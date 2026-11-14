@@ -292,6 +292,17 @@ export function SupportIcon(p: IconProps) {
   );
 }
 
+/** Settings: a gear. */
+export function GearIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" strokeWidth={2.4} />
+      <circle cx="12" cy="12" r="6.6" />
+    </Svg>
+  );
+}
+
 /** Your field: a square plot. */
 export function FieldScaleIcon(p: IconProps) {
   return (

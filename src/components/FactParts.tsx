@@ -44,8 +44,19 @@ export function ScaleBadge({ scale, long = false, iconOnly = false }: { scale: S
   );
 }
 
-/** Dataset and resolution, e.g. "LANDSAT / HLS · 30 m". Hidden in Simple view until tapped. */
+/** Marks a figure the farmer changed in Settings. It takes the place of the dataset label. */
+export function YoursTag() {
+  const t = useT();
+  return (
+    <span data-testid="tag-yours" className="inline-flex items-center px-1.5 border-2 border-line-strong text-small font-bold rounded-sm whitespace-nowrap">
+      {t("money.yours")}
+    </span>
+  );
+}
+
+/** Dataset and resolution, e.g. "LANDSAT / HLS · 30 m". Hidden in Simple view until tapped. A figure the farmer changed shows "Yours" instead. */
 export function DatasetLabel({ fact, always = false }: { fact: Fact; always?: boolean }) {
+  if (fact.edited) return <YoursTag />;
   return (
     <span
       className={`${always ? "" : "tc-dataset "}font-mono text-small uppercase tracking-wide text-ink-soft`}
@@ -136,7 +147,7 @@ export function FactButton({
         </span>
         <span className="flex flex-wrap items-center gap-x-2 mt-1">
           <ScaleBadge scale={fact.scale} />
-          {showDataset ? <DatasetLabel fact={fact} /> : null}
+          {showDataset || fact.edited ? <DatasetLabel fact={fact} /> : null}
         </span>
       </button>
       {open ? (
@@ -156,7 +167,9 @@ export function FactDetail({ fact }: { fact: Fact }) {
   const parts: ReactNode[] = [];
   if (range) parts.push(`${t("common.range")} ${range}`);
   parts.push(
-    fact.source.url ? (
+    fact.edited ? (
+      t("money.yoursLong")
+    ) : fact.source.url ? (
       <a key="src" href={fact.source.url} target="_blank" rel="noreferrer" className="underline">
         {fact.source.dataset} · {fact.source.resolution}
       </a>

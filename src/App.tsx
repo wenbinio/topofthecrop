@@ -14,6 +14,7 @@ import FindField from "./screens/FindField";
 import Options from "./screens/Options";
 import Print from "./screens/Print";
 import Questions from "./screens/Questions";
+import Settings, { SETTINGS_PATH } from "./screens/Settings";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
 
@@ -45,6 +46,8 @@ function Shell() {
   }, [state.view, state.lang]);
 
   const isPrint = pathname.startsWith("/print");
+  // Settings sits outside the six steps: reachable from any of them, it belongs to none.
+  const isSettings = pathname === SETTINGS_PATH;
 
   return (
     <LangContext.Provider value={state.lang}>
@@ -54,7 +57,7 @@ function Shell() {
         }`}
       >
         <TopBar />
-        {isPrint ? null : <StepBar pathname={pathname} />}
+        {isPrint || isSettings ? null : <StepBar pathname={pathname} />}
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
           <Routes>
             <Route path="/" element={<FindField />} />
@@ -72,6 +75,7 @@ function Shell() {
             <Route path="/year" element={demo((b) => <Year bundle={b} />)} />
             <Route path="/adviser" element={<Guard need="demo"><Adviser /></Guard>} />
             <Route path="/print" element={demo((b) => <Print bundle={b} />)} />
+            <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="*" element={<RedirectHome />} />
           </Routes>
         </main>

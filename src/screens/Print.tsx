@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
-import type { Fact, FieldBundle } from "../data/types";
+import type { Economics, Fact, FieldBundle } from "../data/types";
+import { CROPS } from "../data/types";
+import { resolveMoney } from "../money/money";
 import { useLang, useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
 import { optionCrop } from "../components/Crops";
-import { PlaceholderNote, ScaleBadge, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
+import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
 
@@ -29,7 +31,46 @@ function FactText({ fact, perYear = false }: { fact: Fact; perYear?: boolean }) 
         {perYear ? t("unit.perYear") : ""}
       </b>
       {range ? ` (${range})` : ""} <ScaleBadge scale={fact.scale} />
+      {fact.edited ? (
+        <>
+          {" "}
+          <YoursTag />
+        </>
+      ) : null}
     </span>
+  );
+}
+
+/** The prices and support the income figures were worked out with, and which the farmer changed. */
+function MoneyUsed({ economics }: { economics: Economics }) {
+  const t = useT();
+  const lang = useLang();
+  const [state] = useAppState();
+  const r = resolveMoney(economics, state.money);
+  const changed = (edited: boolean) => (edited ? ` · ${t("print.changed")}` : "");
+  return (
+    <Block title={t("print.money")}>
+      <ul data-testid="print-money">
+        {CROPS.filter((c) => economics.crops[c]).map((c) => (
+          <li key={c}>
+            {t(`crop.${c}`)}: <b>{formatNumber(r.prices[c].value, lang)} €/t</b>
+            {changed(r.prices[c].edited)}
+          </li>
+        ))}
+        {economics.support.map((item) => {
+          const s = r.support.find((x) => x.id === item.id);
+          if (!s) return null;
+          return (
+            <li key={item.id}>
+              {item.name[lang]} ({t(`level.${item.level}`)}): <b>{s.on ? t("print.on") : t("print.off")}</b>
+              {s.on ? `, ${formatNumber(s.amount, lang)} €/ha` : ""}
+              {changed(s.edited)}. <span className="text-ink-soft">{item.condition[lang]}</span>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-1">{t("settings.adviser")}</p>
+    </Block>
   );
 }
 
@@ -52,7 +93,9 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
     ...ranked.flatMap((r) => Object.values(r.option.facts)),
   ];
   const sources = new Map<string, Fact["source"]>();
-  for (const f of facts) sources.set(f.source.dataset, f.source);
+  // A figure the farmer changed came from no dataset: it is listed as the farmer's own.
+  for (const f of facts) if (!f.edited) sources.set(f.source.dataset, f.source);
+  const anyEdited = facts.some((f) => f.edited);
   sources.set(bundle.lastCrop.source.dataset, bundle.lastCrop.source);
 
   return (
@@ -158,6 +201,8 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           ) : null}
         </Block>
 
+        {bundle.economics ? <MoneyUsed economics={bundle.economics} /> : null}
+
         {best ? (
           <Block title={`${t("print.bestDetail")}: ${t(`crop.${optionCrop(best.option)}`)}`}>
             <p>{t(best.option.why.suggested)}</p>
@@ -184,6 +229,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                 {s.url ? ` · ${s.url}` : ""}
               </li>
             ))}
+            {anyEdited ? <li>{t("money.yoursLong")}</li> : null}
           </ul>
         </Block>
 
