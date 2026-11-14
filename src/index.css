@@ -164,3 +164,14 @@
   border: 2px solid var(--tc-map-drawn);
   opacity: 0.85;
 }
+
+/* Map zoom buttons: thumb-sized, and placed under the search box and "My location" on the right. */
+/* The extra class beats the map library's own stylesheet, which loads later. */
+.maplibregl-map .maplibregl-ctrl-top-right {
+  top: 7.5rem;
+  right: 0.25rem;
+}
+.maplibregl-map .maplibregl-ctrl-group button {
+  width: 44px;
+  height: 44px;
+}

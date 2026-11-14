@@ -14,7 +14,7 @@ import type { MapTarget } from "../components/Map";
 import { Button } from "../components/ui";
 
 /** Where the map opens before the bundle arrives: the Genzano demo field. */
-const DEMO_CENTRE: LngLat = [16.0617, 40.8631];
+const DEMO_CENTRE: LngLat = [16.0611, 40.8656];
 const OPEN_ZOOM = 15;
 
 type Mode =
@@ -154,7 +154,7 @@ export default function FindField() {
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => flyTo([pos.coords.longitude, pos.coords.latitude], 16),
+      (pos) => flyTo([pos.coords.longitude, pos.coords.latitude], 17),
       () => setLocError(true),
       { timeout: 10000, enableHighAccuracy: true },
     );
@@ -179,7 +179,8 @@ export default function FindField() {
       <Map
         centre={centre}
         zoom={OPEN_ZOOM}
-        fieldOutline={demoRing}
+        // While the farmer draws their own field the demo outline is out of the way, so only one shape shows.
+        fieldOutline={drawing ? null : demoRing}
         drawnOutline={drawn}
         editable={drawing}
         drawing={tracing}

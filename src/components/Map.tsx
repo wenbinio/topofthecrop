@@ -1,6 +1,6 @@
 // All MapLibre code lives here, behind a small props interface, so tests can vi.mock this file.
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Map as MapLibre, Marker, setWorkerUrl } from "maplibre-gl";
+import { Map as MapLibre, Marker, NavigationControl, setWorkerUrl } from "maplibre-gl";
 // MapLibre 6 ships its worker as a separate module. Let Vite bundle it and hand us the URL,
 // otherwise the worker cannot be found once the library itself has been bundled.
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
@@ -35,6 +35,8 @@ export type MapProps = {
 };
 
 export const BASEMAP_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+/** Beyond this level the tile server returns a "no data yet" picture, so never ask for more. */
+const BASEMAP_MAX_TILE_ZOOM = 19;
 const BASEMAP_ATTRIBUTION =
   'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noreferrer">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
 
@@ -102,14 +104,24 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable
       container: containerRef.current,
       center: initial.current.centre,
       zoom: initial.current.zoom,
-      maxZoom: 18.5,
+      // The photos hold real detail to tile level 19 (checked over Genzano); past that the map enlarges them,
+      // which still helps a thumb place a corner exactly.
+      maxZoom: 21,
       attributionControl: { compact: true },
       dragRotate: false,
       pitchWithRotate: false,
       style: {
         version: 8,
         sources: {
-          aerial: { type: "raster", tiles: [BASEMAP_TILES], tileSize: 256, maxzoom: 19, attribution: BASEMAP_ATTRIBUTION },
+          // On a sharp phone screen, treating each 256 px photo tile as 128 px makes the map load the next
+          // level of detail, so the picture is crisp instead of stretched over twice as many pixels.
+          aerial: {
+            type: "raster",
+            tiles: [BASEMAP_TILES],
+            tileSize: window.devicePixelRatio > 1 ? 128 : 256,
+            maxzoom: BASEMAP_MAX_TILE_ZOOM,
+            attribution: BASEMAP_ATTRIBUTION,
+          },
           field: { type: "geojson", data: polygonData(null) },
           drawn: { type: "geojson", data: polygonData(null) },
         },
@@ -123,6 +135,8 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable
       },
     });
     map.touchZoomRotate.disableRotation();
+    // Plus and minus buttons, for anyone who does not pinch. Sized and placed by .maplibregl-ctrl-group in index.css.
+    map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => setLoaded(true));
     map.on("click", (e) => {
       // A tap on a dot is not a tap on the map.

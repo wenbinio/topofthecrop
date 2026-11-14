@@ -181,11 +181,13 @@ const bundle = {
   field: {
     id: "genzano-demo",
     name: "Genzano di Lucania",
-    areaHa: 6,
-    // Placeholder outline east of the town; the data phase replaces it with the real field.
+    areaHa: 3.1,
+    // Traced by eye from the aerial photo: a field east of the town, between a road, a hedge and a gully.
+    // It is a real field shape but not one the team chose; replace it when the demo field is decided.
     outline: {
       type: "Polygon",
-      coordinates: [[[16.06, 40.862], [16.0637, 40.8624], [16.0634, 40.8642], [16.0598, 40.8637], [16.06, 40.862]]],
+      coordinates: [[[16.05917, 40.86615], [16.06024, 40.86651], [16.0611, 40.86646], [16.06153, 40.8661], [16.0617, 40.86545],
+        [16.06209, 40.8648], [16.06196, 40.86399], [16.05917, 40.86615]]],
     },
   },
   lastCrop: { crop: "durum", source: src.cropmap },
