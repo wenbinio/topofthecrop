@@ -6,6 +6,7 @@ import { Map as MapLibre, Marker, NavigationControl, setWorkerUrl } from "maplib
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
+import type { FeatureCollection } from "geojson";
 import type { LngLat } from "../data/types";
 import { MAX_CORNERS, insertAt, midpoints, moveAt, round5 } from "../geo/edit";
 import { detectField } from "../geo/edges";
@@ -23,6 +24,8 @@ export type MapProps = {
   zoom: number;
   /** The known field outline (the demo field), open ring. */
   fieldOutline: LngLat[] | null;
+  /** The Bradano basin's outline (GeoJSON), drawn as a thin line: where full results exist. */
+  basinOutline?: FeatureCollection | null;
   /** The farmer's own shape, open ring. One or two points show as dots and a line until there are three. */
   drawnOutline: LngLat[] | null;
   /** While true each corner of the drawn shape has a dot to pull, and each side a smaller dot that makes a new corner. */
@@ -85,7 +88,7 @@ function handleElement(kind: "corner" | "side"): HTMLDivElement {
 }
 
 /** The layers we draw over the photo, hidden while the photo is read. */
-const OVERLAY_LAYERS = ["field-fill", "field-line", "drawn-fill", "drawn-line"];
+const OVERLAY_LAYERS = ["basin-line", "field-fill", "field-line", "drawn-fill", "drawn-line"];
 /** The photo is read at this size (longer side, in pixels): enough for field edges, quick to search. */
 const SNAPSHOT_SIDE = 240;
 
@@ -173,6 +176,7 @@ export default function Map({
   centre,
   zoom,
   fieldOutline,
+  basinOutline = null,
   drawnOutline,
   editable,
   drawing,
@@ -209,6 +213,7 @@ export default function Map({
     if (!containerRef.current) return;
     const field = cssVar("--tc-map-field");
     const drawn = cssVar("--tc-map-drawn");
+    const basin = cssVar("--tc-map-basin");
     const map = new MapLibre({
       container: containerRef.current,
       center: initial.current.centre,
@@ -231,11 +236,13 @@ export default function Map({
             maxzoom: BASEMAP_MAX_TILE_ZOOM,
             attribution: BASEMAP_ATTRIBUTION,
           },
+          basin: { type: "geojson", data: polygonData(null) },
           field: { type: "geojson", data: polygonData(null) },
           drawn: { type: "geojson", data: polygonData(null) },
         },
         layers: [
           { id: "aerial", type: "raster", source: "aerial" },
+          { id: "basin-line", type: "line", source: "basin", paint: { "line-color": basin, "line-width": 1.5, "line-opacity": 0.8 } },
           { id: "field-fill", type: "fill", source: "field", paint: { "fill-color": field, "fill-opacity": 0.12 } },
           { id: "field-line", type: "line", source: "field", paint: { "line-color": field, "line-width": 3 } },
           { id: "drawn-fill", type: "fill", source: "drawn", paint: { "fill-color": drawn, "fill-opacity": 0.18 } },
@@ -273,6 +280,11 @@ export default function Map({
     const source = mapRef.current?.getSource("field") as SettableSource | undefined;
     if (loaded && source) source.setData(polygonData(fieldOutline));
   }, [loaded, fieldOutline]);
+
+  useEffect(() => {
+    const source = mapRef.current?.getSource("basin") as SettableSource | undefined;
+    if (loaded && source) source.setData(basinOutline ?? polygonData(null));
+  }, [loaded, basinOutline]);
 
   useEffect(() => {
     const source = mapRef.current?.getSource("drawn") as SettableSource | undefined;

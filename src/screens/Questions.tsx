@@ -76,9 +76,11 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       <SectionTitle>
         <span className="flex flex-wrap items-baseline gap-x-2">
           {t("q.lastCrop")}
-          <span className="tc-dataset font-mono normal-case tracking-normal">
-            {bundle.lastCrop.source.dataset} · {bundle.lastCrop.source.resolution}
-          </span>
+          {!bundle.lastCrop.appDefault ? (
+            <span className="tc-dataset font-mono normal-case tracking-normal">
+              {bundle.lastCrop.source.dataset} · {bundle.lastCrop.source.resolution}
+            </span>
+          ) : null}
         </span>
       </SectionTitle>
       <div role="radiogroup" aria-label={t("q.lastCrop")} className="grid grid-cols-2 gap-2 px-4" data-testid="last-crop">

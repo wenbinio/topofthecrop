@@ -471,16 +471,16 @@ export default function Settings() {
 
   // Back to where the farmer came from, carrying the figures just changed (browser back would
   // return to the old link without them). With no record of that, the obvious screen.
-  const fallback = state.fieldId === DEMO_FIELD_ID ? "/options" : state.outline ? "/area" : "/";
+  // A drawn field inside the basin uses the demo's regional prices; outside it there are none to edit.
+  const fallback = state.fieldId === DEMO_FIELD_ID || state.outline ? "/options" : "/";
+  const nothing = (
+    <p className="px-4 py-4 text-big" data-testid="settings-nothing">
+      {t("settings.nothing")}
+    </p>
+  );
 
   let body: ReactNode;
-  if (state.fieldId === DEMO_FIELD_ID) body = <BundleGate>{(b) => <Body bundle={b} />}</BundleGate>;
-  else if (state.outline)
-    body = (
-      <p className="px-4 py-4 text-big" data-testid="settings-nothing">
-        {t("settings.nothing")}
-      </p>
-    );
+  if (state.fieldId === DEMO_FIELD_ID || state.outline) body = <BundleGate outside={nothing}>{(b) => <Body bundle={b} />}</BundleGate>;
   else
     body = (
       <p className="px-4 py-4 text-big" data-testid="settings-no-field">

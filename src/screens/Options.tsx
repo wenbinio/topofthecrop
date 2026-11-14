@@ -19,6 +19,8 @@ import { PriorityChips, ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
+import { AreaNote } from "../components/BundleProvider";
+import { FARMLAND_NOTE_BELOW } from "../data/caveats";
 
 /** What to plant next and why, in a few plain lines. */
 function Recommendation({ best, current, simple }: { best: RankedOption | undefined; current: Option | undefined; simple: boolean }) {
@@ -120,6 +122,13 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         </div>
       )}
 
+      <AreaNote bundle={bundle} />
+      {bundle.field.basin && bundle.field.basin.farmlandShare < FARMLAND_NOTE_BELOW ? (
+        <p className="px-4 pt-1 flex items-start gap-2 text-small font-bold" data-testid="farmland-note">
+          <WarnIcon className="w-4 h-4 flex-none mt-0.5 text-warn" />
+          {t("basin.notFarmland")}
+        </p>
+      ) : null}
       <Recommendation best={best} current={current} simple={simple} />
       <div className="px-4 pt-2">
         <PriorityHelp>

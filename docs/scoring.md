@@ -5,6 +5,8 @@ The demo figures, crop choices, scores and links from findings to rotations are
 also placeholders. A good confidence word describes agreement between signals;
 it does not make a placeholder figure a measured fact.
 
+A field drawn on Bradano basin farmland uses these same rules (`src/data/field-rules.js`), applied to the 1 km squares under its outline instead of the demo field's own data.
+
 ## Read the signals — placeholder interpretation
 
 Compare greenness, surface temperature and water use with the same weeks in

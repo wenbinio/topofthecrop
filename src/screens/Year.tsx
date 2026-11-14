@@ -9,6 +9,7 @@ import { HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
 import { HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, LinkButton } from "../components/ui";
+import { AreaNote } from "../components/BundleProvider";
 
 const RISK_ORDER: Risk[] = ["dry", "frost", "heat", "rain"];
 
@@ -36,6 +37,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
   return (
     <div className="flex flex-col flex-1">
       {/* Held sideways: the hot days, slider and best fit on the left, the year strip on the right. */}
+      <AreaNote bundle={bundle} />
       <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
       <div className="flex flex-col min-w-0">
       <div className="px-4 pt-4">
@@ -95,7 +97,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
         <h2 className="sr-only">{t("year.title")}</h2>
         <YearStrip months={months} />
         <div className="mt-2 flex flex-col gap-1">
-          <CoverLegend />
+          <CoverLegend none={months.some((m) => m.cover === "none")} />
           <RiskLegend risks={risks} />
         </div>
       </div>

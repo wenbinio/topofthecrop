@@ -27,6 +27,8 @@
 
   --tc-map-field: #ffd23f;
   --tc-map-drawn: #ffffff;
+  /* the Bradano basin outline on Find field: where full results exist */
+  --tc-map-basin: #ffffff;
   --tc-map-handle: #000000;
   --tc-map-chip: rgba(0, 0, 0, 0.82);
   --tc-on-map-chip: #ffffff;

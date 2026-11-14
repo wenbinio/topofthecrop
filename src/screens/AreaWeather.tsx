@@ -5,7 +5,7 @@ import { areaHa, centroid } from "../geo/geometry";
 import { useLang, useT } from "../i18n";
 import { useAppState, useGo, useTo } from "../state/useAppState";
 import { fetchPower, summarise } from "../weather/weather";
-import { useBundle } from "../components/BundleProvider";
+import { useDemoBundle } from "../components/BundleProvider";
 import { DatasetLabel, ScaleBadge, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { FieldShape } from "../components/FieldShape";
 import { DropIcon, FrostIcon, HeatIcon } from "../components/Icons";
@@ -48,7 +48,7 @@ export default function AreaWeather() {
   const go = useGo();
   const to = useTo();
   const [state] = useAppState();
-  const bundle = useBundle();
+  const bundle = useDemoBundle();
   const [attempt, setAttempt] = useState(0);
   const [load, setLoad] = useState<Load>({ status: "loading" });
   const outline = state.outline;

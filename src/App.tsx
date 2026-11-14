@@ -5,7 +5,7 @@ import { DEMO_FIELD_ID } from "./data/types";
 import { isUsableRing } from "./geo/geometry";
 import { LangContext } from "./i18n";
 import { useAppState, useTo } from "./state/useAppState";
-import { BundleGate, BundleProvider } from "./components/BundleProvider";
+import { BundleGate, BundleProvider, useBundle } from "./components/BundleProvider";
 import { StepBar } from "./components/StepBar";
 import { TopBar } from "./components/TopBar";
 import Adviser from "./screens/Adviser";
@@ -18,22 +18,33 @@ import Settings, { SETTINGS_PATH } from "./screens/Settings";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
 
-/** Sends the farmer back to step 1 when the link lacks the field a screen needs. */
-function Guard({ need, children }: { need: "demo" | "outline"; children: ReactNode }) {
+/**
+ * Sends the farmer back to step 1 when the link lacks the field a screen needs.
+ * "field": the demo field or a drawn outline (whose bundle is built from the basin data; outside the basin's
+ * farmland the bundle gate sends it on to live weather). "outline": a drawn outline, for live weather.
+ */
+function Guard({ need, children }: { need: "field" | "outline"; children: ReactNode }) {
   const [state] = useAppState();
   const to = useTo();
   // A shared link can carry an outline that is a dot or a line; that is not a field.
-  const ok = need === "demo" ? state.fieldId === DEMO_FIELD_ID : state.outline !== null && isUsableRing(state.outline);
+  const drawn = state.outline !== null && isUsableRing(state.outline);
+  const ok = need === "field" ? state.fieldId === DEMO_FIELD_ID || drawn : drawn;
   if (!ok) return <Navigate to={to("/")} replace />;
   return <>{children}</>;
 }
 
-function demo(render: Parameters<typeof BundleGate>[0]["children"]) {
+function field(render: Parameters<typeof BundleGate>[0]["children"]) {
   return (
-    <Guard need="demo">
+    <Guard need="field">
       <BundleGate>{render}</BundleGate>
     </Guard>
   );
+}
+
+/** The adviser screen needs no bundle for the demo field; a drawn field must first prove to be in the basin. */
+function AdviserRoute() {
+  const { drawn } = useBundle();
+  return <Guard need="field">{drawn ? <BundleGate>{() => <Adviser />}</BundleGate> : <Adviser />}</Guard>;
 }
 
 function Shell() {
@@ -70,12 +81,12 @@ function Shell() {
                 </Guard>
               }
             />
-            <Route path="/questions" element={demo((b) => <Questions bundle={b} />)} />
-            <Route path="/options" element={demo((b) => <Options bundle={b} />)} />
-            <Route path="/why/:optionId" element={demo((b) => <Why bundle={b} />)} />
-            <Route path="/year" element={demo((b) => <Year bundle={b} />)} />
-            <Route path="/adviser" element={<Guard need="demo"><Adviser /></Guard>} />
-            <Route path="/print" element={demo((b) => <Print bundle={b} />)} />
+            <Route path="/questions" element={field((b) => <Questions bundle={b} />)} />
+            <Route path="/options" element={field((b) => <Options bundle={b} />)} />
+            <Route path="/why/:optionId" element={field((b) => <Why bundle={b} />)} />
+            <Route path="/year" element={field((b) => <Year bundle={b} />)} />
+            <Route path="/adviser" element={<AdviserRoute />} />
+            <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="*" element={<RedirectHome />} />
           </Routes>

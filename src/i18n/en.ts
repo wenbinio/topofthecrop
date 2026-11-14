@@ -65,14 +65,22 @@ export const en = {
   "find.undo": "Undo",
   "find.trace": "Trace",
   "find.done": "Done",
+  "find.basinHint": "Full results inside white line",
+  "field.yours": "Your field",
 
   // area weather
   "area.title": "Area weather",
   "area.years": "10-year average",
-  "area.demoOnly": "Field results: demo only, for now.",
+  "area.demoOnly": "Full results: Bradano basin farmland only.",
   "area.demo": "Demo field",
   "area.error": "Weather history unavailable.",
   "area.loading": "Asking NASA POWER…",
+
+  // a drawn field in the basin: figures from the 1 km squares
+  "basin.loading": "Loading area data…",
+  "basin.error": "Area data not loaded.",
+  "basin.note": "For the 1 km area around your field",
+  "basin.notFarmland": "Part of outline is not farmland.",
 
   // step 2
   "q.lastCrop": "Last crop",
@@ -152,6 +160,8 @@ export const en = {
   "cover.green.def": "Crop covers ground (greenness 0.5+).",
   "cover.part.def": "Part covered: crop coming up or drying (0.3–0.5).",
   "cover.bare.def": "Soil showing (under 0.3).",
+  "cover.none": "No data",
+  "cover.none.def": "No usable greenness here.",
   "cover.source": "NASA MODIS, typical year 2001–2020.",
   "risk.dry": "Dry",
   "risk.frost": "Frost",
@@ -299,6 +309,9 @@ export const en = {
   "finding.dry.title": "Autumn rain varies",
   "finding.dry.detail": "Oct–Nov rain: about 100–200 mm year to year, deciding timely sowing.",
   "finding.dry.fact": "Oct–Nov rain",
+  "finding.bare.detailArea": "Months bare after July harvest. Open to first heavy autumn rain.",
+  "finding.heat.detailArea": "30 °C+ days at flowering and fill (mid-April to mid-June).",
+  "finding.dry.detailArea": "Oct–Nov rain varies year to year, deciding timely sowing.",
 
   // why suggested (keys from the bundle)
   "why.chickpea-durum-durum.suggested": "Legume: leaves nitrogen for durum, low water, flowers before peak heat. One break year, then durum.",
@@ -321,6 +334,9 @@ export const en = {
   "unknown.prices": "Future grain and pulse prices",
   "unknown.soilDepth": "Field soil depth",
   "unknown.fieldHistory": "Past crops, weeds, field issues",
+  "unknown.coolTemps": "Temperature data reads 1–2.5 °C cool at demo field: hot days likely undercounted",
+  "unknown.soilTest": "Soil figures are predictions: check with soil test",
+  "unknown.area1km": "1 km estimates: only demo field has figures from its own outline",
   "check.buyer": "Any local pulse or forage buyer?",
   "check.seed": "Where to buy seed; best valley variety",
   "check.adviser": "Review plan with adviser",
