@@ -5,7 +5,9 @@ import { MAX_CORNERS, TRACE_CORNERS, round5 } from "../geo/edit";
 import { areaHa, centroid, isUsableRing, pointInRing, simplifyRing } from "../geo/geometry";
 import { useLang, useT } from "../i18n";
 import { useAppState, useGo } from "../state/useAppState";
-import { useBundle } from "../components/BundleProvider";
+import { useDemoBundle } from "../components/BundleProvider";
+import { loadBasinOutline } from "../data/basin";
+import type { FeatureCollection } from "geojson";
 import { formatNumber } from "../components/FactParts";
 import { openRing } from "../components/FieldShape";
 import { FieldScaleIcon, LocateIcon, PencilIcon, SearchIcon, WarnIcon } from "../components/Icons";
@@ -106,7 +108,19 @@ export default function FindField() {
   const lang = useLang();
   const go = useGo();
   const [state] = useAppState();
-  const bundle = useBundle();
+  const bundle = useDemoBundle();
+  // The basin outline (10 kB): where full results exist. Without it the map simply shows no line.
+  const [basinOutline, setBasinOutline] = useState<FeatureCollection | null>(null);
+  useEffect(() => {
+    let live = true;
+    loadBasinOutline().then(
+      (fc) => live && setBasinOutline(fc),
+      () => undefined,
+    );
+    return () => {
+      live = false;
+    };
+  }, []);
   const [mode, setMode] = useState<Mode>(() =>
     // Coming back with a drawn field: open it ready to adjust.
     state.outline && isUsableRing(state.outline)
@@ -256,6 +270,7 @@ export default function FindField() {
           zoom={OPEN_ZOOM}
           // While the farmer draws their own field the demo outline is out of the way, so only one shape shows.
           fieldOutline={drawing ? null : demoRing}
+          basinOutline={basinOutline}
           drawnOutline={drawn}
           editable={drawing}
           drawing={tracing}
@@ -354,7 +369,10 @@ export default function FindField() {
         {/* The demo sheet needs the bundle; until it arrives (or if it failed) keep the hint and the draw button. */}
         {mode.k === "idle" || (mode.k === "demo" && bundle.status !== "ready") ? (
           <div className="flex items-center justify-between gap-3 phone-land:flex-col phone-land:items-stretch">
-            <p className="font-bold text-big">{t("find.hint")}</p>
+            <div>
+              <p className="font-bold text-big">{t("find.hint")}</p>
+              <p className="text-small font-bold text-ink-soft">{t("find.basinHint")}</p>
+            </div>
             <Button look="secondary" onClick={() => setMode(startDrawing())}>
               <PencilIcon className="w-5 h-5" />
               {t("find.draw")}
@@ -443,7 +461,8 @@ export default function FindField() {
               <Button
                 className="px-2"
                 disabled={!drawnOk || mode.finding}
-                onClick={() => go("/area", { fieldId: null, outline: mode.ring })}
+                // Inside the basin's farmland the full steps follow; outside, the bundle gate sends it on to live weather.
+                onClick={() => go("/questions", { fieldId: null, outline: mode.ring })}
               >
                 {t("find.done")}
               </Button>

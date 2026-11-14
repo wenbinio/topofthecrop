@@ -4,6 +4,7 @@ import type { FieldBundle, Limit, Priority } from "../data/types";
 import { CROPS, LAST_CROP_NAME_MAX, LIMITS, PRIORITIES } from "../data/types";
 import { useT } from "../i18n";
 import { economicsCrops } from "../money/money";
+import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
 import { CropName } from "../components/Crops";
 import { CheckIcon } from "../components/Icons";
@@ -50,10 +51,8 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
   const to = useTo();
   const [state, setState] = useAppState();
 
-  function toggleLimit(limit: Limit) {
-    const has = state.limits.includes(limit);
-    const next = has ? state.limits.filter((l) => l !== limit) : [...state.limits, limit];
-    setState({ limits: LIMITS.filter((l) => next.includes(l)) });
+  function onLimit(limit: Limit) {
+    setState({ limits: toggleLimit(state.limits, limit) });
   }
 
   function togglePriority(p: Priority) {
@@ -76,9 +75,11 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       <SectionTitle>
         <span className="flex flex-wrap items-baseline gap-x-2">
           {t("q.lastCrop")}
-          <span className="tc-dataset font-mono normal-case tracking-normal">
-            {bundle.lastCrop.source.dataset} · {bundle.lastCrop.source.resolution}
-          </span>
+          {!bundle.lastCrop.appDefault ? (
+            <span className="tc-dataset font-mono normal-case tracking-normal">
+              {bundle.lastCrop.source.dataset} · {bundle.lastCrop.source.resolution}
+            </span>
+          ) : null}
         </span>
       </SectionTitle>
       <div role="radiogroup" aria-label={t("q.lastCrop")} className="grid grid-cols-2 gap-2 px-4" data-testid="last-crop">
@@ -114,7 +115,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       <SectionTitle>{t("q.limits")}</SectionTitle>
       <div className="grid grid-cols-1 gap-2 px-4">
         {LIMITS.map((limit) => (
-          <Choice key={limit} on={state.limits.includes(limit)} onClick={() => toggleLimit(limit)}>
+          <Choice key={limit} on={state.limits.includes(limit)} onClick={() => onLimit(limit)}>
             {t(`limit.${limit}`)}
           </Choice>
         ))}

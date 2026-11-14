@@ -26,7 +26,8 @@ export type Scenario = "normal" | "drier" | "much-drier"; // the three slider st
 export type Priority = "income" | "water" | "soil" | "forage";
 export type Limit = "no-irrigation" | "cereal-machinery" | "no-buyer" | "broomrape";
 export type Signal = "rising" | "falling" | "normal" | "no-data";
-export type Cover = "green" | "part" | "bare";
+/** "none": no greenness data (a drawn field over squares without usable MODIS pixels). Never in a shipped bundle. */
+export type Cover = "green" | "part" | "bare" | "none";
 export type Risk = "dry" | "frost" | "heat" | "rain";
 
 /** Crop ids. Display names come from the dictionary key `crop.<id>`. */
@@ -79,9 +80,20 @@ export type Option = {
 };
 
 export type FieldBundle = {
-  field: { id: string; name: string; areaHa: number; outline: Polygon };
-  lastCrop: { crop: CropId; source: Source };
-  findings: Finding[]; // exactly three
+  field: {
+    id: string;
+    name: string;
+    areaHa: number;
+    outline: Polygon;
+    /** Only on a drawn field's bundle, built in the app from the basin's 1 km squares (src/data/fieldFromBasin.ts). */
+    basin?: { farmlandShare: number; squares: number };
+  };
+  /**
+   * What the crop map says was grown last. `appDefault`: no data says so (a drawn field whose squares are under
+   * half durum on the crop map); `crop` is then the app's default and `source` is not shown.
+   */
+  lastCrop: { crop: CropId; source: Source; appDefault?: boolean };
+  findings: Finding[]; // exactly three in a shipped bundle; a drawn field leaves out any without data
   year: {
     months: Month[]; // exactly twelve, October first
     /** Risk icons per month for a slider stop, twelve lists, October first. A missing stop uses `months`. */
@@ -116,6 +128,8 @@ export type View = "standard" | "simple";
 export type Lang = "en" | "it";
 
 export const DEMO_FIELD_ID = "genzano-demo";
+/** The id of a bundle built in the app for a field the farmer drew. */
+export const DRAWN_FIELD_ID = "drawn";
 
 /** Everything the shared link carries. */
 export type AppState = {

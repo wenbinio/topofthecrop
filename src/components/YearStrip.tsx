@@ -10,6 +10,8 @@ const COVER_CLASS: Record<Cover, string> = {
   green: "tc-cover-green",
   part: "tc-cover-part",
   bare: "tc-cover-bare",
+  // No greenness data: plain, with a dashed edge, never shown as bare.
+  none: "bg-surface border-dashed",
 };
 
 /** Twelve months from October: cover by colour and pattern, risk icons under each month. */
@@ -45,9 +47,9 @@ export function YearStrip({ months, risks = true, compact = false }: { months: M
 }
 
 /** Green, patchy, bare: tap or hover says what each means (satellite greenness, NASA MODIS). */
-export function CoverLegend() {
+export function CoverLegend({ none = false }: { none?: boolean }) {
   const t = useT();
-  const covers: Cover[] = ["green", "part", "bare"];
+  const covers: Cover[] = none ? ["green", "part", "bare", "none"] : ["green", "part", "bare"];
   return (
     <LegendExplain
       testId="cover-legend"

@@ -419,3 +419,43 @@ export function BigTextIcon(p: IconProps) {
     </Svg>
   );
 }
+
+/** Voice: a microphone. */
+export function MicIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="9" y="3" width="6" height="11" rx="3" />
+      <path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" />
+    </Svg>
+  );
+}
+
+/** Listening: the microphone filled, with sound waves either side, so the state shows without colour. */
+export function MicLiveIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
+      <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V21M8.5 21h7" />
+      <path d="M3 7.5v5M21 7.5v5" strokeWidth={2.4} />
+    </Svg>
+  );
+}
+
+/** Read aloud: a loudspeaker with sound waves. */
+export function SpeakerIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+      <path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
+    </Svg>
+  );
+}
+
+/** Stop reading: a filled square. */
+export function StopIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" />
+    </Svg>
+  );
+}

@@ -19,6 +19,9 @@ import { PriorityChips, ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
+import { AreaNote } from "../components/BundleProvider";
+import { FARMLAND_NOTE_BELOW } from "../data/caveats";
+import { ReadButton } from "../voice/Voice";
 
 /** What to plant next and why, in a few plain lines. */
 function Recommendation({ best, current, simple }: { best: RankedOption | undefined; current: Option | undefined; simple: boolean }) {
@@ -33,9 +36,12 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   );
   return (
     <div className="px-4 pt-4 pb-1" data-testid="recommendation" data-option-id={option.id}>
-      <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
-        {headline}
-      </h1>
+      <div className="flex items-start justify-between gap-2">
+        <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
+          {headline}
+        </h1>
+        <ReadButton />
+      </div>
       <div className="mt-2">
         <ReasonList reasons={reasonsFor(option, current, state.priorities)} option={option} testId="rec-reasons" />
       </div>
@@ -120,6 +126,13 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         </div>
       )}
 
+      <AreaNote bundle={bundle} />
+      {bundle.field.basin && bundle.field.basin.farmlandShare < FARMLAND_NOTE_BELOW ? (
+        <p className="px-4 pt-1 flex items-start gap-2 text-small font-bold" data-testid="farmland-note">
+          <WarnIcon className="w-4 h-4 flex-none mt-0.5 text-warn" />
+          {t("basin.notFarmland")}
+        </p>
+      ) : null}
       <Recommendation best={best} current={current} simple={simple} />
       <div className="px-4 pt-2">
         <PriorityHelp>

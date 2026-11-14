@@ -9,6 +9,7 @@ import { CropName, PaidIn, Slotted, optionCrop } from "../components/Crops";
 import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
+import { unknownsFor } from "../data/caveats";
 
 function Block({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
@@ -104,7 +105,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
   // A figure the farmer changed came from no dataset: it is listed as the farmer's own.
   for (const f of facts) if (!f.edited) sources.set(f.source.dataset, f.source);
   const anyEdited = facts.some((f) => f.edited);
-  sources.set(bundle.lastCrop.source.dataset, bundle.lastCrop.source);
+  if (!bundle.lastCrop.appDefault) sources.set(bundle.lastCrop.source.dataset, bundle.lastCrop.source);
 
   return (
     <div className="flex flex-col flex-1 bg-surface text-ink">
@@ -125,6 +126,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           {formatNumber(bundle.field.areaHa, lang)} ha · {t("app.name")}
         </p>
         <p className="mt-1">{t("print.intro")}</p>
+        {bundle.field.basin ? <p className="mt-1 font-bold" data-testid="area-note">{t("basin.note")}</p> : null}
 
         <Block title={t("print.answers")}>
           <ul>
@@ -239,7 +241,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
             <p>{t(best.option.why.suggested)}</p>
             <p className="mt-1 font-bold">{t("why.h.unknowns")}</p>
             <ul className="list-disc pl-5">
-              {best.option.why.unknowns.map((k) => (
+              {unknownsFor(best.option).map((k) => (
                 <li key={k}>{t(k)}</li>
               ))}
             </ul>

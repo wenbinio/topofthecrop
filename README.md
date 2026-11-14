@@ -101,7 +101,7 @@ Resolutions above are from general knowledge and must be checked against each pr
 - **Confidence word.** Each option carries one: good, fair or low.
 - **Income is a gross margin.** It is the average per year over the three-year sequence, in €/ha, and the "Why?" screen states the prices used and their date.
 - **Placeholders are labelled.** Until real data arrives, the screen says so.
-- **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. NASA POWER needs no login and allows calls from any website, so the app calls it live for fields outside the demo.
+- **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. For the whole Bradano basin the data team extracted every 1 km square of farmland ahead of time too (`data/`, documented in `HANDOVER.md`); the app downloads those files only when a farmer draws a field. NASA POWER needs no login and allows calls from any website, so the app calls it live for fields outside the basin.
 
 ### How options are ranked
 
@@ -251,13 +251,16 @@ type AreaWeather = {
 
 ### Decisions already made for the builder
 
-- **Which fields work.** Only the Genzano demo field has an outline and a bundle, so only it gets findings from the field itself and ranked options. Tapping it selects it. Anywhere else, the farmer draws the field and gets live weather for the area (next point), a plain line saying field-level results exist for the demo field only so far, and a button to see the full example on the demo field. No fake results for other fields.
+- **Which fields work.** Three cases, and no fake results for any of them:
+  - **The Genzano demo field** has its own bundle, with figures from inside its own outline. Tapping it selects it.
+  - **A field drawn (or found from its edges) on rain-fed farmland in the Bradano basin** gets the same six steps. The app builds its bundle in the browser from the 1 km squares under the outline (`src/data/fieldFromBasin.ts`, using Edison's `src/data/fieldshift-data.js`), with the same rules as the demo field (`src/data/field-rules.js`, shared with `scripts/real-field.mjs`). Every figure is badged "your area" and each screen says once that it is for the 1 km area around the field; Options adds a line when under 80% of the outline is farmland. Crop prices, yields and support are regional, so the options and their income are the demo's. A value missing in the data is left out ("no data"), never shown as 0. The basin's outline is drawn as a thin white line on the map so the farmer sees where full results exist.
+  - **Anywhere else** (outside the basin's farmland), the farmer gets live weather for the area (next point), a plain line saying full results cover Bradano basin farmland only, and a button to see the full example on the demo field.
 - **Live weather for any field.** For a field that is not the demo field, the browser calls NASA POWER for the field's centre (rounded to two decimal places) and asks for daily maximum and minimum temperature and rainfall from 2001 to 2025. Tested on 14 Nov: the service allows calls from any website, and 25 years of daily data came back in about 1.5 seconds (about 300 KB). From that the app counts three things, each shown as a "your area" fact with the last ten years as the value and the spread across those years as the range:
   - hot days at flowering (days of 30 °C or more, 15 April to 15 June)
   - autumn rain (total, September to November)
   - late frost days (below 0 °C, March and April)
 
-  The thresholds and dates are placeholders for the team to correct, and live in `docs/scoring.md`. The same counting code produces the demo bundle's weather facts, so the two always agree. The "by 2050" number and the slider need climate projections, so they stay demo-field only. If the call fails or takes longer than 8 seconds, the app says the weather history is not available right now and offers the demo field.
+  The thresholds and dates are placeholders for the team to correct, and live in `docs/scoring.md`. The same counting code produces the demo bundle's weather facts, so the two always agree. The "by 2050" number and the slider need climate projections, so outside the basin they are not shown. If the call fails or takes longer than 8 seconds, the app says the weather history is not available right now and offers the demo field.
 - **The nine options are three-year sequences** for the harvests of 2027, 2028 and 2029, after the durum just harvested. Crop figures come from `docs/crops-research.md`; each option's facts, limits and scores are derived from its crops by the rules written in `scripts/make-placeholder-bundle.mjs`:
   - chickpea → durum → durum (one legume break)
   - faba bean → durum → faba bean (legume every other year)
@@ -285,6 +288,7 @@ src/
   i18n/         en.ts, it.ts
   theme/        standard.css, simple.css
 public/data/    genzano-demo.json
+data/           the data team's basin files (HANDOVER.md); never edited by hand, served at data/basin/
 docs/           scoring.md, data-sources.md, mockups/
 ```
 
@@ -328,6 +332,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark.
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
+- **Voice uses the phone, not us.** The app contains no hosted AI model and sends nothing to a server of ours. Its voice commands and "read aloud" use the browser's built-in speech recognition and speech synthesis, which the phone maker (Google, Apple, Samsung) provides; recognition may send the audio to the phone maker's servers. Spoken words become commands through a written list of phrases (`src/voice/commands.ts`), not a model.
 
 ## Open questions
 
@@ -370,8 +375,12 @@ npm run build
 
 `npm run build` writes a static site to `dist/` that works from any folder on any static host.
 
+The basin data needs no extra step: a small plugin in `vite.config.ts` serves `data/*.json` and `data/*.geojson` at `data/basin/` while `npm run dev` runs, and writes them to `dist/data/basin/` on `npm run build` (so the GitHub Pages workflow ships them too). Nothing is copied into `public/`, so the files exist once in git. The demo field never downloads them; a drawn field loads them once per session (about 4.6 MB, 1.2 MB gzipped), with the same 8-second limit per file as the demo bundle and a Retry.
+
 ### Replacing the placeholder data
 
 The app reads one file, `public/data/genzano-demo.json`. Its shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. `scripts/make-placeholder-bundle.mjs` shows how the current placeholder file is produced. Set `placeholder` to `false` on each fact as real numbers replace made-up ones; the "placeholder figures" note disappears from a screen once none of its facts are placeholders.
+
+The basin files in `data/` come from the data team's notebooks; to update them, replace the files as `HANDOVER.md` section 9 says. Keys stay the same, so the app needs no change.
 
 The decision tree, the limit rules and the weather thresholds are written in plain words in `docs/scoring.md` for the team to correct.

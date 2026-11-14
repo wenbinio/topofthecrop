@@ -86,11 +86,11 @@ describe("drawing a field", () => {
     expect(button("Done")).toBeEnabled();
   });
 
-  it("Done carries the drawn shape to the weather screen", async () => {
+  it("Done carries the drawn shape to the next step (live weather instead, outside the basin: basin.test.tsx)", async () => {
     await startDrawing();
     for (const p of [A, B, C, D]) await onMap(() => map.onTap(p));
     fireEvent.click(button("Done"));
-    expect(lastPath.startsWith("/area?")).toBe(true);
+    expect(lastPath.startsWith("/questions?")).toBe(true);
     expect(decodeURIComponent(lastPath)).toContain("o=16.60000,40.66000;16.60400,40.66000;16.60400,40.66200;16.60000,40.66200");
   });
 

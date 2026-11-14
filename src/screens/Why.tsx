@@ -14,6 +14,8 @@ import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm, RichText, Term } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
+import { unknownsFor } from "../data/caveats";
+import { AreaNote } from "../components/BundleProvider";
 
 /** A fact in full: label, value, range, scale badge, dataset and resolution, date, confidence. */
 export function FactRow({ fact, perYear = false, flowerHigh }: { fact: Fact; perYear?: boolean; flowerHigh?: FieldBundle["year"]["flowerHigh"] }) {
@@ -197,6 +199,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </div>
         <CropSequence option={option} size="lg" />
       </div>
+      <AreaNote bundle={bundle} />
       {ruledOutBy.length > 0 ? (
         <p role="alert" data-testid="why-ruled-out" className="mx-4 mb-2 px-3 py-2 bg-warn text-on-warn font-bold text-body rounded-sm">
           {t("why.ruledOut", { limits: ruledOutBy.map((l) => t(`limit.${l}`)).join(", ") })}
@@ -277,7 +280,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
 
       <Section title={t("why.h.unknowns")}>
         <ul className="list-disc pl-5 py-1 text-body">
-          {option.why.unknowns.map((k) => (
+          {unknownsFor(option).map((k) => (
             <li key={k} className="py-0.5">
               {t(k)}
             </li>
