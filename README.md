@@ -330,7 +330,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 
 ## Running it
 
-To be filled in once the scaffold exists. Planned:
+Needs Node 22 or newer.
 
 ```bash
 npm install
@@ -339,3 +339,25 @@ npm install
 ```bash
 npm run dev
 ```
+
+Then open the address it prints. To check everything before pushing:
+
+```bash
+npm run typecheck
+```
+
+```bash
+npm test
+```
+
+```bash
+npm run build
+```
+
+`npm run build` writes a static site to `dist/` that works from any folder on any static host.
+
+### Replacing the placeholder data
+
+The app reads one file, `public/data/genzano-demo.json`. Its shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. `scripts/make-placeholder-bundle.mjs` shows how the current placeholder file is produced. Set `placeholder` to `false` on each fact as real numbers replace made-up ones; the "placeholder figures" note disappears from a screen once none of its facts are placeholders.
+
+The decision tree, the limit rules and the weather thresholds are written in plain words in `docs/scoring.md` for the team to correct.

@@ -1,11 +1,16 @@
 // All MapLibre code lives here, behind a small props interface, so tests can vi.mock this file.
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Map as MapLibre } from "maplibre-gl";
+import { Map as MapLibre, setWorkerUrl } from "maplibre-gl";
+// MapLibre 6 ships its worker as a separate module. Let Vite bundle it and hand us the URL,
+// otherwise the worker cannot be found once the library itself has been bundled.
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { LngLat } from "../data/types";
 
-export type MapTarget = { centre: LngLat; zoom: number; key: number };
+setWorkerUrl(workerUrl);
+
+export type MapTarget ={ centre: LngLat; zoom: number; key: number };
 
 export type MapProps = {
   centre: LngLat;
@@ -174,7 +179,8 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, drawing,
 
   return (
     <div className="absolute inset-0">
-      <div ref={containerRef} className="absolute inset-0" data-testid="map" />
+      {/* Inline, because maplibre-gl.css sets .maplibregl-map to position: relative and would collapse the map to 0 px tall. */}
+      <div ref={containerRef} style={{ position: "absolute", inset: 0 }} data-testid="map" />
       {drawing ? (
         <div
           className="absolute inset-0 z-10"
