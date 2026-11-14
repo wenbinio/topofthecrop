@@ -28,6 +28,8 @@ type Place = { name: string; detail: string; at: LngLat };
 function usePlaceSearch(query: string) {
   const [places, setPlaces] = useState<Place[] | null>(null);
   const [failed, setFailed] = useState(false);
+  /** The query the current `places` answer, so Enter never flies to results for older text. */
+  const [answered, setAnswered] = useState("");
   useEffect(() => {
     const q = query.trim();
     if (q.length < 3) {
@@ -55,6 +57,7 @@ function usePlaceSearch(query: string) {
               };
             });
           setPlaces(list);
+          setAnswered(q);
           setFailed(false);
         })
         .catch((e: unknown) => {
@@ -68,7 +71,7 @@ function usePlaceSearch(query: string) {
       ctrl.abort();
     };
   }, [query]);
-  return { places, failed };
+  return { places, failed, fresh: answered === query.trim() };
 }
 
 export default function FindField() {
@@ -78,7 +81,7 @@ export default function FindField() {
   const [state] = useAppState();
   const bundle = useBundle();
   const [mode, setMode] = useState<Mode>(() =>
-    state.outline
+    state.outline && isUsableRing(state.outline)
       ? { k: "confirm", ring: state.outline }
       : state.fieldId === DEMO_FIELD_ID
         ? { k: "demo" }
@@ -86,7 +89,7 @@ export default function FindField() {
   );
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const { places, failed } = usePlaceSearch(query);
+  const { places, failed, fresh } = usePlaceSearch(query);
   const [target, setTarget] = useState<MapTarget | null>(null);
   const [locError, setLocError] = useState(false);
   const targetKey = useRef(0);
@@ -95,7 +98,11 @@ export default function FindField() {
     () => (bundle.status === "ready" ? openRing(bundle.bundle.field.outline.coordinates) : null),
     [bundle],
   );
-  const centre = useMemo(() => (demoRing ? centroid(demoRing) : DEMO_CENTRE), [demoRing]);
+  // Coming back to step 1 with a field drawn elsewhere, open the map on that field, not on the demo.
+  const centre = useMemo(
+    () => (state.outline && isUsableRing(state.outline) ? centroid(state.outline) : demoRing ? centroid(demoRing) : DEMO_CENTRE),
+    [demoRing, state.outline],
+  );
 
   function flyTo(at: LngLat, zoom: number) {
     targetKey.current += 1;
@@ -159,7 +166,7 @@ export default function FindField() {
             className="flex items-center gap-2 px-3 h-12 bg-surface rounded-box shadow-float"
             onSubmit={(e) => {
               e.preventDefault();
-              if (places?.[0]) {
+              if (fresh && places?.[0]) {
                 flyTo(places[0].at, 14);
                 setSearchOpen(false);
               }
@@ -233,7 +240,8 @@ export default function FindField() {
           </p>
         ) : null}
 
-        {mode.k === "idle" ? (
+        {/* The demo sheet needs the bundle; until it arrives (or if it failed) keep the hint and the draw button. */}
+        {mode.k === "idle" || (mode.k === "demo" && bundle.status !== "ready") ? (
           <div className="flex items-center justify-between gap-3">
             <p className="font-bold text-big">{t("find.hint")}</p>
             <Button look="secondary" onClick={() => setMode({ k: "drawing", tooSmall: false })}>

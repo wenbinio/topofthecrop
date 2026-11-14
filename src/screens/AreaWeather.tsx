@@ -107,7 +107,10 @@ export default function AreaWeather() {
         <>
           <p className="px-4 pb-2 text-small font-bold text-ink-soft flex flex-wrap gap-x-2">
             {t("area.years")}
-            <DatasetLabel fact={load.data.hotDaysAtFlowering} />
+            {/* This screen is nothing but NASA numbers, so the source stays visible and linked in both views. */}
+            <a href={load.data.hotDaysAtFlowering.source.url} target="_blank" rel="noreferrer" className="underline">
+              <DatasetLabel fact={load.data.hotDaysAtFlowering} always />
+            </a>
           </p>
           <ul className="bg-surface border-t border-line">
             <WeatherRow fact={load.data.hotDaysAtFlowering} Icon={HeatIcon} />

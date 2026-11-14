@@ -32,13 +32,14 @@ export function rangeText(fact: Fact, lang: Lang): string | null {
 }
 
 /** "your field" or "your area": every number carries one. */
-export function ScaleBadge({ scale, long = false }: { scale: Scale; long?: boolean }) {
+export function ScaleBadge({ scale, long = false, iconOnly = false }: { scale: Scale; long?: boolean; iconOnly?: boolean }) {
   const t = useT();
   const Icon = scale === "field" ? FieldScaleIcon : AreaScaleIcon;
+  const word = t(long ? `scale.${scale}Long` : `scale.${scale}`);
   return (
-    <span className="inline-flex items-center gap-1 text-small font-bold text-ink-soft whitespace-nowrap">
+    <span className="inline-flex items-center gap-1 text-small font-bold text-ink-soft whitespace-nowrap" title={iconOnly ? word : undefined}>
       <Icon className="w-[1em] h-[1em] flex-none" />
-      {t(long ? `scale.${scale}Long` : `scale.${scale}`)}
+      {iconOnly ? <span className="sr-only">{word}</span> : word}
     </span>
   );
 }

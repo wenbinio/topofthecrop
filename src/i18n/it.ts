@@ -72,7 +72,7 @@ export const it: Dict = {
   "options.current": "Ora",
   "options.support": "Aiuti",
   "options.supportLong": "Possibili aiuti pubblici",
-  "options.ruledOut": "{n} escluse: {limits}",
+  "options.ruledOut": "Scelte escluse: {n} ({limits})",
   "options.headline": "Più adatta: {crop}",
   "options.next": "L'annata del campo",
   "options.openWhy": "Perché questa scelta?",

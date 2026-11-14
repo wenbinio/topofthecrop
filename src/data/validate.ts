@@ -122,7 +122,16 @@ export function validateBundle(json: unknown): FieldBundle {
  * Rejects with an Error if the file is missing, is not JSON, or fails validation.
  */
 export async function loadBundle(fieldId: string): Promise<FieldBundle> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/${encodeURIComponent(fieldId)}.json`);
-  if (!response.ok) throw new Error(`bundle: request failed (${response.status})`);
-  return validateBundle(await response.json());
+  // On a stalled rural signal a fetch can hang for minutes; give up so the screen can offer a retry.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), BUNDLE_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}data/${encodeURIComponent(fieldId)}.json`, { signal: controller.signal });
+    if (!response.ok) throw new Error(`bundle: request failed (${response.status})`);
+    return validateBundle(await response.json());
+  } finally {
+    clearTimeout(timer);
+  }
 }
+
+export const BUNDLE_TIMEOUT_MS = 8000;

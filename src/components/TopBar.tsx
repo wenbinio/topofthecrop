@@ -26,7 +26,7 @@ export function TopBar() {
                 aria-checked={on}
                 title={t(`view.${id}`)}
                 onClick={() => setState({ view: id })}
-                className={`w-11 h-10 flex items-center justify-center ${on ? "bg-line-strong text-surface" : "bg-surface text-ink"}`}
+                className={`w-11 h-11 flex items-center justify-center ${on ? "bg-line-strong text-surface" : "bg-surface text-ink"}`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="sr-only">{t(`view.${id}`)}</span>

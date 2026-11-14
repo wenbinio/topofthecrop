@@ -2,6 +2,7 @@ import { useLayoutEffect } from "react";
 import type { ReactNode } from "react";
 import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { DEMO_FIELD_ID } from "./data/types";
+import { isUsableRing } from "./geo/geometry";
 import { LangContext } from "./i18n";
 import { useAppState, useTo } from "./state/useAppState";
 import { BundleGate, BundleProvider } from "./components/BundleProvider";
@@ -20,7 +21,8 @@ import Year from "./screens/Year";
 function Guard({ need, children }: { need: "demo" | "outline"; children: ReactNode }) {
   const [state] = useAppState();
   const to = useTo();
-  const ok = need === "demo" ? state.fieldId === DEMO_FIELD_ID : state.outline !== null;
+  // A shared link can carry an outline that is a dot or a line; that is not a field.
+  const ok = need === "demo" ? state.fieldId === DEMO_FIELD_ID : state.outline !== null && isUsableRing(state.outline);
   if (!ok) return <Navigate to={to("/")} replace />;
   return <>{children}</>;
 }

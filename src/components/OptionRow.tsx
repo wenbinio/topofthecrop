@@ -8,11 +8,13 @@ import { ConfidenceWord, LevelMeter, ScaleBadge, isLevel, unitText, valueText } 
 import { ChevronIcon, DropIcon, NitrogenIcon, RiskShieldIcon, SupportIcon, WarnIcon } from "./Icons";
 import type { Fact } from "../data/types";
 
-function Metric({ fact, label, Icon }: { fact: Fact; label: string; Icon: typeof DropIcon }) {
+function Metric({ fact, label, Icon, showScale }: { fact: Fact; label: string; Icon: typeof DropIcon; showScale: boolean }) {
   const t = useT();
   const lang = useLang();
   return (
     <span className="inline-flex items-center gap-1" title={label}>
+      {/* When the four facts do not share one scale, each number carries its own mark. */}
+      {showScale ? <ScaleBadge scale={fact.scale} iconOnly /> : null}
       <Icon className="w-4 h-4" />
       {isLevel(fact.value) ? (
         <LevelMeter level={fact.value} label={label} />
@@ -67,9 +69,9 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
               </span>
             ) : (
               <span className="flex items-center gap-3 pb-1">
-                <Metric fact={water} label={t("fact.water")} Icon={DropIcon} />
-                <Metric fact={nitrogen} label={t("fact.nitrogen")} Icon={NitrogenIcon} />
-                <Metric fact={risk} label={t("fact.risk")} Icon={RiskShieldIcon} />
+                <Metric fact={water} label={t("fact.water")} Icon={DropIcon} showScale={!sharedScale} />
+                <Metric fact={nitrogen} label={t("fact.nitrogen")} Icon={NitrogenIcon} showScale={!sharedScale} />
+                <Metric fact={risk} label={t("fact.risk")} Icon={RiskShieldIcon} showScale={!sharedScale} />
               </span>
             )}
           </div>

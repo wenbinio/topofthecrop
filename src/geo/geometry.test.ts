@@ -34,3 +34,7 @@ it('rejects lines and tiny scribbles but accepts the demo', () => {
   expect(isUsableRing([[0, 0], [0, 1], [0, 2]])).toBe(false);
   expect(isUsableRing(demo)).toBe(true);
 });
+
+it('rejects a shared-link outline whose points are all the same place', () => {
+  expect(isUsableRing([[16.06, 40.86], [16.06, 40.86], [16.06, 40.86]])).toBe(false);
+});
