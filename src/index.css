@@ -1,111 +1,142 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
+@import "./theme/standard.css";
+@import "./theme/simple.css";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/* Drop Tailwind's built-in palette, fonts, radii and shadows: only theme variables can be used. */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --text-*: initial;
+}
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme inline {
+  --color-paper: var(--tc-paper);
+  --color-surface: var(--tc-surface);
+  --color-sunk: var(--tc-sunk);
+  --color-line: var(--tc-line);
+  --color-line-strong: var(--tc-line-strong);
+  --color-ink: var(--tc-ink);
+  --color-ink-soft: var(--tc-ink-soft);
+  --color-primary: var(--tc-primary);
+  --color-on-primary: var(--tc-on-primary);
+  --color-best: var(--tc-best);
+  --color-on-best: var(--tc-on-best);
+  --color-warn: var(--tc-warn);
+  --color-on-warn: var(--tc-on-warn);
+  --color-focus: var(--tc-focus);
+  --color-cover-green: var(--tc-cover-green);
+  --color-cover-part: var(--tc-cover-part);
+  --color-cover-bare: var(--tc-cover-bare);
+  --color-risk: var(--tc-risk);
+  --color-map-chip: var(--tc-map-chip);
+  --color-on-map-chip: var(--tc-on-map-chip);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  --font-body: var(--tc-font-body);
+  --font-display: var(--tc-font-display);
+  --font-mono: var(--tc-font-mono);
+
+  --text-small: var(--tc-text-small);
+  --text-small--line-height: 1.3;
+  --text-body: var(--tc-text-body);
+  --text-body--line-height: 1.4;
+  --text-big: var(--tc-text-big);
+  --text-big--line-height: 1.25;
+  --text-head: var(--tc-text-head);
+  --text-head--line-height: 1.15;
+  --text-hero: var(--tc-text-hero);
+  --text-hero--line-height: 1;
+
+  --radius-sm: var(--tc-radius-sm);
+  --radius-box: var(--tc-radius);
+  --radius-sheet: var(--tc-radius-sheet);
+
+  --shadow-float: var(--tc-shadow-float);
+  --shadow-sheet: var(--tc-shadow-sheet);
+}
+
+@layer base {
+  html {
+    background: var(--tc-paper);
+    color: var(--tc-ink);
+    font-family: var(--tc-font-body);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-variant-numeric: tabular-nums;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--tc-font-display);
+    font-weight: var(--tc-weight-head);
+  }
+  button,
+  a,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 3px solid var(--tc-focus);
+    outline-offset: 2px;
+  }
+  /* The step-3 range input */
+  input[type="range"] {
+    accent-color: var(--tc-primary);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* Dataset labels: shown in Standard view, hidden until tapped in Simple view. */
+[data-view="simple"] .tc-dataset {
+  display: none;
+}
+
+.tc-tap {
+  min-height: var(--tc-tap);
+}
+.tc-icon {
+  width: var(--tc-icon);
+  height: var(--tc-icon);
+  flex: none;
+}
+
+/* Year strip cover patterns (colour plus pattern, so it reads without colour). */
+.tc-cover-green {
+  background: var(--tc-cover-green);
+}
+.tc-cover-part {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--tc-cover-part) 0 4px,
+    var(--tc-surface) 4px 7px
+  );
+}
+.tc-cover-bare {
+  background: radial-gradient(var(--tc-cover-bare) 1.2px, transparent 1.6px) 0 0 / 6px 6px,
+    var(--tc-sunk);
+}
+
+.maplibregl-ctrl-attrib {
+  font-family: var(--tc-font-body);
+  font-size: 12px;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
   }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  html,
+  body {
+    background: var(--tc-surface);
   }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  .tc-dataset {
+    display: inline !important;
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

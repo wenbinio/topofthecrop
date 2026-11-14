@@ -1,122 +1,101 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useLayoutEffect } from "react";
+import type { ReactNode } from "react";
+import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { DEMO_FIELD_ID } from "./data/types";
+import { LangContext } from "./i18n";
+import { useAppState, useTo } from "./state/useAppState";
+import { BundleGate, BundleProvider } from "./components/BundleProvider";
+import { StepBar } from "./components/StepBar";
+import { TopBar } from "./components/TopBar";
+import Adviser from "./screens/Adviser";
+import AreaWeather from "./screens/AreaWeather";
+import FindField from "./screens/FindField";
+import Options from "./screens/Options";
+import Print from "./screens/Print";
+import Questions from "./screens/Questions";
+import Why from "./screens/Why";
+import Year from "./screens/Year";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+/** Sends the farmer back to step 1 when the link lacks the field a screen needs. */
+function Guard({ need, children }: { need: "demo" | "outline"; children: ReactNode }) {
+  const [state] = useAppState();
+  const to = useTo();
+  const ok = need === "demo" ? state.fieldId === DEMO_FIELD_ID : state.outline !== null;
+  if (!ok) return <Navigate to={to("/")} replace />;
+  return <>{children}</>;
 }
 
-export default App
+function demo(render: Parameters<typeof BundleGate>[0]["children"]) {
+  return (
+    <Guard need="demo">
+      <BundleGate>{render}</BundleGate>
+    </Guard>
+  );
+}
+
+function Shell() {
+  const [state] = useAppState();
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    document.documentElement.dataset.view = state.view;
+    document.documentElement.lang = state.lang;
+  }, [state.view, state.lang]);
+
+  const isPrint = pathname.startsWith("/print");
+
+  return (
+    <LangContext.Provider value={state.lang}>
+      <div
+        className={`mx-auto w-full flex flex-col bg-paper text-ink font-body ${
+          isPrint ? "min-h-dvh max-w-[52rem] print:max-w-none" : "h-dvh max-w-[30rem]"
+        }`}
+      >
+        <TopBar />
+        {isPrint ? null : <StepBar pathname={pathname} />}
+        <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
+          <Routes>
+            <Route path="/" element={<FindField />} />
+            <Route
+              path="/area"
+              element={
+                <Guard need="outline">
+                  <AreaWeather />
+                </Guard>
+              }
+            />
+            <Route path="/questions" element={demo((b) => <Questions bundle={b} />)} />
+            <Route path="/options" element={demo((b) => <Options bundle={b} />)} />
+            <Route path="/why/:optionId" element={demo((b) => <Why bundle={b} />)} />
+            <Route path="/year" element={demo((b) => <Year bundle={b} />)} />
+            <Route path="/adviser" element={<Guard need="demo"><Adviser /></Guard>} />
+            <Route path="/print" element={demo((b) => <Print bundle={b} />)} />
+            <Route path="*" element={<RedirectHome />} />
+          </Routes>
+        </main>
+      </div>
+    </LangContext.Provider>
+  );
+}
+
+function RedirectHome() {
+  const to = useTo();
+  return <Navigate to={to("/")} replace />;
+}
+
+/** Everything inside the router. Tests render this inside a MemoryRouter. */
+export function AppRoutes() {
+  return (
+    <BundleProvider>
+      <Shell />
+    </BundleProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <HashRouter>
+      <AppRoutes />
+    </HashRouter>
+  );
+}

@@ -1,0 +1,61 @@
+/*
+ * Standard view: data visible, satellite first.
+ * Every colour, font, radius and shadow in the app comes from these variables.
+ * simple.css defines the same names; a restyle only edits these two files.
+ */
+:root,
+[data-view="standard"] {
+  /* surfaces */
+  --tc-paper: #f4f2ec;
+  --tc-surface: #ffffff;
+  --tc-sunk: #e9e6dc;
+  --tc-line: #cfcbbf;
+  --tc-line-strong: #1d2a22;
+
+  /* text */
+  --tc-ink: #16201a;
+  --tc-ink-soft: #46514a;
+
+  /* actions and tags */
+  --tc-primary: #1f3a2b;
+  --tc-on-primary: #f7f5ef;
+  --tc-best: #e0b43c;
+  --tc-on-best: #16201a;
+  --tc-warn: #9c3b12;
+  --tc-on-warn: #ffffff;
+  --tc-focus: #2563a8;
+
+  /* field year */
+  --tc-cover-green: #3d7a35;
+  --tc-cover-part: #a9bd6a;
+  --tc-cover-bare: #b48b5c;
+  --tc-risk: #16201a;
+
+  /* map */
+  --tc-map-field: #ffd23f;
+  --tc-map-drawn: #ffffff;
+  --tc-map-chip: rgba(16, 24, 19, 0.78);
+  --tc-on-map-chip: #ffffff;
+
+  /* type */
+  --tc-font-body: "Atkinson Hyperlegible Next", "Verdana", sans-serif;
+  --tc-font-display: "Atkinson Hyperlegible Next", "Verdana", sans-serif;
+  --tc-font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --tc-text-small: 0.8125rem;
+  --tc-text-body: 1rem;
+  --tc-text-big: 1.1875rem;
+  --tc-text-head: 1.375rem;
+  --tc-text-hero: 2rem;
+  --tc-weight-head: 700;
+
+  /* shape */
+  --tc-radius-sm: 3px;
+  --tc-radius: 6px;
+  --tc-radius-sheet: 12px;
+  --tc-shadow-float: 0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
+  --tc-shadow-sheet: 0 -2px 12px rgba(0, 0, 0, 0.18);
+
+  /* sizes */
+  --tc-tap: 3rem;
+  --tc-icon: 1.375rem;
+}
