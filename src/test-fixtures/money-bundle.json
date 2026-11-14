@@ -1,0 +1,1391 @@
+{
+  "economics": {
+    "crops": {
+      "durum": {
+        "yield": {
+          "value": 3,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 320,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 620,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      },
+      "chickpea": {
+        "yield": {
+          "value": 1.6,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 650,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 520,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      },
+      "faba": {
+        "yield": {
+          "value": 2.2,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 330,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 430,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      },
+      "vetch-oat": {
+        "yield": {
+          "value": 5.5,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 120,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 380,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      }
+    },
+    "support": [
+      {
+        "id": "basic-income",
+        "level": "eu",
+        "defaultOn": true,
+        "name": {
+          "en": "Basic income support",
+          "it": "Sostegno di base al reddito"
+        },
+        "condition": {
+          "en": "Paid on eligible hectares with entitlements.",
+          "it": "Pagato sugli ettari ammissibili con titoli."
+        },
+        "amount": {
+          "value": 160,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [],
+        "options": []
+      },
+      {
+        "id": "coupled-durum",
+        "level": "italy",
+        "defaultOn": true,
+        "name": {
+          "en": "Coupled support for durum wheat",
+          "it": "Sostegno accoppiato grano duro"
+        },
+        "condition": {
+          "en": "Durum wheat in central and southern Italy, certified seed.",
+          "it": "Grano duro nel Centro-Sud, seme certificato."
+        },
+        "amount": {
+          "value": 95,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [
+          "durum"
+        ],
+        "options": []
+      },
+      {
+        "id": "coupled-legumes",
+        "level": "italy",
+        "defaultOn": true,
+        "name": {
+          "en": "Coupled support for grain legumes",
+          "it": "Sostegno accoppiato leguminose da granella"
+        },
+        "condition": {
+          "en": "Grain legumes harvested as dry grain.",
+          "it": "Leguminose raccolte a granella secca."
+        },
+        "amount": {
+          "value": 60,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [
+          "chickpea",
+          "faba"
+        ],
+        "options": []
+      },
+      {
+        "id": "eco-rotation",
+        "level": "eu",
+        "defaultOn": true,
+        "name": {
+          "en": "Eco-scheme: rotation with legumes or forage",
+          "it": "Eco-schema: avvicendamento con leguminose o foraggere"
+        },
+        "condition": {
+          "en": "Needs a legume or forage in the rotation; limits on chemicals in that year.",
+          "it": "Serve una leguminosa o foraggera in rotazione; limiti ai prodotti chimici in quell'anno."
+        },
+        "amount": {
+          "value": 110,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [],
+        "options": [
+          "chickpea-durum-durum",
+          "faba-durum-faba",
+          "vetch-oat-durum-durum"
+        ]
+      }
+    ]
+  },
+  "field": {
+    "id": "genzano-demo",
+    "name": "Genzano di Lucania",
+    "areaHa": 6,
+    "outline": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            16.06,
+            40.862
+          ],
+          [
+            16.0637,
+            40.8624
+          ],
+          [
+            16.0634,
+            40.8642
+          ],
+          [
+            16.0598,
+            40.8637
+          ],
+          [
+            16.06,
+            40.862
+          ]
+        ]
+      ]
+    }
+  },
+  "lastCrop": {
+    "crop": "durum",
+    "source": {
+      "dataset": "EU Crop Map (JRC)",
+      "resolution": "10 m",
+      "url": "https://joint-research-centre.ec.europa.eu/"
+    }
+  },
+  "findings": [
+    {
+      "title": "finding.bare.title",
+      "detail": "finding.bare.detail",
+      "fact": {
+        "value": 4,
+        "unit": "months",
+        "range": [
+          3,
+          5
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "Landsat / HLS",
+          "resolution": "30 m",
+          "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+        },
+        "confidence": "fair",
+        "label": "finding.bare.fact",
+        "placeholder": true
+      },
+      "signals": {
+        "greenness": "falling",
+        "temperature": "rising",
+        "waterUse": "falling"
+      },
+      "weatherDriven": false,
+      "expectedBare": true,
+      "addressedBy": [
+        "vetch-oat-durum-durum",
+        "faba-durum-faba"
+      ]
+    },
+    {
+      "title": "finding.heat.title",
+      "detail": "finding.heat.detail",
+      "fact": {
+        "value": 9,
+        "unit": "days",
+        "range": [
+          4,
+          15
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "NASA POWER",
+          "resolution": "about 50 km",
+          "url": "https://power.larc.nasa.gov/"
+        },
+        "confidence": "fair",
+        "label": "finding.heat.fact",
+        "placeholder": true
+      },
+      "signals": {
+        "greenness": "normal",
+        "temperature": "rising",
+        "waterUse": "falling"
+      },
+      "weatherDriven": true,
+      "addressedBy": [
+        "chickpea-durum-durum",
+        "vetch-oat-durum-durum"
+      ]
+    },
+    {
+      "title": "finding.dry.title",
+      "detail": "finding.dry.detail",
+      "fact": {
+        "value": -18,
+        "unit": "%",
+        "range": [
+          -30,
+          -5
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "GPM IMERG",
+          "resolution": "about 10 km",
+          "url": "https://gpm.nasa.gov/data/imerg"
+        },
+        "confidence": "fair",
+        "label": "finding.dry.fact",
+        "placeholder": true
+      },
+      "signals": {
+        "greenness": "normal",
+        "temperature": "normal",
+        "waterUse": "falling"
+      },
+      "weatherDriven": true,
+      "addressedBy": [
+        "chickpea-durum-durum",
+        "faba-durum-faba"
+      ]
+    }
+  ],
+  "year": {
+    "months": [
+      {
+        "cover": "bare",
+        "risks": [
+          "dry"
+        ]
+      },
+      {
+        "cover": "part",
+        "risks": [
+          "rain"
+        ]
+      },
+      {
+        "cover": "part",
+        "risks": []
+      },
+      {
+        "cover": "green",
+        "risks": [
+          "frost"
+        ]
+      },
+      {
+        "cover": "green",
+        "risks": []
+      },
+      {
+        "cover": "green",
+        "risks": [
+          "frost"
+        ]
+      },
+      {
+        "cover": "green",
+        "risks": []
+      },
+      {
+        "cover": "green",
+        "risks": [
+          "heat"
+        ]
+      },
+      {
+        "cover": "part",
+        "risks": [
+          "heat"
+        ]
+      },
+      {
+        "cover": "bare",
+        "risks": []
+      },
+      {
+        "cover": "bare",
+        "risks": []
+      },
+      {
+        "cover": "bare",
+        "risks": [
+          "rain"
+        ]
+      }
+    ],
+    "risksByScenario": {
+      "drier": [
+        [
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [],
+        [
+          "frost"
+        ],
+        [],
+        [],
+        [],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [],
+        [],
+        [
+          "rain"
+        ]
+      ],
+      "much-drier": [
+        [
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [],
+        [],
+        [],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [],
+        [],
+        [
+          "rain"
+        ]
+      ]
+    },
+    "hotDays": {
+      "normal": {
+        "now": {
+          "value": 9,
+          "unit": "days",
+          "range": [
+            4,
+            15
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA POWER",
+            "resolution": "about 50 km",
+            "url": "https://power.larc.nasa.gov/"
+          },
+          "confidence": "fair",
+          "label": "year.hotNow",
+          "placeholder": true
+        },
+        "by2050": {
+          "value": 17,
+          "unit": "days",
+          "range": [
+            11,
+            24
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NEX-GDDP-CMIP6",
+            "resolution": "about 25 km",
+            "url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6"
+          },
+          "confidence": "low",
+          "label": "year.hot2050",
+          "placeholder": true
+        }
+      },
+      "drier": {
+        "now": {
+          "value": 12,
+          "unit": "days",
+          "range": [
+            6,
+            19
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA POWER",
+            "resolution": "about 50 km",
+            "url": "https://power.larc.nasa.gov/"
+          },
+          "confidence": "fair",
+          "label": "year.hotNow",
+          "placeholder": true
+        },
+        "by2050": {
+          "value": 21,
+          "unit": "days",
+          "range": [
+            14,
+            29
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NEX-GDDP-CMIP6",
+            "resolution": "about 25 km",
+            "url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6"
+          },
+          "confidence": "low",
+          "label": "year.hot2050",
+          "placeholder": true
+        }
+      },
+      "much-drier": {
+        "now": {
+          "value": 16,
+          "unit": "days",
+          "range": [
+            9,
+            24
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA POWER",
+            "resolution": "about 50 km",
+            "url": "https://power.larc.nasa.gov/"
+          },
+          "confidence": "fair",
+          "label": "year.hotNow",
+          "placeholder": true
+        },
+        "by2050": {
+          "value": 27,
+          "unit": "days",
+          "range": [
+            18,
+            36
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NEX-GDDP-CMIP6",
+            "resolution": "about 25 km",
+            "url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6"
+          },
+          "confidence": "low",
+          "label": "year.hot2050",
+          "placeholder": true
+        }
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "chickpea-durum-durum",
+      "isCurrent": false,
+      "sequence": [
+        "chickpea",
+        "durum",
+        "durum"
+      ],
+      "firstHarvestYear": 2027,
+      "facts": {
+        "income": {
+          "value": 753,
+          "unit": "€/ha",
+          "range": [
+            560,
+            940
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.income",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "water": {
+          "value": "low",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.water",
+          "placeholder": true
+        },
+        "nitrogen": {
+          "value": 40,
+          "unit": "kg N/ha",
+          "range": [
+            20,
+            60
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.nitrogen",
+          "placeholder": true
+        },
+        "risk": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.risk",
+          "placeholder": true
+        }
+      },
+      "scores": {
+        "normal": {
+          "income": 0.8,
+          "water": 0.7,
+          "soil": 0.75,
+          "forage": 0.1
+        },
+        "drier": {
+          "income": 0.75,
+          "water": 0.75,
+          "soil": 0.75,
+          "forage": 0.1
+        },
+        "much-drier": {
+          "income": 0.6,
+          "water": 0.8,
+          "soil": 0.75,
+          "forage": 0.1
+        }
+      },
+      "removedBy": [
+        "cereal-machinery"
+      ],
+      "flaggedBy": [
+        "no-buyer",
+        "broomrape"
+      ],
+      "supportTag": true,
+      "why": {
+        "suggested": "why.chickpea-durum-durum.suggested",
+        "evidence": [
+          {
+            "value": 4,
+            "unit": "months",
+            "range": [
+              3,
+              5
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "Landsat / HLS",
+              "resolution": "30 m",
+              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+            },
+            "confidence": "fair",
+            "label": "evidence.bareMonths",
+            "placeholder": true
+          },
+          {
+            "value": 9,
+            "unit": "days",
+            "range": [
+              4,
+              15
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA POWER",
+              "resolution": "about 50 km",
+              "url": "https://power.larc.nasa.gov/"
+            },
+            "confidence": "fair",
+            "label": "evidence.hotDays",
+            "placeholder": true
+          }
+        ],
+        "benefits": [
+          {
+            "value": 40,
+            "unit": "kg N/ha",
+            "range": [
+              20,
+              60
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.nitrogen",
+            "placeholder": true
+          },
+          {
+            "value": 753,
+            "unit": "€/ha",
+            "range": [
+              560,
+              940
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.income",
+            "placeholder": true,
+            "asOf": "2026-10"
+          }
+        ],
+        "unknowns": [
+          "unknown.prices",
+          "unknown.soilDepth",
+          "unknown.fieldHistory"
+        ],
+        "checkLocally": [
+          "check.buyer",
+          "check.seed",
+          "check.adviser"
+        ]
+      }
+    },
+    {
+      "id": "faba-durum-faba",
+      "isCurrent": false,
+      "sequence": [
+        "faba",
+        "durum",
+        "faba"
+      ],
+      "firstHarvestYear": 2027,
+      "facts": {
+        "income": {
+          "value": 652,
+          "unit": "€/ha",
+          "range": [
+            490,
+            820
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.income",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "water": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.water",
+          "placeholder": true
+        },
+        "nitrogen": {
+          "value": 60,
+          "unit": "kg N/ha",
+          "range": [
+            40,
+            80
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.nitrogen",
+          "placeholder": true
+        },
+        "risk": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.risk",
+          "placeholder": true
+        }
+      },
+      "scores": {
+        "normal": {
+          "income": 0.7,
+          "water": 0.5,
+          "soil": 0.9,
+          "forage": 0.3
+        },
+        "drier": {
+          "income": 0.6,
+          "water": 0.45,
+          "soil": 0.9,
+          "forage": 0.3
+        },
+        "much-drier": {
+          "income": 0.45,
+          "water": 0.4,
+          "soil": 0.9,
+          "forage": 0.3
+        }
+      },
+      "removedBy": [],
+      "flaggedBy": [
+        "no-buyer",
+        "broomrape"
+      ],
+      "supportTag": true,
+      "why": {
+        "suggested": "why.faba-durum-faba.suggested",
+        "evidence": [
+          {
+            "value": 4,
+            "unit": "months",
+            "range": [
+              3,
+              5
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "Landsat / HLS",
+              "resolution": "30 m",
+              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+            },
+            "confidence": "fair",
+            "label": "evidence.bareMonths",
+            "placeholder": true
+          },
+          {
+            "value": 9,
+            "unit": "days",
+            "range": [
+              4,
+              15
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA POWER",
+              "resolution": "about 50 km",
+              "url": "https://power.larc.nasa.gov/"
+            },
+            "confidence": "fair",
+            "label": "evidence.hotDays",
+            "placeholder": true
+          }
+        ],
+        "benefits": [
+          {
+            "value": 60,
+            "unit": "kg N/ha",
+            "range": [
+              40,
+              80
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.nitrogen",
+            "placeholder": true
+          },
+          {
+            "value": 652,
+            "unit": "€/ha",
+            "range": [
+              490,
+              820
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.income",
+            "placeholder": true,
+            "asOf": "2026-10"
+          }
+        ],
+        "unknowns": [
+          "unknown.prices",
+          "unknown.soilDepth",
+          "unknown.fieldHistory"
+        ],
+        "checkLocally": [
+          "check.buyer",
+          "check.seed",
+          "check.adviser"
+        ]
+      }
+    },
+    {
+      "id": "vetch-oat-durum-durum",
+      "isCurrent": false,
+      "sequence": [
+        "vetch-oat",
+        "durum",
+        "durum"
+      ],
+      "firstHarvestYear": 2027,
+      "facts": {
+        "income": {
+          "value": 653,
+          "unit": "€/ha",
+          "range": [
+            490,
+            820
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.income",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "water": {
+          "value": "low",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.water",
+          "placeholder": true
+        },
+        "nitrogen": {
+          "value": 30,
+          "unit": "kg N/ha",
+          "range": [
+            10,
+            50
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.nitrogen",
+          "placeholder": true
+        },
+        "risk": {
+          "value": "low",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.risk",
+          "placeholder": true
+        }
+      },
+      "scores": {
+        "normal": {
+          "income": 0.45,
+          "water": 0.8,
+          "soil": 0.7,
+          "forage": 0.95
+        },
+        "drier": {
+          "income": 0.5,
+          "water": 0.85,
+          "soil": 0.7,
+          "forage": 0.95
+        },
+        "much-drier": {
+          "income": 0.55,
+          "water": 0.9,
+          "soil": 0.7,
+          "forage": 0.9
+        }
+      },
+      "removedBy": [],
+      "flaggedBy": [
+        "no-buyer"
+      ],
+      "supportTag": true,
+      "why": {
+        "suggested": "why.vetch-oat-durum-durum.suggested",
+        "evidence": [
+          {
+            "value": 4,
+            "unit": "months",
+            "range": [
+              3,
+              5
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "Landsat / HLS",
+              "resolution": "30 m",
+              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+            },
+            "confidence": "fair",
+            "label": "evidence.bareMonths",
+            "placeholder": true
+          },
+          {
+            "value": 9,
+            "unit": "days",
+            "range": [
+              4,
+              15
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA POWER",
+              "resolution": "about 50 km",
+              "url": "https://power.larc.nasa.gov/"
+            },
+            "confidence": "fair",
+            "label": "evidence.hotDays",
+            "placeholder": true
+          }
+        ],
+        "benefits": [
+          {
+            "value": 30,
+            "unit": "kg N/ha",
+            "range": [
+              10,
+              50
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.nitrogen",
+            "placeholder": true
+          },
+          {
+            "value": 653,
+            "unit": "€/ha",
+            "range": [
+              490,
+              820
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.income",
+            "placeholder": true,
+            "asOf": "2026-10"
+          }
+        ],
+        "unknowns": [
+          "unknown.prices",
+          "unknown.soilDepth",
+          "unknown.fieldHistory"
+        ],
+        "checkLocally": [
+          "check.buyer",
+          "check.seed",
+          "check.adviser"
+        ]
+      }
+    },
+    {
+      "id": "durum-durum-durum",
+      "isCurrent": true,
+      "sequence": [
+        "durum",
+        "durum",
+        "durum"
+      ],
+      "firstHarvestYear": 2027,
+      "facts": {
+        "income": {
+          "value": 595,
+          "unit": "€/ha",
+          "range": [
+            450,
+            740
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.income",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "water": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.water",
+          "placeholder": true
+        },
+        "nitrogen": {
+          "value": 0,
+          "unit": "kg N/ha",
+          "range": [
+            0,
+            20
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.nitrogen",
+          "placeholder": true
+        },
+        "risk": {
+          "value": "high",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.risk",
+          "placeholder": true
+        }
+      },
+      "scores": {
+        "normal": {
+          "income": 0.55,
+          "water": 0.4,
+          "soil": 0.2,
+          "forage": 0.05
+        },
+        "drier": {
+          "income": 0.4,
+          "water": 0.35,
+          "soil": 0.2,
+          "forage": 0.05
+        },
+        "much-drier": {
+          "income": 0.25,
+          "water": 0.3,
+          "soil": 0.2,
+          "forage": 0.05
+        }
+      },
+      "removedBy": [],
+      "flaggedBy": [],
+      "supportTag": false,
+      "why": {
+        "suggested": "why.durum-durum-durum.suggested",
+        "evidence": [
+          {
+            "value": 4,
+            "unit": "months",
+            "range": [
+              3,
+              5
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "Landsat / HLS",
+              "resolution": "30 m",
+              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+            },
+            "confidence": "fair",
+            "label": "evidence.bareMonths",
+            "placeholder": true
+          },
+          {
+            "value": 9,
+            "unit": "days",
+            "range": [
+              4,
+              15
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA POWER",
+              "resolution": "about 50 km",
+              "url": "https://power.larc.nasa.gov/"
+            },
+            "confidence": "fair",
+            "label": "evidence.hotDays",
+            "placeholder": true
+          }
+        ],
+        "benefits": [
+          {
+            "value": 0,
+            "unit": "kg N/ha",
+            "range": [
+              0,
+              20
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.nitrogen",
+            "placeholder": true
+          },
+          {
+            "value": 595,
+            "unit": "€/ha",
+            "range": [
+              450,
+              740
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Agronomy trials and regional prices (to be chosen)",
+              "resolution": "regional",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.income",
+            "placeholder": true,
+            "asOf": "2026-10"
+          }
+        ],
+        "unknowns": [
+          "unknown.prices",
+          "unknown.soilDepth",
+          "unknown.fieldHistory"
+        ],
+        "checkLocally": [
+          "check.adviser"
+        ]
+      }
+    }
+  ]
+}

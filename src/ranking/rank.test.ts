@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import fixture from '../../public/data/genzano-demo.json';
+import fixture from '../test-fixtures/money-bundle.json';
 import type { Option } from '../data/types';
 import type { RankInput } from './rank';
 import { rankOptions } from './rank';

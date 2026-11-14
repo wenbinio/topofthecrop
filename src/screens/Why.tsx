@@ -1,15 +1,17 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import type { Fact, FieldBundle } from "../data/types";
+import type { Economics, Fact, FieldBundle, Option } from "../data/types";
+import { optionMoney } from "../money/money";
 import { buildPath } from "../ranking/diagnose";
 import { rankOptions } from "../ranking/rank";
 import { useLang, useT } from "../i18n";
 import { useAppState, useTo } from "../state/useAppState";
 import { CropSequence, optionCrop } from "../components/Crops";
-import { ConfidenceWord, PlaceholderNote, ScaleBadge, rangeText, unitText, valueText } from "../components/FactParts";
-import { BackIcon, FindingIcon } from "../components/Icons";
+import { ConfidenceWord, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
+import { BackIcon, ChevronIcon, CropIcon, FindingIcon } from "../components/Icons";
 import { RichText, Term } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
+import { SETTINGS_PATH, settingsFrom } from "./Settings";
 
 /** A fact in full: label, value, range, scale badge, dataset and resolution, date, confidence. */
 export function FactRow({ fact, perYear = false }: { fact: Fact; perYear?: boolean }) {
@@ -33,7 +35,9 @@ export function FactRow({ fact, perYear = false }: { fact: Fact; perYear?: boole
             {t("common.range")} {range}
           </span>
         ) : null}
-        {fact.source.url ? (
+        {fact.edited ? (
+          <YoursTag />
+        ) : fact.source.url ? (
           <a href={fact.source.url} target="_blank" rel="noreferrer" className="font-mono uppercase underline">
             {fact.source.dataset} · {fact.source.resolution}
           </a>
@@ -50,6 +54,67 @@ export function FactRow({ fact, perYear = false }: { fact: Fact; perYear?: boole
         {fact.placeholder ? <span className="font-bold text-warn">*</span> : null}
       </div>
     </li>
+  );
+}
+
+/** The sums behind the income figure, year by year, on one hectare. */
+function MoneyWorking({ option, economics }: { option: Option; economics: Economics }) {
+  const t = useT();
+  const lang = useLang();
+  const to = useTo();
+  const [state] = useAppState();
+  const { pathname } = useLocation();
+  const money = optionMoney(option, economics, state.money);
+  const n = (v: number) => formatNumber(Math.round(v), lang);
+  return (
+    <div className="py-2" data-testid="money-working">
+      <p className="flex flex-wrap items-center justify-between gap-2 text-small font-bold text-ink-soft">
+        <span>{t("money.working")} · €/ha</span>
+        <ScaleBadge scale={option.facts.income.scale} long />
+      </p>
+      <table className="w-full mt-1 text-small border-collapse">
+        <thead>
+          <tr className="text-left border-b border-line">
+            <th className="py-1 pr-1 font-bold">{t("money.year")}</th>
+            <th className="py-1 px-1 font-bold text-right">{t("money.sales")}</th>
+            <th className="py-1 px-1 font-bold text-right">{t("money.costs")}</th>
+            <th className="py-1 px-1 font-bold text-right">{t("money.support")}</th>
+            <th className="py-1 pl-1 font-bold text-right">{t("money.total")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {money.years.map((y, i) => (
+            <tr key={i} className="border-b border-line">
+              <td className="py-1 pr-1">
+                <span className="inline-flex items-center gap-1">
+                  <CropIcon crop={y.crop} className="w-4 h-4 flex-none" title={t(`crop.${y.crop}`)} />
+                  {option.firstHarvestYear + i}
+                </span>
+              </td>
+              <td className="py-1 px-1 text-right">{n(y.sales)}</td>
+              <td className="py-1 px-1 text-right">−{n(y.costs)}</td>
+              <td className="py-1 px-1 text-right">{n(y.support.reduce((sum, s) => sum + s.amount, 0))}</td>
+              <td className="py-1 pl-1 text-right font-bold">{n(y.margin)}</td>
+            </tr>
+          ))}
+          <tr>
+            <td colSpan={4} className="py-1 pr-1 font-bold">
+              {t("money.perYear")}
+            </td>
+            <td className="py-1 pl-1 text-right font-bold">{n(money.perYear)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <Link
+        to={to(SETTINGS_PATH)}
+        state={settingsFrom(pathname, null)}
+        data-testid="money-change"
+        className="mt-1 inline-flex items-center gap-1 min-h-11 font-bold text-body underline underline-offset-4"
+      >
+        {t("money.change")}
+        <ChevronIcon className="w-4 h-4" />
+      </Link>
+    </div>
   );
 }
 
@@ -97,7 +162,12 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
   const finding = bundle.findings.find((f) => f.addressedBy.includes(option.id)) ?? bundle.findings[0];
   const path = finding ? buildPath(finding, state.limits, state.priorities) : [];
   const facts = option.facts;
-  const allFacts = [...Object.values(facts), ...option.why.evidence, ...option.why.benefits, ...(finding ? [finding.fact] : [])];
+  // The income benefit repeats the income figure; with economics that figure is worked out
+  // from the farmer's prices, so show the worked-out one rather than the bundle's stale copy.
+  const benefits = option.why.benefits.map((f) =>
+    bundle.economics && f.label === "benefit.income" ? { ...facts.income, label: f.label } : f,
+  );
+  const allFacts = [...Object.values(facts), ...option.why.evidence, ...benefits, ...(finding ? [finding.fact] : [])];
 
   return (
     <div className="flex flex-col flex-1">
@@ -126,6 +196,9 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
       <Section title={t("why.numbers")}>
         <ul>
           <FactRow fact={facts.income} perYear />
+        </ul>
+        {bundle.economics ? <MoneyWorking option={option} economics={bundle.economics} /> : null}
+        <ul>
           <FactRow fact={facts.water} />
           <FactRow fact={facts.nitrogen} />
           <FactRow fact={facts.risk} />
@@ -169,7 +242,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
 
       <Section title={t("why.h.benefits")}>
         <ul>
-          {option.why.benefits.map((f, i) => (
+          {benefits.map((f, i) => (
             <FactRow key={i} fact={f} perYear={f.label === "benefit.income"} />
           ))}
         </ul>

@@ -1,9 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { FieldBundle } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
 import { loadBundle } from "../data/validate";
 import { useT } from "../i18n";
+import { withMoney } from "../money/money";
+import { useAppState } from "../state/useAppState";
 
 type BundleState =
   | { status: "loading"; bundle: null; retry: () => void }
@@ -12,8 +14,13 @@ type BundleState =
 
 const BundleContext = createContext<BundleState | null>(null);
 
-/** Loads the demo field's bundle once and shares it with every screen. */
+/**
+ * Loads the demo field's bundle once and shares it with every screen.
+ * The farmer's own prices and support (`state.money`) are applied here, once, so every screen
+ * (and the step bar's best-fit link) sees the same income figures and ranking.
+ */
 export function BundleProvider({ children }: { children: ReactNode }) {
+  const [{ money }] = useAppState();
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<{ bundle: FieldBundle | null; failed: boolean }>({
     bundle: null,
@@ -35,8 +42,10 @@ export function BundleProvider({ children }: { children: ReactNode }) {
     };
   }, [attempt]);
 
-  const value: BundleState = result.bundle
-    ? { status: "ready", bundle: result.bundle, retry }
+  const priced = useMemo(() => (result.bundle ? withMoney(result.bundle, money) : null), [result.bundle, money]);
+
+  const value: BundleState = priced
+    ? { status: "ready", bundle: priced, retry }
     : result.failed
       ? { status: "error", bundle: null, retry }
       : { status: "loading", bundle: null, retry };

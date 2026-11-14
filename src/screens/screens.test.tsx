@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import fixture from "../../public/data/genzano-demo.json";
+import fixture from "../test-fixtures/money-bundle.json";
 import App, { AppRoutes } from "../App";
 
 vi.mock("../components/Map", () => ({

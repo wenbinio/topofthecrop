@@ -4,7 +4,7 @@ import { useLang, useT } from "../i18n";
 import type { RankedOption } from "../ranking/rank";
 import { useTo } from "../state/useAppState";
 import { CropSequence, optionCrop } from "./Crops";
-import { ConfidenceWord, LevelMeter, ScaleBadge, isLevel, unitText, valueText } from "./FactParts";
+import { ConfidenceWord, LevelMeter, ScaleBadge, YoursTag, isLevel, unitText, valueText } from "./FactParts";
 import { ChevronIcon, DropIcon, NitrogenIcon, RiskShieldIcon, SupportIcon, WarnIcon } from "./Icons";
 import type { Fact } from "../data/types";
 
@@ -79,6 +79,7 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <ConfidenceWord confidence={income.confidence} />
+            {income.edited ? <YoursTag /> : null}
             {sharedScale ? null : <ScaleBadge scale={income.scale} />}
             {option.supportTag ? (
               <span className="inline-flex items-center gap-1 px-1 text-small font-bold border border-line-strong rounded-sm" title={t("options.supportLong")}>

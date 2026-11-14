@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import fixture from '../../public/data/genzano-demo.json';
+import fixture from '../test-fixtures/money-bundle.json';
 import type { LngLat } from '../data/types';
 import { areaHa, centroid, isUsableRing, pointInRing, simplifyRing } from './geometry';
 

@@ -2,7 +2,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import fixture from "../../public/data/genzano-demo.json";
+import fixture from "../test-fixtures/money-bundle.json";
 import { AppRoutes } from "../App";
 import type { MapProps } from "../components/Map";
 import type { LngLat } from "../data/types";

@@ -1,16 +1,19 @@
+import { Link } from "react-router-dom";
 import type { Fact, FieldBundle, Limit } from "../data/types";
 import { LIMITS } from "../data/types";
 import { useLang, useT } from "../i18n";
+import { resolveMoney } from "../money/money";
 import { rankOptions } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
 import { optionCrop } from "../components/Crops";
-import { PlaceholderNote, ScaleBadge, formatNumber } from "../components/FactParts";
+import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
-import { WarnIcon } from "../components/Icons";
+import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
 import { OptionRow } from "../components/OptionRow";
 import { YearStrip } from "../components/YearStrip";
 import { BottomBar, LinkButton, SectionTitle } from "../components/ui";
+import { SETTINGS_PATH, settingsFrom } from "./Settings";
 
 export default function Options({ bundle }: { bundle: FieldBundle }) {
   const t = useT();
@@ -73,6 +76,19 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           <OptionRow key={item.option.id} item={item} view={state.view} sharedScale={sharedScale !== null} />
         ))}
       </ul>
+      {bundle.economics ? (
+        <Link
+          to={to(SETTINGS_PATH)}
+          state={settingsFrom("/options", null)}
+          data-testid="money-row"
+          className="flex items-center gap-3 min-h-11 px-4 py-2 bg-surface border-b border-line font-bold text-body"
+        >
+          <EuroIcon className="w-5 h-5 flex-none" />
+          <span className="flex-1">{t("settings.title")}</span>
+          {resolveMoney(bundle.economics, state.money).edited ? <YoursTag /> : null}
+          <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
+        </Link>
+      ) : null}
       {removed.length > 0 ? (
         <p className="px-4 py-3 flex items-start gap-2 text-body font-bold" data-testid="ruled-out">
           <WarnIcon className="w-5 h-5 flex-none mt-0.5 text-warn" />

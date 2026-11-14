@@ -123,6 +123,34 @@ export function validateBundle(json: unknown): FieldBundle {
     strings(why.unknowns, `${path}.why.unknowns`); strings(why.checkLocally, `${path}.why.checkLocally`);
   });
   check(currentCount === 1, 'options.isCurrent must identify exactly one option');
+  if (bundle.economics !== undefined) {
+    const economics = object(bundle.economics, 'economics');
+    const crops = object(economics.crops, 'economics.crops');
+    for (const crop of CROPS) {
+      const path = `economics.crops.${crop}`, record = object(crops[crop], path);
+      for (const key of ['yield', 'price', 'costs']) {
+        fact(record[key], `${path}.${key}`);
+        number(object(record[key], `${path}.${key}`).value, `${path}.${key}.value`);
+      }
+    }
+    const supportIds = new Set<string>();
+    array(economics.support, 'economics.support').forEach((value, i) => {
+      const path = `economics.support[${i}]`, item = object(value, path);
+      string(item.id, `${path}.id`);
+      check(!supportIds.has(item.id as string), `${path}.id must be unique`);
+      supportIds.add(item.id as string);
+      for (const key of ['name', 'condition']) {
+        const text = object(item[key], `${path}.${key}`);
+        for (const lang of ['en', 'it']) string(text[lang], `${path}.${key}.${lang}`);
+      }
+      known(item.level, ['eu', 'italy', 'basilicata'], `${path}.level`);
+      fact(item.amount, `${path}.amount`);
+      number(object(item.amount, `${path}.amount`).value, `${path}.amount.value`);
+      strings(item.crops, `${path}.crops`, CROPS);
+      strings(item.options, `${path}.options`, [...ids]);
+      boolean(item.defaultOn, `${path}.defaultOn`);
+    });
+  }
   return json as FieldBundle;
 }
 

@@ -67,6 +67,26 @@ diagnosis, weather-driven note, limits and chosen priorities instead.
 Income is average annual gross margin across the three harvests, not revenue;
 the supporting facts should give the prices used and their date.
 
+## How the income figure is worked out
+
+For each harvest, income per hectare is yield × crop price − direct costs +
+the support payments switched on for that crop and rotation. Average the three
+harvests and round to a whole euro. Losses stay negative. These starting yields,
+prices, costs and payments are placeholders, not a promise of eligibility.
+
+The farmer can change crop prices and payment amounts, or switch each payment
+on or off. Changes travel in the shared link. Income using changed figures is
+marked “Yours”, with no old range or dataset attribution; it remains a placeholder
+if any yield or cost it uses is still a placeholder.
+
+Starting figures leave ranking scores unchanged. A change multiplies each
+scenario's income score by the new annual income divided by the starting annual
+income. That multiplier is limited to zero through two, and the score to zero
+through one. If starting income is zero or negative, leave the score alone.
+Other priority scores stay unchanged. Income affects ranking when chosen (or
+when all priorities are used), and can break ties otherwise. Choosing soil and
+water keeps the demo order because their combined scores do not tie.
+
 ## Count area weather — placeholder thresholds and windows
 
 NASA POWER supplies daily temperatures and rainfall for 2001 through 2025.

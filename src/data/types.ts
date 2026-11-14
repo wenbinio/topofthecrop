@@ -18,6 +18,7 @@ export type Fact = {
   confidence: Confidence;
   asOf?: string; // date of the prices or data, where it matters ("2026-10")
   label?: string; // dictionary key naming what the number is, for lists of facts
+  edited?: boolean; // true when the farmer's own figures in Settings changed this number
   placeholder: boolean; // true until real data replaces it
 };
 
@@ -82,6 +83,7 @@ export type FieldBundle = {
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
   };
   options: Option[]; // exactly four, exactly one with isCurrent
+  economics?: Economics; // prices, yields, costs and support behind the income figures
 };
 
 /** Live weather for a field that has no bundle. All three facts are scale "area". */
@@ -117,7 +119,42 @@ export type AppState = {
   scenario: Scenario;
   view: View;
   lang: Lang;
+  money: Money; // the farmer's own prices and support, where they differ from the bundle's
 };
+
+/** Text written by the data team, in both languages (support names and conditions come from policy documents). */
+export type LocalText = { en: string; it: string };
+
+/** What one crop earns and costs on one hectare in one year. */
+export type CropEconomics = {
+  yield: Fact; // t/ha
+  price: Fact; // €/t
+  costs: Fact; // €/ha, direct costs: seed, fertiliser, fuel, contractors
+};
+
+/** One public payment the farmer may receive. */
+export type SupportItem = {
+  id: string; // short kebab-case, "coupled-durum"
+  name: LocalText;
+  condition: LocalText; // one sentence: who qualifies
+  level: "eu" | "italy" | "basilicata";
+  amount: Fact; // €/ha, paid for each hectare-year it applies to
+  crops: CropId[]; // paid in the years the field grows one of these; empty means every year
+  options: string[]; // only for these rotations (option ids); empty means any rotation
+  defaultOn: boolean; // switched on until the farmer says otherwise
+};
+
+/** Everything behind the income figure. Optional: without it the app shows each option's `facts.income` as given. */
+export type Economics = {
+  crops: Record<CropId, CropEconomics>;
+  support: SupportItem[];
+};
+
+/**
+ * The farmer's own figures, by key, only where they differ from the bundle:
+ * `p.<crop>` price in €/t, `s.<support id>` amount in €/ha, `on.<support id>` 1 or 0.
+ */
+export type Money = Record<string, number>;
 
 export const DEFAULT_STATE: AppState = {
   fieldId: null,
@@ -128,4 +165,5 @@ export const DEFAULT_STATE: AppState = {
   scenario: "normal",
   view: "standard",
   lang: "en",
+  money: {},
 };
