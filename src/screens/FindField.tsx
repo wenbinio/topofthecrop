@@ -8,9 +8,9 @@ import { useAppState, useGo } from "../state/useAppState";
 import { useBundle } from "../components/BundleProvider";
 import { formatNumber } from "../components/FactParts";
 import { openRing } from "../components/FieldShape";
-import { LocateIcon, PencilIcon, SearchIcon, WarnIcon } from "../components/Icons";
+import { FieldScaleIcon, LocateIcon, PencilIcon, SearchIcon, WarnIcon } from "../components/Icons";
 import Map from "../components/Map";
-import type { MapTarget } from "../components/Map";
+import type { EdgeRequest, MapTarget } from "../components/Map";
 import { Button } from "../components/ui";
 
 /** Where the map opens before the bundle arrives: the Genzano demo field. */
@@ -20,14 +20,35 @@ const OPEN_ZOOM = 15;
 type Mode =
   | { k: "idle" }
   | { k: "demo" }
-  | { k: "offer" }
+  /** Looking for the field's edges in the photo around a tap, before drawing. */
+  | { k: "finding" }
   /**
-   * Drawing the field: tap corners, pull dots, or trace with one finger.
-   * `past` holds earlier shapes for Undo. `note` is a one-line message after something did not work.
+   * Drawing the field: tap corners, pull dots, trace with one finger, or let the app find the edges.
+   * `past` holds earlier shapes for Undo. `seeking`: the next tap is a point inside the field, not a corner.
+   * `finding`: waiting for the edges found in the photo. `note` is a one-line message after something did not work.
    */
-  | { k: "drawing"; ring: LngLat[]; past: LngLat[][]; tracing: boolean; note: "tooSmall" | "max" | null };
+  | {
+      k: "drawing";
+      ring: LngLat[];
+      past: LngLat[][];
+      tracing: boolean;
+      seeking: boolean;
+      finding: boolean;
+      note: Note;
+    };
+type Note = "tooSmall" | "max" | "noEdges" | null;
 
-const startDrawing = (ring: LngLat[] = []): Mode => ({ k: "drawing", ring, past: [], tracing: false, note: null });
+const startDrawing = (ring: LngLat[] = [], past: LngLat[][] = [], note: Note = null): Mode => ({
+  k: "drawing",
+  ring,
+  past,
+  tracing: false,
+  seeking: false,
+  finding: false,
+  note,
+});
+
+const NOTE_KEY = { max: "find.maxCorners", tooSmall: "find.tooSmall", noEdges: "find.noEdges" } as const;
 
 type Place = { name: string; detail: string; at: LngLat };
 
@@ -100,6 +121,8 @@ export default function FindField() {
   const [target, setTarget] = useState<MapTarget | null>(null);
   const [locError, setLocError] = useState(false);
   const targetKey = useRef(0);
+  const [edgeRequest, setEdgeRequest] = useState<EdgeRequest | null>(null);
+  const edgeKey = useRef(0);
 
   const demoRing = useMemo(
     () => (bundle.status === "ready" ? openRing(bundle.bundle.field.outline.coordinates) : null),
@@ -118,19 +141,65 @@ export default function FindField() {
 
   /** Replace the shape being drawn, remembering the one before it for Undo. */
   function reshape(ring: LngLat[]) {
-    setMode((m) => (m.k === "drawing" ? { ...m, ring, past: [...m.past, m.ring], tracing: false, note: null } : m));
+    setMode((m) =>
+      m.k === "drawing" ? { ...m, ring, past: [...m.past, m.ring], tracing: false, seeking: false, note: null } : m,
+    );
+  }
+
+  /** Ask the map to find the field's edges in the photo around `at`; the answer comes to `onEdges`. */
+  function requestEdges(at: LngLat) {
+    edgeKey.current += 1;
+    setEdgeRequest({ at, key: edgeKey.current });
+  }
+
+  function onEdges(ring: LngLat[] | null) {
+    setEdgeRequest(null);
+    setMode((m) => {
+      // Found from a tap before drawing: Undo clears it, leaving an empty shape to tap corners on.
+      if (m.k === "finding") return ring ? startDrawing(ring, [[]]) : startDrawing([], [], "noEdges");
+      if (m.k === "drawing" && m.finding) {
+        return ring
+          ? { ...m, ring, past: [...m.past, m.ring], finding: false, note: null }
+          : { ...m, finding: false, note: "noEdges" };
+      }
+      // Cancelled meanwhile.
+      return m;
+    });
   }
 
   function onTap(point: LngLat) {
+    if (mode.k === "finding") return;
     if (mode.k === "drawing") {
+      if (mode.tracing || mode.finding) return;
+      if (mode.seeking) {
+        setMode({ ...mode, seeking: false, finding: true, note: null });
+        requestEdges(point);
+        return;
+      }
       // Each tap on the map is the next corner of the field.
-      if (mode.tracing) return;
       if (mode.ring.length >= MAX_CORNERS) setMode({ ...mode, note: "max" });
       else reshape([...mode.ring, round5(point)]);
       return;
     }
     if (demoRing && pointInRing(point, demoRing)) setMode({ k: "demo" });
-    else setMode({ k: "offer" });
+    else {
+      setMode({ k: "finding" });
+      requestEdges(point);
+    }
+  }
+
+  /** "Find edges": re-fit the shape on screen from its centre, or with no shape yet, wait for a tap inside the field. */
+  function findEdges() {
+    if (mode.k !== "drawing") return;
+    if (isUsableRing(mode.ring)) {
+      setMode({ ...mode, tracing: false, seeking: false, finding: true, note: null });
+      requestEdges(centroid(mode.ring));
+    } else setMode({ ...mode, tracing: false, seeking: !mode.seeking, note: null });
+  }
+
+  function cancel() {
+    setEdgeRequest(null);
+    setMode({ k: "idle" });
   }
 
   function onTrace(points: LngLat[]) {
@@ -142,7 +211,7 @@ export default function FindField() {
   function undo() {
     setMode((m) =>
       m.k === "drawing" && m.past.length > 0
-        ? { ...m, ring: m.past[m.past.length - 1], past: m.past.slice(0, -1), tracing: false, note: null }
+        ? { ...m, ring: m.past[m.past.length - 1], past: m.past.slice(0, -1), tracing: false, seeking: false, note: null }
         : m,
     );
   }
@@ -185,6 +254,8 @@ export default function FindField() {
         editable={drawing}
         drawing={tracing}
         target={target}
+        edgeRequest={edgeRequest}
+        onEdges={onEdges}
         onTap={onTap}
         onEditRing={reshape}
         onTrace={onTrace}
@@ -298,18 +369,14 @@ export default function FindField() {
           </div>
         ) : null}
 
-        {mode.k === "offer" ? (
-          <div>
-            <p className="font-bold text-big">{t("find.unknown")}</p>
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <Button onClick={() => setMode(startDrawing())}>
-                <PencilIcon className="w-5 h-5" />
-                {t("find.draw")}
-              </Button>
-              <Button look="secondary" onClick={() => setMode({ k: "idle" })}>
-                {t("find.cancel")}
-              </Button>
-            </div>
+        {mode.k === "finding" ? (
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-bold text-big" data-testid="finding">
+              {t("find.finding")}
+            </p>
+            <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={cancel}>
+              {t("find.cancel")}
+            </button>
           </div>
         ) : null}
 
@@ -317,39 +384,59 @@ export default function FindField() {
           <div data-testid="draw-sheet">
             <div className="flex items-start justify-between gap-3">
               <p className="font-bold text-big" data-testid="draw-hint">
-                {mode.tracing
-                  ? t("find.drawHelp")
-                  : mode.ring.length === 0
-                    ? t("find.tapCorners")
-                    : mode.ring.length < 3
-                      ? t("find.keepTapping")
-                      : drawnOk
-                        ? t("find.pull", { n: formatNumber(Math.round(areaHa(mode.ring) * 10) / 10, lang) })
-                        : t("find.tooSmallPull")}
+                {mode.finding
+                  ? t("find.finding")
+                  : mode.seeking
+                    ? t("find.tapInside")
+                    : mode.tracing
+                      ? t("find.drawHelp")
+                      : mode.ring.length === 0
+                        ? t("find.tapCorners")
+                        : mode.ring.length < 3
+                          ? t("find.keepTapping")
+                          : drawnOk
+                            ? t("find.pull", { n: formatNumber(Math.round(areaHa(mode.ring) * 10) / 10, lang) })
+                            : t("find.tooSmallPull")}
               </p>
-              <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={() => setMode({ k: "idle" })}>
+              <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={cancel}>
                 {t("find.cancel")}
               </button>
             </div>
             {mode.note ? (
               <p role="alert" className="mt-1 font-bold text-body text-warn">
-                {t(mode.note === "max" ? "find.maxCorners" : "find.tooSmall")}
+                {t(NOTE_KEY[mode.note])}
               </p>
             ) : null}
-            <div className="grid grid-cols-3 gap-2 mt-3">
-              <Button look="secondary" className="px-2" disabled={mode.past.length === 0} onClick={undo}>
-                {t("find.undo")}
+            {/* Two rows of two, so each label fits at 360 px wide. */}
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              <Button
+                look="secondary"
+                className="px-2"
+                aria-pressed={mode.seeking}
+                disabled={mode.finding}
+                onClick={findEdges}
+              >
+                <FieldScaleIcon className="w-5 h-5" />
+                {t("find.findEdges")}
               </Button>
               <Button
                 look="secondary"
                 className="px-2"
                 aria-pressed={mode.tracing}
-                onClick={() => setMode({ ...mode, tracing: !mode.tracing, note: null })}
+                disabled={mode.finding}
+                onClick={() => setMode({ ...mode, tracing: !mode.tracing, seeking: false, note: null })}
               >
                 <PencilIcon className="w-5 h-5" />
                 {t("find.trace")}
               </Button>
-              <Button className="px-2" disabled={!drawnOk} onClick={() => go("/area", { fieldId: null, outline: mode.ring })}>
+              <Button look="secondary" className="px-2" disabled={mode.past.length === 0 || mode.finding} onClick={undo}>
+                {t("find.undo")}
+              </Button>
+              <Button
+                className="px-2"
+                disabled={!drawnOk || mode.finding}
+                onClick={() => go("/area", { fieldId: null, outline: mode.ring })}
+              >
                 {t("find.done")}
               </Button>
             </div>

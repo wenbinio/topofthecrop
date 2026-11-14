@@ -1,11 +1,12 @@
 // Drawing a field in step 1: tap corners, pull dots, trace, undo.
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import { AppRoutes } from "../App";
 import type { MapProps } from "../components/Map";
 import type { LngLat } from "../data/types";
+import { centroid } from "../geo/geometry";
 
 // A field-sized square near Matera, corner by corner, and a fifth point outside it.
 const A: LngLat = [16.6, 40.66];
@@ -152,12 +153,102 @@ describe("drawing a field", () => {
     expect(button("Done")).toBeEnabled();
   });
 
+  it("Find edges on a shape seeks from its centre, replaces the shape, and Undo brings the old one back", async () => {
+    await startDrawing();
+    for (const p of [A, B, C, D]) await onMap(() => map.onTap(p));
+    fireEvent.click(button("Find edges"));
+    expect(map.edgeRequest!.at[0]).toBeCloseTo(16.602, 6);
+    expect(map.edgeRequest!.at[1]).toBeCloseTo(40.661, 6);
+    expect(hint()).toBe("Finding your field…");
+    const found: LngLat[] = [A, [16.605, 40.66], [16.605, 40.6625], D];
+    await onMap(() => map.onEdges(found));
+    expect(map.drawnOutline).toEqual(found);
+    fireEvent.click(button("Undo"));
+    expect(map.drawnOutline).toEqual([A, B, C, D]);
+  });
+
+  it("Find edges that finds nothing keeps the shape and says so", async () => {
+    await startDrawing();
+    for (const p of [A, B, C]) await onMap(() => map.onTap(p));
+    fireEvent.click(button("Find edges"));
+    await onMap(() => map.onEdges(null));
+    expect(map.drawnOutline).toEqual([A, B, C]);
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not find the edges here. Tap each corner.");
+  });
+
+  it("with no shape yet, Find edges makes the next tap a point inside the field, not a corner", async () => {
+    await startDrawing();
+    expect(map.edgeRequest).toBeNull();
+    fireEvent.click(button("Find edges"));
+    expect(hint()).toBe("Tap inside your field");
+    await onMap(() => map.onTap(C));
+    expect(map.drawnOutline).toEqual([]);
+    expect(map.edgeRequest!.at).toEqual(C);
+    await onMap(() => map.onEdges([A, B, C, D]));
+    expect(map.drawnOutline).toEqual([A, B, C, D]);
+    expect(button("Done")).toBeEnabled();
+    // The next tap is a corner again.
+    await onMap(() => map.onTap([16.601, 40.663]));
+    expect(map.drawnOutline).toHaveLength(5);
+  });
+
   it("Cancel leaves drawing and removes the dots", async () => {
     await startDrawing();
     await onMap(() => map.onTap(A));
     fireEvent.click(button("Cancel"));
     expect(screen.queryByTestId("draw-sheet")).toBeNull();
     expect(map.editable).toBe(false);
+    expect(map.drawnOutline).toBeNull();
+  });
+});
+
+describe("finding a field from a tap", () => {
+  /** Opens step 1 and waits for the demo field's outline to be on the map. */
+  async function openWithDemo() {
+    open();
+    await waitFor(() => expect(map.fieldOutline).not.toBeNull());
+  }
+
+  it("a tap outside the demo field looks for the edges there, and a found field opens ready to adjust", async () => {
+    await openWithDemo();
+    await onMap(() => map.onTap(A));
+    expect(map.edgeRequest?.at).toEqual(A);
+    expect(screen.getByTestId("finding")).toHaveTextContent("Finding your field…");
+    await onMap(() => map.onEdges([A, B, C, D]));
+    expect(screen.getByTestId("draw-sheet")).toBeInTheDocument();
+    expect(map.drawnOutline).toEqual([A, B, C, D]);
+    expect(map.editable).toBe(true);
+    expect(hint()).toMatch(/^[\d.]+ ha · pull a dot to adjust$/);
+    expect(button("Done")).toBeEnabled();
+    // Undo clears it, leaving corners to tap.
+    fireEvent.click(button("Undo"));
+    expect(map.drawnOutline).toEqual([]);
+    expect(hint()).toBe("Tap each corner of your field");
+  });
+
+  it("when no edges are found, drawing opens empty with a note", async () => {
+    await openWithDemo();
+    await onMap(() => map.onTap(A));
+    await onMap(() => map.onEdges(null));
+    expect(map.drawnOutline).toEqual([]);
+    expect(hint()).toBe("Tap each corner of your field");
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not find the edges here. Tap each corner.");
+    expect(button("Done")).toBeDisabled();
+  });
+
+  it("a tap inside the demo outline still offers the demo field", async () => {
+    await openWithDemo();
+    await onMap(() => map.onTap(centroid(map.fieldOutline!)));
+    expect(button("Yes, this one")).toBeInTheDocument();
+    expect(map.edgeRequest).toBeNull();
+  });
+
+  it("an answer that comes after Cancel is ignored", async () => {
+    await openWithDemo();
+    await onMap(() => map.onTap(A));
+    fireEvent.click(button("Cancel"));
+    await onMap(() => map.onEdges([A, B, C, D]));
+    expect(screen.queryByTestId("draw-sheet")).toBeNull();
     expect(map.drawnOutline).toBeNull();
   });
 });
