@@ -328,6 +328,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark.
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
+- **Voice uses the phone, not us.** The app contains no hosted AI model and sends nothing to a server of ours. Its voice commands and "read aloud" use the browser's built-in speech recognition and speech synthesis, which the phone maker (Google, Apple, Samsung) provides; recognition may send the audio to the phone maker's servers. Spoken words become commands through a written list of phrases (`src/voice/commands.ts`), not a model.
 
 ## Open questions
 

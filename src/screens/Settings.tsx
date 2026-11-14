@@ -500,6 +500,11 @@ export default function Settings() {
       </Link>
       <h1 className="px-4 pb-1 text-head">{t("settings.title")}</h1>
       {body}
+      <section data-testid="voice-privacy">
+        <SectionTitle>{t("voice.privacy.title")}</SectionTitle>
+        <p className="px-4 text-small text-ink-soft">{t("voice.privacy.phone")}</p>
+        <p className="px-4 pt-1 text-small text-ink-soft">{t("voice.privacy.app")}</p>
+      </section>
     </div>
   );
 }

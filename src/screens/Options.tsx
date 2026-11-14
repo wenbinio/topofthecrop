@@ -19,6 +19,7 @@ import { PriorityChips, ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
+import { ReadButton } from "../voice/Voice";
 
 /** What to plant next and why, in a few plain lines. */
 function Recommendation({ best, current, simple }: { best: RankedOption | undefined; current: Option | undefined; simple: boolean }) {
@@ -33,9 +34,12 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   );
   return (
     <div className="px-4 pt-4 pb-1" data-testid="recommendation" data-option-id={option.id}>
-      <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
-        {headline}
-      </h1>
+      <div className="flex items-start justify-between gap-2">
+        <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
+          {headline}
+        </h1>
+        <ReadButton />
+      </div>
       <div className="mt-2">
         <ReasonList reasons={reasonsFor(option, current, state.priorities)} option={option} testId="rec-reasons" />
       </div>
