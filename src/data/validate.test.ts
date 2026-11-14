@@ -37,9 +37,9 @@ const economicsMutations:[string, (bundle: FieldBundle) => void][] = [
   ['missing crop', b => { Reflect.deleteProperty(b.economics!.crops, 'faba'); }],
   ['unknown option', b => { b.economics!.support[0].options = ['unknown']; }],
   ['duplicate support id', b => { b.economics!.support[1].id = b.economics!.support[0].id; }],
-  ['string yield', b => { b.economics!.crops.durum.yield.value = 'three'; }],
-  ['string price', b => { b.economics!.crops.durum.price.value = '320'; }],
-  ['nonfinite costs', b => { b.economics!.crops.durum.costs.value = NaN; }],
+  ['string yield', b => { b.economics!.crops.durum!.yield.value = 'three'; }],
+  ['string price', b => { b.economics!.crops.durum!.price.value = '320'; }],
+  ['nonfinite costs', b => { b.economics!.crops.durum!.costs.value = NaN; }],
   ['string amount', b => { b.economics!.support[0].amount.value = '160'; }],
   ['missing source', b => { Reflect.deleteProperty(b.economics!.support[0].amount, 'source'); }],
   ['missing translation', b => { Reflect.deleteProperty(b.economics!.support[0].name, 'it'); }],
@@ -85,4 +85,37 @@ it('rejects a 404', async () => {
 it('rejects an HTML body', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => JSON.parse('<html>') }));
   await expect(loadBundle('genzano-demo')).rejects.toThrow();
+});
+
+const withOptions = (count: number) => {
+  const bundle = structuredClone(fixture);
+  const spare = bundle.options.find(o => !o.isCurrent)!;
+  while (bundle.options.length < count) bundle.options.push({ ...structuredClone(spare), id: `extra-${bundle.options.length}` });
+  bundle.options.splice(count);
+  if (!bundle.options.some(o => o.isCurrent)) bundle.options[0].isCurrent = true;
+  return bundle;
+};
+it.each([3, 4, 9, 12])('accepts a bundle with %i options', count => {
+  const bundle = withOptions(count);
+  expect(validateBundle(bundle)).toBe(bundle);
+});
+it.each([2, 13])('rejects a bundle with %i options', count => {
+  expect(() => validateBundle(withOptions(count))).toThrow(/^bundle: options$/);
+});
+it('rejects economics that lacks a crop an option grows', () => {
+  const bundle = structuredClone(fixture);
+  bundle.options[0].sequence[0] = 'lentil';
+  expect(() => validateBundle(bundle)).toThrow(/^bundle: economics\.crops\.lentil is used by an option but missing/);
+});
+it('accepts economics without a crop no option grows', () => {
+  const bundle = structuredClone(fixture);
+  const faba = bundle.options.find(o => o.id === 'faba-durum-faba')!;
+  faba.sequence = ['chickpea', 'durum', 'chickpea'];
+  Reflect.deleteProperty(bundle.economics.crops, 'faba');
+  expect(validateBundle(bundle)).toBe(bundle);
+});
+it('rejects an unknown crop in economics', () => {
+  const bundle = structuredClone(fixture) as unknown as FieldBundle;
+  Object.assign(bundle.economics!.crops, { maize: bundle.economics!.crops.durum });
+  expect(() => validateBundle(bundle)).toThrow(/^bundle: economics\.crops\.maize/);
 });

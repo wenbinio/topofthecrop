@@ -8,11 +8,15 @@ function object(value: unknown, path: string): Record<string, unknown> {
   check(value !== null && typeof value === 'object' && !Array.isArray(value), path);
   return value as Record<string, unknown>;
 }
-function array(value: unknown, path: string, count?: number): unknown[] {
+function array(value: unknown, path: string, count?: number | [number, number]): unknown[] {
   check(Array.isArray(value), path);
-  check(count === undefined || value.length === count, path);
+  if (Array.isArray(count)) check(value.length >= count[0] && value.length <= count[1], path);
+  else check(count === undefined || value.length === count, path);
   return value;
 }
+
+/** How many options a bundle may hold, the current rotation included. */
+export const OPTION_COUNT: [number, number] = [3, 12];
 function string(value: unknown, path: string): void { check(typeof value === 'string', path); }
 function boolean(value: unknown, path: string): void { check(typeof value === 'boolean', path); }
 function number(value: unknown, path: string): asserts value is number {
@@ -102,13 +106,17 @@ export function validateBundle(json: unknown): FieldBundle {
   }
   const ids = new Set<string>();
   let currentCount = 0;
-  array(bundle.options, 'options', 4).forEach((value, i) => {
+  const usedCrops = new Set<string>();
+  array(bundle.options, 'options', OPTION_COUNT).forEach((value, i) => {
     const path = `options[${i}]`, option = object(value, path);
     string(option.id, `${path}.id`);
     check(!ids.has(option.id as string), `${path}.id must be unique`); ids.add(option.id as string);
     boolean(option.isCurrent, `${path}.isCurrent`);
     if (option.isCurrent) currentCount++;
-    array(option.sequence, `${path}.sequence`, 3).forEach(crop => known(crop, CROPS, `${path}.sequence`));
+    array(option.sequence, `${path}.sequence`, 3).forEach(crop => {
+      known(crop, CROPS, `${path}.sequence`);
+      usedCrops.add(crop as string);
+    });
     number(option.firstHarvestYear, `${path}.firstHarvestYear`);
     check(Number.isInteger(option.firstHarvestYear), `${path}.firstHarvestYear`);
     const facts = object(option.facts, `${path}.facts`);
@@ -133,7 +141,10 @@ export function validateBundle(json: unknown): FieldBundle {
   if (bundle.economics !== undefined) {
     const economics = object(bundle.economics, 'economics');
     const crops = object(economics.crops, 'economics.crops');
-    for (const crop of CROPS) {
+    // Every crop an option grows needs its figures; crops no option grows may be left out.
+    for (const crop of Object.keys(crops)) known(crop, CROPS, `economics.crops.${crop}`);
+    for (const crop of usedCrops) check(crops[crop] !== undefined, `economics.crops.${crop} is used by an option but missing`);
+    for (const crop of Object.keys(crops)) {
       const path = `economics.crops.${crop}`, record = object(crops[crop], path);
       for (const key of ['yield', 'price', 'costs']) {
         fact(record[key], `${path}.${key}`);

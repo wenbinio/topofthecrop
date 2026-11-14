@@ -4,7 +4,7 @@ import type { Economics, Money, Option } from '../data/types';
 import { CROPS, SCENARIOS } from '../data/types';
 import { validateBundle } from '../data/validate';
 import { rankOptions } from '../ranking/rank';
-import { incomeFact, optionMoney, resolveMoney, setMoney, withMoney } from './money';
+import { incomeConfidence, incomeFact, optionMoney, resolveMoney, setMoney, withMoney } from './money';
 
 const bundle = validateBundle(fixture);
 const economics = bundle.economics!;
@@ -39,7 +39,8 @@ it('uses the farmer price and labels the resulting income honestly', () => {
   expect(optionMoney(chickpea, economics, money).perYear).toBe(913);
   const fact = incomeFact(durum, economics, money);
   expect(fact).toMatchObject({ value: 835, unit: '€/ha', scale: 'area', label: 'fact.income',
-    edited: true, confidence: 'fair', placeholder: true,
+    // The typed price counts as fair, but the fixture's yields and costs are low, and the weakest decides.
+    edited: true, confidence: 'low', placeholder: true,
     source: { dataset: 'Your own figures', resolution: 'this farm', url: '' } });
   expect(fact).not.toHaveProperty('range');
 });
@@ -90,7 +91,7 @@ it('bounds the income ratio at two and scores between zero and one', () => {
 it.each([0, -1])('leaves scores alone when default income is %s', income => {
   const copy = structuredClone(bundle);
   copy.economics!.support = [];
-  copy.economics!.crops.durum.costs.value = 960 - income;
+  copy.economics!.crops.durum!.costs.value = 960 - income;
   expect(withMoney(copy, { 'p.durum': 400 }).options.find(item => item.id === durum.id)!.scores).toEqual(durum.scores);
 });
 
@@ -122,10 +123,10 @@ it('resolves changed support amounts and applies their crop restrictions', () =>
 
 it('only keeps the edited placeholder flag for yields or costs used by the option', () => {
   const copy: Economics = structuredClone(economics);
-  copy.crops.durum.yield.placeholder = false;
-  copy.crops.durum.costs.placeholder = false;
+  copy.crops.durum!.yield.placeholder = false;
+  copy.crops.durum!.costs.placeholder = false;
   expect(incomeFact(durum, copy, { 'p.durum': 400 }).placeholder).toBe(false);
-  copy.crops.durum.costs.placeholder = true;
+  copy.crops.durum!.costs.placeholder = true;
   expect(incomeFact(durum, copy, { 'p.durum': 400 }).placeholder).toBe(true);
   expect(incomeFact(durum, economics, { 'p.chickpea': 700 })).toEqual(durum.facts.income);
 });
@@ -191,4 +192,52 @@ it('pays a chickpea-only payment in chickpea years only', () => {
 it('changes nothing with no added payments', () => {
   expect(withMoney(bundle, {}, [])).toEqual(withMoney(bundle, {}));
   expect(withMoney(bundle, {}, [])).toEqual(bundle);
+});
+
+/** A copy of the fixture in which every price, yield, cost and support amount is marked good. */
+function allGood(): Economics {
+  const copy = structuredClone(economics);
+  for (const figures of Object.values(copy.crops)) {
+    for (const key of ['yield', 'price', 'costs'] as const) figures![key].confidence = 'good';
+  }
+  for (const item of copy.support) item.amount.confidence = 'good';
+  return copy;
+}
+
+it('income confidence is the weakest of the figures it is built from', () => {
+  expect(incomeConfidence(chickpea, economics, {})).toBe('low');
+  const good = allGood();
+  expect(incomeConfidence(chickpea, good, {})).toBe('good');
+  expect(incomeFact(durum, good, {}).confidence).toBe('good');
+  // One weak cost in chickpea years weakens chickpea, not durum on durum.
+  good.crops.chickpea!.costs.confidence = 'low';
+  expect(incomeConfidence(chickpea, good, {})).toBe('low');
+  expect(incomeConfidence(durum, good, {})).toBe('good');
+});
+
+it('only support that applies and is switched on counts towards confidence', () => {
+  const good = allGood();
+  good.support.find(item => item.id === 'eco-rotation')!.amount.confidence = 'low';
+  expect(incomeConfidence(chickpea, good, {})).toBe('low');
+  expect(incomeConfidence(durum, good, {})).toBe('good');
+  expect(incomeConfidence(chickpea, good, { 'on.eco-rotation': 0 })).toBe('good');
+});
+
+it('a figure the farmer typed counts as fair', () => {
+  const good = allGood();
+  expect(incomeConfidence(durum, good, { 'p.durum': 400 })).toBe('fair');
+  expect(incomeFact(durum, good, { 'p.durum': 400 })).toMatchObject({ confidence: 'fair', edited: true });
+  expect(incomeConfidence(durum, good, { 's.coupled-durum': 120 })).toBe('fair');
+  expect(incomeConfidence(durum, good, {}, [{ name: 'Aid', amount: 10, crops: ['durum'] }])).toBe('fair');
+  // Payments made on every rotation alike cannot change the comparison, so they do not count, typed or not.
+  expect(incomeConfidence(durum, good, { 's.basic-income': 200 })).toBe('good');
+  expect(incomeConfidence(durum, good, {}, [{ name: 'Aid', amount: 10, crops: [] }])).toBe('good');
+  // A payment for chickpea years only leaves durum on durum as it was.
+  expect(incomeConfidence(durum, good, {}, [{ name: 'Aid', amount: 10, crops: ['chickpea'] }])).toBe('good');
+  // A typed price on a low figure lifts nothing: the weakest still decides.
+  good.support.find(item => item.id === 'basic-income')!.amount.confidence = 'low';
+  expect(incomeConfidence(durum, good, {})).toBe('good');
+  good.support.find(item => item.id === 'coupled-durum')!.amount.confidence = 'low';
+  expect(incomeConfidence(durum, good, {})).toBe('low');
+  expect(incomeConfidence(durum, good, { 's.coupled-durum': 120 })).toBe('fair');
 });

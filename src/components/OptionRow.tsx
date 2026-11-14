@@ -3,8 +3,9 @@ import type { View } from "../data/types";
 import { useLang, useT } from "../i18n";
 import type { RankedOption } from "../ranking/rank";
 import { useTo } from "../state/useAppState";
-import { CropSequence, optionCrop } from "./Crops";
-import { ConfidenceWord, LevelMeter, ScaleBadge, YoursTag, isLevel, unitText, valueText } from "./FactParts";
+import { CropName, CropSequence, optionCrop } from "./Crops";
+import { IncomeConfidence } from "./Term";
+import { LevelMeter, ScaleBadge, YoursTag, isLevel, unitText, valueText } from "./FactParts";
 import { ChevronIcon, DropIcon, NitrogenIcon, RiskShieldIcon, SupportIcon, WarnIcon } from "./Icons";
 import type { Fact } from "../data/types";
 
@@ -43,7 +44,7 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
         <div className="flex-1 min-w-0 flex flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
-              <span className={`font-bold ${simple ? "text-big" : "text-body"}`}>{t(`crop.${optionCrop(option)}`)}</span>
+              <CropName crop={optionCrop(option)} className={`font-bold ${simple ? "text-big" : "text-body"}`} />
               {best ? (
                 <span data-testid="tag-best" className="px-1.5 bg-best text-on-best text-small font-bold rounded-sm">
                   {t("options.best")}
@@ -78,7 +79,7 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
             )}
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <ConfidenceWord confidence={income.confidence} />
+            <IncomeConfidence confidence={income.confidence} />
             {income.edited ? <YoursTag /> : null}
             {sharedScale ? null : <ScaleBadge scale={income.scale} />}
             {option.supportTag ? (

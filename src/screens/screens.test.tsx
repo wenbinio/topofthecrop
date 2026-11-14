@@ -81,7 +81,7 @@ describe("Options", () => {
 
   it("shows Italian text in the Simple view", async () => {
     renderAt("/options?f=genzano-demo&p=income,water&v=simple&g=it");
-    expect(await screen.findByText("Semina cece dopo")).toBeInTheDocument();
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Semina cece dopo");
     expect(document.documentElement.dataset.view).toBe("simple");
     expect(document.documentElement.lang).toBe("it");
   });

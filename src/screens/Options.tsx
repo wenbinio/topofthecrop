@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import type { Fact, FieldBundle, Limit, Option } from "../data/types";
+import type { CropId, Fact, FieldBundle, Limit, Option } from "../data/types";
 import { LIMITS } from "../data/types";
 import { useLang, useT } from "../i18n";
 import { resolveMoney } from "../money/money";
@@ -9,6 +10,8 @@ import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../componen
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
+import { CropName, Slotted } from "../components/Crops";
+import { PriorityHelp } from "../components/Term";
 import { OptionRow } from "../components/OptionRow";
 import { YearStrip } from "../components/YearStrip";
 import { BackButton, BottomBar, LinkButton, SectionTitle } from "../components/ui";
@@ -20,13 +23,14 @@ import { SETTINGS_PATH, settingsFrom } from "./Settings";
 /** What to plant next and why, in a few plain lines. */
 function Recommendation({ best, current, simple }: { best: RankedOption | undefined; current: Option | undefined; simple: boolean }) {
   const t = useT();
-  const lang = useLang();
   const [state] = useAppState();
   if (!best) return null;
   const option = best.option;
-  const headline = option.isCurrent
-    ? t("options.stay")
-    : t("options.plant", { crop: t(`crop.${option.sequence[0]}`).toLocaleLowerCase(lang) });
+  const headline = option.isCurrent ? (
+    <StayHeadline />
+  ) : (
+    <Slotted text={t("options.plant")} slots={{ crop: <CropName crop={option.sequence[0]} lower /> }} />
+  );
   return (
     <div className="px-4 pt-4 pb-1" data-testid="recommendation" data-option-id={option.id}>
       <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
@@ -40,18 +44,49 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   );
 }
 
+/** "Keep durum: fits best", with durum's icon. */
+function StayHeadline() {
+  const t = useT();
+  return <Slotted text={t("options.stay")} slots={{ crop: <CropName crop="durum" lower /> }} />;
+}
+
+/** How many rows show before "More options". */
+export const SHOWN_OPTIONS = 4;
+
+/** One line per crop left out because it was just grown. */
+export function RepeatLines({ repeats }: { repeats: Option[] }) {
+  const t = useT();
+  const crops = [...new Set(repeats.map((o) => o.sequence[0]))] as CropId[];
+  return (
+    <>
+      {crops.map((crop) => (
+        <p key={crop} className="px-4 py-2 flex items-start gap-2 text-body font-bold" data-testid="left-out">
+          <WarnIcon className="w-5 h-5 flex-none mt-0.5 text-warn" />
+          <span>
+            <Slotted text={t("options.repeat")} slots={{ crop: <CropName crop={crop} /> }} />
+          </span>
+        </p>
+      ))}
+    </>
+  );
+}
+
 export default function Options({ bundle }: { bundle: FieldBundle }) {
   const t = useT();
   const lang = useLang();
   const to = useTo();
   const [state, setState] = useAppState();
   const current = bundle.options.find((o) => o.isCurrent);
-  const { ranked, removed } = rankOptions({
+  const [more, setMore] = useState(false);
+  const { ranked, removed, repeats } = rankOptions({
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
     scenario: state.scenario,
+    lastCrop: state.lastCrop,
   });
+  const hidden = Math.max(0, ranked.length - SHOWN_OPTIONS);
+  const shown = more ? ranked : ranked.slice(0, SHOWN_OPTIONS);
   const removedBy: Limit[] = LIMITS.filter((l) => removed.some((r) => r.by.includes(l)));
   const shownFacts: Fact[] = [
     ...bundle.findings.map((f) => f.fact),
@@ -84,7 +119,9 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
 
       <Recommendation best={best} current={current} simple={simple} />
       <div className="px-4 pt-2">
-        <p className="text-small font-bold text-ink-soft mb-1">{t("options.priorities")}</p>
+        <PriorityHelp>
+          <p className="text-small font-bold text-ink-soft">{t("options.priorities")}</p>
+        </PriorityHelp>
         <PriorityChips chosen={state.priorities} onChange={(priorities) => setState({ priorities })} />
       </div>
 
@@ -98,9 +135,23 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         </span>
       </SectionTitle>
       <ul className="border-t border-line" data-testid="option-list">
-        {ranked.map((item) => (
+        {shown.map((item) => (
           <OptionRow key={item.option.id} item={item} view={state.view} sharedScale={sharedScale !== null} />
         ))}
+        {hidden ? (
+          <li>
+            <button
+              type="button"
+              aria-expanded={more}
+              data-testid="more-options"
+              onClick={() => setMore((m) => !m)}
+              className="tc-tap w-full flex items-center gap-2 px-4 bg-surface border-b border-line font-bold text-body text-left"
+            >
+              <span className="flex-1">{more ? t("options.fewer") : t("options.more", { n: hidden })}</span>
+              <ChevronIcon className={`w-5 h-5 flex-none text-ink-soft ${more ? "-rotate-90" : "rotate-90"}`} />
+            </button>
+          </li>
+        ) : null}
       </ul>
       {bundle.economics ? (
         <Link
@@ -124,6 +175,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           })}
         </p>
       ) : null}
+      {repeats.length ? <RepeatLines repeats={repeats} /> : null}
       <div className="px-4 py-2">
         <PlaceholderNote facts={shownFacts} />
       </div>

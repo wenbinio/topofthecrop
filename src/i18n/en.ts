@@ -35,6 +35,7 @@ export const en = {
   "confidence.fair": "Fair",
   "confidence.low": "Low",
   "confidence.label": "Confidence",
+  "confidence.income": "Income figure: {level}",
 
   // step 1
   "find.search": "Search town",
@@ -77,6 +78,9 @@ export const en = {
   "q.lastCrop": "Last crop",
   "q.limits": "Limits",
   "q.priorities": "Pick 2",
+  "q.other": "Other…",
+  "q.otherPlain": "Other",
+  "q.otherName": "Crop name",
 
   // step 3
   "options.seen": "What we see",
@@ -89,9 +93,12 @@ export const en = {
   "options.next": "Field year",
   "options.openWhy": "Why this?",
   "options.plant": "Plant {crop} next",
-  "options.stay": "Keep durum: fits best",
+  "options.stay": "Keep {crop}: fits best",
   "options.adviser": "Suggestion: check with adviser.",
   "options.priorities": "Your priorities",
+  "options.more": "More options ({n})",
+  "options.fewer": "Fewer options",
+  "options.repeat": "{crop} left out: just grown",
 
   // plain reasons for a rotation, one per chosen priority
   "reason.income.more": "About {diff} €/ha/yr more than durum on durum",
@@ -142,10 +149,18 @@ export const en = {
   "cover.green": "Green",
   "cover.part": "Patchy",
   "cover.bare": "Bare",
+  "cover.green.def": "Crop covers ground (greenness 0.5+).",
+  "cover.part.def": "Part covered: crop coming up or drying (0.3–0.5).",
+  "cover.bare.def": "Soil showing (under 0.3).",
+  "cover.source": "NASA MODIS, typical year 2001–2020.",
   "risk.dry": "Dry",
   "risk.frost": "Frost",
   "risk.heat": "Heat",
   "risk.rain": "Heavy rain",
+  "risk.dry.def": "Autumn sowing month can get under 30 mm.",
+  "risk.frost.def": "Frost nights likely.",
+  "risk.heat.def": "Days 30 °C+ while crop flowers.",
+  "risk.rain.def": "100 mm+ in a month on open soil.",
   "month.10": "O",
   "month.11": "N",
   "month.12": "D",
@@ -249,6 +264,11 @@ export const en = {
   "crop.chickpea": "Chickpea",
   "crop.faba": "Faba bean",
   "crop.vetch-oat": "Vetch-oat",
+  "crop.lentil": "Lentil",
+  "crop.pea": "Pea",
+  "crop.barley": "Barley",
+  "crop.rapeseed": "Rapeseed",
+  "crop.coriander": "Coriander",
 
   "level.low": "Low",
   "level.medium": "Medium",
@@ -263,6 +283,11 @@ export const en = {
   "priority.water": "Water",
   "priority.soil": "Soil and nitrogen",
   "priority.forage": "Forage",
+  "priority.help": "What priorities mean",
+  "priority.income.def": "Earns more per ha a year, after costs, with support.",
+  "priority.water.def": "Needs less water; holds up in dry year.",
+  "priority.soil.def": "Leaves nitrogen for next crop; keeps soil covered.",
+  "priority.forage.def": "Gives a hay cut to feed or sell.",
 
   // findings (keys from the bundle)
   "finding.bare.title": "Bare after harvest",
@@ -280,6 +305,11 @@ export const en = {
   "why.faba-durum-faba.suggested": "Every second year: covers soil longer, feeds nitrogen to durum. Needs more water than chickpea.",
   "why.vetch-oat-durum-durum.suggested": "Cut green before spring heat; covers winter soil. Suits farms with animals or hay buyer.",
   "why.durum-durum-durum.suggested": "What you do now, shown to compare the other options.",
+  "why.lentil-durum-durum.suggested": "Legume: little water, leaves nitrogen, good price. Needs low cut at harvest.",
+  "why.pea-durum-durum.suggested": "Legume: leaves nitrogen for durum; sold for feed. More water than chickpea.",
+  "why.barley-durum-durum.suggested": "Easy cereal break: same machinery, little water. No nitrogen, low price.",
+  "why.rapeseed-durum-durum.suggested": "Oilseed break: cuts wheat disease, coupled support. Contract buyer only.",
+  "why.coriander-durum-durum.suggested": "Seed spice: little water, good price. Contract buyer only.",
 
   "evidence.bareMonths": "Bare months after harvest",
   "evidence.hotDays": "Hot flowering days",
@@ -294,6 +324,7 @@ export const en = {
   "check.buyer": "Any local pulse or forage buyer?",
   "check.seed": "Where to buy seed; best valley variety",
   "check.adviser": "Review plan with adviser",
+  "check.contract": "Buyer contract signed before sowing?",
   "check.rotationRule": "Durum on durum risks CAP BCAA 7 payment cuts, unless 10 ha arable or less. Ask adviser.",
 
   "fact.income": "Yearly income (gross margin)",
@@ -340,7 +371,7 @@ export const en = {
   "term.gm.word": "gross margin",
   "term.gm": "Crop sales minus direct costs: seed, fertiliser, fuel, contractors.",
   "term.confidence.word": "Confidence",
-  "term.confidence": "Figure certainty (good, fair, low) from field data fit.",
+  "term.confidence": "How sure (good, fair, low): set by weakest figure behind the income.",
 } as const;
 
 export type DictKey = keyof typeof en;

@@ -2,13 +2,14 @@ import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { CropId, Economics, ExtraSupport, Fact, FieldBundle } from "../data/types";
-import { CROPS, DEMO_FIELD_ID, EXTRA_LIMITS, MAX_EXTRAS } from "../data/types";
+import { DEMO_FIELD_ID, EXTRA_LIMITS, MAX_EXTRAS } from "../data/types";
 import { useLang, useT } from "../i18n";
-import { MONEY_LIMITS, resolveMoney, setMoney } from "../money/money";
+import { MONEY_LIMITS, cropFigures, economicsCrops, resolveMoney, setMoney } from "../money/money";
 import { useAppState } from "../state/useAppState";
 import { BundleGate } from "../components/BundleProvider";
-import { DatasetLabel, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, paidInText } from "../components/FactParts";
-import { BackIcon, CropIcon } from "../components/Icons";
+import { DatasetLabel, PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
+import { CropName, PaidIn } from "../components/Crops";
+import { BackIcon } from "../components/Icons";
 import { Button, SectionTitle } from "../components/ui";
 
 export const SETTINGS_PATH = "/settings";
@@ -148,15 +149,18 @@ function Editor({ economics }: { economics: Economics }) {
   const lang = useLang();
   const [state, setState] = useAppState();
   const resolved = resolveMoney(economics, state.money);
-  const crops = CROPS.filter((c) => economics.crops[c]);
+  const crops = economicsCrops(economics);
   const commit = (key: string, value: number) => setState({ money: setMoney(economics, state.money, key, value) });
   const extras = state.extras;
   const setExtra = (index: number, extra: ExtraSupport | null) =>
     setState({ extras: extra ? extras.map((e, i) => (i === index ? extra : e)) : extras.filter((_, i) => i !== index) });
 
-  const firstPrice = crops.length ? economics.crops[crops[0]].price : undefined;
+  const firstPrice = crops.length ? cropFigures(economics, crops[0]).price : undefined;
   const shownDefaults: Fact[] = [
-    ...crops.flatMap((c) => [economics.crops[c].price, economics.crops[c].yield, economics.crops[c].costs]),
+    ...crops.flatMap((c) => {
+      const figures = cropFigures(economics, c);
+      return [figures.price, figures.yield, figures.costs];
+    }),
     ...economics.support.map((s) => s.amount),
   ];
 
@@ -165,12 +169,12 @@ function Editor({ economics }: { economics: Economics }) {
       <Heading title={t("settings.prices")} unit="€/t" fact={firstPrice} />
       <ul className="border-t border-line bg-surface" data-testid="price-list">
         {crops.map((crop) => {
-          const price = resolved.prices[crop];
+          const fallback = Number(cropFigures(economics, crop).price.value);
+          const price = resolved.prices[crop] ?? { value: fallback, default: fallback, edited: false };
           return (
-            <li key={crop} className="flex items-start gap-3 px-4 py-2 border-b border-line">
-              <CropIcon crop={crop} className="w-8 h-8 mt-2 flex-none" />
+            <li key={crop} className="flex items-start gap-3 px-4 py-2 border-b border-line" data-testid="price-row" data-crop={crop}>
               <span className="flex-1 min-w-0 flex flex-col pt-2.5">
-                <span className="font-bold text-big">{t(`crop.${crop}`)}</span>
+                <CropName crop={crop} iconClassName="w-7 h-7" className="font-bold text-big" wrap />
                 {price.edited ? (
                   <span className="flex flex-wrap items-center gap-2 mt-0.5 text-small text-ink-soft">
                     <YoursTag />
@@ -213,7 +217,7 @@ function Editor({ economics }: { economics: Economics }) {
         })}
       </ul>
 
-      <Extras extras={extras} onChange={setExtra} onAdd={(extra) => setState({ extras: [...extras, extra] })} />
+      <Extras crops={crops} extras={extras} onChange={setExtra} onAdd={(extra) => setState({ extras: [...extras, extra] })} />
 
       <div className="px-4 pt-4 flex flex-col gap-3 items-stretch">
         <Button
@@ -234,16 +238,17 @@ function Editor({ economics }: { economics: Economics }) {
 
 /** The payments the farmer added, each like a known one but always on, and the way to add another. */
 function Extras({
+  crops,
   extras,
   onChange,
   onAdd,
 }: {
+  crops: CropId[];
   extras: ExtraSupport[];
   onChange: (index: number, extra: ExtraSupport | null) => void;
   onAdd: (extra: ExtraSupport) => void;
 }) {
   const t = useT();
-  const lang = useLang();
   const [adding, setAdding] = useState(false);
   const full = extras.length >= MAX_EXTRAS;
   return (
@@ -268,7 +273,9 @@ function Extras({
                 <div className="mt-1 flex flex-wrap items-center justify-between gap-x-2">
                   <span className="flex flex-wrap items-center gap-2 text-small font-bold">
                     <YoursTag />
-                    <span className="text-ink-soft">{paidInText(extra.crops, t, lang)}</span>
+                    <span className="text-ink-soft">
+                      <PaidIn crops={extra.crops} />
+                    </span>
                   </span>
                   <Button
                     look="plain"
@@ -287,6 +294,7 @@ function Extras({
       <div className="px-4 pt-4 flex flex-col gap-2 items-stretch">
         {adding ? (
           <AddForm
+            crops={crops}
             onCancel={() => setAdding(false)}
             onAdd={(extra) => {
               onAdd(extra);
@@ -311,7 +319,7 @@ function Extras({
 }
 
 /** A small form, in place: name, amount and the years it is paid in ("Every year" unless a crop is chosen). */
-function AddForm({ onAdd, onCancel }: { onAdd: (extra: ExtraSupport) => void; onCancel: () => void }) {
+function AddForm({ crops: offered, onAdd, onCancel }: { crops: CropId[]; onAdd: (extra: ExtraSupport) => void; onCancel: () => void }) {
   const t = useT();
   const nameId = useId();
   const paidId = useId();
@@ -324,7 +332,7 @@ function AddForm({ onAdd, onCancel }: { onAdd: (extra: ExtraSupport) => void; on
   const trimmed = name.trim();
   const amount = "value" in parsed ? parsed.value : null;
   const toggle = (crop: CropId) =>
-    setCrops((now) => (now.includes(crop) ? now.filter((c) => c !== crop) : CROPS.filter((c) => c === crop || now.includes(c))));
+    setCrops((now) => (now.includes(crop) ? now.filter((c) => c !== crop) : offered.filter((c) => c === crop || now.includes(c))));
 
   return (
     <div className="flex flex-col gap-3 p-3 border-2 border-line-strong rounded-box bg-surface" data-testid="extra-form">
@@ -353,9 +361,9 @@ function AddForm({ onAdd, onCancel }: { onAdd: (extra: ExtraSupport) => void; on
         <Toggle pressed={!crops.length} onClick={() => setCrops([])}>
           {t("settings.everyYear")}
         </Toggle>
-        {CROPS.map((crop) => (
+        {offered.map((crop) => (
           <Toggle key={crop} pressed={crops.includes(crop)} onClick={() => toggle(crop)}>
-            {t(`crop.${crop}`)}
+            <CropName crop={crop} />
           </Toggle>
         ))}
       </div>
@@ -384,7 +392,7 @@ function Toggle({ pressed, onClick, children }: { pressed: boolean; onClick: () 
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className={`tc-tap px-4 rounded-box border-2 font-bold text-body ${
+      className={`tc-tap px-3 rounded-box border-2 font-bold text-body ${
         pressed ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"
       }`}
     >

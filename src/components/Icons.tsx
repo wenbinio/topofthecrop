@@ -1,6 +1,8 @@
 // Small inline SVG icons. All drawn in currentColor so the theme decides the colour.
 // Crop icons must stay distinguishable without colour at about 22 px:
-// durum = tall ear with awns, chickpea = round puffy pod, faba = long diagonal pod, vetch-oat = tied sheaf.
+// durum = tall upright ear with awns, chickpea = round puffy pod, faba = long diagonal pod, vetch-oat = tied sheaf,
+// lentil = three flat lenses, pea = open pod with a row of peas and a tendril, barley = nodding ear with hanging awns,
+// rapeseed = four-petal flower on a stem, coriander = umbrella of stalks with seeds at the tips.
 import type { ReactNode, SVGProps } from "react";
 import type { CropId, Risk } from "../data/types";
 
@@ -76,6 +78,72 @@ export function SheafIcon(p: IconProps) {
   );
 }
 
+export function LentilIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <ellipse cx="7.6" cy="8.6" rx="4.6" ry="2.9" transform="rotate(-18 7.6 8.6)" />
+      <ellipse cx="16.6" cy="9.4" rx="4.6" ry="2.9" transform="rotate(14 16.6 9.4)" />
+      <ellipse cx="11.6" cy="17" rx="4.6" ry="2.9" transform="rotate(-4 11.6 17)" />
+    </Svg>
+  );
+}
+
+export function PeaIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M2.5 11c3.2 7.4 15.8 7.4 19 0M2.5 11c5.2 1.6 13.8 1.6 19 0" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="6.8" cy="13.4" r="1.7" />
+        <circle cx="10.4" cy="14" r="1.7" />
+        <circle cx="14" cy="14" r="1.7" />
+        <circle cx="17.5" cy="13.3" r="1.7" />
+      </g>
+      <path d="M21.5 11c.8-2.4-.4-4.8-2.6-4.6-1.8.2-2 2.4-.4 2.6" strokeWidth={1.5} />
+    </Svg>
+  );
+}
+
+export function BarleyIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M5 23c0-8 2.5-13.5 8-16.5" />
+      <g fill="currentColor" stroke="none">
+        <ellipse cx="13.8" cy="6.4" rx="1.4" ry="2.3" transform="rotate(60 13.8 6.4)" />
+        <ellipse cx="16.4" cy="7.8" rx="1.4" ry="2.3" transform="rotate(40 16.4 7.8)" />
+        <ellipse cx="18.2" cy="10.2" rx="1.4" ry="2.3" transform="rotate(20 18.2 10.2)" />
+      </g>
+      <path d="M13 8.4 12 20M15.6 10 16 21.5M18 12.6l3 8.4M19 8.2l3.5 8" strokeWidth={1.2} />
+    </Svg>
+  );
+}
+
+export function RapeseedIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="4.4" r="2.6" />
+      <circle cx="15.6" cy="8" r="2.6" />
+      <circle cx="12" cy="11.6" r="2.6" />
+      <circle cx="8.4" cy="8" r="2.6" />
+      <path d="M12 14.2V23" />
+      <path d="M12 20c-3.2-.4-5.4-2.4-6-5.2 2.8 0 5.2 1.8 6 5.2z" strokeWidth={1.5} />
+    </Svg>
+  );
+}
+
+export function CorianderIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 23V12.5M12 12.5 4.6 7M12 12.5 8.4 4.2M12 12.5l3.6-8.3M12 12.5 19.4 7" strokeWidth={1.6} />
+      <g fill="currentColor" stroke="none">
+        <circle cx="4.2" cy="6.6" r="1.9" />
+        <circle cx="8.2" cy="3.6" r="1.9" />
+        <circle cx="15.8" cy="3.6" r="1.9" />
+        <circle cx="19.8" cy="6.6" r="1.9" />
+      </g>
+    </Svg>
+  );
+}
+
 export function CropIcon({ crop, ...p }: IconProps & { crop: CropId }) {
   switch (crop) {
     case "durum":
@@ -86,6 +154,16 @@ export function CropIcon({ crop, ...p }: IconProps & { crop: CropId }) {
       return <FabaIcon {...p} />;
     case "vetch-oat":
       return <SheafIcon {...p} />;
+    case "lentil":
+      return <LentilIcon {...p} />;
+    case "pea":
+      return <PeaIcon {...p} />;
+    case "barley":
+      return <BarleyIcon {...p} />;
+    case "rapeseed":
+      return <RapeseedIcon {...p} />;
+    case "coriander":
+      return <CorianderIcon {...p} />;
   }
 }
 

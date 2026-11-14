@@ -4,6 +4,7 @@ import { useLang, useT } from "../i18n";
 import type { Reason } from "../ranking/reasons";
 import { formatNumber, ScaleBadge } from "./FactParts";
 import { BareSoilIcon, CheckIcon, DropIcon, EuroIcon, SheafIcon } from "./Icons";
+import { RichText, priorityLine } from "./Term";
 
 export const PRIORITY_ICON: Record<Priority, typeof DropIcon> = {
   income: EuroIcon,
@@ -36,7 +37,7 @@ export function ReasonList({ reasons, option, testId }: { reasons: Reason[]; opt
           <li key={reason.priority} data-testid="reason" data-priority={reason.priority} className="flex items-start gap-2 text-body">
             <Icon className="w-5 h-5 flex-none mt-0.5" title={t(`priority.${reason.priority}`)} />
             <span>
-              {t(reason.key, vars)}
+              <RichText text={t(reason.key, vars)} />
               {scale ? (
                 <>
                   {" "}
@@ -72,6 +73,7 @@ export function PriorityChips({ chosen, onChange }: { chosen: Priority[]; onChan
             type="button"
             role="checkbox"
             aria-checked={on}
+            title={t(priorityLine(p))}
             onClick={() => onChange(togglePriority(chosen, p))}
             className={`tc-tap inline-flex items-center gap-1.5 px-3 rounded-box border-2 font-bold text-body ${
               on ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"

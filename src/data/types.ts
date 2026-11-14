@@ -30,12 +30,18 @@ export type Cover = "green" | "part" | "bare";
 export type Risk = "dry" | "frost" | "heat" | "rain";
 
 /** Crop ids. Display names come from the dictionary key `crop.<id>`. */
-export type CropId = "durum" | "chickpea" | "faba" | "vetch-oat";
+export type CropId = "durum" | "chickpea" | "faba" | "vetch-oat" | "lentil" | "pea" | "barley" | "rapeseed" | "coriander";
 
 export const SCENARIOS: readonly Scenario[] = ["normal", "drier", "much-drier"];
 export const PRIORITIES: readonly Priority[] = ["income", "water", "soil", "forage"];
 export const LIMITS: readonly Limit[] = ["no-irrigation", "cereal-machinery", "no-buyer", "broomrape"];
-export const CROPS: readonly CropId[] = ["durum", "chickpea", "faba", "vetch-oat"];
+export const CROPS: readonly CropId[] = ["durum", "chickpea", "faba", "vetch-oat", "lentil", "pea", "barley", "rapeseed", "coriander"];
+/** Legumes: grown twice running they build up disease, so an option that starts with the last crop is left out. */
+export const LEGUMES: readonly CropId[] = ["chickpea", "faba", "lentil", "pea", "vetch-oat"];
+/** The farmer's answer to "Last crop": a crop id, or "other" with its name typed in `lastCropName`. */
+export type LastCrop = CropId | "other";
+/** Longest typed name for an "other" last crop, in characters, after trimming. */
+export const LAST_CROP_NAME_MAX = 30;
 
 export type Signals = { greenness: Signal; temperature: Signal; waterUse: Signal };
 
@@ -84,7 +90,7 @@ export type FieldBundle = {
     /** The usual daytime high (°C) from 15 April to 15 June, now and by 2050. Shown beside what counts as a hot day. */
     flowerHigh?: { now: Fact; by2050: Fact };
   };
-  options: Option[]; // exactly four, exactly one with isCurrent
+  options: Option[]; // 3 to 12, exactly one with isCurrent
   economics?: Economics; // prices, yields, costs and support behind the income figures
 };
 
@@ -115,7 +121,8 @@ export const DEMO_FIELD_ID = "genzano-demo";
 export type AppState = {
   fieldId: string | null; // DEMO_FIELD_ID, or null when the farmer drew a field
   outline: LngLat[] | null; // drawn field: open ring, at most 12 points, 5 decimals
-  lastCrop: CropId;
+  lastCrop: LastCrop;
+  lastCropName: string; // the typed name when lastCrop is "other", trimmed, at most LAST_CROP_NAME_MAX; otherwise ""
   limits: Limit[];
   priorities: Priority[]; // zero to two, in the order chosen
   scenario: Scenario;
@@ -156,9 +163,12 @@ export type SupportItem = {
   defaultOn: boolean; // switched on until the farmer says otherwise
 };
 
-/** Everything behind the income figure. Optional: without it the app shows each option's `facts.income` as given. */
+/**
+ * Everything behind the income figure. Optional: without it the app shows each option's `facts.income` as given.
+ * `crops` covers every crop any option grows; it need not hold all of CROPS.
+ */
 export type Economics = {
-  crops: Record<CropId, CropEconomics>;
+  crops: Partial<Record<CropId, CropEconomics>>;
   support: SupportItem[];
 };
 
@@ -172,6 +182,7 @@ export const DEFAULT_STATE: AppState = {
   fieldId: null,
   outline: null,
   lastCrop: "durum",
+  lastCropName: "",
   limits: [],
   priorities: [],
   scenario: "normal",

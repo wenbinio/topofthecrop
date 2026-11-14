@@ -1,10 +1,10 @@
-import type { AppState, CropId, ExtraSupport, Money } from "../data/types";
+import type { AppState, CropId, ExtraSupport, LastCrop, Money } from "../data/types";
 import type { LngLat } from "../data/types";
-import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LIMITS, MAX_EXTRAS, PRIORITIES, SCENARIOS } from "../data/types";
+import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LAST_CROP_NAME_MAX, LIMITS, MAX_EXTRAS, PRIORITIES, SCENARIOS } from "../data/types";
 
 /**
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
- * Parameter names: f field id, o outline, c last crop, l limits, p priorities, s scenario, v view, g language, m money,
+ * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities, s scenario, v view, g language, m money,
  * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded).
  */
 export function encodeState(state: AppState): string {
@@ -15,6 +15,8 @@ export function encodeState(state: AppState): string {
     if (outline) params.set('o', outline.map(point => point.map(n => n.toFixed(5)).join(',')).join(';'));
   }
   if (state.lastCrop !== DEFAULT_STATE.lastCrop) params.set('c', state.lastCrop);
+  const name = lastCropName(state.lastCrop, state.lastCropName);
+  if (name) params.set('cn', name);
   if (state.limits.length) params.set('l', state.limits.join(','));
   if (state.priorities.length) params.set('p', state.priorities.join(','));
   if (state.scenario !== DEFAULT_STATE.scenario) params.set('s', state.scenario);
@@ -37,10 +39,13 @@ export function decodeState(query: string): AppState {
   const limits = (params.get('l') ?? '').split(',');
   const priorities = (params.get('p') ?? '').split(',');
   const fieldId = params.get('f') === DEMO_FIELD_ID ? DEMO_FIELD_ID : null;
+  const c = params.get('c');
+  const lastCrop: LastCrop = c === 'other' ? 'other' : CROPS.find(crop => crop === c) ?? DEFAULT_STATE.lastCrop;
   return {
     fieldId,
     outline: fieldId ? null : parseOutline(params.get('o') ?? ''),
-    lastCrop: CROPS.find(crop => crop === params.get('c')) ?? DEFAULT_STATE.lastCrop,
+    lastCrop,
+    lastCropName: lastCropName(lastCrop, params.get('cn') ?? ''),
     limits: LIMITS.filter(limit => limits.includes(limit)),
     priorities: [...new Set(priorities)].filter((priority): priority is AppState['priorities'][number] =>
       PRIORITIES.some(known => known === priority)).slice(0, 2),
@@ -50,6 +55,11 @@ export function decodeState(query: string): AppState {
     money: parseMoney(params.get('m') ?? ''),
     extras: parseExtras(params.get('x') ?? ''),
   };
+}
+
+/** The typed name of an "other" last crop: trimmed, at most LAST_CROP_NAME_MAX characters; "" for any other last crop. */
+export function lastCropName(lastCrop: LastCrop, name: string): string {
+  return lastCrop === 'other' ? name.trim().slice(0, LAST_CROP_NAME_MAX).trim() : '';
 }
 
 /** encodeURIComponent leaves `~` alone, and `~` separates the parts of an item. */

@@ -28,6 +28,7 @@ export function StepBar({ pathname }: { pathname: string }) {
       limits: state.limits,
       priorities: state.priorities,
       scenario: state.scenario,
+      lastCrop: state.lastCrop,
     });
     if (ranked[0]) whyPath = `/why/${ranked[0].option.id}`;
   }

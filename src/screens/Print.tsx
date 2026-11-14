@@ -1,17 +1,16 @@
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
 import type { Economics, Fact, FieldBundle } from "../data/types";
-import { CROPS } from "../data/types";
-import { resolveMoney } from "../money/money";
+import { cropFigures, economicsCrops, resolveMoney } from "../money/money";
 import { useLang, useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
-import { optionCrop } from "../components/Crops";
-import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, paidInText, rangeText, unitText, valueText } from "../components/FactParts";
+import { CropName, PaidIn, Slotted, optionCrop } from "../components/Crops";
+import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
 
-function Block({ title, children }: { title: string; children: ReactNode }) {
+function Block({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
     <section className="mt-3 break-inside-avoid">
       <h2 className="text-body font-bold border-b-2 border-line-strong mb-1">{title}</h2>
@@ -51,12 +50,15 @@ function MoneyUsed({ economics }: { economics: Economics }) {
   return (
     <Block title={t("print.money")}>
       <ul data-testid="print-money">
-        {CROPS.filter((c) => economics.crops[c]).map((c) => (
-          <li key={c}>
-            {t(`crop.${c}`)}: <b>{formatNumber(r.prices[c].value, lang)} €/t</b>
-            {changed(r.prices[c].edited)}
-          </li>
-        ))}
+        {economicsCrops(economics).map((c) => {
+          const price = r.prices[c] ?? { value: Number(cropFigures(economics, c).price.value), edited: false };
+          return (
+            <li key={c}>
+              <CropName crop={c} />: <b>{formatNumber(price.value, lang)} €/t</b>
+              {changed(price.edited)}
+            </li>
+          );
+        })}
         {economics.support.map((item) => {
           const s = r.support.find((x) => x.id === item.id);
           if (!s) return null;
@@ -70,7 +72,7 @@ function MoneyUsed({ economics }: { economics: Economics }) {
         })}
         {state.extras.map((extra, i) => (
           <li key={`x${i}`} data-testid="print-extra">
-            {extra.name} ({t("print.extra")}): <b>{formatNumber(extra.amount, lang)} €/ha</b>. {paidInText(extra.crops, t, lang)}.
+            {extra.name} ({t("print.extra")}): <b>{formatNumber(extra.amount, lang)} €/ha</b>. <PaidIn crops={extra.crops} />.
           </li>
         ))}
       </ul>
@@ -84,11 +86,12 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
   const lang = useLang();
   const to = useTo();
   const [state] = useAppState();
-  const { ranked, removed } = rankOptions({
+  const { ranked, removed, repeats } = rankOptions({
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
     scenario: state.scenario,
+    lastCrop: state.lastCrop,
   });
   const best = ranked[0];
   const link = shareLink("/options", state);
@@ -126,7 +129,10 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
         <Block title={t("print.answers")}>
           <ul>
             <li>
-              {t("q.lastCrop")}: <b>{t(`crop.${state.lastCrop}`)}</b>
+              {t("q.lastCrop")}:{" "}
+              <b data-testid="print-last-crop">
+                {state.lastCrop === "other" ? state.lastCropName || t("q.otherPlain") : <CropName crop={state.lastCrop} />}
+              </b>
             </li>
             <li>
               {t("q.limits")}: <b>{state.limits.length ? state.limits.map((l) => t(`limit.${l}`)).join(", ") : t("print.none")}</b>
@@ -167,7 +173,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                 <tr key={r.option.id} className="align-top border-b border-line">
                   <td className="py-1 pr-2">
                     <b>
-                      {r.rank}. {t(`crop.${optionCrop(r.option)}`)}
+                      {r.rank}. <CropName crop={optionCrop(r.option)} />
                     </b>
                     {r.best ? ` · ${t("options.best")}` : ""}
                     {r.option.isCurrent ? ` · ${t("options.current")}` : ""}
@@ -201,7 +207,21 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           {removed.length ? (
             <p className="mt-1">
               {t("print.removed")}:{" "}
-              {removed.map((r) => `${t(`crop.${optionCrop(r.option)}`)} (${r.by.map((l) => t(`limit.${l}`)).join(", ")})`).join("; ")}
+              {removed.map((r, i) => (
+                <span key={r.option.id}>
+                  {i > 0 ? "; " : ""}
+                  <CropName crop={optionCrop(r.option)} /> ({r.by.map((l) => t(`limit.${l}`)).join(", ")})
+                </span>
+              ))}
+            </p>
+          ) : null}
+          {repeats.length ? (
+            <p className="mt-1" data-testid="print-left-out">
+              {[...new Set(repeats.map((o) => o.sequence[0]))].map((crop) => (
+                <span key={crop} className="block">
+                  <Slotted text={t("options.repeat")} slots={{ crop: <CropName crop={crop} /> }} />
+                </span>
+              ))}
             </p>
           ) : null}
         </Block>
@@ -209,7 +229,13 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
         {bundle.economics ? <MoneyUsed economics={bundle.economics} /> : null}
 
         {best ? (
-          <Block title={`${t("print.bestDetail")}: ${t(`crop.${optionCrop(best.option)}`)}`}>
+          <Block
+            title={
+              <>
+                {t("print.bestDetail")}: <CropName crop={optionCrop(best.option)} />
+              </>
+            }
+          >
             <p>{t(best.option.why.suggested)}</p>
             <p className="mt-1 font-bold">{t("why.h.unknowns")}</p>
             <ul className="list-disc pl-5">

@@ -84,3 +84,17 @@ it('tolerates a malformed added-payment escape', () => {
   expect(() => decodeState('x=%E0%A4%A')).not.toThrow();
   expect(decodeState('x=%E0%A4%A').extras).toEqual([]);
 });
+it('round-trips "other" as the last crop with its typed name', () => {
+  const state: AppState = { ...DEFAULT_STATE, lastCrop: 'other', lastCropName: 'White lupin' };
+  const encoded = encodeState(state);
+  expect(new URLSearchParams(encoded).get('c')).toBe('other');
+  expect(new URLSearchParams(encoded).get('cn')).toBe('White lupin');
+  expect(decodeState(encoded)).toEqual(state);
+});
+it('trims the typed last crop and keeps at most 30 characters, only with c=other', () => {
+  expect(decodeState(`c=other&cn=${encodeURIComponent('  Sulla  ')}`).lastCropName).toBe('Sulla');
+  expect(decodeState(`c=other&cn=${'x'.repeat(40)}`).lastCropName).toBe('x'.repeat(30));
+  expect(decodeState('c=lentil&cn=Sulla')).toEqual({ ...DEFAULT_STATE, lastCrop: 'lentil' });
+  expect(encodeState({ ...DEFAULT_STATE, lastCrop: 'pea', lastCropName: 'Sulla' })).toBe('c=pea');
+  expect(decodeState('c=other')).toEqual({ ...DEFAULT_STATE, lastCrop: 'other' });
+});

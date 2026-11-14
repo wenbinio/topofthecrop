@@ -3,7 +3,7 @@ import { SCENARIOS } from "../data/types";
 import { useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
-import { CropSequence, optionCrop } from "../components/Crops";
+import { CropName, CropSequence, optionCrop } from "../components/Crops";
 import { FactButton, PlaceholderNote } from "../components/FactParts";
 import { HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
@@ -22,6 +22,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
     limits: state.limits,
     priorities: state.priorities,
     scenario: state.scenario,
+    lastCrop: state.lastCrop,
   });
   const best = ranked[0];
   const index = SCENARIOS.indexOf(state.scenario);
@@ -79,7 +80,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
         <div className="mx-4 mt-4 p-3 bg-surface border-l-4 border-best" data-testid="year-best" data-option-id={best.option.id}>
           <p className="text-small font-bold uppercase tracking-wider text-ink-soft">{t("year.best")}</p>
           <div className="flex items-center justify-between gap-3 mt-1">
-            <span className="text-big font-bold">{t(`crop.${optionCrop(best.option)}`)}</span>
+            <CropName crop={optionCrop(best.option)} className="text-big font-bold" />
             <CropSequence option={best.option} />
           </div>
         </div>
