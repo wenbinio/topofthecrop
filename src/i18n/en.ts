@@ -53,9 +53,14 @@ export const en = {
   "find.drawHelp": "Trace around your field",
   "find.cancel": "Cancel",
   "find.tooSmall": "Too small. Try again.",
-  "find.shapeOk": "Is this the shape?",
-  "find.yesShape": "Yes",
-  "find.redraw": "Redraw",
+  "find.tapCorners": "Tap each corner of your field",
+  "find.keepTapping": "Keep tapping the corners",
+  "find.pull": "{n} ha · pull a dot to adjust",
+  "find.tooSmallPull": "Too small. Pull the dots apart.",
+  "find.maxCorners": "12 corners is the most.",
+  "find.undo": "Undo",
+  "find.trace": "Trace",
+  "find.done": "Done",
 
   // area weather
   "area.title": "Weather for your area",

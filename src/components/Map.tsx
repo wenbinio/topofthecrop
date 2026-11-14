@@ -1,12 +1,13 @@
 // All MapLibre code lives here, behind a small props interface, so tests can vi.mock this file.
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Map as MapLibre, setWorkerUrl } from "maplibre-gl";
+import { Map as MapLibre, Marker, setWorkerUrl } from "maplibre-gl";
 // MapLibre 6 ships its worker as a separate module. Let Vite bundle it and hand us the URL,
 // otherwise the worker cannot be found once the library itself has been bundled.
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { LngLat } from "../data/types";
+import { MAX_CORNERS, insertAt, midpoints, moveAt, round5 } from "../geo/edit";
 
 setWorkerUrl(workerUrl);
 
@@ -17,13 +18,18 @@ export type MapProps = {
   zoom: number;
   /** The known field outline (the demo field), open ring. */
   fieldOutline: LngLat[] | null;
-  /** The farmer's drawn outline, open ring. */
+  /** The farmer's own shape, open ring. One or two points show as dots and a line until there are three. */
   drawnOutline: LngLat[] | null;
-  /** While true the map does not pan or zoom and a finger trace is recorded. */
+  /** While true each corner of the drawn shape has a dot to pull, and each side a smaller dot that makes a new corner. */
+  editable: boolean;
+  /** While true the map does not pan or zoom and one finger stroke is recorded as a trace. */
   drawing: boolean;
   /** Fly here when `key` changes (search result, my location). */
   target: MapTarget | null;
+  /** A tap on the map itself, never on a dot. */
   onTap: (point: LngLat) => void;
+  /** Called when a dot has been pulled: the whole new ring. */
+  onEditRing: (ring: LngLat[]) => void;
   /** Called on release with the raw trace, in [lon, lat]. */
   onTrace: (points: LngLat[]) => void;
 };
@@ -33,7 +39,14 @@ const BASEMAP_ATTRIBUTION =
   'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noreferrer">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
 
 function polygonData(ring: LngLat[] | null) {
-  if (!ring || ring.length < 3) return { type: "FeatureCollection" as const, features: [] };
+  if (!ring || ring.length < 2) return { type: "FeatureCollection" as const, features: [] };
+  // Two corners so far: show the side between them.
+  if (ring.length === 2) {
+    return {
+      type: "FeatureCollection" as const,
+      features: [{ type: "Feature" as const, properties: {}, geometry: { type: "LineString" as const, coordinates: ring } }],
+    };
+  }
   return {
     type: "FeatureCollection" as const,
     features: [
@@ -52,13 +65,22 @@ function cssVar(name: string): string {
 
 type SettableSource = { setData: (data: unknown) => void };
 
-export default function Map({ centre, zoom, fieldOutline, drawnOutline, drawing, target, onTap, onTrace }: MapProps) {
+/** A dot to pull. The element is a 44 px touch target; the visible dot is drawn by CSS (.tc-handle in index.css). */
+function handleElement(kind: "corner" | "side"): HTMLDivElement {
+  const el = document.createElement("div");
+  el.className = kind === "corner" ? "tc-handle" : "tc-handle tc-handle-side";
+  el.dataset.testid = kind === "corner" ? "corner-handle" : "side-handle";
+  return el;
+}
+
+export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable, drawing, target, onTap, onEditRing, onTrace }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibre | null>(null);
   const [loaded, setLoaded] = useState(false);
   const drawingRef = useRef(drawing);
   const onTapRef = useRef(onTap);
   const onTraceRef = useRef(onTrace);
+  const onEditRingRef = useRef(onEditRing);
   const initial = useRef({ centre, zoom });
   const [trace, setTrace] = useState<[number, number][]>([]);
   const tracing = useRef(false);
@@ -68,6 +90,7 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, drawing,
     drawingRef.current = drawing;
     onTapRef.current = onTap;
     onTraceRef.current = onTrace;
+    onEditRingRef.current = onEditRing;
   });
 
   // Create the map once.
@@ -102,6 +125,9 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, drawing,
     map.touchZoomRotate.disableRotation();
     map.on("load", () => setLoaded(true));
     map.on("click", (e) => {
+      // A tap on a dot is not a tap on the map.
+      const hit = e.originalEvent.target;
+      if (hit instanceof Element && hit.closest(".tc-handle")) return;
       if (!drawingRef.current) onTapRef.current([e.lngLat.lng, e.lngLat.lat]);
     });
     mapRef.current = map;
@@ -120,6 +146,41 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, drawing,
     const source = mapRef.current?.getSource("drawn") as SettableSource | undefined;
     if (loaded && source) source.setData(polygonData(drawnOutline));
   }, [loaded, drawnOutline]);
+
+  // The dots: one on each corner to move it, one on each side to pull out a new corner.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded || !editable || drawing || !drawnOutline || drawnOutline.length === 0) return;
+    const ring = drawnOutline;
+    const source = map.getSource("drawn") as SettableSource | undefined;
+    const markers: Marker[] = [];
+    const sideEls: HTMLElement[] = [];
+    const place = (kind: "corner" | "side", at: LngLat, ringWith: (p: LngLat) => LngLat[]) => {
+      const el = handleElement(kind);
+      if (kind === "side") sideEls.push(el);
+      const marker = new Marker({ element: el, draggable: true }).setLngLat(at).addTo(map);
+      const here = (): LngLat => {
+        const ll = marker.getLngLat();
+        return [ll.lng, ll.lat];
+      };
+      // The other side dots would sit in the wrong place while the shape changes; they come back on release.
+      marker.on("dragstart", () => {
+        for (const s of sideEls) if (s !== el) s.style.display = "none";
+      });
+      marker.on("drag", () => source?.setData(polygonData(ringWith(here()))));
+      // Deferred, because the new ring replaces these markers and MapLibre is still finishing this event.
+      marker.on("dragend", () => {
+        const next = ringWith(round5(here()));
+        setTimeout(() => onEditRingRef.current(next), 0);
+      });
+      markers.push(marker);
+    };
+    ring.forEach((p, i) => place("corner", p, (at) => moveAt(ring, i, at)));
+    if (ring.length >= 3 && ring.length < MAX_CORNERS) {
+      midpoints(ring).forEach((p, i) => place("side", p, (at) => insertAt(ring, i + 1, at)));
+    }
+    return () => markers.forEach((m) => m.remove());
+  }, [loaded, editable, drawing, drawnOutline]);
 
   useEffect(() => {
     if (target && mapRef.current) mapRef.current.flyTo({ center: target.centre, zoom: target.zoom });
