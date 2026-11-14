@@ -111,7 +111,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         >
           <EuroIcon className="w-5 h-5 flex-none" />
           <span className="flex-1">{t("settings.title")}</span>
-          {resolveMoney(bundle.economics, state.money).edited ? <YoursTag /> : null}
+          {resolveMoney(bundle.economics, state.money).edited || state.extras.length ? <YoursTag /> : null}
           <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
         </Link>
       ) : null}

@@ -165,3 +165,30 @@ it('sets support amounts and switches, removes defaults and ignores unknown keys
     expect(setMoney(economics, {}, key, value)).toEqual({});
   }
 });
+
+it('adds an every-year payment of 50 to every option', () => {
+  const extras = [{ name: 'Regional aid', amount: 50, crops: [] }];
+  for (const item of bundle.options) {
+    const result = optionMoney(item, economics, {}, extras);
+    expect(result.perYear).toBe(optionMoney(item, economics, {}).perYear + 50);
+    result.years.forEach(year => expect(year.support.at(-1)).toEqual({ id: 'x0', amount: 50 }));
+    expect(incomeFact(item, economics, {}, extras).edited).toBe(true);
+  }
+});
+
+it('pays a chickpea-only payment in chickpea years only', () => {
+  const extras = [{ name: 'New legume aid', amount: 90, crops: ['chickpea' as const] }];
+  expect(optionMoney(chickpea, economics, {}, extras).perYear).toBe(753 + 30);
+  expect(optionMoney(chickpea, economics, {}, extras).years.map(year => year.support.some(item => item.id === 'x0')))
+    .toEqual([true, false, false]);
+  expect(optionMoney(durum, economics, {}, extras).perYear).toBe(595);
+  expect(incomeFact(durum, economics, {}, extras)).not.toHaveProperty('edited');
+  const priced = withMoney(bundle, {}, extras);
+  expect(priced.options.find(item => item.id === chickpea.id)!.facts.income).toMatchObject({ value: 783, edited: true });
+  expect(priced.options.find(item => item.id === durum.id)!.facts.income).toEqual(durum.facts.income);
+});
+
+it('changes nothing with no added payments', () => {
+  expect(withMoney(bundle, {}, [])).toEqual(withMoney(bundle, {}));
+  expect(withMoney(bundle, {}, [])).toEqual(bundle);
+});

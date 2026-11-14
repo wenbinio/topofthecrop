@@ -66,7 +66,7 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
   const to = useTo();
   const [state] = useAppState();
   const { pathname } = useLocation();
-  const money = optionMoney(option, economics, state.money);
+  const money = optionMoney(option, economics, state.money, state.extras);
   const n = (v: number) => formatNumber(Math.round(v), lang);
   return (
     <div className="py-2" data-testid="money-working">

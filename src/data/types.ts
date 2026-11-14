@@ -120,7 +120,17 @@ export type AppState = {
   view: View;
   lang: Lang;
   money: Money; // the farmer's own prices and support, where they differ from the bundle's
+  extras: ExtraSupport[]; // payments the farmer added that the bundle does not know, at most MAX_EXTRAS
 };
+
+/** A payment the farmer added in Settings. Always on; paid in the years the field grows one of `crops` (empty: every year). */
+export type ExtraSupport = { name: string; amount: number; crops: CropId[] };
+
+/** The most added payments the link carries. */
+export const MAX_EXTRAS = 3;
+
+/** Bounds for an added payment: its name (trimmed) in characters, its amount in €/ha. */
+export const EXTRA_LIMITS = { name: 30, amount: [0, 2000] } as const;
 
 /** Text written by the data team, in both languages (support names and conditions come from policy documents). */
 export type LocalText = { en: string; it: string };
@@ -166,4 +176,5 @@ export const DEFAULT_STATE: AppState = {
   view: "standard",
   lang: "en",
   money: {},
+  extras: [],
 };

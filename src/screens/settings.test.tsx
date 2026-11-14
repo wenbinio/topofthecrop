@@ -43,6 +43,13 @@ function linkMoney(): string | null {
   return new URLSearchParams(lastPath.split("?")[1] ?? "").get("m");
 }
 
+/** The `x` parameter of the current link (added payments), or null. */
+function linkExtras(): string | null {
+  return new URLSearchParams(lastPath.split("?")[1] ?? "").get("x");
+}
+
+const THREE = `x=${encodeURIComponent("A~10~|B~20~durum|C~30~faba")}`;
+
 function row(id: string): HTMLElement {
   return screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === id)!;
 }
@@ -229,5 +236,115 @@ describe("Settings", () => {
     expect(block).toHaveTextContent("Durum: 320 €/t");
     expect(block).toHaveTextContent("Eco-scheme: rotation with legumes or forage (EU): off · changed by the farmer");
     expect(block).toHaveTextContent("Basic income support (EU): on, 160 €/ha");
+  });
+
+  describe("added payments", () => {
+    it("adding New legume aid of 90 for chickpea goes into the link and raises chickpea by 30, marked Yours", async () => {
+      renderAt(SETTINGS);
+      fireEvent.click(await screen.findByRole("button", { name: "Add a payment" }));
+      const form = screen.getByTestId("extra-form");
+      const add = within(form).getByRole("button", { name: "Add" });
+      act(() => {
+        fireEvent.change(within(form).getByRole("textbox", { name: "Name of the payment" }), { target: { value: "New legume aid" } });
+        fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "90" } });
+      });
+      expect(within(form).getByRole("button", { name: "Every year" })).toHaveAttribute("aria-pressed", "true");
+      fireEvent.click(within(form).getByRole("button", { name: "Chickpea" }));
+      expect(within(form).getByRole("button", { name: "Every year" })).toHaveAttribute("aria-pressed", "false");
+      expect(within(form).getByRole("button", { name: "Chickpea" })).toHaveAttribute("aria-pressed", "true");
+      act(() => {
+        fireEvent.click(add);
+      });
+      await waitFor(() => expect(linkExtras()).toBe(`${encodeURIComponent("New legume aid")}~90~chickpea`));
+      const item = screen.getByTestId("extra-item");
+      expect(item).toHaveTextContent("New legume aid");
+      expect(item).toHaveTextContent("Paid in the years of: Chickpea");
+      expect(within(item).getByTestId("tag-yours")).toBeInTheDocument();
+      expect(within(item).getByRole("textbox", { name: "New legume aid: amount" })).toHaveValue("90");
+      expect(screen.queryByTestId("extra-form")).toBeNull();
+      expect(screen.getByRole("button", { name: "Reset to the starting figures" })).toBeEnabled();
+      expect(screen.getByTestId("adviser-line")).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("link", { name: "Back" }));
+      await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+      await screen.findAllByTestId("option-row");
+      expect(incomeOf("chickpea-durum-durum")).toBe("783");
+      expect(within(row("chickpea-durum-durum")).getByTestId("tag-yours")).toBeInTheDocument();
+      expect(incomeOf("durum-durum-durum")).toBe("595");
+      expect(within(row("durum-durum-durum")).queryByTestId("tag-yours")).toBeNull();
+    });
+
+    it("unchosen crops fall back to Every year, and an empty name keeps Add disabled", async () => {
+      renderAt(SETTINGS);
+      fireEvent.click(await screen.findByRole("button", { name: "Add a payment" }));
+      const form = screen.getByTestId("extra-form");
+      const add = within(form).getByRole("button", { name: "Add" });
+      const name = within(form).getByRole("textbox", { name: "Name of the payment" });
+      expect(name).toHaveAttribute("maxLength", "30");
+      act(() => {
+        fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "90" } });
+      });
+      expect(add).toBeDisabled();
+      act(() => {
+        fireEvent.change(name, { target: { value: "   " } });
+      });
+      expect(add).toBeDisabled();
+      act(() => {
+        fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "2001" } });
+        fireEvent.change(name, { target: { value: "Aid" } });
+      });
+      expect(within(form).getByTestId("money-error")).toHaveTextContent("From 0 to 2,000");
+      expect(add).toBeDisabled();
+      act(() => {
+        fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "15" } });
+      });
+      expect(add).toBeEnabled();
+      fireEvent.click(within(form).getByRole("button", { name: "Durum" }));
+      fireEvent.click(within(form).getByRole("button", { name: "Durum" }));
+      expect(within(form).getByRole("button", { name: "Every year" })).toHaveAttribute("aria-pressed", "true");
+      fireEvent.click(within(form).getByRole("button", { name: "Cancel" }));
+      expect(screen.queryByTestId("extra-form")).toBeNull();
+      expect(linkExtras()).toBeNull();
+    });
+
+    it("Remove takes an added payment out of the link", async () => {
+      renderAt(`${SETTINGS}&x=${encodeURIComponent("New legume aid~90~chickpea")}`);
+      const remove = await screen.findByRole("button", { name: "Remove New legume aid" });
+      act(() => {
+        fireEvent.click(remove);
+      });
+      await waitFor(() => expect(linkExtras()).toBeNull());
+      expect(screen.queryByTestId("extra-item")).toBeNull();
+    });
+
+    it("Add a payment is disabled after three, and Reset clears them", async () => {
+      renderAt(`${SETTINGS}&${THREE}`);
+      expect(await screen.findAllByTestId("extra-item")).toHaveLength(3);
+      expect(screen.getByRole("button", { name: "Add a payment" })).toBeDisabled();
+      expect(screen.getByTestId("extra-max")).toHaveTextContent("Three added payments is the most.");
+      const reset = screen.getByRole("button", { name: "Reset to the starting figures" });
+      expect(reset).toBeEnabled();
+      act(() => {
+        fireEvent.click(reset);
+      });
+      await waitFor(() => expect(linkExtras()).toBeNull());
+      expect(screen.queryAllByTestId("extra-item")).toHaveLength(0);
+      expect(screen.getByRole("button", { name: "Add a payment" })).toBeEnabled();
+      expect(screen.getByRole("button", { name: "Reset to the starting figures" })).toBeDisabled();
+    });
+
+    it("Why counts an added payment in each year's support, and Print lists it as the farmer's own", async () => {
+      const x = `x=${encodeURIComponent("New legume aid~90~chickpea")}`;
+      const { unmount } = renderAt(`/why/chickpea-durum-durum?f=genzano-demo&p=income,water&${x}`);
+      const working = await screen.findByTestId("money-working");
+      const cells = within(working).getAllByRole("row")[1].querySelectorAll("td");
+      // basic income 160 + coupled legumes 60 + eco-scheme 110 + the added 90
+      expect(cells[3]).toHaveTextContent("420");
+      unmount();
+
+      renderAt(`/print?f=genzano-demo&p=income,water&${x}`);
+      const block = await screen.findByTestId("print-money");
+      expect(block).toHaveTextContent("New legume aid (added by the farmer): 90 €/ha. Paid in the years of: Chickpea.");
+    });
   });
 });

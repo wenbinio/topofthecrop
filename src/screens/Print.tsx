@@ -7,7 +7,7 @@ import { useLang, useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
 import { optionCrop } from "../components/Crops";
-import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
+import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, paidInText, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
 
@@ -68,6 +68,11 @@ function MoneyUsed({ economics }: { economics: Economics }) {
             </li>
           );
         })}
+        {state.extras.map((extra, i) => (
+          <li key={`x${i}`} data-testid="print-extra">
+            {extra.name} ({t("print.extra")}): <b>{formatNumber(extra.amount, lang)} €/ha</b>. {paidInText(extra.crops, t, lang)}.
+          </li>
+        ))}
       </ul>
       <p className="mt-1">{t("settings.adviser")}</p>
     </Block>

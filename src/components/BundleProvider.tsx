@@ -16,11 +16,11 @@ const BundleContext = createContext<BundleState | null>(null);
 
 /**
  * Loads the demo field's bundle once and shares it with every screen.
- * The farmer's own prices and support (`state.money`) are applied here, once, so every screen
+ * The farmer's own prices and support (`state.money`, `state.extras`) are applied here, once, so every screen
  * (and the step bar's best-fit link) sees the same income figures and ranking.
  */
 export function BundleProvider({ children }: { children: ReactNode }) {
-  const [{ money }] = useAppState();
+  const [{ money, extras }] = useAppState();
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<{ bundle: FieldBundle | null; failed: boolean }>({
     bundle: null,
@@ -42,7 +42,7 @@ export function BundleProvider({ children }: { children: ReactNode }) {
     };
   }, [attempt]);
 
-  const priced = useMemo(() => (result.bundle ? withMoney(result.bundle, money) : null), [result.bundle, money]);
+  const priced = useMemo(() => (result.bundle ? withMoney(result.bundle, money, extras) : null), [result.bundle, money, extras]);
 
   const value: BundleState = priced
     ? { status: "ready", bundle: priced, retry }
