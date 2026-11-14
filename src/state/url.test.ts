@@ -31,6 +31,25 @@ it('cuts outlines to twelve points and rounds to five decimals', () => {
   expect(result?.[0]).toEqual([0.12346, 0.76543]);
 });
 it('tolerates malformed percent escapes', () => expect(() => decodeState('%E0%A4%A')).not.toThrow());
+it('round-trips money with sorted keys and omits empty money', () => {
+  const state: AppState = { ...DEFAULT_STATE, money: { 'p.durum': 350, 'on.eco-rotation': 0 } };
+  const encoded = encodeState(state);
+  expect(new URLSearchParams(encoded).get('m')).toBe('on.eco-rotation:0;p.durum:350');
+  expect(decodeState(encoded)).toEqual(state);
+  expect(new URLSearchParams(encodeState(DEFAULT_STATE)).has('m')).toBe(false);
+});
+it('rejects malformed money values and keys', () => {
+  expect(decodeState('m=p.durum:abc;on.x:2;p.durum:9999;s.ok:12').money).toEqual({ 's.ok': 12 });
+  expect(decodeState(`m=p.durum:-1;p.faba:NaN;s.x:Infinity;p.:2;p.UPPER:3;x.foo:1;p.${'a'.repeat(33)}:1;p.empty:;p.space: ;p.extra:1:2;on.good:0;s.good:5000`).money)
+    .toEqual({ 'on.good': 0, 's.good': 5000 });
+});
+it('keeps at most forty valid money pairs', () => {
+  const pairs = Array.from({ length: 45 }, (_, i) => `s.item-${i}:${i}`);
+  const money = decodeState(`m=invalid;${pairs.join(';')}`).money;
+  expect(Object.keys(money)).toHaveLength(40);
+  expect(money['s.item-39']).toBe(39);
+  expect(money).not.toHaveProperty('s.item-40');
+});
 it('drops invalid positions, deduplicates limits, and gives the demo id precedence', () => {
   expect(decodeState('o=181,0;0,91;NaN,1;,;1,2;3,4').outline).toBeNull();
   expect(decodeState('o=181,0;1,2;3,4;5,6').outline).toEqual([[1, 2], [3, 4], [5, 6]]);

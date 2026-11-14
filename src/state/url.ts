@@ -1,10 +1,10 @@
-import type { AppState } from "../data/types";
+import type { AppState, Money } from "../data/types";
 import type { LngLat } from "../data/types";
 import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, LIMITS, PRIORITIES, SCENARIOS } from "../data/types";
 
 /**
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
- * Parameter names: f field id, o outline, c last crop, l limits, p priorities, s scenario, v view, g language.
+ * Parameter names: f field id, o outline, c last crop, l limits, p priorities, s scenario, v view, g language, m money.
  */
 export function encodeState(state: AppState): string {
   const params = new URLSearchParams();
@@ -19,6 +19,8 @@ export function encodeState(state: AppState): string {
   if (state.scenario !== DEFAULT_STATE.scenario) params.set('s', state.scenario);
   if (state.view !== DEFAULT_STATE.view) params.set('v', state.view);
   if (state.lang !== DEFAULT_STATE.lang) params.set('g', state.lang);
+  const money = Object.keys(state.money).sort().map(key => `${key}:${state.money[key]}`).join(';');
+  if (money) params.set('m', money);
   return params.toString();
 }
 
@@ -41,8 +43,25 @@ export function decodeState(query: string): AppState {
     scenario: SCENARIOS.find(scenario => scenario === params.get('s')) ?? DEFAULT_STATE.scenario,
     view: params.get('v') === 'simple' ? 'simple' : DEFAULT_STATE.view,
     lang: params.get('g') === 'it' ? 'it' : DEFAULT_STATE.lang,
-    money: {},
+    money: parseMoney(params.get('m') ?? ''),
   };
+}
+
+function parseMoney(value: string): Money {
+  const money: Money = {};
+  let count = 0;
+  for (const pair of value.split(';')) {
+    const parts = pair.split(':');
+    if (parts.length !== 2) continue;
+    const [key, raw] = parts;
+    if (!/^(p|s|on)\.[a-z0-9-]{1,32}$/.test(key) || !raw.trim()) continue;
+    const amount = Number(raw);
+    if (!Number.isFinite(amount) || amount < 0 || amount > 5000) continue;
+    if (key.startsWith('on.') && amount !== 0 && amount !== 1) continue;
+    money[key] = amount;
+    if (++count === 40) break;
+  }
+  return money;
 }
 
 function parseOutline(value: string): LngLat[] | null {

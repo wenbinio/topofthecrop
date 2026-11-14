@@ -1,4 +1,295 @@
 {
+  "economics": {
+    "crops": {
+      "durum": {
+        "yield": {
+          "value": 3,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 320,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 620,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      },
+      "chickpea": {
+        "yield": {
+          "value": 1.6,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 650,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 520,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      },
+      "faba": {
+        "yield": {
+          "value": 2.2,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 330,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 430,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      },
+      "vetch-oat": {
+        "yield": {
+          "value": 5.5,
+          "unit": "t/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "price": {
+          "value": 120,
+          "unit": "€/t",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "costs": {
+          "value": 380,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Agronomy trials and regional prices (to be chosen)",
+            "resolution": "regional",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        }
+      }
+    },
+    "support": [
+      {
+        "id": "basic-income",
+        "level": "eu",
+        "defaultOn": true,
+        "name": {
+          "en": "Basic income support",
+          "it": "Sostegno di base al reddito"
+        },
+        "condition": {
+          "en": "Paid on eligible hectares with entitlements.",
+          "it": "Pagato sugli ettari ammissibili con titoli."
+        },
+        "amount": {
+          "value": 160,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [],
+        "options": []
+      },
+      {
+        "id": "coupled-durum",
+        "level": "italy",
+        "defaultOn": true,
+        "name": {
+          "en": "Coupled support for durum wheat",
+          "it": "Sostegno accoppiato grano duro"
+        },
+        "condition": {
+          "en": "Durum wheat in central and southern Italy, certified seed.",
+          "it": "Grano duro nel Centro-Sud, seme certificato."
+        },
+        "amount": {
+          "value": 95,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [
+          "durum"
+        ],
+        "options": []
+      },
+      {
+        "id": "coupled-legumes",
+        "level": "italy",
+        "defaultOn": true,
+        "name": {
+          "en": "Coupled support for grain legumes",
+          "it": "Sostegno accoppiato leguminose da granella"
+        },
+        "condition": {
+          "en": "Grain legumes harvested as dry grain.",
+          "it": "Leguminose raccolte a granella secca."
+        },
+        "amount": {
+          "value": 60,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [
+          "chickpea",
+          "faba"
+        ],
+        "options": []
+      },
+      {
+        "id": "eco-rotation",
+        "level": "eu",
+        "defaultOn": true,
+        "name": {
+          "en": "Eco-scheme: rotation with legumes or forage",
+          "it": "Eco-schema: avvicendamento con leguminose o foraggere"
+        },
+        "condition": {
+          "en": "Needs a legume or forage in the rotation; limits on chemicals in that year.",
+          "it": "Serve una leguminosa o foraggera in rotazione; limiti ai prodotti chimici in quell'anno."
+        },
+        "amount": {
+          "value": 110,
+          "unit": "€/ha",
+          "scale": "area",
+          "source": {
+            "dataset": "Italian CAP Strategic Plan 2023–2027 (to be confirmed)",
+            "resolution": "national",
+            "url": ""
+          },
+          "confidence": "low",
+          "placeholder": true,
+          "asOf": "2026-10"
+        },
+        "crops": [],
+        "options": [
+          "chickpea-durum-durum",
+          "faba-durum-faba",
+          "vetch-oat-durum-durum"
+        ]
+      }
+    ]
+  },
   "field": {
     "id": "genzano-demo",
     "name": "Genzano di Lucania",
@@ -379,11 +670,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 610,
+          "value": 753,
           "unit": "€/ha",
           "range": [
-            480,
-            740
+            560,
+            940
           ],
           "scale": "area",
           "source": {
@@ -523,11 +814,11 @@
             "placeholder": true
           },
           {
-            "value": 610,
+            "value": 753,
             "unit": "€/ha",
             "range": [
-              480,
-              740
+              560,
+              940
             ],
             "scale": "area",
             "source": {
@@ -564,11 +855,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 540,
+          "value": 652,
           "unit": "€/ha",
           "range": [
-            400,
-            680
+            490,
+            820
           ],
           "scale": "area",
           "source": {
@@ -706,11 +997,11 @@
             "placeholder": true
           },
           {
-            "value": 540,
+            "value": 652,
             "unit": "€/ha",
             "range": [
-              400,
-              680
+              490,
+              820
             ],
             "scale": "area",
             "source": {
@@ -747,11 +1038,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 380,
+          "value": 653,
           "unit": "€/ha",
           "range": [
-            300,
-            470
+            490,
+            820
           ],
           "scale": "area",
           "source": {
@@ -888,11 +1179,11 @@
             "placeholder": true
           },
           {
-            "value": 380,
+            "value": 653,
             "unit": "€/ha",
             "range": [
-              300,
-              470
+              490,
+              820
             ],
             "scale": "area",
             "source": {
@@ -929,11 +1220,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 450,
+          "value": 595,
           "unit": "€/ha",
           "range": [
-            280,
-            600
+            450,
+            740
           ],
           "scale": "area",
           "source": {
@@ -1068,11 +1359,11 @@
             "placeholder": true
           },
           {
-            "value": 450,
+            "value": 595,
             "unit": "€/ha",
             "range": [
-              280,
-              600
+              450,
+              740
             ],
             "scale": "area",
             "source": {

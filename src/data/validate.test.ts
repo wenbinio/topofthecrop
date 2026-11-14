@@ -1,9 +1,38 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import fixture from '../../public/data/genzano-demo.json';
+import type { FieldBundle } from './types';
 import { loadBundle, validateBundle } from './validate';
 
 afterEach(() => vi.unstubAllGlobals());
 it('returns the valid fixture unchanged', () => expect(validateBundle(fixture)).toBe(fixture));
+it('accepts a bundle without economics', () => {
+  const bundle = validateBundle(structuredClone(fixture));
+  delete bundle.economics;
+  expect(validateBundle(bundle)).toBe(bundle);
+});
+
+const economicsMutations: [string, (bundle: FieldBundle) => void][] = [
+  ['missing crop', b => { Reflect.deleteProperty(b.economics!.crops, 'faba'); }],
+  ['unknown option', b => { b.economics!.support[0].options = ['unknown']; }],
+  ['duplicate support id', b => { b.economics!.support[1].id = b.economics!.support[0].id; }],
+  ['string yield', b => { b.economics!.crops.durum.yield.value = 'three'; }],
+  ['string price', b => { b.economics!.crops.durum.price.value = '320'; }],
+  ['nonfinite costs', b => { b.economics!.crops.durum.costs.value = NaN; }],
+  ['string amount', b => { b.economics!.support[0].amount.value = '160'; }],
+  ['missing source', b => { Reflect.deleteProperty(b.economics!.support[0].amount, 'source'); }],
+  ['missing translation', b => { Reflect.deleteProperty(b.economics!.support[0].name, 'it'); }],
+  ['missing condition', b => { Reflect.deleteProperty(b.economics!.support[0].condition, 'en'); }],
+  ['invalid level', b => { Object.assign(b.economics!.support[0], { level: 'local' }); }],
+  ['unknown crop', b => { Object.assign(b.economics!.support[0], { crops: ['maize'] }); }],
+  ['nonboolean default', b => { Object.assign(b.economics!.support[0], { defaultOn: 1 }); }],
+  ['nonarray support', b => { Object.assign(b.economics!, { support: {} }); }],
+  ['nonstring id', b => { Object.assign(b.economics!.support[0], { id: 5 }); }],
+];
+it.each(economicsMutations)('rejects economics with %s', (_name, mutate) => {
+  const bundle = validateBundle(structuredClone(fixture));
+  mutate(bundle);
+  expect(() => validateBundle(bundle)).toThrow(/^bundle:.*economics/);
+});
 
 const mutations: [string, (bundle: typeof fixture) => void][] = [
   ['findings', b => { b.findings.pop(); }],

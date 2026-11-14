@@ -17,37 +17,95 @@ const fact = (value, unit, range, scale, source, confidence, label, extra = {}) 
   value, ...(unit ? { unit } : {}), ...(range ? { range } : {}), scale, source, confidence, label, placeholder: true, ...extra,
 });
 
+const economicFact = (value, unit, source = src.trials) =>
+  fact(value, unit, undefined, 'area', source, 'low', undefined, { asOf: '2026-10' });
+const supportSource = { dataset: 'Italian CAP Strategic Plan 2023–2027 (to be confirmed)', resolution: 'national', url: '' };
+
+// PLACEHOLDER SUPPORT: the research track replaces this array with confirmed policy figures.
+const support = [
+  {
+    id: 'basic-income', level: 'eu', defaultOn: true,
+    name: { en: 'Basic income support', it: 'Sostegno di base al reddito' },
+    condition: { en: 'Paid on eligible hectares with entitlements.', it: 'Pagato sugli ettari ammissibili con titoli.' },
+    amount: economicFact(160, '€/ha', supportSource), crops: [], options: [],
+  },
+  {
+    id: 'coupled-durum', level: 'italy', defaultOn: true,
+    name: { en: 'Coupled support for durum wheat', it: 'Sostegno accoppiato grano duro' },
+    condition: { en: 'Durum wheat in central and southern Italy, certified seed.', it: 'Grano duro nel Centro-Sud, seme certificato.' },
+    amount: economicFact(95, '€/ha', supportSource), crops: ['durum'], options: [],
+  },
+  {
+    id: 'coupled-legumes', level: 'italy', defaultOn: true,
+    name: { en: 'Coupled support for grain legumes', it: 'Sostegno accoppiato leguminose da granella' },
+    condition: { en: 'Grain legumes harvested as dry grain.', it: 'Leguminose raccolte a granella secca.' },
+    amount: economicFact(60, '€/ha', supportSource), crops: ['chickpea', 'faba'], options: [],
+  },
+  {
+    id: 'eco-rotation', level: 'eu', defaultOn: true,
+    name: { en: 'Eco-scheme: rotation with legumes or forage', it: 'Eco-schema: avvicendamento con leguminose o foraggere' },
+    condition: { en: 'Needs a legume or forage in the rotation; limits on chemicals in that year.',
+      it: "Serve una leguminosa o foraggera in rotazione; limiti ai prodotti chimici in quell'anno." },
+    amount: economicFact(110, '€/ha', supportSource), crops: [],
+    options: ['chickpea-durum-durum', 'faba-durum-faba', 'vetch-oat-durum-durum'],
+  },
+];
+
+const cropEconomics = (yieldPerHa, price, costs) => ({
+  yield: economicFact(yieldPerHa, 't/ha'), price: economicFact(price, '€/t'), costs: economicFact(costs, '€/ha'),
+});
+const economics = {
+  crops: {
+    durum: cropEconomics(3.0, 320, 620),
+    chickpea: cropEconomics(1.6, 650, 520),
+    faba: cropEconomics(2.2, 330, 430),
+    'vetch-oat': cropEconomics(5.5, 120, 380),
+  },
+  support,
+};
+
 // scores[scenario][priority], 0 to 1
 const scores = (normal, drier, much) => {
   const row = ([income, water, soil, forage]) => ({ income, water, soil, forage });
   return { normal: row(normal), drier: row(drier), "much-drier": row(much) };
 };
 
-const option = (id, sequence, isCurrent, income, incomeRange, water, nitrogen, risk, sc, removedBy, flaggedBy, supportTag) => ({
-  id, isCurrent, sequence, firstHarvestYear: 2027,
-  facts: {
-    income: fact(income, "€/ha", incomeRange, "area", src.trials, "low", "fact.income", { asOf: "2026-10" }),
-    water: fact(water, undefined, undefined, "area", src.trials, "low", "fact.water"),
-    nitrogen: fact(nitrogen, "kg N/ha", [Math.max(0, nitrogen - 20), nitrogen + 20], "area", src.trials, "low", "fact.nitrogen"),
-    risk: fact(risk, undefined, undefined, "area", src.trials, "low", "fact.risk"),
-  },
-  scores: sc, removedBy, flaggedBy, supportTag,
-  why: {
-    suggested: `why.${id}.suggested`,
-    evidence: [
-      fact(4, "months", [3, 5], "field", src.landsat, "fair", "evidence.bareMonths"),
-      fact(9, "days", [4, 15], "area", src.power, "fair", "evidence.hotDays"),
-    ],
-    benefits: [
-      fact(nitrogen, "kg N/ha", [Math.max(0, nitrogen - 20), nitrogen + 20], "area", src.trials, "low", "benefit.nitrogen"),
-      fact(income, "€/ha", incomeRange, "area", src.trials, "low", "benefit.income", { asOf: "2026-10" }),
-    ],
-    unknowns: ["unknown.prices", "unknown.soilDepth", "unknown.fieldHistory"],
-    checkLocally: isCurrent ? ["check.adviser"] : ["check.buyer", "check.seed", "check.adviser"],
-  },
-});
+const option = (id, sequence, isCurrent, water, nitrogen, risk, sc, removedBy, flaggedBy, supportTag) => {
+  const income = Math.round(sequence.reduce((sum, crop) => {
+    const figures = economics.crops[crop];
+    const payments = economics.support.filter(item => item.defaultOn &&
+      (!item.options.length || item.options.includes(id)) && (!item.crops.length || item.crops.includes(crop)));
+    return sum + figures.yield.value * figures.price.value - figures.costs.value +
+      payments.reduce((total, item) => total + item.amount.value, 0);
+  }, 0) / sequence.length);
+  const incomeRange = [0.75, 1.25].map(factor => Math.round(income * factor / 10) * 10);
+  return {
+    id, isCurrent, sequence, firstHarvestYear: 2027,
+    facts: {
+      income: fact(income, "€/ha", incomeRange, "area", src.trials, "low", "fact.income", { asOf: "2026-10" }),
+      water: fact(water, undefined, undefined, "area", src.trials, "low", "fact.water"),
+      nitrogen: fact(nitrogen, "kg N/ha", [Math.max(0, nitrogen - 20), nitrogen + 20], "area", src.trials, "low", "fact.nitrogen"),
+      risk: fact(risk, undefined, undefined, "area", src.trials, "low", "fact.risk"),
+    },
+    scores: sc, removedBy, flaggedBy, supportTag,
+    why: {
+      suggested: `why.${id}.suggested`,
+      evidence: [
+        fact(4, "months", [3, 5], "field", src.landsat, "fair", "evidence.bareMonths"),
+        fact(9, "days", [4, 15], "area", src.power, "fair", "evidence.hotDays"),
+      ],
+      benefits: [
+        fact(nitrogen, "kg N/ha", [Math.max(0, nitrogen - 20), nitrogen + 20], "area", src.trials, "low", "benefit.nitrogen"),
+        fact(income, "€/ha", incomeRange, "area", src.trials, "low", "benefit.income", { asOf: "2026-10" }),
+      ],
+      unknowns: ["unknown.prices", "unknown.soilDepth", "unknown.fieldHistory"],
+      checkLocally: isCurrent ? ["check.adviser"] : ["check.buyer", "check.seed", "check.adviser"],
+    },
+  };
+};
 
 const bundle = {
+  economics,
   field: {
     id: "genzano-demo",
     name: "Genzano di Lucania",
@@ -104,13 +162,13 @@ const bundle = {
     },
   },
   options: [
-    option("chickpea-durum-durum", ["chickpea", "durum", "durum"], false, 610, [480, 740], "low", 40, "medium",
+    option("chickpea-durum-durum", ["chickpea", "durum", "durum"], false, "low", 40, "medium",
       scores([0.8, 0.7, 0.75, 0.1], [0.75, 0.75, 0.75, 0.1], [0.6, 0.8, 0.75, 0.1]), ["cereal-machinery"], ["no-buyer", "broomrape"], true),
-    option("faba-durum-faba", ["faba", "durum", "faba"], false, 540, [400, 680], "medium", 60, "medium",
+    option("faba-durum-faba", ["faba", "durum", "faba"], false, "medium", 60, "medium",
       scores([0.7, 0.5, 0.9, 0.3], [0.6, 0.45, 0.9, 0.3], [0.45, 0.4, 0.9, 0.3]), [], ["no-buyer", "broomrape"], true),
-    option("vetch-oat-durum-durum", ["vetch-oat", "durum", "durum"], false, 380, [300, 470], "low", 30, "low",
+    option("vetch-oat-durum-durum", ["vetch-oat", "durum", "durum"], false, "low", 30, "low",
       scores([0.45, 0.8, 0.7, 0.95], [0.5, 0.85, 0.7, 0.95], [0.55, 0.9, 0.7, 0.9]), [], ["no-buyer"], true),
-    option("durum-durum-durum", ["durum", "durum", "durum"], true, 450, [280, 600], "medium", 0, "high",
+    option("durum-durum-durum", ["durum", "durum", "durum"], true, "medium", 0, "high",
       scores([0.55, 0.4, 0.2, 0.05], [0.4, 0.35, 0.2, 0.05], [0.25, 0.3, 0.2, 0.05]), [], [], false),
   ],
 };
