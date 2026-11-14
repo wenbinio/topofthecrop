@@ -589,42 +589,54 @@
   "field": {
     "id": "genzano-demo",
     "name": "Genzano di Lucania",
-    "areaHa": 3.1,
+    "areaHa": 6.5,
     "outline": {
       "type": "Polygon",
       "coordinates": [
         [
           [
-            16.05917,
-            40.86615
+            16.09393,
+            40.82501
           ],
           [
-            16.06024,
-            40.86651
+            16.09426,
+            40.824
           ],
           [
-            16.0611,
-            40.86646
+            16.09388,
+            40.824
           ],
           [
-            16.06153,
-            40.8661
+            16.09416,
+            40.82134
           ],
           [
-            16.0617,
-            40.86545
+            16.09079,
+            40.82322
           ],
           [
-            16.06209,
-            40.8648
+            16.09141,
+            40.82429
           ],
           [
-            16.06196,
-            40.86399
+            16.09235,
+            40.82417
           ],
           [
-            16.05917,
-            40.86615
+            16.09251,
+            40.82472
+          ],
+          [
+            16.09251,
+            40.82471
+          ],
+          [
+            16.09253,
+            40.82471
+          ],
+          [
+            16.09393,
+            40.82501
           ]
         ]
       ]
@@ -633,9 +645,9 @@
   "lastCrop": {
     "crop": "durum",
     "source": {
-      "dataset": "EU Crop Map (JRC)",
+      "dataset": "EU crop map 2022 (JRC)",
       "resolution": "10 m",
-      "url": "https://joint-research-centre.ec.europa.eu/"
+      "url": "https://doi.org/10.1038/s41597-024-03884-y"
     }
   },
   "findings": [
@@ -643,21 +655,22 @@
       "title": "finding.bare.title",
       "detail": "finding.bare.detail",
       "fact": {
-        "value": 4,
+        "value": 2,
         "unit": "months",
         "range": [
-          3,
-          5
+          1,
+          6
         ],
         "scale": "field",
         "source": {
-          "dataset": "Landsat / HLS",
-          "resolution": "30 m",
-          "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+          "dataset": "NASA MODIS (MOD13Q1)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
         },
         "confidence": "fair",
         "label": "finding.bare.fact",
-        "placeholder": true
+        "asOf": "2001-2020",
+        "placeholder": false
       },
       "signals": {
         "greenness": "falling",
@@ -675,21 +688,22 @@
       "title": "finding.heat.title",
       "detail": "finding.heat.detail",
       "fact": {
-        "value": 9,
+        "value": 4,
         "unit": "days",
         "range": [
-          4,
-          15
+          0,
+          8
         ],
         "scale": "area",
         "source": {
-          "dataset": "NASA POWER",
-          "resolution": "about 50 km",
-          "url": "https://power.larc.nasa.gov/"
+          "dataset": "ERA5-Land (NASA POWER check)",
+          "resolution": "about 11 km",
+          "url": "https://doi.org/10.24381/cds.e2161bac"
         },
         "confidence": "fair",
         "label": "finding.heat.fact",
-        "placeholder": true
+        "asOf": "2001-2020",
+        "placeholder": false
       },
       "signals": {
         "greenness": "normal",
@@ -706,21 +720,22 @@
       "title": "finding.dry.title",
       "detail": "finding.dry.detail",
       "fact": {
-        "value": -18,
-        "unit": "%",
+        "value": 156,
+        "unit": "mm",
         "range": [
-          -30,
-          -5
+          97,
+          200
         ],
         "scale": "area",
         "source": {
-          "dataset": "GPM IMERG",
-          "resolution": "about 10 km",
-          "url": "https://gpm.nasa.gov/data/imerg"
+          "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+          "resolution": "6 to 11 km",
+          "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
         },
         "confidence": "fair",
         "label": "finding.dry.fact",
-        "placeholder": true
+        "asOf": "2001-2020",
+        "placeholder": false
       },
       "signals": {
         "greenness": "normal",
@@ -737,9 +752,10 @@
   "year": {
     "months": [
       {
-        "cover": "bare",
+        "cover": "part",
         "risks": [
-          "dry"
+          "dry",
+          "rain"
         ]
       },
       {
@@ -753,14 +769,16 @@
         "risks": []
       },
       {
-        "cover": "green",
+        "cover": "part",
         "risks": [
           "frost"
         ]
       },
       {
-        "cover": "green",
-        "risks": []
+        "cover": "part",
+        "risks": [
+          "frost"
+        ]
       },
       {
         "cover": "green",
@@ -794,26 +812,32 @@
       },
       {
         "cover": "bare",
-        "risks": [
-          "rain"
-        ]
+        "risks": []
       }
     ],
     "risksByScenario": {
       "drier": [
         [
-          "dry"
+          "dry",
+          "rain"
         ],
         [
+          "rain",
           "dry"
         ],
         [],
         [
           "frost"
         ],
-        [],
-        [],
-        [],
+        [
+          "frost"
+        ],
+        [
+          "frost"
+        ],
+        [
+          "heat"
+        ],
         [
           "heat"
         ],
@@ -822,146 +846,150 @@
         ],
         [],
         [],
-        [
-          "rain"
-        ]
+        []
       ],
       "much-drier": [
         [
-          "dry"
-        ],
-        [
-          "dry"
-        ],
-        [
-          "dry"
-        ],
-        [],
-        [],
-        [],
-        [
-          "heat"
-        ],
-        [
-          "heat"
-        ],
-        [
-          "heat"
-        ],
-        [],
-        [],
-        [
+          "dry",
           "rain"
+        ],
+        [
+          "rain",
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [
+          "frost"
+        ],
+        [
+          "frost"
+        ],
+        [
+          "frost"
+        ],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [],
+        [],
+        [
+          "dry"
         ]
       ]
     },
     "hotDays": {
       "normal": {
         "now": {
-          "value": 9,
+          "value": 4,
           "unit": "days",
           "range": [
-            4,
-            15
+            0,
+            8
           ],
           "scale": "area",
           "source": {
-            "dataset": "NASA POWER",
-            "resolution": "about 50 km",
-            "url": "https://power.larc.nasa.gov/"
+            "dataset": "ERA5-Land (NASA POWER check)",
+            "resolution": "about 11 km",
+            "url": "https://doi.org/10.24381/cds.e2161bac"
           },
           "confidence": "fair",
           "label": "year.hotNow",
-          "placeholder": true
+          "asOf": "2001-2020",
+          "placeholder": false
         },
         "by2050": {
-          "value": 17,
+          "value": 5.4,
           "unit": "days",
           "range": [
-            11,
-            24
+            4.2,
+            6.9
           ],
           "scale": "area",
           "source": {
-            "dataset": "NEX-GDDP-CMIP6",
-            "resolution": "about 25 km",
-            "url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6"
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
           },
           "confidence": "low",
           "label": "year.hot2050",
-          "placeholder": true
+          "asOf": "2041-2060",
+          "placeholder": false
         }
       },
       "drier": {
         "now": {
-          "value": 12,
+          "value": 8,
           "unit": "days",
-          "range": [
-            6,
-            19
-          ],
           "scale": "area",
           "source": {
-            "dataset": "NASA POWER",
-            "resolution": "about 50 km",
-            "url": "https://power.larc.nasa.gov/"
+            "dataset": "ERA5-Land (NASA POWER check)",
+            "resolution": "about 11 km",
+            "url": "https://doi.org/10.24381/cds.e2161bac"
           },
           "confidence": "fair",
           "label": "year.hotNow",
-          "placeholder": true
+          "asOf": "2001-2020",
+          "placeholder": false
         },
         "by2050": {
-          "value": 21,
+          "value": 10,
           "unit": "days",
           "range": [
-            14,
-            29
+            8.8,
+            13.7
           ],
           "scale": "area",
           "source": {
-            "dataset": "NEX-GDDP-CMIP6",
-            "resolution": "about 25 km",
-            "url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6"
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
           },
           "confidence": "low",
           "label": "year.hot2050",
-          "placeholder": true
+          "asOf": "2041-2060",
+          "placeholder": false
         }
       },
       "much-drier": {
         "now": {
-          "value": 16,
+          "value": 13,
           "unit": "days",
-          "range": [
-            9,
-            24
-          ],
           "scale": "area",
           "source": {
-            "dataset": "NASA POWER",
-            "resolution": "about 50 km",
-            "url": "https://power.larc.nasa.gov/"
+            "dataset": "ERA5-Land (NASA POWER check)",
+            "resolution": "about 11 km",
+            "url": "https://doi.org/10.24381/cds.e2161bac"
           },
           "confidence": "fair",
           "label": "year.hotNow",
-          "placeholder": true
+          "asOf": "2001-2026",
+          "placeholder": false
         },
         "by2050": {
-          "value": 27,
+          "value": 15,
           "unit": "days",
           "range": [
-            18,
-            36
+            13.8,
+            18.7
           ],
           "scale": "area",
           "source": {
-            "dataset": "NEX-GDDP-CMIP6",
-            "resolution": "about 25 km",
-            "url": "https://www.nccs.nasa.gov/services/data-collections/land-based-products/nex-gddp-cmip6"
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
           },
           "confidence": "low",
           "label": "year.hot2050",
-          "placeholder": true
+          "asOf": "2041-2060",
+          "placeholder": false
         }
       }
     }
@@ -1069,38 +1097,94 @@
         "suggested": "why.chickpea-durum-durum.suggested",
         "evidence": [
           {
-            "value": 4,
+            "value": 2,
             "unit": "months",
             "range": [
-              3,
-              5
+              1,
+              6
             ],
             "scale": "field",
             "source": {
-              "dataset": "Landsat / HLS",
-              "resolution": "30 m",
-              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+              "dataset": "NASA MODIS (MOD13Q1)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
             },
             "confidence": "fair",
             "label": "evidence.bareMonths",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
           },
           {
-            "value": 9,
+            "value": 4,
             "unit": "days",
             "range": [
-              4,
-              15
+              0,
+              8
             ],
             "scale": "area",
             "source": {
-              "dataset": "NASA POWER",
-              "resolution": "about 50 km",
-              "url": "https://power.larc.nasa.gov/"
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
             },
             "confidence": "fair",
             "label": "evidence.hotDays",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 542,
+            "unit": "mm",
+            "range": [
+              418,
+              631
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "evidence.rainSeason",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 509,
+            "unit": "mm",
+            "range": [
+              487,
+              544
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "FAO-56 crop water need from ERA5-Land",
+              "resolution": "about 11 km",
+              "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+            },
+            "confidence": "fair",
+            "label": "evidence.durumNeed",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 37,
+            "unit": "%",
+            "range": [
+              5.6,
+              76.4
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "SoilGrids 2.0 (ISRIC)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5194/soil-7-217-2021"
+            },
+            "confidence": "fair",
+            "label": "evidence.clay",
+            "asOf": "SoilGrids 2.0",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -1252,38 +1336,94 @@
         "suggested": "why.faba-durum-faba.suggested",
         "evidence": [
           {
-            "value": 4,
+            "value": 2,
             "unit": "months",
             "range": [
-              3,
-              5
+              1,
+              6
             ],
             "scale": "field",
             "source": {
-              "dataset": "Landsat / HLS",
-              "resolution": "30 m",
-              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+              "dataset": "NASA MODIS (MOD13Q1)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
             },
             "confidence": "fair",
             "label": "evidence.bareMonths",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
           },
           {
-            "value": 9,
+            "value": 4,
             "unit": "days",
             "range": [
-              4,
-              15
+              0,
+              8
             ],
             "scale": "area",
             "source": {
-              "dataset": "NASA POWER",
-              "resolution": "about 50 km",
-              "url": "https://power.larc.nasa.gov/"
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
             },
             "confidence": "fair",
             "label": "evidence.hotDays",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 542,
+            "unit": "mm",
+            "range": [
+              418,
+              631
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "evidence.rainSeason",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 509,
+            "unit": "mm",
+            "range": [
+              487,
+              544
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "FAO-56 crop water need from ERA5-Land",
+              "resolution": "about 11 km",
+              "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+            },
+            "confidence": "fair",
+            "label": "evidence.durumNeed",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 37,
+            "unit": "%",
+            "range": [
+              5.6,
+              76.4
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "SoilGrids 2.0 (ISRIC)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5194/soil-7-217-2021"
+            },
+            "confidence": "fair",
+            "label": "evidence.clay",
+            "asOf": "SoilGrids 2.0",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -1434,38 +1574,94 @@
         "suggested": "why.vetch-oat-durum-durum.suggested",
         "evidence": [
           {
-            "value": 4,
+            "value": 2,
             "unit": "months",
             "range": [
-              3,
-              5
+              1,
+              6
             ],
             "scale": "field",
             "source": {
-              "dataset": "Landsat / HLS",
-              "resolution": "30 m",
-              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+              "dataset": "NASA MODIS (MOD13Q1)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
             },
             "confidence": "fair",
             "label": "evidence.bareMonths",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
           },
           {
-            "value": 9,
+            "value": 4,
             "unit": "days",
             "range": [
-              4,
-              15
+              0,
+              8
             ],
             "scale": "area",
             "source": {
-              "dataset": "NASA POWER",
-              "resolution": "about 50 km",
-              "url": "https://power.larc.nasa.gov/"
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
             },
             "confidence": "fair",
             "label": "evidence.hotDays",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 542,
+            "unit": "mm",
+            "range": [
+              418,
+              631
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "evidence.rainSeason",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 509,
+            "unit": "mm",
+            "range": [
+              487,
+              544
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "FAO-56 crop water need from ERA5-Land",
+              "resolution": "about 11 km",
+              "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+            },
+            "confidence": "fair",
+            "label": "evidence.durumNeed",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 37,
+            "unit": "%",
+            "range": [
+              5.6,
+              76.4
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "SoilGrids 2.0 (ISRIC)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5194/soil-7-217-2021"
+            },
+            "confidence": "fair",
+            "label": "evidence.clay",
+            "asOf": "SoilGrids 2.0",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -1614,38 +1810,94 @@
         "suggested": "why.durum-durum-durum.suggested",
         "evidence": [
           {
-            "value": 4,
+            "value": 2,
             "unit": "months",
             "range": [
-              3,
-              5
+              1,
+              6
             ],
             "scale": "field",
             "source": {
-              "dataset": "Landsat / HLS",
-              "resolution": "30 m",
-              "url": "https://www.earthdata.nasa.gov/data/projects/hls"
+              "dataset": "NASA MODIS (MOD13Q1)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
             },
             "confidence": "fair",
             "label": "evidence.bareMonths",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
           },
           {
-            "value": 9,
+            "value": 4,
             "unit": "days",
             "range": [
-              4,
-              15
+              0,
+              8
             ],
             "scale": "area",
             "source": {
-              "dataset": "NASA POWER",
-              "resolution": "about 50 km",
-              "url": "https://power.larc.nasa.gov/"
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
             },
             "confidence": "fair",
             "label": "evidence.hotDays",
-            "placeholder": true
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 542,
+            "unit": "mm",
+            "range": [
+              418,
+              631
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "evidence.rainSeason",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 509,
+            "unit": "mm",
+            "range": [
+              487,
+              544
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "FAO-56 crop water need from ERA5-Land",
+              "resolution": "about 11 km",
+              "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+            },
+            "confidence": "fair",
+            "label": "evidence.durumNeed",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 37,
+            "unit": "%",
+            "range": [
+              5.6,
+              76.4
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "SoilGrids 2.0 (ISRIC)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5194/soil-7-217-2021"
+            },
+            "confidence": "fair",
+            "label": "evidence.clay",
+            "asOf": "SoilGrids 2.0",
+            "placeholder": false
           }
         ],
         "benefits": [

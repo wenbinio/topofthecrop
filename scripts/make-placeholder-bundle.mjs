@@ -1,7 +1,10 @@
-// Writes public/data/genzano-demo.json with made-up placeholder figures.
-// The data phase replaces this file with real numbers in the same shape (see src/data/types.ts).
+// Writes public/data/genzano-demo.json, the one file the app reads.
+// Real: the field, what the satellites see, its year and the evidence (from field.json via real-field.mjs),
+//       and the researched prices and support (docs/support-and-prices.md).
+// Still made up: yields, costs, and each rotation's water, nitrogen, risk and priority scores.
 // Run: node scripts/make-placeholder-bundle.mjs
 import { mkdirSync, writeFileSync } from "node:fs";
+import { realField } from "./real-field.mjs";
 
 const src = {
   landsat: { dataset: "Landsat / HLS", resolution: "30 m", url: "https://www.earthdata.nasa.gov/data/projects/hls" },
@@ -162,10 +165,7 @@ const option = (id, sequence, isCurrent, water, nitrogen, risk, sc, removedBy, f
     scores: sc, removedBy, flaggedBy, supportTag,
     why: {
       suggested: `why.${id}.suggested`,
-      evidence: [
-        fact(4, "months", [3, 5], "field", src.landsat, "fair", "evidence.bareMonths"),
-        fact(9, "days", [4, 15], "area", src.power, "fair", "evidence.hotDays"),
-      ],
+      evidence: realField.evidence,
       benefits: [
         fact(nitrogen, "kg N/ha", [Math.max(0, nitrogen - 20), nitrogen + 20], "area", src.trials, "low", "benefit.nitrogen"),
         fact(income, "€/ha", incomeRange, "area", src.trials, "low", "benefit.income", { asOf: "2026-10" }),
@@ -178,63 +178,11 @@ const option = (id, sequence, isCurrent, water, nitrogen, risk, sc, removedBy, f
 
 const bundle = {
   economics,
-  field: {
-    id: "genzano-demo",
-    name: "Genzano di Lucania",
-    areaHa: 3.1,
-    // Traced by eye from the aerial photo: a field east of the town, between a road, a hedge and a gully.
-    // It is a real field shape but not one the team chose; replace it when the demo field is decided.
-    outline: {
-      type: "Polygon",
-      coordinates: [[[16.05917, 40.86615], [16.06024, 40.86651], [16.0611, 40.86646], [16.06153, 40.8661], [16.0617, 40.86545],
-        [16.06209, 40.8648], [16.06196, 40.86399], [16.05917, 40.86615]]],
-    },
-  },
-  lastCrop: { crop: "durum", source: src.cropmap },
-  findings: [
-    {
-      title: "finding.bare.title", detail: "finding.bare.detail",
-      fact: fact(4, "months", [3, 5], "field", src.landsat, "fair", "finding.bare.fact"),
-      // Bare soil after harvest looks like decline to a satellite; expectedBare says it is not.
-      signals: { greenness: "falling", temperature: "rising", waterUse: "falling" },
-      weatherDriven: false,
-      expectedBare: true,
-      addressedBy: ["vetch-oat-durum-durum", "faba-durum-faba"],
-    },
-    {
-      title: "finding.heat.title", detail: "finding.heat.detail",
-      fact: fact(9, "days", [4, 15], "area", src.power, "fair", "finding.heat.fact"),
-      signals: { greenness: "normal", temperature: "rising", waterUse: "falling" },
-      weatherDriven: true,
-      addressedBy: ["chickpea-durum-durum", "vetch-oat-durum-durum"],
-    },
-    {
-      title: "finding.dry.title", detail: "finding.dry.detail",
-      fact: fact(-18, "%", [-30, -5], "area", src.gpm, "fair", "finding.dry.fact"),
-      signals: { greenness: "normal", temperature: "normal", waterUse: "falling" },
-      weatherDriven: true,
-      addressedBy: ["chickpea-durum-durum", "faba-durum-faba"],
-    },
-  ],
-  year: {
-    // October first
-    months: [
-      { cover: "bare", risks: ["dry"] }, { cover: "part", risks: ["rain"] }, { cover: "part", risks: [] },
-      { cover: "green", risks: ["frost"] }, { cover: "green", risks: [] }, { cover: "green", risks: ["frost"] },
-      { cover: "green", risks: [] }, { cover: "green", risks: ["heat"] }, { cover: "part", risks: ["heat"] },
-      { cover: "bare", risks: [] }, { cover: "bare", risks: [] }, { cover: "bare", risks: ["rain"] },
-    ],
-    // Risk icons for the slider's other two stops (the first stop uses `months`). October first.
-    risksByScenario: {
-      drier: [["dry"], ["dry"], [], ["frost"], [], [], [], ["heat"], ["heat"], [], [], ["rain"]],
-      "much-drier": [["dry"], ["dry"], ["dry"], [], [], [], ["heat"], ["heat"], ["heat"], [], [], ["rain"]],
-    },
-    hotDays: {
-      normal: { now: fact(9, "days", [4, 15], "area", src.power, "fair", "year.hotNow"), by2050: fact(17, "days", [11, 24], "area", src.cmip6, "low", "year.hot2050") },
-      drier: { now: fact(12, "days", [6, 19], "area", src.power, "fair", "year.hotNow"), by2050: fact(21, "days", [14, 29], "area", src.cmip6, "low", "year.hot2050") },
-      "much-drier": { now: fact(16, "days", [9, 24], "area", src.power, "fair", "year.hotNow"), by2050: fact(27, "days", [18, 36], "area", src.cmip6, "low", "year.hot2050") },
-    },
-  },
+  // The field, what the satellites see and its year come from the team's field.json (scripts/real-field.mjs).
+  field: realField.field,
+  lastCrop: realField.lastCrop,
+  findings: realField.findings,
+  year: realField.year,
   options: [
     option("chickpea-durum-durum", ["chickpea", "durum", "durum"], false, "low", 40, "medium",
       scores([0.8, 0.7, 0.75, 0.1], [0.75, 0.75, 0.75, 0.1], [0.6, 0.8, 0.75, 0.1]), ["cereal-machinery"], ["no-buyer", "broomrape"], true),
