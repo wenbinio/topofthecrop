@@ -14,7 +14,7 @@ import type { EdgeRequest, MapTarget } from "../components/Map";
 import { Button } from "../components/ui";
 
 /** Where the map opens before the bundle arrives: the Genzano demo field. */
-const DEMO_CENTRE: LngLat = [16.0611, 40.8656];
+const DEMO_CENTRE: LngLat = [16.0928, 40.8234];
 const OPEN_ZOOM = 15;
 
 type Mode =
