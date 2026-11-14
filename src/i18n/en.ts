@@ -86,9 +86,26 @@ export const en = {
   "options.support": "Support",
   "options.supportLong": "Public support may apply",
   "options.ruledOut": "{n} ruled out: {limits}",
-  "options.headline": "Best fit: {crop}",
   "options.next": "Your field's year",
   "options.openWhy": "Why this option?",
+  "options.plant": "Plant {crop} next",
+  "options.stay": "Staying with durum fits best",
+  "options.adviser": "A suggestion to check with your adviser.",
+  "options.priorities": "Your priorities",
+
+  // plain reasons for a rotation, one per chosen priority
+  "reason.income.more": "About {diff} €/ha a year more than durum after durum",
+  "reason.income.less": "About {diff} €/ha a year less than durum after durum",
+  "reason.income.same": "Earns about the same as durum after durum",
+  "reason.income.current": "Earns about {income} €/ha a year",
+  "reason.income.plain": "Earns about {income} €/ha a year",
+  "reason.soil.nitrogen": "Leaves about {n} kg of nitrogen per hectare for the next crop",
+  "reason.soil.none": "Adds no nitrogen; the soil keeps giving",
+  "reason.water.low": "Needs little water",
+  "reason.water.medium": "Needs a middling amount of water",
+  "reason.water.high": "Needs a lot of water",
+  "reason.forage.yes": "Gives a forage cut in the vetch-oat year",
+  "reason.forage.no": "Gives no forage",
 
   // flags: one short warning per chosen limit that keeps an option but warns
   "flag.no-irrigation": "Irrigation",
@@ -228,7 +245,7 @@ export const en = {
 
   "priority.income": "Income",
   "priority.water": "Water",
-  "priority.soil": "Soil",
+  "priority.soil": "Soil and nitrogen",
   "priority.forage": "Forage",
 
   // findings (keys from the bundle)
@@ -295,7 +312,7 @@ export const en = {
   "path.limit.broomrape": "You have seen broomrape before",
   "path.priority.income": "You chose income",
   "path.priority.water": "You chose water",
-  "path.priority.soil": "You chose soil",
+  "path.priority.soil": "You chose soil and nitrogen",
   "path.priority.forage": "You chose forage",
   "path.priority.none": "You chose no priorities",
 

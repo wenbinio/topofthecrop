@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
-import type { Fact, FieldBundle, Limit } from "../data/types";
+import type { Fact, FieldBundle, Limit, Option } from "../data/types";
 import { LIMITS } from "../data/types";
 import { useLang, useT } from "../i18n";
 import { resolveMoney } from "../money/money";
 import { rankOptions } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
-import { optionCrop } from "../components/Crops";
 import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
@@ -13,13 +12,40 @@ import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
 import { OptionRow } from "../components/OptionRow";
 import { YearStrip } from "../components/YearStrip";
 import { BottomBar, LinkButton, SectionTitle } from "../components/ui";
+import { PriorityChips, ReasonList } from "../components/Reasons";
+import { reasonsFor } from "../ranking/reasons";
+import type { RankedOption } from "../ranking/rank";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
+
+/** What to plant next and why, in a few plain lines. */
+function Recommendation({ best, current, simple }: { best: RankedOption | undefined; current: Option | undefined; simple: boolean }) {
+  const t = useT();
+  const lang = useLang();
+  const [state] = useAppState();
+  if (!best) return null;
+  const option = best.option;
+  const headline = option.isCurrent
+    ? t("options.stay")
+    : t("options.plant", { crop: t(`crop.${option.sequence[0]}`).toLocaleLowerCase(lang) });
+  return (
+    <div className="px-4 pt-4 pb-1" data-testid="recommendation" data-option-id={option.id}>
+      <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
+        {headline}
+      </h1>
+      <div className="mt-2">
+        <ReasonList reasons={reasonsFor(option, current, state.priorities)} option={option} testId="rec-reasons" />
+      </div>
+      <p className="mt-2 text-small text-ink-soft">{t("options.adviser")}</p>
+    </div>
+  );
+}
 
 export default function Options({ bundle }: { bundle: FieldBundle }) {
   const t = useT();
   const lang = useLang();
   const to = useTo();
-  const [state] = useAppState();
+  const [state, setState] = useAppState();
+  const current = bundle.options.find((o) => o.isCurrent);
   const { ranked, removed } = rankOptions({
     options: bundle.options,
     limits: state.limits,
@@ -39,18 +65,12 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
 
   return (
     <div className="flex flex-col flex-1">
-      {simple ? (
-        <div className="px-4 pt-4 pb-3">
-          <h1 className="text-head">
-            {best ? t("options.headline", { crop: t(`crop.${optionCrop(best.option)}`) }) : null}
-          </h1>
-        </div>
-      ) : (
+      {simple ? null : (
         <div className="px-4 pt-3 pb-3 bg-surface border-b border-line">
           <div className="flex items-center gap-3">
             <FieldShape ring={openRing(bundle.field.outline.coordinates)} className="w-12 h-12 flex-none" />
             <div className="min-w-0">
-              <h1 className="text-big">{bundle.field.name}</h1>
+              <p className="text-big font-bold">{bundle.field.name}</p>
               <p className="text-small font-bold text-ink-soft">
                 {formatNumber(bundle.field.areaHa, lang)} ha
               </p>
@@ -61,6 +81,12 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           </div>
         </div>
       )}
+
+      <Recommendation best={best} current={current} simple={simple} />
+      <div className="px-4 pt-2">
+        <p className="text-small font-bold text-ink-soft mb-1">{t("options.priorities")}</p>
+        <PriorityChips chosen={state.priorities} onChange={(priorities) => setState({ priorities })} />
+      </div>
 
       <SectionTitle>{t("options.seen")}</SectionTitle>
       <Findings findings={bundle.findings} view={state.view} />

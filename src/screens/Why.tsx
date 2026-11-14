@@ -4,6 +4,8 @@ import type { Economics, Fact, FieldBundle, Option } from "../data/types";
 import { optionMoney } from "../money/money";
 import { buildPath } from "../ranking/diagnose";
 import { rankOptions } from "../ranking/rank";
+import { reasonsFor } from "../ranking/reasons";
+import { ReasonList } from "../components/Reasons";
 import { useLang, useT } from "../i18n";
 import { useAppState, useTo } from "../state/useAppState";
 import { CropSequence, optionCrop } from "../components/Crops";
@@ -206,6 +208,13 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
       </Section>
 
       <Section title={t("why.h.suggested")}>
+        <div className="my-2">
+          <ReasonList
+            reasons={reasonsFor(option, bundle.options.find((o) => o.isCurrent), state.priorities)}
+            option={option}
+            testId="why-reasons"
+          />
+        </div>
         <ol className="flex flex-col gap-1 my-2" data-testid="why-path">
           {path.map((key, i) => (
             <li key={i} className="flex gap-2 text-body">

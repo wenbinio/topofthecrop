@@ -3,15 +3,9 @@ import type { FieldBundle, Limit, Priority } from "../data/types";
 import { CROPS, LIMITS, PRIORITIES } from "../data/types";
 import { useT } from "../i18n";
 import { useAppState, useGo } from "../state/useAppState";
-import { CheckIcon, CropIcon, DropIcon, EuroIcon, BareSoilIcon, SheafIcon } from "../components/Icons";
+import { CheckIcon, CropIcon } from "../components/Icons";
+import { PRIORITY_ICON } from "../components/Reasons";
 import { Button, BottomBar, SectionTitle } from "../components/ui";
-
-const PRIORITY_ICON: Record<Priority, typeof DropIcon> = {
-  income: EuroIcon,
-  water: DropIcon,
-  soil: BareSoilIcon,
-  forage: SheafIcon,
-};
 
 function Choice({
   on,
