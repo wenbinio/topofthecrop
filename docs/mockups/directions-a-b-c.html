@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800&family=Barlow+Semi+Condensed:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Rubik:wght@400;500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;color:#1b1b1b;font-family:Inter,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45}
+.page{max-width:1000px;margin:0 auto;padding:32px 16px 64px}
+.page>h1{font-size:28px;font-weight:600;letter-spacing:-.01em}
+.page>p{margin-top:6px;color:#444}
+.page>p.ph{margin-top:10px;font-weight:600;color:#1b1b1b}
+.band{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:40px 0;border-top:1px solid #ddd;margin-top:32px}
+.band .letter{font-size:96px;font-weight:600;line-height:1}
+.band h2{font-size:20px;font-weight:600;margin-top:8px}
+.band .aim{color:#444;margin-top:6px}
+.phones{display:flex;gap:28px;flex-wrap:wrap}
+.cap{font-size:13px;color:#666;margin-bottom:8px}
+@media (max-width:760px){.band{grid-template-columns:1fr}}
+
+/* phone shell, shared geometry only */
+.ph-wrap{width:300px}
+.phone{width:300px;height:620px;overflow:hidden;position:relative;border:8px solid #1b1b1b;border-radius:30px;background:#fff}
+.phone>.scr{position:absolute;inset:0;display:flex;flex-direction:column}
+.phone>.scr>*{flex-shrink:0}
+
+/* ================= A · FIELD INSTRUMENT ================= */
+.A{font-family:Barlow,Arial,sans-serif;color:#111;background:#fff}
+.A .top{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:2px solid #111}
+.A .top b{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.A .lang{display:flex;height:32px;border:2px solid #111;font-weight:700;font-size:13px}
+.A .lang span{width:34px;display:flex;align-items:center;justify-content:center}
+.A .lang .on{background:#111;color:#fff}
+.A .steps{display:flex;align-items:center;gap:4px;padding:10px 14px 0}
+.A .steps i{flex:1;height:6px;background:#dcdcdc}
+.A .steps i.on{background:#FF5C00}
+.A .steps em{font-style:normal;font-family:'Barlow Semi Condensed',Arial,sans-serif;font-weight:700;font-size:13px;margin-left:6px;color:#111}
+.A h3{font-size:26px;font-weight:800;letter-spacing:-.015em;padding:8px 14px 8px;line-height:1.1}
+.A h3.sm{font-size:24px;padding:6px 14px 4px}
+.A .search{margin:0 14px;height:48px;border:2px solid #111;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:16px;font-weight:600}
+.A .search svg{flex:none}
+.A .map{position:relative;margin:10px 14px 0;height:280px;background:#2a2c1d}
+.A .map>svg{display:block;width:100%;height:100%}
+.A .loc{position:absolute;right:8px;bottom:8px;height:44px;background:#fff;color:#111;display:flex;align-items:center;gap:6px;padding:0 12px;font-weight:700;font-size:14px;white-space:nowrap}
+.A .loc svg,.B .locb svg{flex:none}
+.A .scale{position:absolute;left:8px;bottom:8px;color:#fff;font-size:12px;font-weight:700;font-family:'Barlow Semi Condensed',Arial,sans-serif}
+.A .scale i{display:block;width:50px;height:4px;background:#fff;margin-top:2px}
+.A .confirm{margin-top:auto;padding:12px 14px 14px;border-top:2px solid #111}
+.A .confirm p{font-size:19px;font-weight:700}
+.A .confirm p span{font-weight:600;font-size:15px;color:#555;margin-left:6px;white-space:nowrap}
+.A .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.A .btn{height:52px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;border:2px solid #111}
+.A .btn.pri{background:#FF5C00;border-color:#FF5C00;color:#111}
+.A .see{margin:0 14px;border-top:2px solid #111}
+.A .see .lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 0 2px;color:#555}
+.A .see .r{display:grid;grid-template-columns:112px 1fr;gap:6px;padding:2px 0;font-size:12px;line-height:1.2;align-items:baseline}
+.A .see .r b{font-size:14px;font-weight:800}
+.A .opt{margin:0 14px;border-top:1px solid #cfcfcf;padding:6px 0;min-height:50px}
+.A .opt .n{display:flex;align-items:baseline;gap:8px;font-size:16px;font-weight:800;white-space:nowrap}
+.A .opt .n .k{font-family:'Barlow Semi Condensed',Arial,sans-serif;font-size:16px;width:16px}
+.A .opt .n .tag{margin-left:auto;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#555}
+.A .opt .f{display:flex;gap:7px;white-space:nowrap;padding-left:22px;font-size:13px;color:#333;margin-top:2px}
+.A .opt .f b{color:#111;font-weight:800}
+.A .opt.best{margin:6px 14px 2px;border:3px solid #111;padding:0 0 8px;min-height:0}
+.A .opt.best .hd{background:#111;color:#fff;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;height:26px;display:flex;align-items:center;gap:6px;padding:0 10px}
+.A .opt.best .hd i{width:10px;height:10px;background:#FF5C00;display:inline-block}
+.A .opt.best .n{padding:6px 10px 0}
+.A .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:0 6px;padding:4px 10px 0}
+.A .grid4 div{font-size:12px;color:#444;line-height:1.1}
+.A .grid4 b{display:block;font-family:'Barlow Semi Condensed',Arial,sans-serif;font-size:21px;white-space:nowrap;font-weight:800;color:#111;line-height:1.05}
+.A .meta{display:flex;justify-content:space-between;padding:6px 10px 0;font-size:13px;font-weight:600}
+.A .meta .sup{border-bottom:2px solid #FF5C00;font-weight:700}
+.A .foot{margin:auto 14px 10px;padding-top:6px;border-top:1px solid #cfcfcf;font-size:12px;color:#555;font-weight:600}
+
+/* ================= B · SATELLITE FIRST ================= */
+.B{font-family:Manrope,Arial,sans-serif;color:#0E2A33;background:#F4F7F8}
+.B .mono{font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.B .top{height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#fff;position:relative;z-index:2}
+.B .top b{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.B .lang{font-size:14px;font-weight:700;color:#4A6470}
+.B .lang u{color:#0E2A33;text-decoration:none;border-bottom:2px solid #0E2A33}
+.B .steps{background:#fff;display:flex;align-items:center;gap:10px;padding:0 14px 8px;position:relative;z-index:2}
+.B .steps .dots{display:flex;gap:5px}
+.B .steps .dots i{width:16px;height:4px;border-radius:2px;background:#C9D6DB}
+.B .steps .dots i.on{background:#0E2A33;width:26px}
+.B .steps .mono{color:#4A6470}
+.B .full{position:relative;flex:1;background:#0B1A1F}
+.B .full>svg{position:absolute;inset:0;width:100%;height:100%}
+.B .float{position:absolute;left:12px;right:12px;top:12px;height:48px;background:#fff;border-radius:6px;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:16px;font-weight:700}
+.B .float .mono{margin-left:auto;color:#4A6470}
+.B .locb{position:absolute;right:12px;top:70px;height:44px;background:#fff;border-radius:6px;display:flex;align-items:center;gap:6px;padding:0 12px;font-weight:700;font-size:14px;white-space:nowrap}
+.B .src{position:absolute;left:12px;top:78px;color:#fff;background:rgba(11,26,31,.75);padding:4px 7px}
+.B .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:14px 14px 0 0;padding:14px 14px 16px}
+.B .sheet .q{font-size:20px;font-weight:800;line-height:1.2}
+.B .sheet .q span{display:block;font-size:14px;font-weight:600;color:#4A6470;margin-top:2px}
+.B .bt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.B .btn{height:50px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;border:1.5px solid #0E2A33}
+.B .btn.pri{background:#0E2A33;color:#fff}
+.B .hero{background:#0B1A1F;color:#fff;display:flex;gap:12px;align-items:center;padding:6px 14px 4px}
+.B .hero svg{flex:none}
+.B .hero h3{font-size:20px;font-weight:800;line-height:1.1}
+.B .hero .mono{color:#9FB6BF;margin-top:4px;display:block}
+.B .strip{background:#0B1A1F;padding:0 14px 6px}
+.B .strip .cells{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.B .strip .cells i{height:10px}
+.B .strip .mo{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.2;color:#9FB6BF;text-align:center;margin-top:2px}
+.B .finds{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-bottom:1px solid #D5E0E4}
+.B .finds div{padding:5px 6px 5px 8px;font-size:12px;line-height:1.25;color:#4A6470;border-left:1px solid #D5E0E4}
+.B .finds div:first-child{border-left:0}
+.B .finds b{display:block;color:#0E2A33;font-size:13px;font-weight:800;line-height:1.15;margin-bottom:2px}
+.B .rows{background:#fff;flex:1 0 auto;display:flex;flex-direction:column}
+.B .row{display:grid;grid-template-columns:18px 1fr auto;gap:2px 8px;padding:5px 14px;border-bottom:1px solid #E3EAED;min-height:46px;align-items:center}
+.B .row .k{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:#4A6470}
+.B .row .nm{font-size:15px;font-weight:800;line-height:1.15}
+.B .row .eur{font-size:18px;font-weight:800;text-align:right;line-height:1}
+.B .row .eur small{display:block;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#4A6470;text-transform:uppercase}
+.B .row .dt{grid-column:2 / 4;display:flex;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:#4A6470}
+.B .row .dt b{color:#0E2A33;font-weight:700}
+.B .row.best{border-left:5px solid #F2A93B;background:#FFF8EC;padding-left:9px}
+.B .row.best .k{color:#0E2A33}
+.B .row .bestlbl{grid-column:2 / 4;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#8A5400;text-transform:uppercase;letter-spacing:.05em}
+.B .row .ex{grid-column:2 / 4;display:flex;gap:12px;font-size:12px;font-weight:600}
+.B .row .ex span+span{color:#0F6E73}
+.B .row.now .nm::after{content:"";}
+.B .nowlbl{font-family:'JetBrains Mono',monospace;font-size:12px;color:#4A6470;text-transform:uppercase;border:1px solid #9FB6BF;padding:1px 5px;margin-left:6px;font-weight:500;white-space:nowrap}
+.B .foot{padding:4px 14px 6px;color:#4A6470;margin-top:auto}
+
+/* ================= C · FRIENDLY EVERYDAY ================= */
+.C{font-family:Rubik,Arial,sans-serif;color:#1A1A1A;background:#F2F2EF}
+.C .top{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#1F5C34;color:#fff}
+.C .top b{font-size:19px;font-weight:600}
+.C .lang{font-weight:500;font-size:15px;height:44px;display:flex;align-items:center;color:#CFE3D5}
+.C .lang u{text-decoration:none;color:#fff;font-weight:700;border-bottom:2px solid #fff}
+.C .steps{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:#1F5C34;padding:0 16px 10px}
+.C .steps i{height:5px;border-radius:3px;background:#3D7A52}
+.C .steps i.on{background:#fff}
+.C h3{font-size:24px;font-weight:600;line-height:1.1;padding:12px 16px 8px}
+.C h3.sm{font-size:22px;padding:8px 16px 6px}
+.C .search{margin:0 12px;height:48px;background:#fff;border-radius:12px;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:16px;font-weight:500;border:1px solid #D6D6D0}
+.C .mapc{position:relative;margin:10px 12px 0;height:240px;border-radius:12px;overflow:hidden;background:#3c3f2c}
+.C .mapc>svg{display:block;width:100%;height:100%}
+.C .locc{position:absolute;right:8px;bottom:8px;width:48px;height:48px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center}
+.C .locc span{position:absolute;right:56px;white-space:nowrap;background:#fff;color:#1A1A1A;font-size:13px;font-weight:600;height:32px;line-height:32px;padding:0 10px;border-radius:8px}
+.C .ask{margin-top:auto;background:#fff;padding:14px 16px 16px;border-radius:16px 16px 0 0}
+.C .ask p{font-size:20px;font-weight:600;line-height:1.2}
+.C .ask p span{font-weight:400;font-size:15px;color:#555;margin-left:6px}
+.C .bc{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+.C .btn{height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:17px}
+.C .btn.pri{background:#1F5C34;color:#fff}
+.C .btn.sec{height:44px;background:transparent;color:#1F5C34;font-size:16px}
+.C .seec{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 12px}
+.C .seec div{padding:6px 7px 7px;font-size:12px;line-height:1.2;border-radius:10px;color:#fff}
+.C .seec svg{display:block;margin-bottom:2px;width:16px;height:16px}
+.C .seec b{display:block;font-size:13px;font-weight:600;line-height:1.1;margin-bottom:2px}
+.C .list{margin:6px 12px 0;background:#fff;border-radius:14px;overflow:hidden}
+.C .optc{display:grid;grid-template-columns:1fr auto;gap:2px 6px;padding:6px 12px;min-height:50px;border-top:1px solid #E6E6E1;align-items:center}
+.C .optc:first-child{border-top:0}
+.C .optc .nm{font-size:15px;font-weight:600;line-height:1.15;white-space:nowrap}
+.C .optc .nm.wrap{white-space:normal}
+.C .optc .eur{font-size:17px;white-space:nowrap;font-weight:600;text-align:right;line-height:1}
+.C .optc .eur small{font-size:12px;font-weight:400;color:#555}
+.C .optc .line{grid-column:1 / 3;font-size:12px;display:flex;white-space:nowrap;gap:9px;color:#444;align-items:center}
+.C .optc .line b{font-weight:600;color:#1A1A1A}
+.C .rk{display:inline-flex;align-items:center;gap:4px}
+.C .rk i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.C .lo{background:#2E8B57}.C .md{background:#E09A1A}.C .hi{background:#C8402B}
+.C .optc.best{background:#1F5C34;color:#fff;padding-top:0}
+.C .optc.best .flag{grid-column:1 / 3;display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;color:#FFD54A;height:22px;margin-top:2px}
+.C .optc.best .eur small,.C .optc.best .line,.C .optc.best .line b{color:#fff}
+.C .optc.best .meta{grid-column:1 / 3;display:flex;justify-content:space-between;font-size:13px;margin-top:3px;padding-top:5px;border-top:1px solid #3D7A52}
+.C .now{font-size:12px;font-weight:600;color:#555;display:block;margin-top:1px}
+.C .foot{margin:auto 16px 8px;padding-top:6px;font-size:12px;color:#555}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Three directions — pick one</h1>
+  <p>Reply with A, B or C, or mix them, for example "A's map with C's cards". The two screens and their wording are the same in all three; only the style changes.</p>
+  <p class="ph">All figures shown are made-up placeholders, not results for Genzano.</p>
+
+  <!-- ===================================================== A -->
+  <section class="band">
+    <div>
+      <div class="letter">A</div>
+      <h2>Field instrument</h2>
+      <p class="aim">A working tool, like a tractor display or a good banking app: big numbers, one signal colour, readable in full sun.</p>
+    </div>
+    <div class="phones">
+      <div class="ph-wrap"><p class="cap">Screen 1a · Tap your field</p>
+      <div class="phone"><div class="scr A">
+        <div class="top"><b>Top of the Crop</b><div class="lang"><span class="on">EN</span><span>IT</span></div></div>
+        <div class="steps"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><em>1/6</em></div>
+        <h3>Tap your field</h3>
+        <div class="search"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="#111" stroke-width="2.5"/><path d="M13 13l5 5" stroke="#111" stroke-width="2.5"/></svg>Genzano di Lucania</div>
+        <div class="map">
+          <svg viewBox="0 0 272 250" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <filter id="aN" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+              <pattern id="aF1" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-12)"><rect width="5" height="5" fill="#8b7b4c"/><rect width="5" height="1.4" fill="#76683e"/></pattern>
+              <pattern id="aF2" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(28)"><rect width="4" height="4" fill="#5d6534"/><rect width="4" height="1.2" fill="#4c5429"/></pattern>
+              <pattern id="aF3" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(70)"><rect width="6" height="6" fill="#a8946a"/><rect width="6" height="1.5" fill="#93805a"/></pattern>
+              <pattern id="aF4" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><rect width="5" height="5" fill="#9d8250"/><rect width="5" height="1.3" fill="#86703f"/></pattern>
+              <pattern id="aF5" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(5)"><rect width="4" height="4" fill="#6f6a3c"/><rect width="4" height="1" fill="#5c5830"/></pattern>
+            </defs>
+            <rect width="272" height="250" fill="#4a4a2c"/>
+            <polygon points="0,0 110,0 96,72 0,90" fill="url(#aF3)"/>
+            <polygon points="110,0 272,0 272,62 96,72" fill="url(#aF2)"/>
+            <polygon points="0,90 96,72 118,170 0,192" fill="url(#aF1)"/>
+            <polygon points="96,72 272,62 272,160 118,170" fill="url(#aF4)"/>
+            <polygon points="0,192 118,170 134,250 0,250" fill="url(#aF5)"/>
+            <polygon points="118,170 272,160 272,250 134,250" fill="url(#aF3)"/>
+            <path d="M0,134 C70,126 160,132 272,112" stroke="#c9c1a6" stroke-width="3" fill="none"/>
+            <path d="M0,238 C30,226 52,236 80,220 C104,206 112,214 134,250" stroke="#3b4426" stroke-width="2.5" fill="none"/>
+            <path d="M60,134 C66,112 58,96 70,80" stroke="#b9ae8e" stroke-width="2" fill="none"/>
+            <rect x="64" y="72" width="12" height="8" fill="#d8d0bb"/><circle cx="82" cy="78" r="3" fill="#2f3a22"/>
+            <rect width="272" height="250" filter="url(#aN)" fill="#000"/>
+            <polygon points="96,72 272,62 272,160 118,170" fill="#FF5C00" fill-opacity=".12" stroke="#FF5C00" stroke-width="4" stroke-linejoin="miter"/>
+            <g transform="translate(186,114)"><circle r="9" fill="#fff"/><circle r="5" fill="#FF5C00"/></g>
+          </svg>
+          <div class="scale">200 m<i></i></div>
+          <div class="loc"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="5" fill="none" stroke="#111" stroke-width="2.2"/><circle cx="9" cy="9" r="1.8" fill="#111"/><path d="M9 0v3M9 15v3M0 9h3M15 9h3" stroke="#111" stroke-width="2.2"/></svg>My location</div>
+        </div>
+        <div class="confirm">
+          <p>Is this your field? <span>about 6 ha</span></p>
+          <div class="btns"><div class="btn pri">Yes, this one</div><div class="btn">No, draw it</div></div>
+        </div>
+      </div></div></div>
+
+      <div class="ph-wrap"><p class="cap">Screen 3 · Your options</p>
+      <div class="phone"><div class="scr A">
+        <div class="top"><b>Top of the Crop</b><div class="lang"><span class="on">EN</span><span>IT</span></div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><em>3/6</em></div>
+        <h3 class="sm">Your options</h3>
+        <div class="see">
+          <div class="lbl">What we see on your field</div>
+          <div class="r"><b>Bare 4 months</b><span>Jul–Oct, soil exposed</span></div>
+          <div class="r"><b>Hotter flowering</b><span>more hot days than 20 yrs ago</span></div>
+          <div class="r"><b>Dry autumns</b><span>4 of the last 10</span></div>
+        </div>
+        <div class="opt best">
+          <div class="hd"><i></i>1 · Best fit for you</div>
+          <div class="n">Durum → Chickpea</div>
+          <div class="grid4"><div><b>€610</b>income/ha</div><div><b>Low</b>water</div><div><b>+40 kg</b>nitrogen</div><div><b>Med</b>risk</div></div>
+          <div class="meta"><span>Confidence: <b>fair</b></span><span class="sup">Support may apply</span></div>
+        </div>
+        <div class="opt"><div class="n"><span class="k">2</span>Durum → Faba bean</div><div class="f"><span><b>€540</b>/ha</span><span>Water <b>Med</b></span><span>N <b>+60 kg</b></span><span>Risk <b>Med</b></span></div></div>
+        <div class="opt"><div class="n"><span class="k">3</span>Durum → Vetch-oat forage</div><div class="f"><span><b>€380</b>/ha</span><span>Water <b>Low</b></span><span>N <b>+30 kg</b></span><span>Risk <b>Low</b></span></div></div>
+        <div class="opt"><div class="n"><span class="k">4</span>Durum → Durum<span class="tag">What you do now</span></div><div class="f"><span><b>€450</b>/ha</span><span>Water <b>Med</b></span><span>N <b>0 kg</b></span><span>Risk <b>High</b></span></div></div>
+        <div class="foot">Placeholder figures</div>
+      </div></div></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== B -->
+  <section class="band">
+    <div>
+      <div class="letter">B</div>
+      <h2>Satellite first</h2>
+      <p class="aim">The NASA imagery is the hero: the farmer sees their own field from orbit on every screen, with the advice laid out cleanly beneath it.</p>
+    </div>
+    <div class="phones">
+      <div class="ph-wrap"><p class="cap">Screen 1a · Tap your field</p>
+      <div class="phone"><div class="scr B">
+        <div class="top"><b>Top of the Crop</b><span class="lang"><u>EN</u> · IT</span></div>
+        <div class="steps"><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span><span class="mono">Step 1 of 6</span></div>
+        <div class="full">
+          <svg viewBox="0 0 284 500" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <filter id="bN" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="8"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+              <pattern id="bF1" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(20)"><rect width="4" height="4" fill="#6c6744"/><rect width="4" height="1" fill="#5a563a"/></pattern>
+              <pattern id="bF2" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)"><rect width="5" height="5" fill="#8e7f58"/><rect width="5" height="1.3" fill="#7a6c4a"/></pattern>
+              <pattern id="bF3" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(80)"><rect width="4" height="4" fill="#4c5a36"/><rect width="4" height="1" fill="#3f4b2d"/></pattern>
+              <pattern id="bF4" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)"><rect width="6" height="6" fill="#a39070"/><rect width="6" height="1.5" fill="#8d7c60"/></pattern>
+            </defs>
+            <rect width="284" height="500" fill="#3c3f2c"/>
+            <polygon points="0,0 150,0 130,110 0,130" fill="url(#bF2)"/>
+            <polygon points="150,0 284,0 284,96 130,110" fill="url(#bF3)"/>
+            <polygon points="0,130 130,110 150,230 0,250" fill="url(#bF4)"/>
+            <polygon points="130,110 284,96 284,212 150,230" fill="url(#bF1)"/>
+            <polygon points="0,250 150,230 170,360 0,380" fill="url(#bF3)"/>
+            <polygon points="150,230 284,212 284,350 170,360" fill="url(#bF2)"/>
+            <polygon points="0,380 170,360 180,500 0,500" fill="url(#bF1)"/>
+            <polygon points="170,360 284,350 284,500 180,500" fill="url(#bF4)"/>
+            <path d="M0,240 C90,232 190,236 284,214" stroke="#cfc7ae" stroke-width="3" fill="none"/>
+            <path d="M40,500 C70,440 40,400 76,360 C100,334 96,300 120,262" stroke="#2f3a22" stroke-width="2.5" fill="none"/>
+            <path d="M210,214 C214,180 200,150 214,120" stroke="#b9ae8e" stroke-width="2" fill="none"/><rect x="206" y="112" width="14" height="9" fill="#d8d0bb"/>
+            <rect width="284" height="500" filter="url(#bN)" fill="#000"/>
+            <polygon points="0,130 130,110 150,230 0,250" fill="#4FD1E8" fill-opacity=".14" stroke="#4FD1E8" stroke-width="3.5"/>
+            <polygon points="0,130 130,110 150,230 0,250" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="3 3" transform="translate(0,0)"/>
+            <g transform="translate(72,180)"><circle r="10" fill="none" stroke="#fff" stroke-width="2"/><circle r="4" fill="#4FD1E8" stroke="#fff" stroke-width="1.5"/></g>
+          </svg>
+          <div class="float"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#0E2A33" stroke-width="2"/><path d="M11.5 11.5l5 5" stroke="#0E2A33" stroke-width="2"/></svg>Genzano di Lucania</div>
+          <div class="src mono">Landsat · 30 m</div>
+          <div class="locb"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M1 7l14-6-6 14-1.5-6.5z" fill="#0E2A33"/></svg>My location</div>
+          <div class="sheet"><div style="width:36px;height:4px;border-radius:2px;background:#C9D6DB;margin:-6px auto 10px"></div>
+            <p class="q">Is this your field?<span>about 6 ha · outline from satellite</span></p>
+            <div class="bt"><div class="btn pri">Yes, this one</div><div class="btn">No, draw it</div></div>
+          </div>
+        </div>
+      </div></div></div>
+
+      <div class="ph-wrap"><p class="cap">Screen 3 · Your options</p>
+      <div class="phone"><div class="scr B">
+        <div class="top"><b>Top of the Crop</b><span class="lang"><u>EN</u> · IT</span></div>
+        <div class="steps"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span><span class="mono">Step 3 of 6</span></div>
+        <div class="hero">
+          <svg width="50" height="44" viewBox="0 0 66 58">
+            <defs><linearGradient id="bNd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E8B57"/><stop offset=".45" stop-color="#9DBB4E"/><stop offset=".75" stop-color="#C7A46A"/><stop offset="1" stop-color="#9C6B3F"/></linearGradient>
+            <pattern id="bPx" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="none" stroke="#0B1A1F" stroke-opacity=".35" stroke-width=".6"/></pattern></defs>
+            <polygon points="2,8 56,2 64,50 8,56" fill="url(#bNd)"/>
+            <polygon points="2,8 56,2 64,50 8,56" fill="url(#bPx)"/>
+            <polygon points="2,8 56,2 64,50 8,56" fill="none" stroke="#F2A93B" stroke-width="2"/>
+          </svg>
+          <div><h3>Your options</h3><span class="mono">NDVI · your field · 10 yrs</span></div>
+        </div>
+        <div class="strip">
+          <div class="cells"><i style="background:#2E8B57"></i><i style="background:#2E8B57"></i><i style="background:#3F9E55"></i><i style="background:#57A84A"></i><i style="background:#9DBB4E"></i><i style="background:#C7A46A"></i><i style="background:#9C6B3F"></i><i style="background:#9C6B3F"></i><i style="background:#9C6B3F"></i><i style="background:#9C6B3F"></i><i style="background:#7FAE56"></i><i style="background:#3F9E55"></i></div>
+          <div class="mo"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div>
+        </div>
+        <div class="finds">
+          <div><b>Bare 4 months</b>Jul–Oct, soil exposed</div>
+          <div><b>Hotter flowering</b>more hot days than 20 yrs ago</div>
+          <div><b>Dry autumns</b>4 of the last 10</div>
+        </div>
+        <div class="rows">
+          <div class="row best">
+            <span class="k">1</span>
+            <span class="nm">Durum → Chickpea</span>
+            <span class="eur">€ 610<small>/ha</small></span>
+            <span class="bestlbl"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 0l1.8 3.9 4.2.5-3.1 2.9.8 4.2L6 9.4 2.3 11.5l.8-4.2L0 4.4l4.2-.5z" fill="#F2A93B"/></svg>Best fit for you</span>
+            <span class="dt"><span>Water <b>Low</b></span><span>N <b>+40 kg</b></span><span>Risk <b>Medium</b></span></span>
+            <span class="ex"><span>Confidence: <b>fair</b></span><span>Support may apply</span></span>
+          </div>
+          <div class="row"><span class="k">2</span><span class="nm">Durum → Faba bean</span><span class="eur">€ 540<small>/ha</small></span><span class="dt"><span>Water <b>Medium</b></span><span>N <b>+60 kg</b></span><span>Risk <b>Medium</b></span></span></div>
+          <div class="row"><span class="k">3</span><span class="nm">Durum → Vetch-oat forage</span><span class="eur">€ 380<small>/ha</small></span><span class="dt"><span>Water <b>Low</b></span><span>N <b>+30 kg</b></span><span>Risk <b>Low</b></span></span></div>
+          <div class="row now"><span class="k">4</span><span class="nm">Durum → Durum</span><span class="eur">€ 450<small>/ha</small></span><span class="dt"><span>Water <b>Medium</b></span><span>N <b>0 kg</b></span><span>Risk <b>High</b></span><span class="nowlbl">What you do now</span></span></div>
+          <div class="foot mono">Placeholder figures</div>
+        </div>
+      </div></div></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== C -->
+  <section class="band">
+    <div>
+      <div class="letter">C</div>
+      <h2>Friendly everyday</h2>
+      <p class="aim">The warmest of the three, like a weather or messaging app: soft grey ground, a green bar, colour that codes meaning (risk, findings) rather than decorates.</p>
+    </div>
+    <div class="phones">
+      <div class="ph-wrap"><p class="cap">Screen 1a · Tap your field</p>
+      <div class="phone"><div class="scr C">
+        <div class="top"><b>Top of the Crop</b><span class="lang"><u>EN</u>&nbsp;·&nbsp;IT</span></div>
+        <div class="steps"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <h3>Tap your field</h3>
+        <div class="search"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="#555" stroke-width="2.2"/><path d="M13 13l5 5" stroke="#555" stroke-width="2.2" stroke-linecap="round"/></svg>Genzano di Lucania</div>
+        <div class="mapc">
+          <svg viewBox="0 0 276 262" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <filter id="cN" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="21"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .45 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+              <pattern id="cF1" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(15)"><rect width="5" height="5" fill="#a08f63"/><rect width="5" height="1.3" fill="#8b7b52"/></pattern>
+              <pattern id="cF2" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-50)"><rect width="4" height="4" fill="#677039"/><rect width="4" height="1" fill="#555d2e"/></pattern>
+              <pattern id="cF3" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(60)"><rect width="6" height="6" fill="#b39d73"/><rect width="6" height="1.5" fill="#9c8862"/></pattern>
+            </defs>
+            <rect width="276" height="262" fill="#5a5638"/>
+            <polygon points="0,0 130,0 116,96 0,110" fill="url(#cF2)"/>
+            <polygon points="130,0 276,0 276,84 116,96" fill="url(#cF3)"/>
+            <polygon points="0,110 116,96 136,196 0,212" fill="url(#cF3)"/>
+            <polygon points="116,96 276,84 276,184 136,196" fill="url(#cF1)"/>
+            <polygon points="0,212 136,196 148,262 0,262" fill="url(#cF1)"/>
+            <polygon points="136,196 276,184 276,262 148,262" fill="url(#cF2)"/>
+            <path d="M0,150 C80,142 180,146 276,126" stroke="#e8e2cc" stroke-width="4" fill="none"/>
+            <path d="M0,236 C40,222 70,240 110,220 C126,212 132,230 150,262" stroke="#3b4426" stroke-width="2.5" fill="none"/>
+            <path d="M60,148 C64,120 56,100 66,70" stroke="#c4b896" stroke-width="2" fill="none"/><rect x="60" y="62" width="13" height="9" fill="#ddd5c0"/>
+            <rect width="276" height="262" filter="url(#cN)" fill="#000"/>
+            <polygon points="116,96 276,84 276,184 136,196" fill="#fff" fill-opacity=".18" stroke="#fff" stroke-width="3.5"/>
+            <g transform="translate(200,140)"><path d="M0,0 C-4,-10 -14,-16 -14,-27 a14,14 0 0 1 28,0 C14,-16 4,-10 0,0z" fill="#C8402B" stroke="#fff" stroke-width="2"/><circle cy="-27" r="5" fill="#fff"/></g>
+          </svg>
+          <div class="locc"><span>My location</span><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="6" fill="none" stroke="#1F5C34" stroke-width="2.4"/><circle cx="11" cy="11" r="2.4" fill="#1F5C34"/><path d="M11 1v4M11 17v4M1 11h4M17 11h4" stroke="#1F5C34" stroke-width="2.4"/></svg></div>
+        </div>
+        <div class="ask">
+          <p>Is this your field?<span>about 6 ha</span></p>
+          <div class="bc"><div class="btn pri">Yes, this one</div><div class="btn sec">No, draw it</div></div>
+        </div>
+      </div></div></div>
+
+      <div class="ph-wrap"><p class="cap">Screen 3 · Your options</p>
+      <div class="phone"><div class="scr C">
+        <div class="top"><b>Top of the Crop</b><span class="lang"><u>EN</u>&nbsp;·&nbsp;IT</span></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+        <h3 class="sm">Your options</h3>
+        <div class="seec">
+          <div style="background:#8A5A2B"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M1 13h16M3 16h12" stroke="#fff" stroke-width="2"/><circle cx="9" cy="7" r="4" fill="none" stroke="#fff" stroke-width="2"/></svg><b>Bare 4 months</b>Jul–Oct, soil exposed</div>
+          <div style="background:#C8402B"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M8 2v9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="8" cy="13" r="3.5" fill="#fff"/><path d="M12 4h4M12 7h3" stroke="#fff" stroke-width="2"/></svg><b>Hotter flowering</b>more hot days than 20 yrs ago</div>
+          <div style="background:#9A6F00"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2C6 7 4 9.5 4 12a5 5 0 0 0 10 0c0-2.5-2-5-5-10z" fill="none" stroke="#fff" stroke-width="2"/><path d="M3 16L15 4" stroke="#fff" stroke-width="2"/></svg><b>Dry autumns</b>4 of the last 10</div>
+        </div>
+        <div class="list">
+          <div class="optc best">
+            <span class="flag"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7l3.5 3.5L12 3" fill="none" stroke="#FFD54A" stroke-width="2.6"/></svg>Best fit for you</span>
+            <span class="nm">1 · Durum → Chickpea</span><span class="eur">€610<small>/ha</small></span>
+            <span class="line"><span>Water <b>Low</b></span><span>N <b>+40 kg</b></span><span class="rk"><i class="md"></i>Risk <b>Medium</b></span></span>
+            <span class="meta"><span>Confidence: <b>fair</b></span><span>Support may apply</span></span>
+          </div>
+          <div class="optc"><span class="nm">2 · Durum → Faba bean</span><span class="eur">€540<small>/ha</small></span><span class="line"><span>Water <b>Medium</b></span><span>N <b>+60 kg</b></span><span class="rk"><i class="md"></i>Risk <b>Medium</b></span></span></div>
+          <div class="optc"><span class="nm wrap">3 · Durum → Vetch-oat forage</span><span class="eur">€380<small>/ha</small></span><span class="line"><span>Water <b>Low</b></span><span>N <b>+30 kg</b></span><span class="rk"><i class="lo"></i>Risk <b>Low</b></span></span></div>
+          <div class="optc"><span class="nm">4 · Durum → Durum<span class="now">What you do now</span></span><span class="eur">€450<small>/ha</small></span><span class="line"><span>Water <b>Medium</b></span><span>N <b>0 kg</b></span><span class="rk"><i class="hi"></i>Risk <b>High</b></span></span></div>
+        </div>
+        <div class="foot">Placeholder figures</div>
+      </div></div></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

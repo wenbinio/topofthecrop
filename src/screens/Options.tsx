@@ -1,0 +1,96 @@
+import type { Fact, FieldBundle, Limit } from "../data/types";
+import { LIMITS } from "../data/types";
+import { useLang, useT } from "../i18n";
+import { rankOptions } from "../ranking/rank";
+import { useAppState, useTo } from "../state/useAppState";
+import { optionCrop } from "../components/Crops";
+import { PlaceholderNote, ScaleBadge, formatNumber } from "../components/FactParts";
+import { FieldShape, openRing } from "../components/FieldShape";
+import { Findings } from "../components/Findings";
+import { WarnIcon } from "../components/Icons";
+import { OptionRow } from "../components/OptionRow";
+import { YearStrip } from "../components/YearStrip";
+import { BottomBar, LinkButton, SectionTitle } from "../components/ui";
+
+export default function Options({ bundle }: { bundle: FieldBundle }) {
+  const t = useT();
+  const lang = useLang();
+  const to = useTo();
+  const [state] = useAppState();
+  const { ranked, removed } = rankOptions({
+    options: bundle.options,
+    limits: state.limits,
+    priorities: state.priorities,
+    scenario: state.scenario,
+  });
+  const removedBy: Limit[] = LIMITS.filter((l) => removed.some((r) => r.by.includes(l)));
+  const shownFacts: Fact[] = [
+    ...bundle.findings.map((f) => f.fact),
+    ...ranked.flatMap((r) => Object.values(r.option.facts)),
+  ];
+  const best = ranked[0];
+  // When every option fact shares one scale, one badge on the list stands for all of them.
+  const optionScales = new Set(ranked.flatMap((r) => Object.values(r.option.facts).map((f) => f.scale)));
+  const sharedScale = optionScales.size === 1 ? [...optionScales][0] : null;
+  const simple = state.view === "simple";
+
+  return (
+    <div className="flex flex-col flex-1">
+      {simple ? (
+        <div className="px-4 pt-4 pb-3">
+          <h1 className="text-head">
+            {best ? t("options.headline", { crop: t(`crop.${optionCrop(best.option)}`) }) : null}
+          </h1>
+        </div>
+      ) : (
+        <div className="px-4 pt-3 pb-3 bg-surface border-b border-line">
+          <div className="flex items-center gap-3">
+            <FieldShape ring={openRing(bundle.field.outline.coordinates)} className="w-12 h-12 flex-none" />
+            <div className="min-w-0">
+              <h1 className="text-big">{bundle.field.name}</h1>
+              <p className="text-small font-bold text-ink-soft">
+                {formatNumber(bundle.field.areaHa, lang)} ha
+              </p>
+            </div>
+          </div>
+          <div className="mt-2">
+            <YearStrip months={bundle.year.months} risks={false} compact />
+          </div>
+        </div>
+      )}
+
+      <SectionTitle>{t("options.seen")}</SectionTitle>
+      <Findings findings={bundle.findings} view={state.view} />
+
+      <SectionTitle>
+        <span className="flex items-center justify-between">
+          {t("options.list")}
+          {sharedScale ? <ScaleBadge scale={sharedScale} /> : null}
+        </span>
+      </SectionTitle>
+      <ul className="border-t border-line" data-testid="option-list">
+        {ranked.map((item) => (
+          <OptionRow key={item.option.id} item={item} view={state.view} sharedScale={sharedScale !== null} />
+        ))}
+      </ul>
+      {removed.length > 0 ? (
+        <p className="px-4 py-3 flex items-start gap-2 text-body font-bold" data-testid="ruled-out">
+          <WarnIcon className="w-5 h-5 flex-none mt-0.5 text-warn" />
+          {t("options.ruledOut", {
+            n: removed.length,
+            limits: removedBy.map((l) => t(`limit.${l}`)).join(", "),
+          })}
+        </p>
+      ) : null}
+      <div className="px-4 py-2">
+        <PlaceholderNote facts={shownFacts} />
+      </div>
+
+      <BottomBar>
+        <LinkButton to={to("/year")} className="flex-1">
+          {t("options.next")}
+        </LinkButton>
+      </BottomBar>
+    </div>
+  );
+}
