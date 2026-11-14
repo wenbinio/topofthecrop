@@ -206,6 +206,7 @@ type FieldBundle = {
   }[];
   year: {                                                             // October first
     months: { cover: "green" | "part" | "bare"; risks: ("dry" | "frost" | "heat" | "rain")[] }[];
+    risksByScenario?: Partial<Record<Scenario, ("dry" | "frost" | "heat" | "rain")[][]>>;  // risk icons per month for a slider stop
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
   };
   options: {

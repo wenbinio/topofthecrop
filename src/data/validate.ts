@@ -72,6 +72,7 @@ export function validateBundle(json: unknown): FieldBundle {
       known(signals[key], ['rising', 'falling', 'normal', 'no-data'], `${path}.signals.${key}`);
     }
     boolean(finding.weatherDriven, `${path}.weatherDriven`); strings(finding.addressedBy, `${path}.addressedBy`);
+    if (finding.expectedBare !== undefined) boolean(finding.expectedBare, `${path}.expectedBare`);
   });
   const year = object(bundle.year, 'year');
   array(year.months, 'year.months', 12).forEach((value, i) => {
@@ -79,6 +80,14 @@ export function validateBundle(json: unknown): FieldBundle {
     known(month.cover, ['green', 'part', 'bare'], `${path}.cover`);
     strings(month.risks, `${path}.risks`, ['dry', 'frost', 'heat', 'rain']);
   });
+  if (year.risksByScenario !== undefined) {
+    const byScenario = object(year.risksByScenario, 'year.risksByScenario');
+    for (const scenario of SCENARIOS) {
+      if (byScenario[scenario] === undefined) continue;
+      array(byScenario[scenario], `year.risksByScenario.${scenario}`, 12)
+        .forEach(risks => strings(risks, `year.risksByScenario.${scenario}`, ['dry', 'frost', 'heat', 'rain']));
+    }
+  }
   const hotDays = object(year.hotDays, 'year.hotDays');
   for (const scenario of SCENARIOS) {
     const path = `year.hotDays.${scenario}`, weather = object(hotDays[scenario], path);

@@ -24,9 +24,16 @@ it.each(['greenness', 'temperature', 'waterUse'] as const)('handles missing %s',
   expect(diagnose({ ...rows[0][0], [signal]: 'no-data' })).toEqual({ key: 'not-enough-data', confidence: 'low' });
 });
 it('builds the first finding path in signal, limit and chosen priority order', () => {
-  expect(buildPath(fixture.findings[0] as Finding, ['no-buyer', 'no-irrigation'], ['soil', 'income'])).toEqual([
+  expect(buildPath({ ...fixture.findings[0], expectedBare: false } as Finding, ['no-buyer', 'no-irrigation'], ['soil', 'income'])).toEqual([
     'path.signal.greenness.falling', 'path.signal.temperature.rising', 'path.signal.waterUse.falling',
     'diagnosis.water-heat-stress', 'path.limit.no-irrigation', 'path.limit.no-buyer', 'path.priority.soil', 'path.priority.income',
+  ]);
+});
+it('does not call bare soil after harvest a declining crop', () => {
+  // The fixture's first finding is the bare months after harvest: decline-like signals, flagged as expected.
+  expect((fixture.findings[0] as Finding).expectedBare).toBe(true);
+  expect(buildPath(fixture.findings[0] as Finding, ['no-buyer'], ['soil'])).toEqual([
+    'path.expectedBare', 'path.limit.no-buyer', 'path.priority.soil',
   ]);
 });
 it('builds the third finding path with weather and no priorities', () => {
@@ -35,7 +42,7 @@ it('builds the third finding path with weather and no priorities', () => {
   ]);
 });
 it('uses allNormal when no direction counts', () => {
-  expect(buildPath({ ...fixture.findings[0], signals: rows[7][0] } as Finding, [], [])).toEqual([
+  expect(buildPath({ ...fixture.findings[0], expectedBare: false, signals: rows[7][0] } as Finding, [], [])).toEqual([
     'path.signal.allNormal', 'diagnosis.no-decline', 'path.priority.none',
   ]);
 });

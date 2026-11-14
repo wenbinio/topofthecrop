@@ -24,7 +24,12 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
   });
   const best = ranked[0];
   const index = SCENARIOS.indexOf(state.scenario);
-  const risks = RISK_ORDER.filter((r) => bundle.year.months.some((m) => m.risks.includes(r)));
+  // The slider changes the risk icons too, when the bundle carries them for that stop.
+  const scenarioRisks = bundle.year.risksByScenario?.[state.scenario];
+  const months = scenarioRisks
+    ? bundle.year.months.map((m, i) => ({ ...m, risks: scenarioRisks[i] ?? m.risks }))
+    : bundle.year.months;
+  const risks = RISK_ORDER.filter((r) => months.some((m) => m.risks.includes(r)));
 
   return (
     <div className="flex flex-col flex-1">
@@ -81,7 +86,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
 
       <div className="px-4 pt-5">
         <h2 className="sr-only">{t("year.title")}</h2>
-        <YearStrip months={bundle.year.months} />
+        <YearStrip months={months} />
         <div className="mt-2 flex flex-col gap-1">
           <CoverLegend />
           <RiskLegend risks={risks} />

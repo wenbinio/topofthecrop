@@ -19,8 +19,9 @@ function Metric({ fact, label, Icon, showScale }: { fact: Fact; label: string; I
       {isLevel(fact.value) ? (
         <LevelMeter level={fact.value} label={label} />
       ) : (
-        <span className="font-bold text-body" aria-label={`${label}: ${valueText(fact, t, lang)} ${unitText(fact.unit, t)}`}>
+        <span className="font-bold text-body whitespace-nowrap" aria-label={`${label}: ${valueText(fact, t, lang)} ${unitText(fact.unit, t)}`}>
           {valueText(fact, t, lang)}
+          {fact.unit ? <span className="text-small"> {unitText(fact.unit, t)}</span> : null}
         </span>
       )}
     </span>
@@ -63,12 +64,13 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
             <CropSequence option={option} size={simple ? "lg" : "md"} />
             {simple ? (
               <span className="inline-flex items-center gap-1 pb-1 font-bold text-body" title={t("fact.risk")}>
+                {sharedScale ? null : <ScaleBadge scale={risk.scale} iconOnly />}
                 <RiskShieldIcon className="w-5 h-5" />
                 <span className="sr-only">{t("fact.risk")}: </span>
                 {valueText(risk, t, lang)}
               </span>
             ) : (
-              <span className="flex items-center gap-3 pb-1">
+              <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 pb-1">
                 <Metric fact={water} label={t("fact.water")} Icon={DropIcon} showScale={!sharedScale} />
                 <Metric fact={nitrogen} label={t("fact.nitrogen")} Icon={NitrogenIcon} showScale={!sharedScale} />
                 <Metric fact={risk} label={t("fact.risk")} Icon={RiskShieldIcon} showScale={!sharedScale} />

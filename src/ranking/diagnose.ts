@@ -38,11 +38,16 @@ export function diagnose(signals: Signals): Diagnosis {
  */
 export function buildPath(finding: Finding, limits: Limit[], priorities: Priority[]): string[] {
   const path: string[] = [];
-  if (finding.signals.greenness === 'falling') path.push('path.signal.greenness.falling');
-  if (finding.signals.temperature === 'rising') path.push('path.signal.temperature.rising');
-  if (finding.signals.waterUse === 'falling') path.push('path.signal.waterUse.falling');
-  if (!path.length) path.push('path.signal.allNormal');
-  path.push(`diagnosis.${diagnose(finding.signals).key}`);
+  if (finding.expectedBare) {
+    // README pre-check: bare soil after harvest gives the same signals as a failing crop. Say what it is.
+    path.push('path.expectedBare');
+  } else {
+    if (finding.signals.greenness === 'falling') path.push('path.signal.greenness.falling');
+    if (finding.signals.temperature === 'rising') path.push('path.signal.temperature.rising');
+    if (finding.signals.waterUse === 'falling') path.push('path.signal.waterUse.falling');
+    if (!path.length) path.push('path.signal.allNormal');
+    path.push(`diagnosis.${diagnose(finding.signals).key}`);
+  }
   if (finding.weatherDriven) path.push('path.weatherDriven');
   for (const limit of LIMITS) if (limits.includes(limit)) path.push(`path.limit.${limit}`);
   path.push(...(priorities.length ? priorities.map(priority => `path.priority.${priority}`) : ['path.priority.none']));

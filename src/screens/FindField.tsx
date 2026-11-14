@@ -138,7 +138,8 @@ export default function FindField() {
     go("/questions", {
       fieldId: DEMO_FIELD_ID,
       outline: null,
-      lastCrop: bundle.status === "ready" ? bundle.bundle.lastCrop.crop : state.lastCrop,
+      // Pre-fill the last crop from the crop map on first choosing the field; keep the farmer's own answer after that.
+      lastCrop: state.fieldId !== DEMO_FIELD_ID && bundle.status === "ready" ? bundle.bundle.lastCrop.crop : state.lastCrop,
     });
   }
 

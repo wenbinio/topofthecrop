@@ -66,6 +66,7 @@
         "waterUse": "falling"
       },
       "weatherDriven": false,
+      "expectedBare": true,
       "addressedBy": [
         "vetch-oat-durum-durum",
         "faba-durum-faba"
@@ -199,6 +200,62 @@
         ]
       }
     ],
+    "risksByScenario": {
+      "drier": [
+        [
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [],
+        [
+          "frost"
+        ],
+        [],
+        [],
+        [],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [],
+        [],
+        [
+          "rain"
+        ]
+      ],
+      "much-drier": [
+        [
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [
+          "dry"
+        ],
+        [],
+        [],
+        [],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [
+          "heat"
+        ],
+        [],
+        [],
+        [
+          "rain"
+        ]
+      ]
+    },
     "hotDays": {
       "normal": {
         "now": {

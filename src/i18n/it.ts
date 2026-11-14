@@ -90,6 +90,7 @@ export const it: Dict = {
   "why.numbers": "Sui tre raccolti",
   "why.back": "Tutte le scelte",
   "why.notFound": "Questa scelta non è nella tua lista.",
+  "why.ruledOut": "Esclusa dai tuoi limiti: {limits}",
 
   "year.title": "L'annata del tuo campo",
   "year.hotHead": "Giorni caldi in fioritura",
@@ -228,6 +229,7 @@ export const it: Dict = {
   "path.signal.waterUse.falling": "L'acqua usata (evapotraspirazione) cala",
   "path.signal.allNormal": "Nessun segnale di calo dai satelliti",
   "path.weatherDriven": "Lo mostra tutta la zona: è il meteo, non solo il tuo campo",
+  "path.expectedBare": "Il verde (NDVI) cala dopo la raccolta perché il campo è nudo, come previsto: non è una coltura in sofferenza",
   "path.limit.no-irrigation": "Non hai irrigazione",
   "path.limit.cereal-machinery": "Hai solo macchine da cereali",
   "path.limit.no-buyer": "Non hai acquirenti vicini",

@@ -63,8 +63,10 @@ const bundle = {
     {
       title: "finding.bare.title", detail: "finding.bare.detail",
       fact: fact(4, "months", [3, 5], "field", src.landsat, "fair", "finding.bare.fact"),
+      // Bare soil after harvest looks like decline to a satellite; expectedBare says it is not.
       signals: { greenness: "falling", temperature: "rising", waterUse: "falling" },
       weatherDriven: false,
+      expectedBare: true,
       addressedBy: ["vetch-oat-durum-durum", "faba-durum-faba"],
     },
     {
@@ -90,6 +92,11 @@ const bundle = {
       { cover: "green", risks: [] }, { cover: "green", risks: ["heat"] }, { cover: "part", risks: ["heat"] },
       { cover: "bare", risks: [] }, { cover: "bare", risks: [] }, { cover: "bare", risks: ["rain"] },
     ],
+    // Risk icons for the slider's other two stops (the first stop uses `months`). October first.
+    risksByScenario: {
+      drier: [["dry"], ["dry"], [], ["frost"], [], [], [], ["heat"], ["heat"], [], [], ["rain"]],
+      "much-drier": [["dry"], ["dry"], ["dry"], [], [], [], ["heat"], ["heat"], ["heat"], [], [], ["rain"]],
+    },
     hotDays: {
       normal: { now: fact(9, "days", [4, 15], "area", src.power, "fair", "year.hotNow"), by2050: fact(17, "days", [11, 24], "area", src.cmip6, "low", "year.hot2050") },
       drier: { now: fact(12, "days", [6, 19], "area", src.power, "fair", "year.hotNow"), by2050: fact(21, "days", [14, 29], "area", src.cmip6, "low", "year.hot2050") },

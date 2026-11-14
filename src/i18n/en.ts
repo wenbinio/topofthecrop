@@ -97,6 +97,7 @@ export const en = {
   "why.numbers": "Over three harvests",
   "why.back": "All options",
   "why.notFound": "This option is not in your list.",
+  "why.ruledOut": "Ruled out by your limits: {limits}",
 
   // step 5
   "year.title": "Your field's year",
@@ -243,6 +244,7 @@ export const en = {
   "path.signal.waterUse.falling": "Water use (evapotranspiration) is dropping",
   "path.signal.allNormal": "No satellite signal of decline",
   "path.weatherDriven": "The whole area shows it: it is the weather, not only your field",
+  "path.expectedBare": "Greenness (NDVI) drops after harvest because the field is bare, as expected: not a failing crop",
   "path.limit.no-irrigation": "You have no irrigation",
   "path.limit.cereal-machinery": "You have cereal machinery only",
   "path.limit.no-buyer": "You have no buyer nearby",

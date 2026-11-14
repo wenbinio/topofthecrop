@@ -44,6 +44,8 @@ export type Finding = {
   fact: Fact;
   signals: Signals;
   weatherDriven: boolean;
+  /** True when the field is bare on purpose (after harvest). The signals then look like decline but are not. */
+  expectedBare?: boolean;
   addressedBy: string[]; // ids of the options that respond to this finding
 };
 
@@ -75,6 +77,8 @@ export type FieldBundle = {
   findings: Finding[]; // exactly three
   year: {
     months: Month[]; // exactly twelve, October first
+    /** Risk icons per month for a slider stop, twelve lists, October first. A missing stop uses `months`. */
+    risksByScenario?: Partial<Record<Scenario, Risk[][]>>;
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
   };
   options: Option[]; // exactly four, exactly one with isCurrent

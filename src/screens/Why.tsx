@@ -85,13 +85,15 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
     );
   }
 
-  const { ranked } = rankOptions({
+  const { ranked, removed } = rankOptions({
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
     scenario: state.scenario,
   });
   const item = ranked.find((r) => r.option.id === option.id);
+  // A shared link can open an option the farmer's limits have ruled out; say so before anything else.
+  const ruledOutBy = removed.find((r) => r.option.id === option.id)?.by ?? [];
   const finding = bundle.findings.find((f) => f.addressedBy.includes(option.id)) ?? bundle.findings[0];
   const path = finding ? buildPath(finding, state.limits, state.priorities) : [];
   const facts = option.facts;
@@ -115,6 +117,11 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </div>
         <CropSequence option={option} size="lg" />
       </div>
+      {ruledOutBy.length > 0 ? (
+        <p role="alert" data-testid="why-ruled-out" className="mx-4 mb-2 px-3 py-2 bg-warn text-on-warn font-bold text-body rounded-sm">
+          {t("why.ruledOut", { limits: ruledOutBy.map((l) => t(`limit.${l}`)).join(", ") })}
+        </p>
+      ) : null}
 
       <Section title={t("why.numbers")}>
         <ul>
