@@ -81,9 +81,55 @@ describe("Options", () => {
 
   it("shows Italian text in the Simple view", async () => {
     renderAt("/options?f=genzano-demo&p=income,water&v=simple&g=it");
-    expect(await screen.findByText("Più adatta: Cece")).toBeInTheDocument();
+    expect(await screen.findByText("L'anno prossimo semina cece")).toBeInTheDocument();
     expect(document.documentElement.dataset.view).toBe("simple");
     expect(document.documentElement.lang).toBe("it");
+  });
+
+  it("with soil and income says what to plant next and shows the nitrogen it leaves", async () => {
+    renderAt("/options?f=genzano-demo&p=soil,income");
+    // In the fixture faba (soil 0.9, income 0.7) edges chickpea (0.75, 0.8) for these two priorities.
+    const rec = await screen.findByTestId("recommendation");
+    expect(rec).toHaveAttribute("data-option-id", "faba-durum-faba");
+    expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant faba bean next");
+    const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
+    expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income"]);
+    expect(reasons[0]).toHaveTextContent("60 kg of nitrogen");
+    expect(screen.getByTestId("tag-best").closest("[data-testid=option-row]")).toHaveAttribute("data-option-id", "faba-durum-faba");
+  });
+
+  it("a third priority chip replaces the one chosen first and re-ranks at once", async () => {
+    renderAt("/options?f=genzano-demo&p=soil,income");
+    await screen.findByTestId("recommendation");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Forage" }));
+    await waitFor(() => expect(lastPath).toContain("p=income%2Cforage"));
+    expect(screen.getByRole("checkbox", { name: "Soil and nitrogen" })).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant vetch-oat next");
+    expect(screen.getByTestId("tag-best").closest("[data-testid=option-row]")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
+    const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
+    expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["income", "forage"]);
+  });
+
+  it("releasing both chips drops p from the link and still shows a headline", async () => {
+    renderAt("/options?f=genzano-demo&p=soil,income");
+    await screen.findByTestId("recommendation");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Soil and nitrogen" }));
+    await waitFor(() => expect(lastPath).toContain("p=income"));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Income" }));
+    await waitFor(() => expect(lastPath).not.toContain("p="));
+    expect(screen.getByTestId("rec-headline").textContent).toMatch(/^Plant .+ next$/);
+    expect(within(screen.getByTestId("rec-reasons")).getAllByTestId("reason")).toHaveLength(2);
+  });
+
+  it("when the limits leave only the current rotation, staying with durum fits best", async () => {
+    const only = structuredClone(fixture);
+    for (const o of only.options) if (!o.isCurrent) o.removedBy = ["no-irrigation"];
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(only)));
+    renderAt("/options?f=genzano-demo&p=soil,income&l=no-irrigation");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Staying with durum fits best");
+    expect(screen.getAllByTestId("option-row")).toHaveLength(1);
+    expect(screen.getByTestId("rec-reasons")).toHaveTextContent("Adds no nitrogen");
   });
 });
 
@@ -151,7 +197,7 @@ describe("Questions", () => {
     const next = await screen.findByRole("button", { name: "Next" });
     expect(next).toBeDisabled();
     fireEvent.click(screen.getByRole("checkbox", { name: "Income" }));
-    fireEvent.click(screen.getByRole("checkbox", { name: "Soil" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Soil and nitrogen" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Next" })).toBeEnabled());
     expect(screen.getByRole("checkbox", { name: "Water" })).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
@@ -168,6 +214,16 @@ describe("Why", () => {
     const five = ["Why suggested", "Evidence", "Benefits", "What we don't know", "Check locally"];
     expect(names.filter((n) => five.includes(n ?? ""))).toEqual(five);
     expect(within(screen.getByTestId("why-path")).getAllByRole("listitem").length).toBeGreaterThan(2);
+  });
+
+  it("lists the plain reasons before the path", async () => {
+    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=soil,income");
+    const reasons = await screen.findByTestId("why-reasons");
+    const items = within(reasons).getAllByTestId("reason");
+    expect(items.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income"]);
+    expect(items[0]).toHaveTextContent("40 kg of nitrogen");
+    expect(items[1]).toHaveTextContent("more than durum after durum");
+    expect(reasons.compareDocumentPosition(screen.getByTestId("why-path")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("a term opens its one-line explanation", async () => {
