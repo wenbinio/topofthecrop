@@ -1,0 +1,60 @@
+{
+ "project": "Field Shift (NASA Space Apps Challenge 2026)",
+ "updated": "2026-11-14T16:51Z",
+ "ai_assistance": "Produced by notebooks written with AI assistance (Claude, Anthropic) and run by the Field Shift team in Google Colab with Google Earth Engine. Data values come from the cited datasets and were not written by the AI, except a few published values from the trial at the demo field (its station's rain and temperature, and its soil description), which were copied by hand from Denora et al. (2025) and are labelled as such.",
+ "conventions": {
+  "low_typical_high": "10th percentile, median, 90th percentile",
+  "season": "named by harvest year: season 2024 = September 2023 to August 2024",
+  "days": "day numbers count from 1 September",
+  "grid": "EEA 1 km reference grid, EPSG:3035"
+ },
+ "files": {
+  "grid.geojson": {
+   "bytes": 1209447,
+   "made_by": "notebooks/01_area_grid.ipynb",
+   "what": "1 km squares with land cover, durum share, height, slope"
+  },
+  "area.geojson": {
+   "bytes": 10194,
+   "made_by": "notebooks/01_area_grid.ipynb",
+   "what": "basin outline"
+  },
+  "field.json": {
+   "bytes": 168525,
+   "made_by": {
+    "field": "notebooks/01_area_grid.ipynb (2026-11-14T08:30Z)",
+    "greenness": "notebooks/02_greenness.ipynb (2026-11-14T15:59Z)",
+    "weather": "notebooks/03_weather.ipynb (2026-11-14T16:04Z)",
+    "water": "notebooks/04_water.ipynb (2026-11-14T16:11Z)",
+    "future": "notebooks/05_future_soil.ipynb (2026-11-14T16:17Z)",
+    "soil": "notebooks/05_future_soil.ipynb (2026-11-14T16:17Z)"
+   },
+   "what": "the demo field in detail"
+  },
+  "cells_greenness.json": {
+   "bytes": 1673118,
+   "made_by": "notebooks/02_greenness.ipynb (2026-11-14T15:59Z)",
+   "what": "greenness per farmland square"
+  },
+  "cells_weather.json": {
+   "bytes": 337357,
+   "made_by": "notebooks/03_weather.ipynb (2026-11-14T16:04Z)",
+   "what": "rain and temperature per square (records[cells[id]])"
+  },
+  "cells_water.json": {
+   "bytes": 621175,
+   "made_by": "notebooks/04_water.ipynb (2026-11-14T16:11Z)",
+   "what": "water need, water use, soil moisture (records[cells[id].rec] + cells[id])"
+  },
+  "cells_future.json": {
+   "bytes": 60203,
+   "made_by": "notebooks/05_future_soil.ipynb (2026-11-14T16:17Z)",
+   "what": "change by 2041-2060 (records[cells[id]])"
+  },
+  "cells_soil.json": {
+   "bytes": 563839,
+   "made_by": "notebooks/05_future_soil.ipynb (2026-11-14T16:17Z)",
+   "what": "soil per square"
+  }
+ }
+}
