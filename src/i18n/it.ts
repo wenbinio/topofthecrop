@@ -241,6 +241,7 @@ export const it: Dict = {
   "check.buyer": "C'è chi compra legumi o foraggio qui vicino?",
   "check.seed": "Dove comprare il seme, e quale varietà va bene per la valle",
   "check.adviser": "Riguarda il piano con il tuo tecnico",
+  "check.rotationRule": "Il ringrano può violare la regola PAC sulla rotazione (BCAA 7) e ridurre i pagamenti, a meno che l'azienda abbia fino a 10 ha di seminativi. Chiedi al tecnico.",
 
   "fact.income": "Reddito per anno (margine lordo)",
   "fact.water": "Bisogno d'acqua",

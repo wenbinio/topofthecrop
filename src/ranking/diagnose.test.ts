@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import fixture from '../../public/data/genzano-demo.json';
+import fixture from '../test-fixtures/money-bundle.json';
 import type { Finding, Signals } from '../data/types';
 import { buildPath, diagnose } from './diagnose';
 import type { Diagnosis } from './diagnose';

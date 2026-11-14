@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import fixture from '../../public/data/genzano-demo.json';
+import fixture from '../test-fixtures/money-bundle.json';
 import type { FieldBundle } from './types';
 import { loadBundle, validateBundle } from './validate';
 

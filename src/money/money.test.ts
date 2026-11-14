@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import fixture from '../../public/data/genzano-demo.json';
+import fixture from '../test-fixtures/money-bundle.json';
 import type { Economics, Money, Option } from '../data/types';
 import { CROPS, SCENARIOS } from '../data/types';
 import { validateBundle } from '../data/validate';

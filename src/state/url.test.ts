@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import fixture from '../../public/data/genzano-demo.json';
+import fixture from '../test-fixtures/money-bundle.json';
 import { DEFAULT_STATE } from '../data/types';
 import type { AppState, LngLat } from '../data/types';
 import { decodeState, encodeState } from './url';

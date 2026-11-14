@@ -255,6 +255,7 @@ export const en = {
   "check.buyer": "Is there a buyer for the pulse or forage nearby?",
   "check.seed": "Where to buy seed, and which variety suits this valley",
   "check.adviser": "Go through the plan with your adviser",
+  "check.rotationRule": "Durum after durum can break the CAP crop-rotation rule (BCAA 7) and cut your payments, unless your farm has 10 ha of arable land or less. Ask your adviser.",
 
   "fact.income": "Income per year (gross margin)",
   "fact.water": "Water need",
