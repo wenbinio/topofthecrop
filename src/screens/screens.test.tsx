@@ -81,7 +81,7 @@ describe("Options", () => {
 
   it("shows Italian text in the Simple view", async () => {
     renderAt("/options?f=genzano-demo&p=income,water&v=simple&g=it");
-    expect(await screen.findByText("L'anno prossimo semina cece")).toBeInTheDocument();
+    expect(await screen.findByText("Semina cece dopo")).toBeInTheDocument();
     expect(document.documentElement.dataset.view).toBe("simple");
     expect(document.documentElement.lang).toBe("it");
   });
@@ -94,7 +94,7 @@ describe("Options", () => {
     expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant faba bean next");
     const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
     expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income"]);
-    expect(reasons[0]).toHaveTextContent("60 kg of nitrogen");
+    expect(reasons[0]).toHaveTextContent("60 kg N/ha");
     expect(screen.getByTestId("tag-best").closest("[data-testid=option-row]")).toHaveAttribute("data-option-id", "faba-durum-faba");
   });
 
@@ -127,9 +127,9 @@ describe("Options", () => {
     for (const o of only.options) if (!o.isCurrent) o.removedBy = ["no-irrigation"];
     vi.stubGlobal("fetch", vi.fn(async () => okJson(only)));
     renderAt("/options?f=genzano-demo&p=soil,income&l=no-irrigation");
-    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Staying with durum fits best");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Keep durum: fits best");
     expect(screen.getAllByTestId("option-row")).toHaveLength(1);
-    expect(screen.getByTestId("rec-reasons")).toHaveTextContent("Adds no nitrogen");
+    expect(screen.getByTestId("rec-reasons")).toHaveTextContent("No nitrogen added");
   });
 });
 
@@ -168,9 +168,9 @@ describe("AreaWeather", () => {
       }),
     );
     renderAt("/area?o=16.1,40.9;16.11,40.9;16.11,40.91;16.1,40.91");
-    expect(await screen.findByTestId("weather-error")).toHaveTextContent("Weather history is not available right now.");
-    expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
-    const demo = screen.getByRole("button", { name: "See the demo field" });
+    expect(await screen.findByTestId("weather-error")).toHaveTextContent("Weather history unavailable.");
+    expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
+    const demo = screen.getByRole("button", { name: "Demo field" });
     fireEvent.click(demo);
     await waitFor(() => expect(lastPath.startsWith("/questions?")).toBe(true));
     expect(lastPath).toContain("f=genzano-demo");
@@ -188,6 +188,72 @@ describe("Year", () => {
     });
     await waitFor(() => expect(screen.getByTestId("year-best")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum"));
     expect(lastPath).toContain("s=much-drier");
+  });
+});
+
+describe("what counts as a hot day", () => {
+  it("tapping the Year headline opens the 30 °C definition, also given on hover", async () => {
+    renderAt("/year?f=genzano-demo&p=income,water");
+    const head = await screen.findByRole("button", { name: "Hot flowering days" });
+    expect(head).toHaveAttribute("title", expect.stringContaining("30 °C"));
+    expect(screen.queryByTestId("hot-def")).toBeNull();
+    fireEvent.click(head);
+    const line = screen.getByTestId("hot-def");
+    expect(line).toHaveTextContent("30 °C or more, 15 April–15 June");
+    // The frozen fixture has no flowerHigh, so only the definition shows.
+    expect(line).not.toHaveTextContent("Usual high");
+  });
+
+  it("with flowerHigh in the bundle the line also gives the usual high now and by 2050", async () => {
+    const withHigh = structuredClone(fixture);
+    const fact = (value: number, range: [number, number]) => ({
+      value, unit: "°C", range, scale: "area", confidence: "fair", placeholder: false,
+      source: { dataset: "ERA5-Land", resolution: "about 11 km", url: "" },
+    });
+    Object.assign(withHigh.year, { flowerHigh: { now: fact(22.9, [21.2, 24.5]), by2050: fact(24.5, [23.7, 25.3]) } });
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withHigh)));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    fireEvent.click(await screen.findByRole("button", { name: "Hot flowering days" }));
+    const line = screen.getByTestId("hot-def");
+    expect(line).toHaveTextContent("30 °C");
+    expect(line).toHaveTextContent("22.9 °C now, 24.5 °C by 2050");
+  });
+
+  it("the Hot flowering finding on Options opens the same line", async () => {
+    renderAt("/options?f=genzano-demo&p=income,water");
+    fireEvent.click(await screen.findByRole("button", { name: "Hot flowering" }));
+    expect(screen.getByTestId("hot-def")).toHaveTextContent("30 °C or more");
+  });
+});
+
+describe("Back buttons", () => {
+  const steps: [string, string][] = [
+    ["/questions?f=genzano-demo&p=income,water", "/"],
+    ["/options?f=genzano-demo&p=income,water", "/questions"],
+    ["/year?f=genzano-demo&p=income,water", "/options"],
+    ["/adviser?f=genzano-demo&p=income,water", "/year"],
+  ];
+  it.each(steps)("%s goes back to %s keeping the query string", async (entry, target) => {
+    renderAt(entry);
+    fireEvent.click(await screen.findByRole("link", { name: "Back" }));
+    await waitFor(() => expect(lastPath.startsWith(`${target}?`)).toBe(true));
+    expect(lastPath).toContain("f=genzano-demo");
+    expect(lastPath).toContain("p=income%2Cwater");
+  });
+
+  it("live weather goes back to Find field keeping the drawn outline", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("offline"); }));
+    renderAt("/area?o=16.1,40.9;16.11,40.9;16.11,40.91;16.1,40.91&g=it");
+    fireEvent.click(await screen.findByRole("link", { name: "Indietro" }));
+    await waitFor(() => expect(lastPath.startsWith("/?")).toBe(true));
+    expect(lastPath).toContain("o=");
+    expect(lastPath).toContain("g=it");
+  });
+
+  it("Find field, the first step, has none", async () => {
+    renderAt("/?f=genzano-demo");
+    await screen.findByTestId("map");
+    expect(screen.queryByRole("link", { name: "Back" })).toBeNull();
   });
 });
 
@@ -211,7 +277,7 @@ describe("Why", () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     const headings = await screen.findAllByRole("heading", { level: 2 });
     const names = headings.map((h) => h.textContent);
-    const five = ["Why suggested", "Evidence", "Benefits", "What we don't know", "Check locally"];
+    const five = ["Why suggested", "Evidence", "Benefits", "Not known", "Check locally"];
     expect(names.filter((n) => five.includes(n ?? ""))).toEqual(five);
     expect(within(screen.getByTestId("why-path")).getAllByRole("listitem").length).toBeGreaterThan(2);
   });
@@ -221,8 +287,8 @@ describe("Why", () => {
     const reasons = await screen.findByTestId("why-reasons");
     const items = within(reasons).getAllByTestId("reason");
     expect(items.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income"]);
-    expect(items[0]).toHaveTextContent("40 kg of nitrogen");
-    expect(items[1]).toHaveTextContent("more than durum after durum");
+    expect(items[0]).toHaveTextContent("40 kg N/ha");
+    expect(items[1]).toHaveTextContent("more than durum on durum");
     expect(reasons.compareDocumentPosition(screen.getByTestId("why-path")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
@@ -230,7 +296,7 @@ describe("Why", () => {
     renderAt("/why/faba-durum-faba?f=genzano-demo&p=income,water");
     const term = (await screen.findAllByRole("button", { name: "NDVI" }))[0];
     fireEvent.click(term);
-    expect(screen.getByRole("note")).toHaveTextContent("how green");
+    expect(screen.getByRole("note")).toHaveTextContent("field greenness");
   });
 });
 
@@ -238,8 +304,8 @@ describe("bundle failure", () => {
   it("says so and offers a retry", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 404, json: async () => ({}) }) as unknown as Response));
     renderAt("/options?f=genzano-demo&p=income,water");
-    expect(await screen.findByRole("button", { name: "Try again" })).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent("Field data did not load.");
+    expect(await screen.findByRole("button", { name: "Retry" })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Field data not loaded.");
   });
 });
 

@@ -11,7 +11,29 @@ it('accepts a bundle without economics', () => {
   expect(validateBundle(bundle)).toBe(bundle);
 });
 
-const economicsMutations: [string, (bundle: FieldBundle) => void][] = [
+const flowerHigh = (now: unknown, by2050: unknown) => {
+  const fact = (value: unknown) => ({ value, unit: '°C', range: [21, 25], scale: 'area', confidence: 'fair', placeholder: false,
+    source: { dataset: 'ERA5-Land', resolution: 'about 11 km', url: '' } });
+  return { now: fact(now), by2050: fact(by2050) };
+};
+it('accepts a bundle with and without year.flowerHigh', () => {
+  expect('flowerHigh' in fixture.year).toBe(false);
+  const bundle = structuredClone(fixture) as unknown as FieldBundle;
+  Object.assign(bundle.year, { flowerHigh: flowerHigh(22.9, 24.5) });
+  expect(validateBundle(bundle)).toBe(bundle);
+});
+it.each([
+  ['not an object', 'hot'],
+  ['missing by2050', { now: flowerHigh(22.9, 24.5).now }],
+  ['a string temperature', flowerHigh('22.9', 24.5)],
+  ['a fact without a source', (() => { const h = flowerHigh(22.9, 24.5); Reflect.deleteProperty(h.by2050, 'source'); return h; })()],
+])('rejects year.flowerHigh that is %s', (_name, value) => {
+  const bundle = structuredClone(fixture);
+  Object.assign(bundle.year, { flowerHigh: value });
+  expect(() => validateBundle(bundle)).toThrow(/^bundle: year\.flowerHigh/);
+});
+
+const economicsMutations:[string, (bundle: FieldBundle) => void][] = [
   ['missing crop', b => { Reflect.deleteProperty(b.economics!.crops, 'faba'); }],
   ['unknown option', b => { b.economics!.support[0].options = ['unknown']; }],
   ['duplicate support id', b => { b.economics!.support[1].id = b.economics!.support[0].id; }],

@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 import type { FieldBundle, Limit, Priority } from "../data/types";
 import { CROPS, LIMITS, PRIORITIES } from "../data/types";
 import { useT } from "../i18n";
-import { useAppState, useGo } from "../state/useAppState";
+import { useAppState, useGo, useTo } from "../state/useAppState";
 import { CheckIcon, CropIcon } from "../components/Icons";
 import { PRIORITY_ICON } from "../components/Reasons";
-import { Button, BottomBar, SectionTitle } from "../components/ui";
+import { BackButton, Button, BottomBar, SectionTitle } from "../components/ui";
 
 function Choice({
   on,
@@ -40,6 +40,7 @@ function Choice({
 export default function Questions({ bundle }: { bundle: FieldBundle }) {
   const t = useT();
   const go = useGo();
+  const to = useTo();
   const [state, setState] = useAppState();
 
   function toggleLimit(limit: Limit) {
@@ -101,6 +102,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <BottomBar>
+        <BackButton to={to("/")} />
         <Button className="flex-1" disabled={!full} onClick={() => go("/options")}>
           {t("common.next")}
         </Button>

@@ -81,6 +81,8 @@ export type FieldBundle = {
     /** Risk icons per month for a slider stop, twelve lists, October first. A missing stop uses `months`. */
     risksByScenario?: Partial<Record<Scenario, Risk[][]>>;
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
+    /** The usual daytime high (°C) from 15 April to 15 June, now and by 2050. Shown beside what counts as a hot day. */
+    flowerHigh?: { now: Fact; by2050: Fact };
   };
   options: Option[]; // exactly four, exactly one with isCurrent
   economics?: Economics; // prices, yields, costs and support behind the income figures

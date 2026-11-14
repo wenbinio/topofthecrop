@@ -93,7 +93,8 @@ NASA POWER supplies daily temperatures and rainfall for 2001 through 2025.
 The request uses the field centre rounded to two decimal places. Its figures
 describe the area, at about 50 km resolution, rather than the field itself.
 
-- Hot days: maximum temperature strictly above 30 °C, 15 April–31 May inclusive.
+- Hot days: maximum temperature 30 °C or more, 15 April–15 June inclusive (the same
+  rule as the team's field.json for the demo field).
 - Autumn rain: sum of daily rainfall, 1 September–30 November inclusive.
 - Late frost: minimum temperature strictly below 0 °C, 1 March–30 April inclusive.
 

@@ -7,8 +7,8 @@ export const POWER_TIMEOUT_MS = 8000;
 
 /** Thresholds are placeholders for the team to correct; they are also written in docs/scoring.md. */
 export const WEATHER_RULES = {
-  hotDayAboveC: 30,
-  flowering: { from: "0415", to: "0531" }, // MMDD, inclusive
+  hotDayAtLeastC: 30, // a hot day reaches 30 °C or more, as in the team's field.json
+  flowering: { from: "0415", to: "0615" }, // MMDD, inclusive
   autumn: { from: "0901", to: "1130" },
   frostBelowC: 0,
   lateFrost: { from: "0301", to: "0430" },
@@ -63,7 +63,7 @@ function dailySeries(value: unknown): Record<string, number> {
 export function summarise(daily: DailyWeather): AreaWeather {
   return {
     years: [POWER_FIRST_YEAR, POWER_LAST_YEAR],
-    hotDaysAtFlowering: measure(daily.tmax, WEATHER_RULES.flowering, value => Number(value > WEATHER_RULES.hotDayAboveC), 'days', 'weather.hotDays'),
+    hotDaysAtFlowering: measure(daily.tmax, WEATHER_RULES.flowering, value => Number(value >= WEATHER_RULES.hotDayAtLeastC), 'days', 'weather.hotDays'),
     autumnRain: measure(daily.rain, WEATHER_RULES.autumn, value => value, 'mm', 'weather.autumnRain'),
     lateFrostDays: measure(daily.tmin, WEATHER_RULES.lateFrost, value => Number(value < WEATHER_RULES.frostBelowC), 'days', 'weather.lateFrost'),
   };

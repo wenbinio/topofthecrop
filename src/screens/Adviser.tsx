@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useT } from "../i18n";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
 import { ChatIcon, LinkIcon, PrintIcon } from "../components/Icons";
-import { Button, Headline, LinkButton } from "../components/ui";
+import { BackButton, BottomBar, Button, Headline, LinkButton } from "../components/ui";
 
 async function copyText(text: string): Promise<boolean> {
   try {
@@ -51,6 +51,9 @@ export default function Adviser() {
         </Button>
         <p className="text-small text-ink-soft break-all font-mono">{link}</p>
       </div>
+      <BottomBar>
+        <BackButton to={to("/year")} />
+      </BottomBar>
     </div>
   );
 }

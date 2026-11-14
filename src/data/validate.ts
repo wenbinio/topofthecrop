@@ -93,6 +93,13 @@ export function validateBundle(json: unknown): FieldBundle {
     const path = `year.hotDays.${scenario}`, weather = object(hotDays[scenario], path);
     fact(weather.now, `${path}.now`); fact(weather.by2050, `${path}.by2050`);
   }
+  if (year.flowerHigh !== undefined) {
+    const high = object(year.flowerHigh, 'year.flowerHigh');
+    for (const key of ['now', 'by2050']) {
+      fact(high[key], `year.flowerHigh.${key}`);
+      number(object(high[key], `year.flowerHigh.${key}`).value, `year.flowerHigh.${key}.value`);
+    }
+  }
   const ids = new Set<string>();
   let currentCount = 0;
   array(bundle.options, 'options', 4).forEach((value, i) => {

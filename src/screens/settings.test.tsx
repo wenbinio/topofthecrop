@@ -57,9 +57,9 @@ function row(id: string): HTMLElement {
 /** The income figure on an option row: the first big number in its top line. */
 function incomeOf(id: string): string {
   const label = within(row(id))
-    .getAllByLabelText(/^Income per year/)
+    .getAllByLabelText(/^Yearly income/)
     .map((el) => el.getAttribute("aria-label") ?? "")[0];
-  return label.replace(/^Income per year \(gross margin\): /, "").split(" ")[0];
+  return label.replace(/^Yearly income \(gross margin\): /, "").split(" ")[0];
 }
 
 const SETTINGS = "/settings?f=genzano-demo&p=income,water";
@@ -87,9 +87,9 @@ describe("Settings", () => {
       expect(el).toHaveTextContent(item.condition.en);
       expect(within(el).getByRole("checkbox", { name: item.name.en })).toBeChecked();
     }
-    expect(screen.getByTestId("adviser-line")).toHaveTextContent("cannot tell whether you qualify");
+    expect(screen.getByTestId("adviser-line")).toHaveTextContent("cannot tell if you qualify");
     expect(screen.getByTestId("placeholder-note")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Reset to the starting figures" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Reset figures" })).toBeDisabled();
   });
 
   it("(b) a durum price of 400 goes into the link, and Options shows 835 marked Yours", async () => {
@@ -139,16 +139,16 @@ describe("Settings", () => {
     act(() => {
       fireEvent.change(durum, { target: { value: "" } });
     });
-    expect(screen.getByTestId("money-error")).toHaveTextContent("Type a number");
+    expect(screen.getByTestId("money-error")).toHaveTextContent("Enter number");
     expect(durum).toHaveAttribute("aria-invalid", "true");
     act(() => {
       fireEvent.change(durum, { target: { value: "4o0" } });
     });
-    expect(screen.getByTestId("money-error")).toHaveTextContent("Type a number");
+    expect(screen.getByTestId("money-error")).toHaveTextContent("Enter number");
     act(() => {
       fireEvent.change(durum, { target: { value: "99999" } });
     });
-    expect(screen.getByTestId("money-error")).toHaveTextContent("From 0 to 5,000");
+    expect(screen.getByTestId("money-error")).toHaveTextContent("0 to 5,000");
     expect(lastPath).toBe(before);
     expect(linkMoney()).toBeNull();
     expect(document.body.textContent).not.toContain("NaN");
@@ -156,21 +156,21 @@ describe("Settings", () => {
 
   it("(e) Reset empties m from the link and is disabled afterwards", async () => {
     renderAt(`${SETTINGS}&m=on.eco-rotation:0;p.durum:350`);
-    const reset = await screen.findByRole("button", { name: "Reset to the starting figures" });
+    const reset = await screen.findByRole("button", { name: "Reset figures" });
     expect(reset).toBeEnabled();
     expect(screen.getByRole("textbox", { name: "Durum price" })).toHaveValue("350");
     act(() => {
       fireEvent.click(reset);
     });
     await waitFor(() => expect(linkMoney()).toBeNull());
-    expect(screen.getByRole("button", { name: "Reset to the starting figures" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Reset figures" })).toBeDisabled();
     expect(screen.getByRole("textbox", { name: "Durum price" })).toHaveValue("320");
     expect(screen.getByRole("checkbox", { name: "Eco-scheme: rotation with legumes or forage" })).toBeChecked();
   });
 
   it("(f) with no field chosen says so and shows no inputs", async () => {
     renderAt("/settings");
-    expect(await screen.findByTestId("settings-no-field")).toHaveTextContent("Choose your field first.");
+    expect(await screen.findByTestId("settings-no-field")).toHaveTextContent("Pick field first.");
     expect(screen.queryAllByRole("textbox")).toHaveLength(0);
     expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
   });
@@ -234,7 +234,7 @@ describe("Settings", () => {
     renderAt("/print?f=genzano-demo&p=income,water&m=on.eco-rotation:0");
     const block = await screen.findByTestId("print-money");
     expect(block).toHaveTextContent("Durum: 320 €/t");
-    expect(block).toHaveTextContent("Eco-scheme: rotation with legumes or forage (EU): off · changed by the farmer");
+    expect(block).toHaveTextContent("Eco-scheme: rotation with legumes or forage (EU): off · farmer-edited");
     expect(block).toHaveTextContent("Basic income support (EU): on, 160 €/ha");
   });
 
@@ -245,7 +245,7 @@ describe("Settings", () => {
       const form = screen.getByTestId("extra-form");
       const add = within(form).getByRole("button", { name: "Add" });
       act(() => {
-        fireEvent.change(within(form).getByRole("textbox", { name: "Name of the payment" }), { target: { value: "New legume aid" } });
+        fireEvent.change(within(form).getByRole("textbox", { name: "Payment name" }), { target: { value: "New legume aid" } });
         fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "90" } });
       });
       expect(within(form).getByRole("button", { name: "Every year" })).toHaveAttribute("aria-pressed", "true");
@@ -258,11 +258,11 @@ describe("Settings", () => {
       await waitFor(() => expect(linkExtras()).toBe(`${encodeURIComponent("New legume aid")}~90~chickpea`));
       const item = screen.getByTestId("extra-item");
       expect(item).toHaveTextContent("New legume aid");
-      expect(item).toHaveTextContent("Paid in the years of: Chickpea");
+      expect(item).toHaveTextContent("Paid in Chickpea years");
       expect(within(item).getByTestId("tag-yours")).toBeInTheDocument();
       expect(within(item).getByRole("textbox", { name: "New legume aid: amount" })).toHaveValue("90");
       expect(screen.queryByTestId("extra-form")).toBeNull();
-      expect(screen.getByRole("button", { name: "Reset to the starting figures" })).toBeEnabled();
+      expect(screen.getByRole("button", { name: "Reset figures" })).toBeEnabled();
       expect(screen.getByTestId("adviser-line")).toBeInTheDocument();
 
       fireEvent.click(screen.getByRole("link", { name: "Back" }));
@@ -279,7 +279,7 @@ describe("Settings", () => {
       fireEvent.click(await screen.findByRole("button", { name: "Add a payment" }));
       const form = screen.getByTestId("extra-form");
       const add = within(form).getByRole("button", { name: "Add" });
-      const name = within(form).getByRole("textbox", { name: "Name of the payment" });
+      const name = within(form).getByRole("textbox", { name: "Payment name" });
       expect(name).toHaveAttribute("maxLength", "30");
       act(() => {
         fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "90" } });
@@ -293,7 +293,7 @@ describe("Settings", () => {
         fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "2001" } });
         fireEvent.change(name, { target: { value: "Aid" } });
       });
-      expect(within(form).getByTestId("money-error")).toHaveTextContent("From 0 to 2,000");
+      expect(within(form).getByTestId("money-error")).toHaveTextContent("0 to 2,000");
       expect(add).toBeDisabled();
       act(() => {
         fireEvent.change(within(form).getByRole("textbox", { name: "Amount" }), { target: { value: "15" } });
@@ -321,8 +321,8 @@ describe("Settings", () => {
       renderAt(`${SETTINGS}&${THREE}`);
       expect(await screen.findAllByTestId("extra-item")).toHaveLength(3);
       expect(screen.getByRole("button", { name: "Add a payment" })).toBeDisabled();
-      expect(screen.getByTestId("extra-max")).toHaveTextContent("Three added payments is the most.");
-      const reset = screen.getByRole("button", { name: "Reset to the starting figures" });
+      expect(screen.getByTestId("extra-max")).toHaveTextContent("Max 3 added payments.");
+      const reset = screen.getByRole("button", { name: "Reset figures" });
       expect(reset).toBeEnabled();
       act(() => {
         fireEvent.click(reset);
@@ -330,7 +330,7 @@ describe("Settings", () => {
       await waitFor(() => expect(linkExtras()).toBeNull());
       expect(screen.queryAllByTestId("extra-item")).toHaveLength(0);
       expect(screen.getByRole("button", { name: "Add a payment" })).toBeEnabled();
-      expect(screen.getByRole("button", { name: "Reset to the starting figures" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Reset figures" })).toBeDisabled();
     });
 
     it("Why counts an added payment in each year's support, and Print lists it as the farmer's own", async () => {
@@ -344,7 +344,7 @@ describe("Settings", () => {
 
       renderAt(`/print?f=genzano-demo&p=income,water&${x}`);
       const block = await screen.findByTestId("print-money");
-      expect(block).toHaveTextContent("New legume aid (added by the farmer): 90 €/ha. Paid in the years of: Chickpea.");
+      expect(block).toHaveTextContent("New legume aid (farmer-added): 90 €/ha. Paid in Chickpea years.");
     });
   });
 });
