@@ -8,9 +8,9 @@ import { reasonsFor } from "../ranking/reasons";
 import { ReasonList } from "../components/Reasons";
 import { useLang, useT } from "../i18n";
 import { useAppState, useTo } from "../state/useAppState";
-import { CropSequence, optionCrop } from "../components/Crops";
+import { CropName, CropSequence, Slotted, optionCrop } from "../components/Crops";
 import { ConfidenceWord, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
-import { BackIcon, ChevronIcon, CropIcon, FindingIcon } from "../components/Icons";
+import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm, RichText, Term } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
@@ -94,10 +94,8 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
           {money.years.map((y, i) => (
             <tr key={i} className="border-b border-line">
               <td className="py-1 pr-1">
-                <span className="inline-flex items-center gap-1">
-                  <CropIcon crop={y.crop} className="w-4 h-4 flex-none" title={t(`crop.${y.crop}`)} />
-                  {option.firstHarvestYear + i}
-                </span>
+                <CropName crop={y.crop} iconClassName="w-4 h-4" wrap />
+                <span className="block text-ink-soft">{option.firstHarvestYear + i}</span>
               </td>
               <td className="py-1 px-1 text-right">{n(y.sales)}</td>
               <td className="py-1 px-1 text-right">−{n(y.costs)}</td>
@@ -158,12 +156,14 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
     );
   }
 
-  const { ranked, removed } = rankOptions({
+  const { ranked, removed, repeats } = rankOptions({
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
     scenario: state.scenario,
+    lastCrop: state.lastCrop,
   });
+  const repeated = repeats.some((o) => o.id === option.id);
   const item = ranked.find((r) => r.option.id === option.id);
   // A shared link can open an option the farmer's limits have ruled out; say so before anything else.
   const ruledOutBy = removed.find((r) => r.option.id === option.id)?.by ?? [];
@@ -182,7 +182,9 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
       {back}
       <div className="px-4 pb-2 flex items-end justify-between gap-3">
         <div>
-          <h1 className="text-head">{t(`crop.${optionCrop(option)}`)}</h1>
+          <h1 className="text-head">
+            <CropName crop={optionCrop(option)} />
+          </h1>
           <p className="flex flex-wrap gap-2 mt-1">
             {item?.best ? (
               <span className="px-1.5 bg-best text-on-best text-small font-bold rounded-sm">{t("options.best")}</span>
@@ -200,7 +202,15 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
           {t("why.ruledOut", { limits: ruledOutBy.map((l) => t(`limit.${l}`)).join(", ") })}
         </p>
       ) : null}
+      {repeated ? (
+        <p role="alert" data-testid="why-left-out" className="mx-4 mb-2 px-3 py-2 bg-warn text-on-warn font-bold text-body rounded-sm">
+          <Slotted text={t("options.repeat")} slots={{ crop: <CropName crop={option.sequence[0]} /> }} />
+        </p>
+      ) : null}
 
+      {/* Held sideways: the numbers and the reasons on the left, the evidence and the rest on the right. */}
+      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
+      <div className="flex flex-col min-w-0">
       <Section title={t("why.numbers")}>
         <ul>
           <FactRow fact={facts.income} perYear />
@@ -238,6 +248,8 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </p>
       </Section>
 
+      </div>
+      <div className="flex flex-col min-w-0">
       <Section title={t("why.h.evidence")}>
         {finding ? (
           <div className="flex gap-2 py-2">
@@ -285,6 +297,8 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
 
       <div className="px-4 py-3">
         <PlaceholderNote facts={allFacts} />
+      </div>
+      </div>
       </div>
 
       <BottomBar>

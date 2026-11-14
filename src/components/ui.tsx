@@ -69,7 +69,14 @@ export function BackButton({ to }: { to: { pathname: string; search: string } })
   );
 }
 
-/** A bottom bar for the screen's main action. */
+/** A bottom bar for the screen's main action. Held sideways it is slimmer, and clear of the home bar. */
 export function BottomBar({ children }: { children: ReactNode }) {
-  return <div className="sticky bottom-0 mt-auto p-3 bg-paper border-t border-line flex gap-2 print:hidden">{children}</div>;
+  return (
+    <div
+      data-testid="bottom-bar"
+      className="sticky bottom-0 mt-auto p-3 bg-paper border-t border-line flex gap-2 print:hidden phone-land:pt-1.5 phone-land:pb-[max(0.375rem,env(safe-area-inset-bottom))]"
+    >
+      {children}
+    </div>
+  );
 }

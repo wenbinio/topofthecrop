@@ -51,13 +51,14 @@ function Shell() {
 
   return (
     <LangContext.Provider value={state.lang}>
+      {/* Held sideways (phone-land, in index.css) the app takes the whole width, clear of the notch. */}
       <div
-        className={`mx-auto w-full flex flex-col bg-paper text-ink font-body ${
-          isPrint ? "min-h-dvh max-w-[52rem] print:max-w-none" : "h-dvh max-w-[30rem]"
+        data-testid="shell"
+        className={`mx-auto w-full flex flex-col bg-paper text-ink font-body phone-land:pl-[env(safe-area-inset-left)] phone-land:pr-[env(safe-area-inset-right)] ${
+          isPrint ? "min-h-dvh max-w-[52rem] print:max-w-none" : "h-dvh max-w-[30rem] phone-land:max-w-none"
         }`}
       >
-        <TopBar />
-        {isPrint || isSettings ? null : <StepBar pathname={pathname} />}
+        <TopBar steps={isPrint || isSettings ? null : <StepBar pathname={pathname} />} />
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
           <Routes>
             <Route path="/" element={<FindField />} />

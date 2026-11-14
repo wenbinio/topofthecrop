@@ -53,3 +53,12 @@ describe("reasonsFor", () => {
     expect(reasonsFor(chickpea, undefined, ["income"])[0]).toEqual({ priority: "income", key: "reason.income.plain", vars: { income: 753 } });
   });
 });
+
+describe("forage reason", () => {
+  it("says yes only for a hay crop, not for faba or pea", () => {
+    const pea: Option = { ...chickpea, id: "pea-durum-durum", sequence: ["pea", "durum", "durum"] };
+    const faba = byId("faba-durum-faba");
+    expect(reasonsFor(pea, current, ["forage"])[0].key).toBe("reason.forage.no");
+    expect(reasonsFor(faba, current, ["forage"])[0].key).toBe("reason.forage.no");
+  });
+});

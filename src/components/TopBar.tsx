@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { Lang, View } from "../data/types";
 import { useT } from "../i18n";
@@ -29,7 +30,11 @@ function GearLink() {
   );
 }
 
-export function TopBar() {
+/**
+ * The app name and switches, with the step bar (`steps`) under them. Held sideways the phone is short,
+ * so everything goes into one row: name, steps, then the switches; the name gives way below 48 rem.
+ */
+export function TopBar({ steps = null }: { steps?: ReactNode }) {
   const [state, setState] = useAppState();
   const t = useT();
   const views: { id: View; Icon: typeof TilesIcon }[] = [
@@ -38,10 +43,15 @@ export function TopBar() {
   ];
   const langs: Lang[] = ["en", "it"];
   return (
-    <header className="flex items-center justify-between gap-2 px-3 bg-surface border-b border-line print:hidden">
+    <header
+      data-testid="top-bar"
+      className="flex flex-wrap items-center justify-between gap-x-2 bg-surface border-b border-line print:hidden phone-land:flex-nowrap phone-land:gap-x-3 phone-land:px-3 phone-land:py-1"
+    >
       {/* At 360 px the name wraps onto two lines rather than squeezing the switches. */}
-      <span className="min-w-0 py-1 font-display font-bold text-big leading-tight">{t("app.name")}</span>
-      <div className="flex items-center gap-2 flex-none">
+      <span className="min-w-0 pl-3 py-1 font-display font-bold text-big leading-tight phone-land:pl-0 phone-land:py-0 phone-land:text-body phone-land:max-[48rem]:hidden">
+        {t("app.name")}
+      </span>
+      <div className="flex items-center gap-2 flex-none pr-3 phone-land:pr-0 phone-land:order-3">
         <GearLink />
         <div role="radiogroup" aria-label={t("view.label")} className="flex border-2 border-line-strong rounded-box overflow-hidden">
           {views.map(({ id, Icon }) => {
@@ -81,6 +91,7 @@ export function TopBar() {
           })}
         </div>
       </div>
+      {steps}
     </header>
   );
 }

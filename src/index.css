@@ -2,6 +2,12 @@
 @import "./theme/standard.css";
 @import "./theme/simple.css";
 
+/*
+ * A phone held sideways: wide but short. Tablets and desktop windows are taller (or wider) and keep the
+ * centred portrait column. Use it as `phone-land:` in class names.
+ */
+@custom-variant phone-land (@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px));
+
 /* Drop Tailwind's built-in palette, fonts, radii and shadows: only theme variables can be used. */
 @theme {
   --color-*: initial;

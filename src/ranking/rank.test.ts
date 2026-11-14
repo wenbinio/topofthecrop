@@ -43,7 +43,7 @@ it('orders flags by LIMITS without removing flagged options', () => {
 it('turns a removal into a flag for the current option', () => {
   const current: Option = { ...options[3], removedBy: ['no-irrigation'] };
   expect(rankOptions({ ...input, options: [current], limits: ['no-irrigation'] })).toEqual({
-    ranked: [{ option: current, rank: 1, best: true, flags: ['no-irrigation'] }], removed: [],
+    ranked: [{ option: current, rank: 1, best: true, flags: ['no-irrigation'] }], removed: [], repeats: [],
   });
 });
 it('retains the current rotation when all alternatives are removed', () => {
@@ -63,4 +63,25 @@ it('breaks ties on other priorities and preserves input order on complete ties',
   higher.scores.normal = { ...lower.scores.normal };
   expect(ids(rankOptions({ ...input, options: [lower, higher] }))).toEqual(['lower', 'higher']);
   expect(ids(rankOptions({ ...input, options: [higher, lower] }))).toEqual(['higher', 'lower']);
+});
+
+it('leaves out an option whose first crop is the legume just grown', () => {
+  const result = rankOptions({ ...input, lastCrop: 'chickpea' });
+  expect(ids(result)).toEqual([forage, faba, durum]);
+  expect(result.repeats.map(option => option.id)).toEqual([chickpea]);
+  expect(result.ranked[0]).toMatchObject({ rank: 1, best: true });
+});
+it('leaves nothing out after a cereal or a crop typed by the farmer', () => {
+  for (const lastCrop of ['durum', 'barley', 'rapeseed', 'other'] as const) {
+    const result = rankOptions({ ...input, lastCrop });
+    expect(result.repeats).toEqual([]);
+    expect(result.ranked).toHaveLength(4);
+  }
+  expect(rankOptions(input).repeats).toEqual([]);
+});
+it('never leaves out the current rotation', () => {
+  const current: Option = { ...options[3], sequence: ['faba', 'durum', 'durum'] };
+  const result = rankOptions({ ...input, options: [options[1], current], lastCrop: 'faba' });
+  expect(result.repeats.map(option => option.id)).toEqual([faba]);
+  expect(ids(result)).toEqual([durum]);
 });

@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
-import type { Confidence, CropId, Fact, Lang, Scale } from "../data/types";
+import type { Confidence, Fact, Lang, Scale } from "../data/types";
 import { hasKey, useLang, useT } from "../i18n";
 import type { Translate } from "../i18n";
 import { AreaScaleIcon, FieldScaleIcon } from "./Icons";
@@ -13,13 +13,6 @@ export function isLevel(value: unknown): value is (typeof LEVELS)[number] {
 
 export function formatNumber(n: number, lang: Lang): string {
   return n.toLocaleString(lang === "it" ? "it-IT" : "en-GB", { maximumFractionDigits: 1 });
-}
-
-/** The years an added payment is paid in, in words: "Paid every year", or the crops joined with "and". */
-export function paidInText(crops: CropId[], t: Translate, lang: Lang): string {
-  if (!crops.length) return t("settings.paidEvery");
-  const names = crops.map((crop) => t(`crop.${crop}`));
-  return t("settings.paidCrops", { crops: new Intl.ListFormat(lang, { type: "conjunction" }).format(names) });
 }
 
 export function valueText(fact: Fact, t: Translate, lang: Lang): string {

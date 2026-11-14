@@ -244,94 +244,102 @@ export default function FindField() {
   const drawnOk = drawn !== null && isUsableRing(drawn);
 
   return (
-    <div className="relative flex-1 min-h-[28rem] overflow-hidden bg-line-strong">
-      <Map
-        centre={centre}
-        zoom={OPEN_ZOOM}
-        // While the farmer draws their own field the demo outline is out of the way, so only one shape shows.
-        fieldOutline={drawing ? null : demoRing}
-        drawnOutline={drawn}
-        editable={drawing}
-        drawing={tracing}
-        target={target}
-        edgeRequest={edgeRequest}
-        onEdges={onEdges}
-        onTap={onTap}
-        onEditRing={reshape}
-        onTrace={onTrace}
-      />
+    // Upright, the sheet sits over the bottom of the map. Held sideways (phone-land), the map takes the left
+    // and the sheet becomes a panel on the right, so the search box and buttons on the map stay clear of it.
+    <div
+      data-testid="find-field"
+      className="relative flex-1 min-h-[28rem] overflow-hidden bg-line-strong phone-land:min-h-0 phone-land:flex phone-land:flex-row"
+    >
+      <div data-testid="map-area" className="absolute inset-0 phone-land:relative phone-land:inset-auto phone-land:flex-1 phone-land:min-w-0">
+        <Map
+          centre={centre}
+          zoom={OPEN_ZOOM}
+          // While the farmer draws their own field the demo outline is out of the way, so only one shape shows.
+          fieldOutline={drawing ? null : demoRing}
+          drawnOutline={drawn}
+          editable={drawing}
+          drawing={tracing}
+          target={target}
+          edgeRequest={edgeRequest}
+          onEdges={onEdges}
+          onTap={onTap}
+          onEditRing={reshape}
+          onTrace={onTrace}
+        />
 
-      {/* search and location, floating on the map; out of the way only while a finger is tracing */}
-      {tracing ? null : (
-        <div className="absolute left-3 right-3 top-3 z-20 flex flex-col gap-2">
-          <form
-            role="search"
-            className="flex items-center gap-2 px-3 h-12 bg-surface rounded-box shadow-float"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (fresh && places?.[0]) {
-                flyTo(places[0].at, 14);
-                setSearchOpen(false);
-              }
-            }}
-          >
-            <SearchIcon className="w-5 h-5 flex-none text-ink-soft" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setSearchOpen(true);
+        {/* search and location, floating on the map; out of the way only while a finger is tracing */}
+        {tracing ? null : (
+          <div className="absolute left-3 right-3 top-3 z-20 flex flex-col gap-2">
+            <form
+              role="search"
+              className="flex items-center gap-2 px-3 h-12 bg-surface rounded-box shadow-float"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (fresh && places?.[0]) {
+                  flyTo(places[0].at, 14);
+                  setSearchOpen(false);
+                }
               }}
-              placeholder={t("find.search")}
-              aria-label={t("find.search")}
-              className="flex-1 min-w-0 h-full bg-transparent outline-none text-body font-bold placeholder:text-ink-soft"
-            />
-          </form>
-          {searchOpen && (places || failed) ? (
-            <ul className="bg-surface rounded-box shadow-float overflow-hidden">
-              {failed ? <li className="px-3 py-3 text-body">{t("find.searchError")}</li> : null}
-              {places && places.length === 0 ? <li className="px-3 py-3 text-body">{t("find.searchNone")}</li> : null}
-              {places?.map((p, i) => (
-                <li key={i} className="border-t border-line first:border-t-0">
-                  <button
-                    type="button"
-                    className="w-full min-h-12 px-3 py-2 text-left"
-                    onClick={() => {
-                      flyTo(p.at, 14);
-                      setSearchOpen(false);
-                    }}
-                  >
-                    <span className="block font-bold text-body">{p.name}</span>
-                    {p.detail ? <span className="block text-small text-ink-soft">{p.detail}</span> : null}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          <div className="flex items-start justify-between gap-2">
-            <span className="px-2 py-1 bg-map-chip text-on-map-chip text-small font-bold rounded-sm">{t("find.basemap")}</span>
-            <button
-              type="button"
-              onClick={locate}
-              className="flex-none inline-flex items-center gap-1.5 h-11 px-3 bg-surface rounded-box shadow-float font-bold text-body"
             >
-              <LocateIcon className="w-5 h-5" />
-              {t("find.locate")}
-            </button>
+              <SearchIcon className="w-5 h-5 flex-none text-ink-soft" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSearchOpen(true);
+                }}
+                placeholder={t("find.search")}
+                aria-label={t("find.search")}
+                className="flex-1 min-w-0 h-full bg-transparent outline-none text-body font-bold placeholder:text-ink-soft"
+              />
+            </form>
+            {searchOpen && (places || failed) ? (
+              <ul className="bg-surface rounded-box shadow-float overflow-hidden phone-land:max-h-48 phone-land:overflow-y-auto">
+                {failed ? <li className="px-3 py-3 text-body">{t("find.searchError")}</li> : null}
+                {places && places.length === 0 ? <li className="px-3 py-3 text-body">{t("find.searchNone")}</li> : null}
+                {places?.map((p, i) => (
+                  <li key={i} className="border-t border-line first:border-t-0">
+                    <button
+                      type="button"
+                      className="w-full min-h-12 px-3 py-2 text-left"
+                      onClick={() => {
+                        flyTo(p.at, 14);
+                        setSearchOpen(false);
+                      }}
+                    >
+                      <span className="block font-bold text-body">{p.name}</span>
+                      {p.detail ? <span className="block text-small text-ink-soft">{p.detail}</span> : null}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <div className="flex items-start justify-between gap-2">
+              <span className="px-2 py-1 bg-map-chip text-on-map-chip text-small font-bold rounded-sm">{t("find.basemap")}</span>
+              <button
+                type="button"
+                onClick={locate}
+                className="flex-none inline-flex items-center gap-1.5 h-11 px-3 bg-surface rounded-box shadow-float font-bold text-body"
+              >
+                <LocateIcon className="w-5 h-5" />
+                {t("find.locate")}
+              </button>
+            </div>
+            {locError ? (
+              <p role="alert" className="self-end px-2 py-1 bg-map-chip text-on-map-chip text-small font-bold rounded-sm">
+                {t("find.locateError")}
+              </p>
+            ) : null}
           </div>
-          {locError ? (
-            <p role="alert" className="self-end px-2 py-1 bg-map-chip text-on-map-chip text-small font-bold rounded-sm">
-              {t("find.locateError")}
-            </p>
-          ) : null}
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* bottom sheet */}
+      {/* bottom sheet; held sideways, a panel on the right that scrolls if it must */}
       <section
         aria-live="polite"
-        className="absolute left-0 right-0 bottom-0 z-20 bg-surface rounded-t-sheet shadow-sheet px-4 pt-4 pb-5"
+        data-testid="find-sheet"
+        className="absolute left-0 right-0 bottom-0 z-20 bg-surface rounded-t-sheet shadow-sheet px-4 pt-4 pb-5 phone-land:relative phone-land:inset-auto phone-land:flex-none phone-land:w-[20rem] phone-land:overflow-y-auto phone-land:rounded-none phone-land:shadow-none phone-land:border-l phone-land:border-line phone-land:pt-3 phone-land:pb-3"
       >
         {bundle.status === "error" ? (
           <p role="alert" className="mb-3 flex items-center gap-2 text-body">
@@ -345,7 +353,7 @@ export default function FindField() {
 
         {/* The demo sheet needs the bundle; until it arrives (or if it failed) keep the hint and the draw button. */}
         {mode.k === "idle" || (mode.k === "demo" && bundle.status !== "ready") ? (
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 phone-land:flex-col phone-land:items-stretch">
             <p className="font-bold text-big">{t("find.hint")}</p>
             <Button look="secondary" onClick={() => setMode(startDrawing())}>
               <PencilIcon className="w-5 h-5" />

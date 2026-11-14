@@ -23,7 +23,7 @@ Six steps, each one screen on a phone.
 |---|---|---|
 | 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn anywhere else gets live NASA weather history for its area. |
 | 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); pick 2 of 4 priorities (income, water, soil, forage). | Big buttons. Last crop is pre-filled from the EU crop map. |
-| 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then four ranked rotations, each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029): continuous durum plus three alternatives. The top one says "Best fit for you". | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
+| 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029): continuous durum plus three alternatives. The top one says "Best fit for you". | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
 | 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | Every number shows its source, its range, and whether it describes "your field" or "your area". Terms such as NDVI open a one-line explanation. |
 | 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. | One headline number: hot days at flowering, now and by 2050. |
 | 6. Take it to your adviser | A one-page printout and a WhatsApp link. | The link reopens the same field and answers. |
@@ -34,14 +34,14 @@ The tool supports a conversation with a local adviser. It never tells the farmer
 
 Rotation planners already exist. Assolia, a French tool sold through cooperatives, plans a whole farm's crops over 3 to 7 years to maximise gross margin from farm records, prices and constraints, and is mostly run by an adviser (as described in a 2022 trade article; we could not check its current state). We found no sign that it uses satellite or climate data, or explains its choices.
 
-Top of the Crop does the step before that. It reads what satellites show on one field, turns that into three or four options with their reasons and unknowns, and hands the farmer a page to take to the adviser. The adviser, with a whole-farm tool, does the money.
+Top of the Crop does the step before that. It reads what satellites show on one field, turns that into a short ranked list of options with their reasons and unknowns, and hands the farmer a page to take to the adviser. The adviser, with a whole-farm tool, does the money.
 
 ### How this answers the challenge
 
 | The challenge asks for | Where it is in the app |
 |---|---|
 | A decision-support tool combining NASA observations, local soil information, crop characteristics and farmer priorities | Steps 1 to 3 |
-| At least three rotation strategies including the existing one | Step 3: four options, each a three-year sequence, the current rotation always among them |
+| At least three rotation strategies including the existing one | Step 3: nine options, each a three-year sequence, the current rotation always among them |
 | For each: why suggested, evidence, benefits, information gaps, risks needing local review | Step 4, using the same five headings |
 | Bare-field periods and seasons of vulnerability | Step 5 strip and step 3 findings |
 | Explaining terms, satellite versus ground measurements, uncertainty | Step 4 explanations, scale badges, ranges and confidence words |
@@ -135,6 +135,8 @@ This table is a first draft for the team to correct. The findings it produces ar
 
 **2. Each finding points to rotation traits that address it.** For example: repeated water stress at grain fill points to crops that finish earlier or use less water; bare soil through summer points to a crop or cover that shortens the bare period; decline under continuous durum with no heat or water signal points to a legume break. This mapping from finding to rotation is the agronomy the team writes down in `docs/scoring.md`.
 
+**3a. A legume just grown is not grown again.** If the farmer's last crop is a legume (chickpea, faba bean, lentil, pea, vetch-oat), an option that starts with the same crop is left out, and the Options screen says so in one line. The current rotation is never left out.
+
 **3. The farmer's limits rule options in or out.** The limits from step 2 are yes/no facts, so they are also branches, not scores. Each either removes an option or flags it, and keeps its reason:
 
 - No irrigation → options that need irrigation are removed.
@@ -194,10 +196,11 @@ type Scenario = "normal" | "drier" | "much-drier";     // the three slider stops
 type Priority = "income" | "water" | "soil" | "forage";
 type Limit = "no-irrigation" | "cereal-machinery" | "no-buyer" | "broomrape";
 type Signal = "rising" | "falling" | "normal" | "no-data";
+type CropId = "durum" | "chickpea" | "faba" | "vetch-oat" | "lentil" | "pea" | "barley" | "rapeseed" | "coriander";
 
 type FieldBundle = {
   field: { id: string; name: string; areaHa: number; outline: GeoJSON.Polygon };
-  lastCrop: { crop: string; source: Fact["source"] };
+  lastCrop: { crop: CropId; source: Fact["source"] };
   findings: {                                                         // exactly three
     title: string; detail: string; fact: Fact;
     signals: { greenness: Signal; temperature: Signal; waterUse: Signal };
@@ -214,7 +217,7 @@ type FieldBundle = {
   options: {
     id: string;                        // "chickpea-durum-durum"
     isCurrent: boolean;
-    sequence: [string, string, string]; // crop ids for the next three harvests, in order
+    sequence: [CropId, CropId, CropId]; // the next three harvests, in order
     firstHarvestYear: number;          // 2027 for the demo field
     facts: { income: Fact; water: Fact; nitrogen: Fact; risk: Fact };  // each covers the whole sequence; income is the average per year
     scores: Record<Scenario, Record<Priority, number>>;               // 0 to 1
@@ -222,11 +225,18 @@ type FieldBundle = {
     flaggedBy: Limit[];                // limits that keep it but add a warning
     supportTag: boolean;
     why: { suggested: string; evidence: Fact[]; benefits: Fact[]; unknowns: string[]; checkLocally: string[] };
-  }[];                                                                // exactly four
+  }[];                                                                // 3 to 12, exactly one with isCurrent
+  economics?: {                        // the sums behind the income figure; without it, facts.income is shown as given
+    crops: Partial<Record<CropId, { yield: Fact; price: Fact; costs: Fact }>>;  // every crop any option grows; others may be left out
+    support: { id: string; name: { en: string; it: string }; condition: { en: string; it: string };
+      level: "eu" | "italy" | "basilicata"; amount: Fact; crops: CropId[]; options: string[]; defaultOn: boolean }[];
+  };
 };
 ```
 
-All wording in a bundle is a dictionary key, not text, so both languages work.
+All wording in a bundle is a dictionary key, not text, so both languages work (support names and conditions, which come from policy documents, carry both languages).
+
+The income figure's confidence is worked out in the app (`incomeFact` in `src/money/money.ts`): the weakest confidence among the yield, price and cost facts of the option's three crops and the amounts of the support that applies and is switched on. A figure the farmer typed in Settings counts as `fair`.
 
 Live weather for other fields uses the same `Fact` type:
 
@@ -248,10 +258,11 @@ type AreaWeather = {
   - late frost days (below 0 °C, March and April)
 
   The thresholds and dates are placeholders for the team to correct, and live in `docs/scoring.md`. The same counting code produces the demo bundle's weather facts, so the two always agree. The "by 2050" number and the slider need climate projections, so they stay demo-field only. If the call fails or takes longer than 8 seconds, the app says the weather history is not available right now and offers the demo field.
-- **The four options are three-year sequences** for the harvests of 2027, 2028 and 2029, after the durum just harvested. Placeholders until the data phase confirms them:
+- **The nine options are three-year sequences** for the harvests of 2027, 2028 and 2029, after the durum just harvested. Crop figures come from `docs/crops-research.md`; each option's facts, limits and scores are derived from its crops by the rules written in `scripts/make-placeholder-bundle.mjs`:
   - chickpea → durum → durum (one legume break)
   - faba bean → durum → faba bean (legume every other year)
   - vetch-oat forage → durum → durum (one forage year)
+  - lentil, pea, barley, rapeseed or coriander → durum → durum (one break year)
   - durum → durum → durum (what the farmer does now)
 - **Three years, fixed.** Every option has exactly three crops. The card shows them as three icons with the year under each, not as a sentence. Longer or shorter rotations are out of scope for this version.
 - **The year strip in step 5** still shows the field's year as observed under the current rotation. A separate strip for each option is out of scope.

@@ -81,7 +81,7 @@ export default function AreaWeather() {
   if (!outline) return null;
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
       <Headline sub={`${t("scale.fieldLong")} · ${formatNumber(Math.round(areaHa(outline) * 10) / 10, lang)} ha`}>
         <span className="flex items-center gap-3">
           <FieldShape ring={outline} className="w-11 h-11 flex-none" />

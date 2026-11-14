@@ -260,6 +260,15 @@ export default function Map({
     };
   }, []);
 
+  // Turning the phone moves the map from full width to beside the panel: MapLibre must be told its box changed.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => mapRef.current?.resize());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     const source = mapRef.current?.getSource("field") as SettableSource | undefined;
     if (loaded && source) source.setData(polygonData(fieldOutline));
