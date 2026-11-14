@@ -489,7 +489,7 @@ export default function Settings() {
     );
 
   return (
-    <div className="flex flex-col flex-1 pb-6">
+    <div className="flex flex-col flex-1 pb-6 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
       <Link
         to={{ pathname: from ?? fallback, search: location.search }}
         replace

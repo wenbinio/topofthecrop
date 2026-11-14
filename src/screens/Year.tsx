@@ -35,6 +35,9 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
 
   return (
     <div className="flex flex-col flex-1">
+      {/* Held sideways: the hot days, slider and best fit on the left, the year strip on the right. */}
+      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
+      <div className="flex flex-col min-w-0">
       <div className="px-4 pt-4">
         <h1 className="text-big flex items-center gap-2">
           <HeatIcon className="w-6 h-6 flex-none" />
@@ -85,6 +88,8 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
           </div>
         </div>
       ) : null}
+      </div>
+      <div className="flex flex-col min-w-0">
 
       <div className="px-4 pt-5">
         <h2 className="sr-only">{t("year.title")}</h2>
@@ -97,6 +102,8 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
 
       <div className="px-4 py-3">
         <PlaceholderNote facts={[hot.now, hot.by2050]} />
+      </div>
+      </div>
       </div>
 
       <BottomBar>

@@ -208,6 +208,9 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </p>
       ) : null}
 
+      {/* Held sideways: the numbers and the reasons on the left, the evidence and the rest on the right. */}
+      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
+      <div className="flex flex-col min-w-0">
       <Section title={t("why.numbers")}>
         <ul>
           <FactRow fact={facts.income} perYear />
@@ -245,6 +248,8 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </p>
       </Section>
 
+      </div>
+      <div className="flex flex-col min-w-0">
       <Section title={t("why.h.evidence")}>
         {finding ? (
           <div className="flex gap-2 py-2">
@@ -292,6 +297,8 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
 
       <div className="px-4 py-3">
         <PlaceholderNote facts={allFacts} />
+      </div>
+      </div>
       </div>
 
       <BottomBar>

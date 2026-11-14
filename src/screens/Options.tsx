@@ -100,6 +100,9 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
 
   return (
     <div className="flex flex-col flex-1">
+      {/* Held sideways: the advice and priorities on the left, what was seen and the options on the right. */}
+      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
+      <div className="flex flex-col min-w-0">
       {simple ? null : (
         <div className="px-4 pt-3 pb-3 bg-surface border-b border-line">
           <div className="flex items-center gap-3">
@@ -124,6 +127,8 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         </PriorityHelp>
         <PriorityChips chosen={state.priorities} onChange={(priorities) => setState({ priorities })} />
       </div>
+      </div>
+      <div className="flex flex-col min-w-0">
 
       <SectionTitle>{t("options.seen")}</SectionTitle>
       <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
@@ -178,6 +183,8 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       {repeats.length ? <RepeatLines repeats={repeats} /> : null}
       <div className="px-4 py-2">
         <PlaceholderNote facts={shownFacts} />
+      </div>
+      </div>
       </div>
 
       <BottomBar>

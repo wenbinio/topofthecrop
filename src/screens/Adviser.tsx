@@ -28,7 +28,7 @@ export default function Adviser() {
   const whatsapp = `https://wa.me/?text=${encodeURIComponent(`${t("adviser.share")} ${link}`)}`;
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
       <Headline>{t("adviser.title")}</Headline>
       <div className="px-4 py-2 flex flex-col gap-3">
         <LinkButton to={to("/print")} className="justify-start">

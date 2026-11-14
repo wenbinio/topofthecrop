@@ -35,7 +35,9 @@ export function StepBar({ pathname }: { pathname: string }) {
   const paths = ["/", "/questions", "/options", whyPath, "/year", "/adviser"];
 
   return (
-    <nav aria-label={t("step.label", { n: current })} className="flex items-stretch gap-1 px-2 py-1 bg-surface border-b border-line print:hidden">
+    <nav aria-label={t("step.label", { n: current })} data-testid="step-bar"
+      // Under the name and switches, full width; held sideways, between them in the same row (see TopBar).
+      className="basis-full flex items-stretch gap-1 px-2 py-1 bg-surface border-t border-line print:hidden phone-land:basis-auto phone-land:flex-1 phone-land:min-w-0 phone-land:order-2 phone-land:px-0 phone-land:py-0 phone-land:border-t-0 phone-land:overflow-x-auto">
       {paths.map((path, i) => {
         const n = i + 1;
         const isCurrent = n === current;

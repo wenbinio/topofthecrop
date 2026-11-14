@@ -70,6 +70,9 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
 
   return (
     <div className="flex flex-col flex-1">
+      {/* Held sideways: last crop and limits on the left, priorities on the right. */}
+      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
+      <div className="flex flex-col min-w-0">
       <SectionTitle>
         <span className="flex flex-wrap items-baseline gap-x-2">
           {t("q.lastCrop")}
@@ -116,8 +119,10 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
           </Choice>
         ))}
       </div>
+      </div>
+      <div className="flex flex-col min-w-0">
 
-      <div className="px-4 pt-2 pb-1">
+      <div className="px-4 pt-2 pb-1 phone-land:pt-4">
         <PriorityHelp>
           <h2 className="text-small font-bold uppercase tracking-wider text-ink-soft">
             {t("q.priorities")} · {state.priorities.length}/2
@@ -135,6 +140,8 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
             </Choice>
           );
         })}
+      </div>
+      </div>
       </div>
 
       <BottomBar>
