@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LngLat } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
+import { MAX_CORNERS, TRACE_CORNERS, round5 } from "../geo/edit";
 import { areaHa, centroid, isUsableRing, pointInRing, simplifyRing } from "../geo/geometry";
 import { useLang, useT } from "../i18n";
 import { useAppState, useGo } from "../state/useAppState";
@@ -20,8 +21,13 @@ type Mode =
   | { k: "idle" }
   | { k: "demo" }
   | { k: "offer" }
-  | { k: "drawing"; tooSmall: boolean }
-  | { k: "confirm"; ring: LngLat[] };
+  /**
+   * Drawing the field: tap corners, pull dots, or trace with one finger.
+   * `past` holds earlier shapes for Undo. `note` is a one-line message after something did not work.
+   */
+  | { k: "drawing"; ring: LngLat[]; past: LngLat[][]; tracing: boolean; note: "tooSmall" | "max" | null };
+
+const startDrawing = (ring: LngLat[] = []): Mode => ({ k: "drawing", ring, past: [], tracing: false, note: null });
 
 type Place = { name: string; detail: string; at: LngLat };
 
@@ -81,8 +87,9 @@ export default function FindField() {
   const [state] = useAppState();
   const bundle = useBundle();
   const [mode, setMode] = useState<Mode>(() =>
+    // Coming back with a drawn field: open it ready to adjust.
     state.outline && isUsableRing(state.outline)
-      ? { k: "confirm", ring: state.outline }
+      ? startDrawing(state.outline)
       : state.fieldId === DEMO_FIELD_ID
         ? { k: "demo" }
         : { k: "idle" },
@@ -109,16 +116,35 @@ export default function FindField() {
     setTarget({ centre: at, zoom, key: targetKey.current });
   }
 
+  /** Replace the shape being drawn, remembering the one before it for Undo. */
+  function reshape(ring: LngLat[]) {
+    setMode((m) => (m.k === "drawing" ? { ...m, ring, past: [...m.past, m.ring], tracing: false, note: null } : m));
+  }
+
   function onTap(point: LngLat) {
-    if (mode.k === "drawing") return;
+    if (mode.k === "drawing") {
+      // Each tap on the map is the next corner of the field.
+      if (mode.tracing) return;
+      if (mode.ring.length >= MAX_CORNERS) setMode({ ...mode, note: "max" });
+      else reshape([...mode.ring, round5(point)]);
+      return;
+    }
     if (demoRing && pointInRing(point, demoRing)) setMode({ k: "demo" });
     else setMode({ k: "offer" });
   }
 
   function onTrace(points: LngLat[]) {
-    const ring = simplifyRing(points);
-    if (!isUsableRing(ring)) setMode({ k: "drawing", tooSmall: true });
-    else setMode({ k: "confirm", ring });
+    const ring = simplifyRing(points, TRACE_CORNERS);
+    if (isUsableRing(ring)) reshape(ring);
+    else setMode((m) => (m.k === "drawing" ? { ...m, tracing: false, note: "tooSmall" } : m));
+  }
+
+  function undo() {
+    setMode((m) =>
+      m.k === "drawing" && m.past.length > 0
+        ? { ...m, ring: m.past[m.past.length - 1], past: m.past.slice(0, -1), tracing: false, note: null }
+        : m,
+    );
   }
 
   function locate() {
@@ -144,7 +170,9 @@ export default function FindField() {
   }
 
   const drawing = mode.k === "drawing";
-  const drawn = mode.k === "confirm" ? mode.ring : null;
+  const tracing = mode.k === "drawing" && mode.tracing;
+  const drawn = mode.k === "drawing" ? mode.ring : null;
+  const drawnOk = drawn !== null && isUsableRing(drawn);
 
   return (
     <div className="relative flex-1 min-h-[28rem] overflow-hidden bg-line-strong">
@@ -153,14 +181,16 @@ export default function FindField() {
         zoom={OPEN_ZOOM}
         fieldOutline={demoRing}
         drawnOutline={drawn}
-        drawing={drawing}
+        editable={drawing}
+        drawing={tracing}
         target={target}
         onTap={onTap}
+        onEditRing={reshape}
         onTrace={onTrace}
       />
 
-      {/* search and location, floating on the map */}
-      {drawing ? null : (
+      {/* search and location, floating on the map; out of the way only while a finger is tracing */}
+      {tracing ? null : (
         <div className="absolute left-3 right-3 top-3 z-20 flex flex-col gap-2">
           <form
             role="search"
@@ -245,7 +275,7 @@ export default function FindField() {
         {mode.k === "idle" || (mode.k === "demo" && bundle.status !== "ready") ? (
           <div className="flex items-center justify-between gap-3">
             <p className="font-bold text-big">{t("find.hint")}</p>
-            <Button look="secondary" onClick={() => setMode({ k: "drawing", tooSmall: false })}>
+            <Button look="secondary" onClick={() => setMode(startDrawing())}>
               <PencilIcon className="w-5 h-5" />
               {t("find.draw")}
             </Button>
@@ -260,7 +290,7 @@ export default function FindField() {
             </p>
             <div className="grid grid-cols-2 gap-2 mt-3">
               <Button onClick={chooseDemo}>{t("find.yes")}</Button>
-              <Button look="secondary" onClick={() => setMode({ k: "drawing", tooSmall: false })}>
+              <Button look="secondary" onClick={() => setMode(startDrawing())}>
                 {t("find.no")}
               </Button>
             </div>
@@ -271,7 +301,7 @@ export default function FindField() {
           <div>
             <p className="font-bold text-big">{t("find.unknown")}</p>
             <div className="grid grid-cols-2 gap-2 mt-3">
-              <Button onClick={() => setMode({ k: "drawing", tooSmall: false })}>
+              <Button onClick={() => setMode(startDrawing())}>
                 <PencilIcon className="w-5 h-5" />
                 {t("find.draw")}
               </Button>
@@ -283,38 +313,48 @@ export default function FindField() {
         ) : null}
 
         {mode.k === "drawing" ? (
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="font-bold text-big flex items-center gap-2">
-                <PencilIcon className="w-5 h-5" />
-                {t("find.drawHelp")}
+          <div data-testid="draw-sheet">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-bold text-big" data-testid="draw-hint">
+                {mode.tracing
+                  ? t("find.drawHelp")
+                  : mode.ring.length === 0
+                    ? t("find.tapCorners")
+                    : mode.ring.length < 3
+                      ? t("find.keepTapping")
+                      : drawnOk
+                        ? t("find.pull", { n: formatNumber(Math.round(areaHa(mode.ring) * 10) / 10, lang) })
+                        : t("find.tooSmallPull")}
               </p>
-              {mode.tooSmall ? (
-                <p role="alert" className="mt-1 font-bold text-body text-warn">
-                  {t("find.tooSmall")}
-                </p>
-              ) : null}
+              <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={() => setMode({ k: "idle" })}>
+                {t("find.cancel")}
+              </button>
             </div>
-            <Button look="secondary" onClick={() => setMode({ k: "idle" })}>
-              {t("find.cancel")}
-            </Button>
-          </div>
-        ) : null}
-
-        {mode.k === "confirm" ? (
-          <div>
-            <p className="text-head">
-              {formatNumber(Math.round(areaHa(mode.ring) * 10) / 10, lang)} ha
-            </p>
-            <p className="text-body text-ink-soft font-bold">{t("find.shapeOk")}</p>
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <Button onClick={() => go("/area", { fieldId: null, outline: mode.ring })}>{t("find.yesShape")}</Button>
-              <Button look="secondary" onClick={() => setMode({ k: "drawing", tooSmall: false })}>
-                {t("find.redraw")}
+            {mode.note ? (
+              <p role="alert" className="mt-1 font-bold text-body text-warn">
+                {t(mode.note === "max" ? "find.maxCorners" : "find.tooSmall")}
+              </p>
+            ) : null}
+            <div className="grid grid-cols-3 gap-2 mt-3">
+              <Button look="secondary" className="px-2" disabled={mode.past.length === 0} onClick={undo}>
+                {t("find.undo")}
+              </Button>
+              <Button
+                look="secondary"
+                className="px-2"
+                aria-pressed={mode.tracing}
+                onClick={() => setMode({ ...mode, tracing: !mode.tracing, note: null })}
+              >
+                <PencilIcon className="w-5 h-5" />
+                {t("find.trace")}
+              </Button>
+              <Button className="px-2" disabled={!drawnOk} onClick={() => go("/area", { fieldId: null, outline: mode.ring })}>
+                {t("find.done")}
               </Button>
             </div>
           </div>
         ) : null}
+
       </section>
     </div>
   );

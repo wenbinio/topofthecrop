@@ -140,3 +140,27 @@
     display: inline !important;
   }
 }
+
+/* Dots on a drawn field. The element is a 44 px touch target; the visible dot is its ::after. */
+.tc-handle {
+  width: 44px;
+  height: 44px;
+  cursor: grab;
+  touch-action: none;
+}
+.tc-handle::after {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  border-radius: 50%;
+  background: var(--tc-map-drawn);
+  border: 4px solid var(--tc-map-handle);
+  box-shadow: 0 1px 4px var(--tc-map-chip);
+}
+/* The smaller dot on each side: pull it to make a new corner. */
+.tc-handle-side::after {
+  inset: 15px;
+  background: var(--tc-map-handle);
+  border: 2px solid var(--tc-map-drawn);
+  opacity: 0.85;
+}
