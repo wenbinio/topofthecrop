@@ -4,6 +4,7 @@ import type { Lang, View } from "../data/types";
 import { useT } from "../i18n";
 import { SETTINGS_PATH, settingsFrom } from "../screens/Settings";
 import { useAppState, useTo } from "../state/useAppState";
+import { MicButton, VoiceLine, useVoice } from "../voice/Voice";
 import { BigTextIcon, GearIcon, TilesIcon } from "./Icons";
 
 /** The way into prices and support, from every screen. */
@@ -42,16 +43,24 @@ export function TopBar({ steps = null }: { steps?: ReactNode }) {
     { id: "simple", Icon: BigTextIcon },
   ];
   const langs: Lang[] = ["en", "it"];
+  // The microphone takes the room the name had: upright under 28 rem (448 px) the name is left to screen readers.
+  const mic = useVoice()?.canListen ?? false;
   return (
     <header
       data-testid="top-bar"
-      className="flex flex-wrap items-center justify-between gap-x-2 bg-surface border-b border-line print:hidden phone-land:flex-nowrap phone-land:gap-x-3 phone-land:px-3 phone-land:py-1"
+      className="relative flex flex-wrap items-center justify-between gap-x-2 bg-surface border-b border-line print:hidden phone-land:flex-nowrap phone-land:gap-x-3 phone-land:px-3 phone-land:py-1"
     >
-      {/* At 360 px the name wraps onto two lines rather than squeezing the switches. */}
-      <span className="min-w-0 pl-3 py-1 font-display font-bold text-big leading-tight phone-land:pl-0 phone-land:py-0 phone-land:text-body phone-land:max-[48rem]:hidden">
+      {/* At 360 px the name wraps onto two lines rather than squeezing the switches; with the microphone it gives way. */}
+      <span
+        data-testid="app-name"
+        className={`min-w-0 pl-3 py-1 font-display font-bold text-big leading-tight phone-land:pl-0 phone-land:py-0 phone-land:text-body phone-land:max-[48rem]:hidden ${
+          mic ? "max-[28rem]:sr-only" : ""
+        }`}
+      >
         {t("app.name")}
       </span>
       <div className="flex items-center gap-2 flex-none pr-3 phone-land:pr-0 phone-land:order-3">
+        <MicButton />
         <GearLink />
         <div role="radiogroup" aria-label={t("view.label")} className="flex border-2 border-line-strong rounded-box overflow-hidden">
           {views.map(({ id, Icon }) => {
@@ -92,6 +101,7 @@ export function TopBar({ steps = null }: { steps?: ReactNode }) {
         </div>
       </div>
       {steps}
+      <VoiceLine />
     </header>
   );
 }

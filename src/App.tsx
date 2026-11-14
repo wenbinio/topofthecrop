@@ -17,6 +17,7 @@ import Questions from "./screens/Questions";
 import Settings, { SETTINGS_PATH } from "./screens/Settings";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
+import { VoiceProvider } from "./voice/Voice";
 
 /**
  * Sends the farmer back to step 1 when the link lacks the field a screen needs.
@@ -62,6 +63,7 @@ function Shell() {
 
   return (
     <LangContext.Provider value={state.lang}>
+      <VoiceProvider>
       {/* Held sideways (phone-land, in index.css) the app takes the whole width, clear of the notch. */}
       <div
         data-testid="shell"
@@ -92,6 +94,7 @@ function Shell() {
           </Routes>
         </main>
       </div>
+      </VoiceProvider>
     </LangContext.Provider>
   );
 }
