@@ -202,6 +202,7 @@ type FieldBundle = {
     title: string; detail: string; fact: Fact;
     signals: { greenness: Signal; temperature: Signal; waterUse: Signal };
     weatherDriven: boolean;            // the whole area shows it, not just this field
+    expectedBare?: boolean;            // the field is bare on purpose (after harvest), so it is not read as decline
     addressedBy: string[];             // ids of the options that respond to this finding
   }[];
   year: {                                                             // October first
