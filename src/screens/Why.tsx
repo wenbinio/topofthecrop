@@ -11,12 +11,12 @@ import { useAppState, useTo } from "../state/useAppState";
 import { CropSequence, optionCrop } from "../components/Crops";
 import { ConfidenceWord, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, ChevronIcon, CropIcon, FindingIcon } from "../components/Icons";
-import { RichText, Term } from "../components/Term";
+import { HOT_DAY_LABELS, HotDaysTerm, RichText, Term } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
 import { SETTINGS_PATH, settingsFrom } from "./Settings";
 
 /** A fact in full: label, value, range, scale badge, dataset and resolution, date, confidence. */
-export function FactRow({ fact, perYear = false }: { fact: Fact; perYear?: boolean }) {
+export function FactRow({ fact, perYear = false, flowerHigh }: { fact: Fact; perYear?: boolean; flowerHigh?: FieldBundle["year"]["flowerHigh"] }) {
   const t = useT();
   const lang = useLang();
   const range = rangeText(fact, lang);
@@ -24,7 +24,13 @@ export function FactRow({ fact, perYear = false }: { fact: Fact; perYear?: boole
   return (
     <li className="py-2 border-b border-line last:border-b-0">
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-body">{fact.label ? <RichText text={t(fact.label)} /> : null}</span>
+        <span className="text-body">
+          {fact.label && HOT_DAY_LABELS.includes(fact.label) ? (
+            <HotDaysTerm high={flowerHigh}>{t(fact.label)}</HotDaysTerm>
+          ) : fact.label ? (
+            <RichText text={t(fact.label)} />
+          ) : null}
+        </span>
         <span className="text-right whitespace-nowrap">
           <span className="text-big font-bold">{valueText(fact, t, lang)}</span>
           {unit ? <span className="text-small font-bold"> {unit}</span> : null}
@@ -66,7 +72,7 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
   const to = useTo();
   const [state] = useAppState();
   const { pathname } = useLocation();
-  const money = optionMoney(option, economics, state.money);
+  const money = optionMoney(option, economics, state.money, state.extras);
   const n = (v: number) => formatNumber(Math.round(v), lang);
   return (
     <div className="py-2" data-testid="money-working">
@@ -242,9 +248,9 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
           </div>
         ) : null}
         <ul>
-          {finding ? <FactRow fact={finding.fact} /> : null}
+          {finding ? <FactRow fact={finding.fact} flowerHigh={bundle.year.flowerHigh} /> : null}
           {option.why.evidence.map((f, i) => (
-            <FactRow key={i} fact={f} />
+            <FactRow key={i} fact={f} flowerHigh={bundle.year.flowerHigh} />
           ))}
         </ul>
       </Section>

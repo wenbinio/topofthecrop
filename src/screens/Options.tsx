@@ -11,7 +11,7 @@ import { Findings } from "../components/Findings";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
 import { OptionRow } from "../components/OptionRow";
 import { YearStrip } from "../components/YearStrip";
-import { BottomBar, LinkButton, SectionTitle } from "../components/ui";
+import { BackButton, BottomBar, LinkButton, SectionTitle } from "../components/ui";
 import { PriorityChips, ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
@@ -89,7 +89,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <SectionTitle>{t("options.seen")}</SectionTitle>
-      <Findings findings={bundle.findings} view={state.view} />
+      <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
 
       <SectionTitle>
         <span className="flex items-center justify-between">
@@ -111,7 +111,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         >
           <EuroIcon className="w-5 h-5 flex-none" />
           <span className="flex-1">{t("settings.title")}</span>
-          {resolveMoney(bundle.economics, state.money).edited ? <YoursTag /> : null}
+          {resolveMoney(bundle.economics, state.money).edited || state.extras.length ? <YoursTag /> : null}
           <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
         </Link>
       ) : null}
@@ -129,6 +129,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <BottomBar>
+        <BackButton to={to("/questions")} />
         <LinkButton to={to("/year")} className="flex-1">
           {t("options.next")}
         </LinkButton>

@@ -7,7 +7,8 @@ import { CropSequence, optionCrop } from "../components/Crops";
 import { FactButton, PlaceholderNote } from "../components/FactParts";
 import { HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
-import { BottomBar, LinkButton } from "../components/ui";
+import { HotDaysTerm } from "../components/Term";
+import { BackButton, BottomBar, LinkButton } from "../components/ui";
 
 const RISK_ORDER: Risk[] = ["dry", "frost", "heat", "rain"];
 
@@ -35,8 +36,8 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
     <div className="flex flex-col flex-1">
       <div className="px-4 pt-4">
         <h1 className="text-big flex items-center gap-2">
-          <HeatIcon className="w-6 h-6" />
-          {t("year.hotHead")}
+          <HeatIcon className="w-6 h-6 flex-none" />
+          <HotDaysTerm high={bundle.year.flowerHigh}>{t("year.hotHead")}</HotDaysTerm>
         </h1>
         <div className="flex items-start gap-6 mt-1" data-testid="hot-days">
           <div>
@@ -98,6 +99,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <BottomBar>
+        <BackButton to={to("/options")} />
         <LinkButton to={to("/adviser")} className="flex-1">
           {t("year.next")}
         </LinkButton>

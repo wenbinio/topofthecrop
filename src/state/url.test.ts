@@ -56,3 +56,31 @@ it('drops invalid positions, deduplicates limits, and gives the demo id preceden
   expect(decodeState('l=broomrape,no-buyer,broomrape').limits).toEqual(['no-buyer', 'broomrape']);
   expect(decodeState('f=genzano-demo&o=1,2;3,4;5,6').outline).toBeNull();
 });
+it('round-trips added payments, names with separators and accents included', () => {
+  const state: AppState = { ...DEFAULT_STATE, fieldId: fixture.field.id, extras: [
+    { name: 'Regional aid', amount: 50, crops: [] },
+    { name: 'Aiuto ~ a|b & più', amount: 90.5, crops: ['chickpea', 'faba'] },
+  ] };
+  const encoded = encodeState(state);
+  expect(decodeState(encoded)).toEqual(state);
+  expect(decodeState(`?${encoded}`).extras).toEqual(state.extras);
+  expect(new URLSearchParams(encodeState(DEFAULT_STATE)).has('x')).toBe(false);
+});
+it('keeps at most three added payments', () => {
+  const x = ['a~1~', 'b~2~', 'c~3~durum', 'd~4~'].join('|');
+  expect(decodeState(`x=${encodeURIComponent(x)}`).extras.map(extra => extra.name)).toEqual(['a', 'b', 'c']);
+});
+it('drops added payments with a bad name, amount or crop list', () => {
+  const items = ['~5~', '%20%20~5~', `${'n'.repeat(31)}~5~`, 'neg~-1~', 'big~2001~', 'word~abc~', 'none~~',
+    'maize~5~maize,rice', 'ok~2000~faba,maize,chickpea,faba', `${'k'.repeat(30)}~0~`, ' pad ~7~'];
+  expect(decodeState(`x=${encodeURIComponent(items.join('|'))}`).extras).toEqual([
+    { name: 'ok', amount: 2000, crops: ['chickpea', 'faba'] },
+    { name: 'k'.repeat(30), amount: 0, crops: [] },
+    { name: 'pad', amount: 7, crops: [] },
+  ]);
+  expect(decodeState('x=a~1|b~2~~|%E0%A4%A~3~').extras).toEqual([]);
+});
+it('tolerates a malformed added-payment escape', () => {
+  expect(() => decodeState('x=%E0%A4%A')).not.toThrow();
+  expect(decodeState('x=%E0%A4%A').extras).toEqual([]);
+});

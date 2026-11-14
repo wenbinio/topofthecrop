@@ -24,7 +24,7 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Foggia commodity exchange and national durum price list (CUN)",
+            "dataset": "National durum price list and Foggia exchange",
             "resolution": "regional market",
             "url": "https://www.fg.camcom.it/"
           },
@@ -69,7 +69,7 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Foggia commodity exchange and national durum price list (CUN)",
+            "dataset": "National durum price list and Foggia exchange",
             "resolution": "regional market",
             "url": "https://www.fg.camcom.it/"
           },
@@ -114,7 +114,7 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Foggia commodity exchange and national durum price list (CUN)",
+            "dataset": "National durum price list and Foggia exchange",
             "resolution": "regional market",
             "url": "https://www.fg.camcom.it/"
           },
@@ -189,11 +189,11 @@
         "defaultOn": true,
         "name": {
           "en": "Basic income support",
-          "it": "Sostegno di base al reddito"
+          "it": "Sostegno base reddito"
         },
         "condition": {
-          "en": "Paid on your own payment entitlements, so it differs for every farm. Put in your own figure.",
-          "it": "Pagato sui tuoi titoli, quindi cambia da azienda ad azienda. Metti il tuo valore."
+          "en": "Based on your entitlements; varies by farm. Enter your figure.",
+          "it": "Sui tuoi titoli; varia per azienda. Metti tua cifra."
         },
         "amount": {
           "value": 170,
@@ -224,8 +224,8 @@
           "it": "Sostegno ridistributivo"
         },
         "condition": {
-          "en": "First 14 hectares of farms up to 50 hectares.",
-          "it": "Primi 14 ettari delle aziende fino a 50 ettari."
+          "en": "First 14 ha, farms up to 50 ha.",
+          "it": "Primi 14 ha, aziende fino a 50 ha."
         },
         "amount": {
           "value": 90,
@@ -252,12 +252,12 @@
         "level": "italy",
         "defaultOn": true,
         "name": {
-          "en": "Coupled support for durum wheat",
-          "it": "Sostegno accoppiato grano duro"
+          "en": "Coupled durum support",
+          "it": "Accoppiato grano duro"
         },
         "condition": {
-          "en": "Durum in central and southern Italy, grown to full ripeness, with certified seed.",
-          "it": "Grano duro nel Centro-Sud, portato a maturazione, con seme certificato."
+          "en": "Centre-South durum, grown to full ripeness, certified seed.",
+          "it": "Grano duro Centro-Sud a maturazione, seme certificato."
         },
         "amount": {
           "value": 103,
@@ -286,12 +286,12 @@
         "level": "italy",
         "defaultOn": true,
         "name": {
-          "en": "Coupled support for grain legumes",
-          "it": "Sostegno accoppiato leguminose da granella"
+          "en": "Coupled grain legumes",
+          "it": "Accoppiato leguminose granella"
         },
         "condition": {
-          "en": "Chickpea or faba bean grown to full seed ripeness.",
-          "it": "Cece o favino portati a maturazione piena del seme."
+          "en": "Chickpea or faba bean to full seed ripeness.",
+          "it": "Cece o favino a maturazione piena."
         },
         "amount": {
           "value": 44,
@@ -321,12 +321,12 @@
         "level": "eu",
         "defaultOn": true,
         "name": {
-          "en": "Eco-scheme 4: rotation with a legume",
-          "it": "Eco-schema 4: avvicendamento con leguminosa"
+          "en": "Eco-scheme 4: legume rotation",
+          "it": "Eco-schema 4: rotazione leguminosa"
         },
         "condition": {
-          "en": "About 60 €/ha in the years that count, roughly two in three. No herbicides or pesticides on the legume; residues worked in.",
-          "it": "Circa 60 €/ha negli anni che contano, più o meno due su tre. Niente diserbanti o fitofarmaci sulla leguminosa; residui interrati."
+          "en": "About 60 €/ha in eligible years (about 2 of 3). No legume herbicides or pesticides; residues worked in.",
+          "it": "Circa 60 €/ha anni validi (circa 2 su 3). No diserbi o fitofarmaci su legume; residui interrati."
         },
         "amount": {
           "value": 40,
@@ -356,12 +356,12 @@
         "level": "eu",
         "defaultOn": false,
         "name": {
-          "en": "Eco-scheme 4 with a vetch-oat year",
-          "it": "Eco-schema 4 con un anno di veccia-avena"
+          "en": "Eco-scheme 4: vetch-oat year",
+          "it": "Eco-schema 4: anno veccia-avena"
         },
         "condition": {
-          "en": "Our sources disagree on whether one year of vetch-oat followed by durum counts. Ask your adviser.",
-          "it": "Le nostre fonti non concordano: un anno di veccia-avena seguito da grano duro potrebbe non valere. Chiedi al tecnico."
+          "en": "Sources disagree if vetch-oat before durum counts. Ask your adviser.",
+          "it": "Fonti discordi se veccia-avena prima del grano duro valga. Chiedi al tecnico."
         },
         "amount": {
           "value": 40,
@@ -390,12 +390,12 @@
         "level": "italy",
         "defaultOn": false,
         "name": {
-          "en": "Coupled support for a legume forage mix",
-          "it": "Sostegno accoppiato erbaio di leguminose"
+          "en": "Coupled legume forage",
+          "it": "Accoppiato erbaio leguminose"
         },
         "condition": {
-          "en": "Only if vetch is the main plant in the mix and it stays until flowering starts.",
-          "it": "Solo se la veccia prevale nel miscuglio e resta in campo fino a inizio fioritura."
+          "en": "Only if vetch dominates mix and stays until flowering starts.",
+          "it": "Solo se prevale veccia fino a inizio fioritura."
         },
         "amount": {
           "value": 44,
@@ -428,8 +428,8 @@
           "it": "Fondo grano duro"
         },
         "condition": {
-          "en": "Needs a supply-chain contract of at least three years and certified seed. Up to 50 hectares; cut if too many apply.",
-          "it": "Serve un contratto di filiera almeno triennale e seme certificato. Fino a 50 ettari; ridotto se le domande sono troppe."
+          "en": "3+ yr supply contract, certified seed. Max 50 ha; cut if too many apply.",
+          "it": "Contratto filiera almeno 3 anni, seme certificato. Max 50 ha; taglio se troppe domande."
         },
         "amount": {
           "value": 100,
@@ -458,12 +458,12 @@
         "level": "italy",
         "defaultOn": false,
         "name": {
-          "en": "Food-sovereignty fund for legumes",
-          "it": "Fondo sovranità alimentare per le leguminose"
+          "en": "Legume sovereignty fund",
+          "it": "Fondo sovranità leguminose"
         },
         "condition": {
-          "en": "Needs a three-year supply-chain contract, and pays only on legume area above your three-year average. Up to 250 €/ha; cut if too many apply.",
-          "it": "Serve un contratto di filiera triennale e paga solo la superficie a leguminose in più rispetto alla tua media di tre anni. Fino a 250 €/ha; ridotto se le domande sono troppe."
+          "en": "3-yr supply contract; pays legume ha above 3-yr average. Max 250 €/ha; cut if too many apply.",
+          "it": "Contratto filiera 3 anni; paga ha legumi sopra media 3 anni. Max 250 €/ha; taglio se troppe domande."
         },
         "amount": {
           "value": 200,
@@ -497,8 +497,8 @@
           "it": "Semina su sodo (SRA03)"
         },
         "condition": {
-          "en": "Five-year commitment to no-till on every crop. The 2026 call is closed.",
-          "it": "Impegno di cinque anni alla semina su sodo su tutte le colture. Il bando 2026 è chiuso."
+          "en": "5-year no-till on all crops. 2026 call closed.",
+          "it": "Impegno 5 anni su sodo, tutte le colture. Bando 2026 chiuso."
         },
         "amount": {
           "value": 300,
@@ -529,8 +529,8 @@
           "it": "Produzione integrata (SRA01)"
         },
         "condition": {
-          "en": "Five-year commitment to the regional integrated-production rules. Not together with organic on the same field.",
-          "it": "Impegno di cinque anni ai disciplinari regionali di produzione integrata. Non insieme al biologico sullo stesso campo."
+          "en": "5-year regional integrated rules. Not with organic on same field.",
+          "it": "Impegno 5 anni regole integrate regionali. No col biologico sullo stesso campo."
         },
         "amount": {
           "value": 171,
@@ -557,12 +557,12 @@
         "level": "basilicata",
         "defaultOn": false,
         "name": {
-          "en": "Organic farming (SRA29)",
-          "it": "Agricoltura biologica (SRA29)"
+          "en": "Organic (SRA29)",
+          "it": "Biologico (SRA29)"
         },
         "condition": {
-          "en": "Five years certified organic. Our sources disagree on the rate for arable land; the last call closed in May 2025.",
-          "it": "Cinque anni di biologico certificato. Le nostre fonti non concordano sul premio per i seminativi; ultimo bando chiuso a maggio 2025."
+          "en": "5 years certified organic. Sources disagree on arable rate; last call closed May 2025.",
+          "it": "5 anni biologico certificato. Fonti discordi sul premio seminativi; ultimo bando chiuso maggio 2025."
         },
         "amount": {
           "value": 258,
@@ -991,6 +991,42 @@
           "asOf": "2041-2060",
           "placeholder": false
         }
+      }
+    },
+    "flowerHigh": {
+      "now": {
+        "value": 22.9,
+        "unit": "°C",
+        "range": [
+          21.2,
+          24.5
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "ERA5-Land (NASA POWER check)",
+          "resolution": "about 11 km",
+          "url": "https://doi.org/10.24381/cds.e2161bac"
+        },
+        "confidence": "fair",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "by2050": {
+        "value": 24.5,
+        "unit": "°C",
+        "range": [
+          23.7,
+          25.3
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "NASA NEX-GDDP-CMIP6",
+          "resolution": "about 28 km",
+          "url": "https://doi.org/10.1038/s41597-022-01393-4"
+        },
+        "confidence": "low",
+        "asOf": "2041-2060",
+        "placeholder": false
       }
     }
   },

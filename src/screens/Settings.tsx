@@ -1,13 +1,13 @@
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import type { Economics, Fact, FieldBundle } from "../data/types";
-import { CROPS, DEMO_FIELD_ID } from "../data/types";
+import type { CropId, Economics, ExtraSupport, Fact, FieldBundle } from "../data/types";
+import { CROPS, DEMO_FIELD_ID, EXTRA_LIMITS, MAX_EXTRAS } from "../data/types";
 import { useLang, useT } from "../i18n";
 import { MONEY_LIMITS, resolveMoney, setMoney } from "../money/money";
 import { useAppState } from "../state/useAppState";
 import { BundleGate } from "../components/BundleProvider";
-import { DatasetLabel, PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
+import { DatasetLabel, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, paidInText } from "../components/FactParts";
 import { BackIcon, CropIcon } from "../components/Icons";
 import { Button, SectionTitle } from "../components/ui";
 
@@ -51,9 +51,6 @@ function MoneyInput({
   disabled?: boolean;
   onCommit: (value: number) => void;
 }) {
-  const t = useT();
-  const lang = useLang();
-  const errId = useId();
   const [text, setText] = useState(String(value));
   const [seen, setSeen] = useState(value);
   // The stored value changed from elsewhere (Reset, another tab of the link): show it,
@@ -67,6 +64,41 @@ function MoneyInput({
   const error = disabled || "value" in parsed ? null : parsed.error;
 
   return (
+    <AmountBox
+      text={text}
+      limits={limits}
+      label={label}
+      disabled={disabled}
+      error={error}
+      onText={(next) => {
+        setText(next);
+        const p = parseMoney(next, limits);
+        if ("value" in p) onCommit(p.value);
+      }}
+    />
+  );
+}
+
+/** The number box itself, with its error line below. */
+function AmountBox({
+  text,
+  limits,
+  label,
+  disabled = false,
+  error,
+  onText,
+}: {
+  text: string;
+  limits: Limits;
+  label: string;
+  disabled?: boolean;
+  error: "number" | "range" | null;
+  onText: (text: string) => void;
+}) {
+  const t = useT();
+  const lang = useLang();
+  const errId = useId();
+  return (
     <span className="flex flex-col items-end flex-none">
       <input
         type="text"
@@ -77,12 +109,7 @@ function MoneyInput({
         aria-describedby={error ? errId : undefined}
         disabled={disabled}
         value={text}
-        onChange={(e) => {
-          const next = e.target.value;
-          setText(next);
-          const p = parseMoney(next, limits);
-          if ("value" in p) onCommit(p.value);
-        }}
+        onChange={(e) => onText(e.target.value)}
         className={`tc-tap w-28 px-3 rounded-box border-2 bg-surface text-big font-bold text-right disabled:bg-sunk disabled:text-ink-soft disabled:opacity-60 ${
           error ? "border-warn" : "border-line-strong"
         }`}
@@ -123,6 +150,9 @@ function Editor({ economics }: { economics: Economics }) {
   const resolved = resolveMoney(economics, state.money);
   const crops = CROPS.filter((c) => economics.crops[c]);
   const commit = (key: string, value: number) => setState({ money: setMoney(economics, state.money, key, value) });
+  const extras = state.extras;
+  const setExtra = (index: number, extra: ExtraSupport | null) =>
+    setState({ extras: extra ? extras.map((e, i) => (i === index ? extra : e)) : extras.filter((_, i) => i !== index) });
 
   const firstPrice = crops.length ? economics.crops[crops[0]].price : undefined;
   const shownDefaults: Fact[] = [
@@ -183,8 +213,14 @@ function Editor({ economics }: { economics: Economics }) {
         })}
       </ul>
 
+      <Extras extras={extras} onChange={setExtra} onAdd={(extra) => setState({ extras: [...extras, extra] })} />
+
       <div className="px-4 pt-4 flex flex-col gap-3 items-stretch">
-        <Button look="secondary" disabled={!resolved.edited} onClick={() => setState({ money: {} })}>
+        <Button
+          look="secondary"
+          disabled={!resolved.edited && !extras.length}
+          onClick={() => setState({ money: {}, extras: [] })}
+        >
           {t("settings.reset")}
         </Button>
         <p className="text-body font-bold" data-testid="adviser-line">
@@ -193,6 +229,167 @@ function Editor({ economics }: { economics: Economics }) {
         <PlaceholderNote facts={shownDefaults} />
       </div>
     </>
+  );
+}
+
+/** The payments the farmer added, each like a known one but always on, and the way to add another. */
+function Extras({
+  extras,
+  onChange,
+  onAdd,
+}: {
+  extras: ExtraSupport[];
+  onChange: (index: number, extra: ExtraSupport | null) => void;
+  onAdd: (extra: ExtraSupport) => void;
+}) {
+  const t = useT();
+  const lang = useLang();
+  const [adding, setAdding] = useState(false);
+  const full = extras.length >= MAX_EXTRAS;
+  return (
+    <>
+      {extras.length ? (
+        <>
+          <SectionTitle>
+            {t("settings.added")} <span className="normal-case tracking-normal">€/ha</span>
+          </SectionTitle>
+          <ul className="border-t border-line bg-surface" data-testid="extra-list">
+            {extras.map((extra, i) => (
+              <li key={`${i}-${extra.name}`} className="px-4 py-2 border-b border-line" data-testid="extra-item">
+                <div className="flex items-start gap-3">
+                  <span className="flex-1 min-w-0 pt-2.5 font-bold text-body break-words">{extra.name}</span>
+                  <MoneyInput
+                    value={extra.amount}
+                    limits={EXTRA_LIMITS.amount}
+                    label={t("settings.amountOf", { name: extra.name })}
+                    onCommit={(amount) => onChange(i, { ...extra, amount })}
+                  />
+                </div>
+                <div className="mt-1 flex flex-wrap items-center justify-between gap-x-2">
+                  <span className="flex flex-wrap items-center gap-2 text-small font-bold">
+                    <YoursTag />
+                    <span className="text-ink-soft">{paidInText(extra.crops, t, lang)}</span>
+                  </span>
+                  <Button
+                    look="plain"
+                    className="px-2"
+                    aria-label={t("settings.removeOf", { name: extra.name })}
+                    onClick={() => onChange(i, null)}
+                  >
+                    {t("settings.remove")}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      <div className="px-4 pt-4 flex flex-col gap-2 items-stretch">
+        {adding ? (
+          <AddForm
+            onCancel={() => setAdding(false)}
+            onAdd={(extra) => {
+              onAdd(extra);
+              setAdding(false);
+            }}
+          />
+        ) : (
+          <>
+            <Button look="secondary" disabled={full} onClick={() => setAdding(true)}>
+              {t("settings.add")}
+            </Button>
+            {full ? (
+              <p className="text-small text-ink-soft" data-testid="extra-max">
+                {t("settings.addMax")}
+              </p>
+            ) : null}
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+/** A small form, in place: name, amount and the years it is paid in ("Every year" unless a crop is chosen). */
+function AddForm({ onAdd, onCancel }: { onAdd: (extra: ExtraSupport) => void; onCancel: () => void }) {
+  const t = useT();
+  const nameId = useId();
+  const paidId = useId();
+  const [name, setName] = useState("");
+  const [amountText, setAmountText] = useState("");
+  const [crops, setCrops] = useState<CropId[]>([]);
+  const parsed = parseMoney(amountText, EXTRA_LIMITS.amount);
+  // An empty box is not yet a mistake to point out; it only keeps "Add" off.
+  const error = !amountText || "value" in parsed ? null : parsed.error;
+  const trimmed = name.trim();
+  const amount = "value" in parsed ? parsed.value : null;
+  const toggle = (crop: CropId) =>
+    setCrops((now) => (now.includes(crop) ? now.filter((c) => c !== crop) : CROPS.filter((c) => c === crop || now.includes(c))));
+
+  return (
+    <div className="flex flex-col gap-3 p-3 border-2 border-line-strong rounded-box bg-surface" data-testid="extra-form">
+      <label htmlFor={nameId} className="font-bold text-body">
+        {t("settings.addName")}
+      </label>
+      <input
+        id={nameId}
+        type="text"
+        autoComplete="off"
+        maxLength={EXTRA_LIMITS.name}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="tc-tap w-full px-3 rounded-box border-2 border-line-strong bg-surface text-big"
+      />
+      <div className="flex items-start justify-between gap-3">
+        <span className="pt-2.5 font-bold text-body">
+          {t("settings.addAmount")} <span className="font-normal">€/ha</span>
+        </span>
+        <AmountBox text={amountText} limits={EXTRA_LIMITS.amount} label={t("settings.addAmount")} error={error} onText={setAmountText} />
+      </div>
+      <p id={paidId} className="font-bold text-body">
+        {t("settings.paidIn")}
+      </p>
+      <div role="group" aria-labelledby={paidId} className="flex flex-wrap gap-2">
+        <Toggle pressed={!crops.length} onClick={() => setCrops([])}>
+          {t("settings.everyYear")}
+        </Toggle>
+        {CROPS.map((crop) => (
+          <Toggle key={crop} pressed={crops.includes(crop)} onClick={() => toggle(crop)}>
+            {t(`crop.${crop}`)}
+          </Toggle>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button
+          disabled={!trimmed || amount === null}
+          className="flex-1"
+          onClick={() => {
+            if (trimmed && amount !== null) onAdd({ name: trimmed, amount, crops });
+          }}
+        >
+          {t("settings.addConfirm")}
+        </Button>
+        <Button look="secondary" className="flex-1" onClick={onCancel}>
+          {t("settings.addCancel")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** An on/off button for "Paid in". */
+function Toggle({ pressed, onClick, children }: { pressed: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={pressed}
+      onClick={onClick}
+      className={`tc-tap px-4 rounded-box border-2 font-bold text-body ${
+        pressed ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 

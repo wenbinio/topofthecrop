@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { useT } from "../i18n";
+import { BackIcon } from "./Icons";
 
 const base = "tc-tap inline-flex items-center justify-center gap-2 px-5 rounded-box font-bold text-body text-center";
 const looks = {
@@ -54,6 +56,17 @@ export function Headline({ children, sub }: { children: ReactNode; sub?: ReactNo
 
 export function SectionTitle({ children }: { children: ReactNode }) {
   return <h2 className="px-4 pt-4 pb-2 text-small font-bold uppercase tracking-wider text-ink-soft">{children}</h2>;
+}
+
+/** Back to the previous step, keeping the state: sits in the bottom bar, left of the main button, and gives way to it. */
+export function BackButton({ to }: { to: { pathname: string; search: string } }) {
+  const t = useT();
+  return (
+    <LinkButton to={to} look="secondary" className="flex-none px-3">
+      <BackIcon className="w-5 h-5 flex-none" />
+      {t("common.back")}
+    </LinkButton>
+  );
 }
 
 /** A bottom bar for the screen's main action. */

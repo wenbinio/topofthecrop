@@ -22,10 +22,17 @@ it('counts the baseline and supplies the required fact metadata', () => {
       source: { dataset: 'NASA POWER', resolution: 'about 50 km', url: 'https://power.larc.nasa.gov/' } });
   }
 });
-it('includes flowering endpoints and excludes adjacent days and exactly 30 C', () => {
+it('counts 30 C or more from 15 April to 15 June inclusive, not the days either side', () => {
   const daily = series();
-  Object.assign(daily.tmax, { '20250415': 31, '20250531': 31, '20250414': 35, '20250601': 35, '20250501': 30 });
-  expect(summarise(daily).hotDaysAtFlowering).toMatchObject({ value: 0.2, range: [0, 2] });
+  // Counted: both endpoints (15 April, 15 June) and a day of exactly 30 C. Not counted: 14 April, 16 June, 29.9 C.
+  Object.assign(daily.tmax, { '20250415': 31, '20250615': 31, '20250501': 30, '20250414': 35, '20250616': 35, '20250502': 29.9 });
+  expect(summarise(daily).hotDaysAtFlowering).toMatchObject({ value: 0.3, range: [0, 3] });
+});
+it('counts a hot day on 15 June and not one on 16 June', () => {
+  const june15 = series(); june15.tmax['20250615'] = 30;
+  expect(summarise(june15).hotDaysAtFlowering.value).toBe(0.1);
+  const june16 = series(); june16.tmax['20250616'] = 30;
+  expect(summarise(june16).hotDaysAtFlowering.value).toBe(0);
 });
 it('includes frost endpoints and excludes leap day, May and exactly zero', () => {
   const daily = series();
@@ -50,10 +57,11 @@ it('requires at least three usable years for every measure', () => {
 });
 it('applies 90% completeness independently to each calendar window', () => {
   const daily = series();
-  for (let day = 15; day <= 18; day++) delete daily.tmax[`202504${day}`];
+  // The flowering window is 62 days: 56 present (6 missing) still counts, 55 present does not.
+  for (let day = 15; day <= 20; day++) delete daily.tmax[`202504${day}`];
   daily.tmax['20250531'] = 31;
   expect(summarise(daily).hotDaysAtFlowering.value).toBe(0.1);
-  daily.tmax['20250419'] = -999;
+  daily.tmax['20250421'] = -999;
   expect(summarise(daily).hotDaysAtFlowering.value).toBe(0);
   for (const key of Object.keys(daily.rain)) if (key < '20240101') delete daily.rain[key];
   expect(() => summarise(daily)).toThrow('weather: not enough data');

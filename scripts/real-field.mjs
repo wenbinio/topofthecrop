@@ -1,10 +1,10 @@
-// Turns the team's field.json (made by the notebooks in this repo, see DATA_SOURCES.md) into the parts of the
+// Turns the team's data/field.json (made by the notebooks in ColabNotebooks/, see DATA_SOURCES.md) into the parts of the
 // app's bundle that describe the field itself: its outline, what the satellites see, and its year.
 // Nothing here is made up. Each figure is read from field.json; where a rule is applied (which months count
 // as bare, when a risk icon shows) the rule is written out below so the team can correct it.
 import { readFileSync } from "node:fs";
 
-const data = JSON.parse(readFileSync(new URL("../field.json", import.meta.url), "utf8"));
+const data = JSON.parse(readFileSync(new URL("../data/field.json", import.meta.url), "utf8"));
 const S = data.meta.sources;
 
 const km = (m) => (m >= 1000 ? `about ${Math.round(m / 1000)} km` : `${m} m`);
@@ -114,6 +114,13 @@ const hotDays = {
   },
 };
 
+// The usual daytime high from 15 April to 15 June, shown beside what counts as a hot day (30 °C or more).
+// now: ERA5-Land 2001-2020; by 2050: NEX-GDDP-CMIP6 on the middle emissions path (SSP2-4.5), 2041-2060.
+const flowerHigh = {
+  now: real(f.now.tmaxfl, "°C", "area", sources.era5, "fair", undefined, baseline),
+  by2050: real(f.projected.ssp245.tmaxfl, "°C", "area", sources.cmip6, "low", undefined, future),
+};
+
 // In a hotter, drier year heat reaches back into April and autumn sowing months turn dry more often.
 const withRisk = (list, monthIndexes, risk) => list.map((risks, i) =>
   monthIndexes.includes(OCT_FIRST[i]) && !risks.includes(risk) ? [...risks, risk] : risks);
@@ -130,4 +137,4 @@ const evidence = [
   one(data.soil.values.clay, "%", data.soil.range_90pc.clay, "field", sources.soil, "fair", "evidence.clay", "SoilGrids 2.0"),
 ];
 
-export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays }, evidence };
+export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays, flowerHigh }, evidence };

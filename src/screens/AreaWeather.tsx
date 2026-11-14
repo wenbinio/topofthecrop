@@ -3,13 +3,14 @@ import type { AreaWeather as AreaWeatherData, Fact } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
 import { areaHa, centroid } from "../geo/geometry";
 import { useLang, useT } from "../i18n";
-import { useAppState, useGo } from "../state/useAppState";
+import { useAppState, useGo, useTo } from "../state/useAppState";
 import { fetchPower, summarise } from "../weather/weather";
 import { useBundle } from "../components/BundleProvider";
 import { DatasetLabel, ScaleBadge, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { FieldShape } from "../components/FieldShape";
 import { DropIcon, FrostIcon, HeatIcon } from "../components/Icons";
-import { Button, Headline } from "../components/ui";
+import { HOT_DAY_LABELS, HotDaysTerm } from "../components/Term";
+import { BackButton, BottomBar, Button, Headline } from "../components/ui";
 
 type Load = { status: "loading" } | { status: "error" } | { status: "ready"; data: AreaWeatherData };
 
@@ -21,7 +22,9 @@ function WeatherRow({ fact, Icon }: { fact: Fact; Icon: typeof HeatIcon }) {
     <li className="flex items-start gap-3 px-4 py-3 border-b border-line">
       <Icon className="w-8 h-8 flex-none mt-1" />
       <div className="flex-1 min-w-0">
-        <p className="font-bold text-body">{t(fact.label ?? "")}</p>
+        <p className="font-bold text-body">
+          {fact.label && HOT_DAY_LABELS.includes(fact.label) ? <HotDaysTerm>{t(fact.label)}</HotDaysTerm> : t(fact.label ?? "")}
+        </p>
         {range ? (
           <p className="text-small text-ink-soft">
             {t("common.range")} {range} {unitText(fact.unit, t)}
@@ -43,6 +46,7 @@ export default function AreaWeather() {
   const t = useT();
   const lang = useLang();
   const go = useGo();
+  const to = useTo();
   const [state] = useAppState();
   const bundle = useBundle();
   const [attempt, setAttempt] = useState(0);
@@ -123,6 +127,9 @@ export default function AreaWeather() {
           </div>
         </>
       ) : null}
+      <BottomBar>
+        <BackButton to={to("/")} />
+      </BottomBar>
     </div>
   );
 }

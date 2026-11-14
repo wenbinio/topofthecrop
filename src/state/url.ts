@@ -1,10 +1,11 @@
-import type { AppState, Money } from "../data/types";
+import type { AppState, CropId, ExtraSupport, Money } from "../data/types";
 import type { LngLat } from "../data/types";
-import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, LIMITS, PRIORITIES, SCENARIOS } from "../data/types";
+import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LIMITS, MAX_EXTRAS, PRIORITIES, SCENARIOS } from "../data/types";
 
 /**
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
- * Parameter names: f field id, o outline, c last crop, l limits, p priorities, s scenario, v view, g language, m money.
+ * Parameter names: f field id, o outline, c last crop, l limits, p priorities, s scenario, v view, g language, m money,
+ * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded).
  */
 export function encodeState(state: AppState): string {
   const params = new URLSearchParams();
@@ -21,6 +22,9 @@ export function encodeState(state: AppState): string {
   if (state.lang !== DEFAULT_STATE.lang) params.set('g', state.lang);
   const money = Object.keys(state.money).sort().map(key => `${key}:${state.money[key]}`).join(';');
   if (money) params.set('m', money);
+  const extras = state.extras.slice(0, MAX_EXTRAS).map(extra =>
+    `${encodeName(extra.name)}~${extra.amount}~${extra.crops.join(',')}`).join('|');
+  if (extras) params.set('x', extras);
   return params.toString();
 }
 
@@ -44,7 +48,39 @@ export function decodeState(query: string): AppState {
     view: params.get('v') === 'simple' ? 'simple' : DEFAULT_STATE.view,
     lang: params.get('g') === 'it' ? 'it' : DEFAULT_STATE.lang,
     money: parseMoney(params.get('m') ?? ''),
+    extras: parseExtras(params.get('x') ?? ''),
   };
+}
+
+/** encodeURIComponent leaves `~` alone, and `~` separates the parts of an item. */
+function encodeName(name: string): string {
+  return encodeURIComponent(name).replace(/~/g, '%7E');
+}
+
+function parseExtras(value: string): ExtraSupport[] {
+  const extras: ExtraSupport[] = [];
+  if (!value) return extras;
+  for (const item of value.split('|')) {
+    const parts = item.split('~');
+    if (parts.length !== 3) continue;
+    let name: string;
+    try {
+      name = decodeURIComponent(parts[0]).trim();
+    } catch {
+      continue;
+    }
+    if (name.length < 1 || name.length > EXTRA_LIMITS.name) continue;
+    if (!parts[1].trim()) continue;
+    const amount = Number(parts[1]);
+    if (!Number.isFinite(amount) || amount < EXTRA_LIMITS.amount[0] || amount > EXTRA_LIMITS.amount[1]) continue;
+    const listed = parts[2] ? parts[2].split(',') : [];
+    const crops: CropId[] = CROPS.filter(crop => listed.includes(crop));
+    // A list of only unknown crops would otherwise widen the payment to every year.
+    if (listed.length && !crops.length) continue;
+    extras.push({ name, amount, crops });
+    if (extras.length === MAX_EXTRAS) break;
+  }
+  return extras;
 }
 
 function parseMoney(value: string): Money {

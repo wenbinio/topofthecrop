@@ -209,6 +209,7 @@ type FieldBundle = {
     months: { cover: "green" | "part" | "bare"; risks: ("dry" | "frost" | "heat" | "rain")[] }[];
     risksByScenario?: Partial<Record<Scenario, ("dry" | "frost" | "heat" | "rain")[][]>>;  // risk icons per month for a slider stop
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
+    flowerHigh?: { now: Fact; by2050: Fact };  // usual daytime high, 15 April to 15 June, °C; shown with the "hot day" definition
   };
   options: {
     id: string;                        // "chickpea-durum-durum"
@@ -242,7 +243,7 @@ type AreaWeather = {
 
 - **Which fields work.** Only the Genzano demo field has an outline and a bundle, so only it gets findings from the field itself and ranked options. Tapping it selects it. Anywhere else, the farmer draws the field and gets live weather for the area (next point), a plain line saying field-level results exist for the demo field only so far, and a button to see the full example on the demo field. No fake results for other fields.
 - **Live weather for any field.** For a field that is not the demo field, the browser calls NASA POWER for the field's centre (rounded to two decimal places) and asks for daily maximum and minimum temperature and rainfall from 2001 to 2025. Tested on 14 Nov: the service allows calls from any website, and 25 years of daily data came back in about 1.5 seconds (about 300 KB). From that the app counts three things, each shown as a "your area" fact with the last ten years as the value and the spread across those years as the range:
-  - hot days at flowering (days above 30 °C, 15 April to 31 May)
+  - hot days at flowering (days of 30 °C or more, 15 April to 15 June)
   - autumn rain (total, September to November)
   - late frost days (below 0 °C, March and April)
 
@@ -323,7 +324,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - Team member names for this page.
 - Must the repository be public for judging? (Planned: make it public before submitting.)
 - Licence for the code (planned: MIT).
-- Are the weather thresholds right for durum in the upper Bradano (30 °C, 15 April to 31 May for flowering; frost in March and April)?
+- Are the weather thresholds right for durum in the upper Bradano (30 °C or more, 15 April to 15 June for flowering; frost in March and April)?
 - Are the three alternative sequences right for the upper Bradano (chickpea → durum → durum, faba bean → durum → faba bean, vetch-oat forage → durum → durum)?
 - Which aerial basemap, and does its licence allow this use?
 - Sources for rotation income and nitrogen figures in Basilicata.
