@@ -1,10 +1,10 @@
-// Turns the team's field.json (made by the notebooks in this repo, see DATA_SOURCES.md) into the parts of the
+// Turns the team's data/field.json (made by the notebooks in ColabNotebooks/, see DATA_SOURCES.md) into the parts of the
 // app's bundle that describe the field itself: its outline, what the satellites see, and its year.
 // Nothing here is made up. Each figure is read from field.json; where a rule is applied (which months count
 // as bare, when a risk icon shows) the rule is written out below so the team can correct it.
 import { readFileSync } from "node:fs";
 
-const data = JSON.parse(readFileSync(new URL("../field.json", import.meta.url), "utf8"));
+const data = JSON.parse(readFileSync(new URL("../data/field.json", import.meta.url), "utf8"));
 const S = data.meta.sources;
 
 const km = (m) => (m >= 1000 ? `about ${Math.round(m / 1000)} km` : `${m} m`);
