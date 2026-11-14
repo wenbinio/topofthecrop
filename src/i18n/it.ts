@@ -41,7 +41,7 @@ export const it: Dict = {
   "find.searchError": "Ricerca non disponibile",
   "find.locate": "Dove sono",
   "find.locateError": "Posizione negata",
-  "find.basemap": "Foto aerea · non NASA",
+  "find.basemap": "Immagine satellitare · NASA, ESA Sentinel-2",
   "find.hint": "Tocca il campo",
   "find.draw": "Disegna il campo",
   "find.isThis": "È il tuo campo?",

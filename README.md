@@ -92,7 +92,9 @@ Resolutions above are from general knowledge and must be checked against each pr
 | EU Crop Map (JRC, 10 m) | Pre-filling the last crop |
 | SoilGrids (ISRIC, 250 m) | Soil texture and organic carbon |
 | Published agronomy trials and regional price data | Income (gross margin), nitrogen and water figures for each three-year rotation (sources to be chosen in the data phase) |
-| High-resolution aerial basemap (provider to be chosen, licence to be checked) | Finding and tapping the field. This is not NASA data and is labelled as such. |
+| Map picture, zoomed out: NASA Blue Marble (MODIS), from NASA GIBS. Public domain. | Finding the area |
+| Map picture, zoomed in, anywhere: Sentinel-2 cloudless 2016 by EOX (contains modified Copernicus Sentinel data 2016), 10 m, CC BY 4.0 | Finding and drawing a field outside the basin |
+| Map picture, zoomed in, Bradano basin: our own tiles in `public/tiles/s2/`, cut by `scripts/build-basemap.py` from four Sentinel-2 L2A scenes of 30 May 2026 (contains modified Copernicus Sentinel data 2026), 10 m | Finding and drawing a field in the basin |
 
 ### Rules for honest numbers
 
@@ -273,7 +275,7 @@ type AreaWeather = {
 - **Simple view** is the same components with a `view` flag. It swaps the design tokens, hides dataset labels until tapped, and shows the findings and options as weather-style rows under one big headline. No separate screens.
 - **Sharing link.** Hash routing (`/#/options?...`), so it works on any static host. The demo field travels as its id. A drawn field travels as its outline, simplified to at most 12 points at 5 decimal places. Nothing is stored on a server.
 - **Print page** is a route in the same app that reads the same link.
-- **Basemap for the scaffold:** Esri World Imagery with its attribution, until the licence question below is settled.
+- **Map picture:** three open layers, none needing an account or key: NASA Blue Marble zoomed out, Sentinel-2 cloudless 2016 (EOX, CC BY 4.0) zoomed in, and over the Bradano basin our own Sentinel-2 picture of one clear day (30 May 2026). Sentinel-2 pixels are 10 m, so a field is recognisable but not sharp. We dropped Esri World Imagery, which the scaffold used, because it is under a commercial licence (the Esri Master License Agreement), and the challenge rules ask for outside material that is free and open. Italy's public aerial photos (AGEA, the national geoportal, the Basilicata region) could not be loaded from a web page when we tested them on 15 November 2026.
 - **Target devices:** current Chrome on Android and Safari on iPhone, from 360 px wide.
 
 ### Planned layout
@@ -342,7 +344,6 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - Licence for the code (planned: MIT).
 - Are the weather thresholds right for durum in the upper Bradano (30 °C or more, 15 April to 15 June for flowering; frost in March and April)?
 - Are the three alternative sequences right for the upper Bradano (chickpea → durum → durum, faba bean → durum → faba bean, vetch-oat forage → durum → durum)?
-- Which aerial basemap, and does its licence allow this use?
 - Sources for rotation income and nitrogen figures in Basilicata.
 - What to say about public support (CAP eco-schemes) and where to source it.
 - Italian wording needs a check by a native speaker.
@@ -382,5 +383,9 @@ The basin data needs no extra step: a small plugin in `vite.config.ts` serves `d
 The app reads one file, `public/data/genzano-demo.json`. Its shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. `scripts/make-placeholder-bundle.mjs` shows how the current placeholder file is produced. Set `placeholder` to `false` on each fact as real numbers replace made-up ones; the "placeholder figures" note disappears from a screen once none of its facts are placeholders.
 
 The basin files in `data/` come from the data team's notebooks; to update them, replace the files as `HANDOVER.md` section 9 says. Keys stay the same, so the app needs no change.
+
+The basin's map picture in `public/tiles/s2/` (1,597 tiles, about 25 MB, zooms 10 to 14) is cut by `scripts/build-basemap.py` from four Sentinel-2 L2A true-colour scenes of 30 May 2026, each under 1% cloud, downloaded without a login from the public `sentinel-cogs` archive. `public/tiles/s2/about.json` lists the scenes. To rebuild it for another day, download each scene's `TCI.tif`, name them `TCI_<square>.tif`, and run `python scripts/build-basemap.py <folder>` (needs rasterio, numpy, pillow, mercantile and shapely). The script was written with AI assistance.
+
+Credits the map shows: "Contains modified Copernicus Sentinel data 2026" (our tiles), "Sentinel-2 cloudless by EOX, contains modified Copernicus Sentinel data 2016, CC BY 4.0", and NASA GIBS for Blue Marble. We acknowledge the use of imagery provided by services from NASA's Global Imagery Browse Services (GIBS), part of NASA's Earth Science Data and Information System (ESDIS).
 
 The decision tree, the limit rules and the weather thresholds are written in plain words in `docs/scoring.md` for the team to correct.

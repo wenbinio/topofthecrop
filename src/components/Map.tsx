@@ -46,11 +46,36 @@ export type MapProps = {
   onTrace: (points: LngLat[]) => void;
 };
 
-export const BASEMAP_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
-/** Beyond this level the tile server returns a "no data yet" picture, so never ask for more. */
-const BASEMAP_MAX_TILE_ZOOM = 19;
-const BASEMAP_ATTRIBUTION =
-  'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noreferrer">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+// The map picture comes from three open sources, coarsest first. None needs an account or a key.
+/** The whole world, zoomed out: NASA Blue Marble (MODIS), from NASA's own tile service. Public domain. */
+const NASA_TILES =
+  "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg";
+const NASA_MAX_TILE_ZOOM = 8;
+const NASA_ATTRIBUTION = 'Blue Marble: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noreferrer">NASA GIBS</a>';
+/** Anywhere, zoomed in: the 2016 cloud-free Sentinel-2 picture by EOX, 10 m, CC BY 4.0. */
+const SENTINEL_TILES = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg";
+const SENTINEL_FROM_ZOOM = 8;
+const SENTINEL_ATTRIBUTION =
+  '<a href="https://s2maps.eu" target="_blank" rel="noreferrer">Sentinel-2 cloudless</a> by EOX (contains modified Copernicus Sentinel data 2016), CC BY 4.0';
+/**
+ * The Bradano basin, zoomed in: our own picture, cut from four Sentinel-2 scenes of 30 May 2026 by
+ * scripts/build-basemap.py into public/tiles/s2/ (see about.json there). One clear day in late spring shows
+ * field edges better than a whole-year blend.
+ */
+const BASIN_TILES_PATH = "tiles/s2/";
+const BASIN_TILE_ZOOMS = [10, 14] as const;
+/** West, south, east, north of the tiles that exist (about.json). */
+const BASIN_TILE_BOUNDS: [number, number, number, number] = [15.7175, 40.3384, 16.9247, 41.0283];
+const BASIN_ATTRIBUTION = "Bradano basin: contains modified Copernicus Sentinel data 2026";
+/** Sentinel-2 pixels are 10 m: about one screen pixel at zoom 14 here. Past that the map only enlarges them. */
+const DETAIL_MAX_TILE_ZOOM = 14;
+/** Enlarging still helps a thumb place a corner, up to here. */
+const MAP_MAX_ZOOM = 18;
+
+/** The address of the app's own tiles, whatever folder the app is served from. */
+function basinTiles(): string {
+  return `${new URL(BASIN_TILES_PATH, document.baseURI).href}{z}/{x}/{y}.jpg`;
+}
 
 function polygonData(ring: LngLat[] | null) {
   if (!ring || ring.length < 2) return { type: "FeatureCollection" as const, features: [] };
@@ -214,34 +239,46 @@ export default function Map({
     const field = cssVar("--tc-map-field");
     const drawn = cssVar("--tc-map-drawn");
     const basin = cssVar("--tc-map-basin");
+    const detailTile = window.devicePixelRatio > 1 ? 128 : 256;
     const map = new MapLibre({
       container: containerRef.current,
       center: initial.current.centre,
       zoom: initial.current.zoom,
-      // The photos hold real detail to tile level 19 (checked over Genzano); past that the map enlarges them,
-      // which still helps a thumb place a corner exactly.
-      maxZoom: 21,
+      maxZoom: MAP_MAX_ZOOM,
       attributionControl: { compact: true },
       dragRotate: false,
       pitchWithRotate: false,
       style: {
         version: 8,
         sources: {
-          // On a sharp phone screen, treating each 256 px photo tile as 128 px makes the map load the next
+          nasa: { type: "raster", tiles: [NASA_TILES], tileSize: 256, maxzoom: NASA_MAX_TILE_ZOOM, attribution: NASA_ATTRIBUTION },
+          // On a sharp phone screen, treating each 256 px tile as 128 px makes the map load the next
           // level of detail, so the picture is crisp instead of stretched over twice as many pixels.
-          aerial: {
+          sentinel: {
             type: "raster",
-            tiles: [BASEMAP_TILES],
-            tileSize: window.devicePixelRatio > 1 ? 128 : 256,
-            maxzoom: BASEMAP_MAX_TILE_ZOOM,
-            attribution: BASEMAP_ATTRIBUTION,
+            tiles: [SENTINEL_TILES],
+            tileSize: detailTile,
+            maxzoom: DETAIL_MAX_TILE_ZOOM,
+            attribution: SENTINEL_ATTRIBUTION,
+          },
+          ours: {
+            type: "raster",
+            tiles: [basinTiles()],
+            tileSize: detailTile,
+            minzoom: BASIN_TILE_ZOOMS[0],
+            maxzoom: BASIN_TILE_ZOOMS[1],
+            bounds: BASIN_TILE_BOUNDS,
+            attribution: BASIN_ATTRIBUTION,
           },
           basin: { type: "geojson", data: polygonData(null) },
           field: { type: "geojson", data: polygonData(null) },
           drawn: { type: "geojson", data: polygonData(null) },
         },
         layers: [
-          { id: "aerial", type: "raster", source: "aerial" },
+          // Hidden once the Sentinel-2 picture covers it, so a zoomed-in map does not fetch it.
+          { id: "nasa", type: "raster", source: "nasa", maxzoom: SENTINEL_FROM_ZOOM + 1 },
+          { id: "sentinel", type: "raster", source: "sentinel", minzoom: SENTINEL_FROM_ZOOM },
+          { id: "ours", type: "raster", source: "ours" },
           { id: "basin-line", type: "line", source: "basin", paint: { "line-color": basin, "line-width": 1.5, "line-opacity": 0.8 } },
           { id: "field-fill", type: "fill", source: "field", paint: { "fill-color": field, "fill-opacity": 0.12 } },
           { id: "field-line", type: "line", source: "field", paint: { "line-color": field, "line-width": 3 } },
