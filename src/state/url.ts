@@ -41,6 +41,7 @@ export function decodeState(query: string): AppState {
     scenario: SCENARIOS.find(scenario => scenario === params.get('s')) ?? DEFAULT_STATE.scenario,
     view: params.get('v') === 'simple' ? 'simple' : DEFAULT_STATE.view,
     lang: params.get('g') === 'it' ? 'it' : DEFAULT_STATE.lang,
+    money: {},
   };
 }
 
