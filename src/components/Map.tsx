@@ -8,10 +8,15 @@ import { useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { LngLat } from "../data/types";
 import { MAX_CORNERS, insertAt, midpoints, moveAt, round5 } from "../geo/edit";
+import { detectField } from "../geo/edges";
+import type { Pixels } from "../geo/edges";
+import { isUsableRing, simplifyRing } from "../geo/geometry";
 
 setWorkerUrl(workerUrl);
 
 export type MapTarget ={ centre: LngLat; zoom: number; key: number };
+/** Find the field around `at` in the photo when `key` changes. */
+export type EdgeRequest = { at: LngLat; key: number };
 
 export type MapProps = {
   centre: LngLat;
@@ -26,6 +31,10 @@ export type MapProps = {
   drawing: boolean;
   /** Fly here when `key` changes (search result, my location). */
   target: MapTarget | null;
+  /** Look for the field's edges in the photo around a point when `key` changes; the answer comes in `onEdges`. */
+  edgeRequest: EdgeRequest | null;
+  /** The field found for the latest `edgeRequest`, as an open ring of at most 10 corners, or null if none was found. */
+  onEdges: (ring: LngLat[] | null) => void;
   /** A tap on the map itself, never on a dot. */
   onTap: (point: LngLat) => void;
   /** Called when a dot has been pulled: the whole new ring. */
@@ -75,7 +84,105 @@ function handleElement(kind: "corner" | "side"): HTMLDivElement {
   return el;
 }
 
-export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable, drawing, target, onTap, onEditRing, onTrace }: MapProps) {
+/** The layers we draw over the photo, hidden while the photo is read. */
+const OVERLAY_LAYERS = ["field-fill", "field-line", "drawn-fill", "drawn-line"];
+/** The photo is read at this size (longer side, in pixels): enough for field edges, quick to search. */
+const SNAPSHOT_SIDE = 240;
+
+type Snapshot = Pixels & { cssWidth: number; cssHeight: number };
+
+/** Waits for the map to finish loading tiles, or `ms` at most. */
+function waitIdle(map: MapLibre, ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      map.off("idle", done);
+      resolve();
+    };
+    const timer = setTimeout(done, ms);
+    map.once("idle", done);
+  });
+}
+
+/**
+ * Reads the photo on screen, without our own shapes on it, as a small image.
+ * A WebGL canvas can only be read straight after it has drawn, so this hides the shapes,
+ * asks for one more frame and copies the canvas inside that frame's `render` event.
+ */
+function snapshot(map: MapLibre): Promise<Snapshot | null> {
+  return new Promise((resolve) => {
+    const before = OVERLAY_LAYERS.map((id) => map.getLayoutProperty(id, "visibility") as "visible" | "none" | undefined);
+    let finished = false;
+    const finish = (result: Snapshot | null) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      OVERLAY_LAYERS.forEach((id, i) => map.setLayoutProperty(id, "visibility", before[i] ?? "visible"));
+      resolve(result);
+    };
+    const timer = setTimeout(() => finish(null), 2000);
+    map.once("render", () => {
+      try {
+        const canvas = map.getCanvas();
+        const cssWidth = canvas.clientWidth;
+        const cssHeight = canvas.clientHeight;
+        if (!cssWidth || !cssHeight) return finish(null);
+        const k = SNAPSHOT_SIDE / Math.max(cssWidth, cssHeight);
+        const width = Math.max(1, Math.round(cssWidth * k));
+        const height = Math.max(1, Math.round(cssHeight * k));
+        const small = document.createElement("canvas");
+        small.width = width;
+        small.height = height;
+        const ctx = small.getContext("2d", { willReadFrequently: true });
+        if (!ctx) return finish(null);
+        ctx.drawImage(canvas, 0, 0, width, height);
+        finish({ width, height, data: ctx.getImageData(0, 0, width, height).data, cssWidth, cssHeight });
+      } catch {
+        // For example a canvas tainted by a photo served without CORS.
+        finish(null);
+      }
+    });
+    OVERLAY_LAYERS.forEach((id) => map.setLayoutProperty(id, "visibility", "none"));
+    map.triggerRepaint();
+  });
+}
+
+/** The field around `at` in the photo on screen, as an open ring, or null. */
+async function findEdges(map: MapLibre, at: LngLat): Promise<LngLat[] | null> {
+  try {
+    if (!map.areTilesLoaded()) await waitIdle(map, 4000);
+    const shot = await snapshot(map);
+    if (!shot) return null;
+    const sx = shot.width / shot.cssWidth;
+    const sy = shot.height / shot.cssHeight;
+    const seed = map.project(at);
+    const outline = detectField(shot, [seed.x * sx, seed.y * sy]);
+    if (!outline) return null;
+    const points: LngLat[] = outline.map(([x, y]) => {
+      const ll = map.unproject([x / sx, y / sy]);
+      return [ll.lng, ll.lat];
+    });
+    const ring = simplifyRing(points, 10);
+    return isUsableRing(ring) ? ring : null;
+  } catch {
+    return null;
+  }
+}
+
+export default function Map({
+  centre,
+  zoom,
+  fieldOutline,
+  drawnOutline,
+  editable,
+  drawing,
+  target,
+  edgeRequest,
+  onEdges,
+  onTap,
+  onEditRing,
+  onTrace,
+}: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibre | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -83,6 +190,7 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable
   const onTapRef = useRef(onTap);
   const onTraceRef = useRef(onTrace);
   const onEditRingRef = useRef(onEditRing);
+  const onEdgesRef = useRef(onEdges);
   const initial = useRef({ centre, zoom });
   const [trace, setTrace] = useState<[number, number][]>([]);
   const tracing = useRef(false);
@@ -93,6 +201,7 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable
     onTapRef.current = onTap;
     onTraceRef.current = onTrace;
     onEditRingRef.current = onEditRing;
+    onEdgesRef.current = onEdges;
   });
 
   // Create the map once.
@@ -199,6 +308,23 @@ export default function Map({ centre, zoom, fieldOutline, drawnOutline, editable
   useEffect(() => {
     if (target && mapRef.current) mapRef.current.flyTo({ center: target.centre, zoom: target.zoom });
   }, [target]);
+
+  // Find the field's edges in the photo; until the map has loaded, wait (and give up after a while).
+  useEffect(() => {
+    if (!edgeRequest) return;
+    const map = mapRef.current;
+    if (!map || !loaded) {
+      const timer = setTimeout(() => onEdgesRef.current(null), 8000);
+      return () => clearTimeout(timer);
+    }
+    let cancelled = false;
+    findEdges(map, edgeRequest.at).then((ring) => {
+      if (!cancelled) onEdgesRef.current(ring);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [edgeRequest, loaded]);
 
   // Draw mode: freeze the map.
   useEffect(() => {

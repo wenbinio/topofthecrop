@@ -49,7 +49,10 @@ export const en = {
   "find.about": "about {n} ha",
   "find.yes": "Yes, this one",
   "find.no": "No, draw it",
-  "find.unknown": "No outline here yet.",
+  "find.finding": "Finding your field…",
+  "find.noEdges": "Could not find the edges here. Tap each corner.",
+  "find.findEdges": "Find edges",
+  "find.tapInside": "Tap inside your field",
   "find.drawHelp": "Trace around your field",
   "find.cancel": "Cancel",
   "find.tooSmall": "Too small. Try again.",
@@ -229,15 +232,15 @@ export const en = {
   "priority.forage": "Forage",
 
   // findings (keys from the bundle)
-  "finding.bare.title": "Bare Jul–Oct",
-  "finding.bare.detail": "After harvest the field is bare soil from July to October, open to heavy autumn rain.",
+  "finding.bare.title": "Bare after harvest",
+  "finding.bare.detail": "In a typical year the soil is bare for about two months after harvest, from July, and in some years for six. It is open to the first heavy autumn rain.",
   "finding.bare.fact": "Bare months after harvest",
   "finding.heat.title": "Hot flowering",
-  "finding.heat.detail": "More days above 30 °C while the wheat flowers, from mid-April to May.",
+  "finding.heat.detail": "Days of 30 °C or more while the wheat flowers and fills, from mid-April to mid-June. A typical year has four; one year in ten has eight or more.",
   "finding.heat.fact": "Hot days at flowering",
-  "finding.dry.title": "Drier autumns",
-  "finding.dry.detail": "Autumn rain at sowing time is below the long-term average.",
-  "finding.dry.fact": "Autumn rain against the average",
+  "finding.dry.title": "Autumn rain varies",
+  "finding.dry.detail": "Rain in October and November runs from about 100 to 200 mm from one year to the next, which decides whether sowing goes in on time.",
+  "finding.dry.fact": "Rain in October and November",
 
   // why suggested (keys from the bundle)
   "why.chickpea-durum-durum.suggested": "Chickpea is a legume: it leaves nitrogen for the durum after it, uses little water and flowers before the worst heat. One break year, then back to durum.",
@@ -247,6 +250,9 @@ export const en = {
 
   "evidence.bareMonths": "Bare months after harvest",
   "evidence.hotDays": "Hot days at flowering",
+  "evidence.rainSeason": "Rain from October to May",
+  "evidence.durumNeed": "Water a durum crop needs in the season",
+  "evidence.clay": "Clay in the topsoil",
   "benefit.nitrogen": "Nitrogen left for the next crop",
   "benefit.income": "Income per year (gross margin)",
   "unknown.prices": "Grain and pulse prices in the coming years",
