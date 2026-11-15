@@ -3,6 +3,8 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import { AppRoutes } from "../App";
+import { planKey, readPlan, readPlans, writePlan } from "../state/plan";
+import { decodeState } from "../state/url";
 
 vi.mock("../components/Map", () => ({
   default: () => <div data-testid="map" />,
@@ -304,6 +306,76 @@ describe("Settings", () => {
     expect(linkMoney()).toContain("p.durum:400");
     expect(await screen.findByTestId("money-working")).toBeInTheDocument();
     expect(screen.getAllByTestId("tag-yours").length).toBeGreaterThan(0);
+  });
+
+  describe("Save changes", () => {
+    /** A plain in-memory store: the test runner's own localStorage is not a full one. */
+    function memoryStorage(): Storage {
+      const items = new Map<string, string>();
+      return {
+        get length() { return items.size; },
+        clear: () => items.clear(),
+        getItem: (key: string) => items.get(key) ?? null,
+        key: (index: number) => [...items.keys()][index] ?? null,
+        removeItem: (key: string) => void items.delete(key),
+        setItem: (key: string, value: string) => void items.set(key, String(value)),
+      };
+    }
+    const kept = (query: string) => ({ query, key: query, bestId: "chickpea-durum-durum", stamp: "s1", savedAt: "2026-11-01", field: "Genzano di Lucania", done: ["check.seed"] });
+
+    async function setDurumPriceAndSave() {
+      await openSection(PRICES);
+      const durum = await screen.findByRole("textbox", { name: "Durum price" });
+      act(() => {
+        fireEvent.change(durum, { target: { value: "400" } });
+      });
+      await waitFor(() => expect(linkMoney()).toContain("p.durum:400"));
+      fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    }
+
+    it("returns to the screen the farmer came from, with the new figures", async () => {
+      vi.stubGlobal("localStorage", memoryStorage());
+      renderAt("/why/faba-durum-faba?f=genzano-demo&p=income,water");
+      expect(await screen.findByTestId("money-working")).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("money-change"));
+      await setDurumPriceAndSave();
+      await waitFor(() => expect(lastPath.startsWith("/why/faba-durum-faba?")).toBe(true));
+      expect(linkMoney()).toContain("p.durum:400");
+      expect(screen.getAllByTestId("tag-yours").length).toBeGreaterThan(0);
+      // Nothing was kept on this phone before, so nothing is kept now: the plan starts on "Your field today".
+      expect(readPlan()).toBeNull();
+    });
+
+    it("puts the new figures in the plan kept on this phone, and keeps its best fit, date and ticks", async () => {
+      vi.stubGlobal("localStorage", memoryStorage());
+      const before = kept(planKey(decodeState("f=genzano-demo&p=income,water")));
+      writePlan(before);
+      renderAt(SETTINGS);
+      await setDurumPriceAndSave();
+      await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+      const plan = readPlan()!;
+      expect(new URLSearchParams(plan.query).get("m")).toContain("p.durum:400");
+      expect(plan.key).not.toBe(before.key);
+      expect(plan).toMatchObject({ bestId: before.bestId, stamp: "s1", savedAt: "2026-11-01", done: ["check.seed"] });
+      // One entry in the list of past plans, not the old figures beside the new.
+      expect(readPlans().map((p) => p.key)).toEqual([plan.key]);
+    });
+
+    it("leaves a plan kept for other answers alone", async () => {
+      vi.stubGlobal("localStorage", memoryStorage());
+      const other = kept(planKey(decodeState("f=genzano-demo&p=soil,water")));
+      writePlan(other);
+      renderAt(SETTINGS);
+      await setDurumPriceAndSave();
+      await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+      expect(readPlan()).toMatchObject({ query: other.query, key: other.key });
+    });
+
+    it("is not offered when no field is chosen", async () => {
+      renderAt("/settings");
+      expect(await screen.findByTestId("settings-no-field")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull();
+    });
   });
 
   it("Print lists the prices and support used, marking the changed ones", async () => {

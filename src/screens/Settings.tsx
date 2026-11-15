@@ -2,14 +2,15 @@
 // the route and links into it use ./settings/path. Written with AI assistance (Claude, Anthropic).
 import { useState } from "react";
 import type { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import type { FieldBundle } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
 import { useT } from "../i18n";
 import { useAppState } from "../state/useAppState";
 import { BundleGate } from "../components/BundleProvider";
 import { BackIcon } from "../components/Icons";
-import { SectionTitle } from "../components/ui";
+import { BottomBar, Button, SectionTitle } from "../components/ui";
+import { keepFigures } from "../state/plan";
 import { Editor } from "./settings/Editor";
 import type { SettingsFrom } from "./settings/path";
 
@@ -27,12 +28,14 @@ function Body({ bundle }: { bundle: FieldBundle }) {
 
 /**
  * Prices, costs and support: the farmer's own figures behind the income, in fold-out sections.
- * Every change applies at once.
+ * Every change applies at once and travels in the link. "Save changes" takes the farmer back to where they were
+ * with the new figures, and puts them in the plan kept on this phone.
  */
 export default function Settings() {
   const t = useT();
   const [state] = useAppState();
   const location = useLocation();
+  const navigate = useNavigate();
   // Read once: every change to the figures replaces the link, and that drops the router state.
   const [from] = useState(() => (location.state as SettingsFrom | null)?.from);
 
@@ -46,6 +49,13 @@ export default function Settings() {
     </p>
   );
 
+  const hasField = state.fieldId === DEMO_FIELD_ID || !!state.outline;
+  const back = { pathname: from ?? fallback, search: location.search };
+  const save = () => {
+    keepFigures(state);
+    navigate(back, { replace: true });
+  };
+
   let body: ReactNode;
   if (state.fieldId === DEMO_FIELD_ID || state.outline) body = <BundleGate outside={nothing}>{(b) => <Body bundle={b} />}</BundleGate>;
   else
@@ -56,9 +66,9 @@ export default function Settings() {
     );
 
   return (
-    <div className="flex flex-col flex-1 pb-6 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
+    <div className="flex flex-col flex-1 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
       <Link
-        to={{ pathname: from ?? fallback, search: location.search }}
+        to={back}
         replace
         className="self-start inline-flex items-center gap-1 min-h-11 px-3 font-bold text-body"
       >
@@ -70,8 +80,15 @@ export default function Settings() {
       <section data-testid="voice-privacy">
         <SectionTitle>{t("voice.privacy.title")}</SectionTitle>
         <p className="px-4 text-small text-ink-soft">{t("voice.privacy.phone")}</p>
-        <p className="px-4 pt-1 text-small text-ink-soft">{t("voice.privacy.app")}</p>
+        <p className="px-4 pt-1 pb-6 text-small text-ink-soft">{t("voice.privacy.app")}</p>
       </section>
+      {hasField ? (
+        <BottomBar>
+          <Button className="flex-1" data-testid="settings-save" onClick={save}>
+            {t("settings.save")}
+          </Button>
+        </BottomBar>
+      ) : null}
     </div>
   );
 }
