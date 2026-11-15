@@ -322,7 +322,7 @@ describe("strip intercrops", () => {
   it("the strips' own checks are on the field's to-do list", async () => {
     vi.stubGlobal("localStorage", memoryStorage());
     serve(shipped);
-    renderAt("/today?f=genzano-demo&p=income,water&i=1");
+    renderAt("/today?f=genzano-demo&p=income,soil&i=1");
     const todo = await screen.findByTestId("today-todo");
     expect(within(todo).getByText("Which strip width suits your drill and the combine header?")).toBeInTheDocument();
   });
