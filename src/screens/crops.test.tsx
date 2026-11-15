@@ -282,6 +282,9 @@ describe("strip intercrops", () => {
     renderAt("/options?f=genzano-demo&p=water,income");
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
     const toggle = screen.getByTestId("intercrops-toggle");
+    // One row for intercropping: its switch sits with the map, not among the other choices.
+    expect(toggle.closest("[data-testid=fold-intercrop]")).not.toBeNull();
+    expect(toggle.closest("[data-testid=fold-options]")).toBeNull();
     expect(toggle).toHaveAttribute("aria-checked", "false");
     expect(toggle).toHaveTextContent("Intercropping");
     expect(toggle).toHaveTextContent("Counted as if each were grown alone");

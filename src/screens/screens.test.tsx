@@ -700,11 +700,14 @@ describe("Options as a decision tree", () => {
     expect(screen.queryByText("Tap to look closer")).toBeNull();
   });
 
-  it("keeps the ruled-out and left-out lines and the intercropping switch inside the other choices", async () => {
+  it("keeps the ruled-out and left-out lines inside the other choices, and intercropping in its own single row", async () => {
     renderAt("/options?f=genzano-demo&p=income,water&l=cereal-machinery&c=faba");
     const fold = await screen.findByTestId("fold-options");
     expect(within(fold).getByTestId("ruled-out")).toBeInTheDocument();
     expect(within(fold).getByTestId("left-out")).toHaveTextContent("Faba bean was left out: you just grew it");
+    // Intercropping is one row: the switch and the map together, never also inside the other choices.
+    expect(within(fold).queryByTestId("intercrops-toggle")).toBeNull();
+    expect(screen.queryByText("Another way to farm")).toBeNull();
   });
 
   it("a row opens on a tap and closes on the next", async () => {

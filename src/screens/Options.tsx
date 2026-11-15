@@ -199,9 +199,30 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           <SoilCard bundle={bundle} view={state.view} bare />
         </Fold>
       ) : null}
-      {intercrop ? (
+      {intercrop || best?.option.strips || waiting.length || state.intercrops ? (
         <Fold testId="fold-intercrop" title={t("strips.where")}>
-          <StripMap option={intercrop} bundle={bundle} />
+          {/* Strip intercrops stay out of the ranking until asked for: nobody here has tried them. The switch lives
+              here, with the map, so intercropping is one row on the plan screen rather than two. */}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={state.intercrops}
+            data-testid="intercrops-toggle"
+            onClick={() => setState({ intercrops: !state.intercrops })}
+            className="tc-tap w-full flex items-center gap-2 px-4 py-2 bg-surface border-y border-line text-left"
+          >
+            <span className="flex-1">
+              <span className="block font-bold text-body">{t("options.intercrops")}</span>
+              <span className="block text-small text-ink-soft">{t("options.intercropsMeans")}</span>
+            </span>
+            <span
+              aria-hidden="true"
+              className={`tc-knob flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary" : "bg-surface"}`}
+            >
+              <span className={`tc-knob w-4 h-4 rounded-full ${state.intercrops ? "bg-surface translate-x-5" : "bg-line-strong translate-x-0"}`} />
+            </span>
+          </button>
+          {intercrop ? <StripMap option={intercrop} bundle={bundle} /> : null}
           <div className="h-3" />
         </Fold>
       ) : null}
@@ -244,32 +265,6 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         </p>
       ) : null}
       {repeats.length ? <RepeatLines repeats={repeats} /> : null}
-      {/* Strip intercrops stay out of the ranking until asked for: nobody here has tried them. Kept apart, as a
-          different way to farm rather than one more crop. */}
-      {waiting.length || state.intercrops ? (
-        <div className="pt-2">
-          <p className="px-4 pb-1 text-small font-bold uppercase tracking-wider text-ink-soft">{t("options.otherWays")}</p>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={state.intercrops}
-            data-testid="intercrops-toggle"
-            onClick={() => setState({ intercrops: !state.intercrops })}
-            className="tc-tap w-full flex items-center gap-2 px-4 py-2 bg-surface border-y border-line text-left"
-          >
-            <span className="flex-1">
-              <span className="block font-bold text-body">{t("options.intercrops")}</span>
-              <span className="block text-small text-ink-soft">{t("options.intercropsMeans")}</span>
-            </span>
-            <span
-              aria-hidden="true"
-              className={`tc-knob flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary" : "bg-surface"}`}
-            >
-              <span className={`tc-knob w-4 h-4 rounded-full ${state.intercrops ? "bg-surface translate-x-5" : "bg-line-strong translate-x-0"}`} />
-            </span>
-          </button>
-        </div>
-      ) : null}
       </Fold>
       <div className="px-4 py-2">
         <PlaceholderNote facts={shownFacts} />
