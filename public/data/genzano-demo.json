@@ -544,9 +544,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "European Commission: basic income support for sustainability (BISS)",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://agriculture.ec.europa.eu/common-agricultural-policy/income-support/biss_en"
           },
           "confidence": "low",
           "placeholder": false,
@@ -568,17 +568,17 @@
           "it": "Vale sui primi 14 ha, solo per le aziende fino a 50 ha."
         },
         "amount": {
-          "value": 90,
+          "value": 89.37,
           "unit": "€/ha",
           "range": [
-            80,
-            90
+            84.73,
+            89.87
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "good",
           "placeholder": false,
@@ -596,21 +596,21 @@
           "it": "Accoppiato per il grano duro"
         },
         "condition": {
-          "en": "For durum in Centre-South Italy, grown to full ripeness with certified seed.",
-          "it": "È per il grano duro del Centro-Sud, portato a maturazione piena con seme certificato."
+          "en": "For durum in Centre-South regions, Basilicata included, grown to full ripeness with certified seed. The plan says 93.50 €/ha, but 102.86 €/ha (the cap) was paid in 2024 and 2025.",
+          "it": "È per il grano duro delle regioni del Centro-Sud, Basilicata compresa, portato a maturazione piena con seme certificato. Il piano dice 93,50 €/ha, ma nel 2024 e nel 2025 sono stati pagati 102,86 €/ha (il massimo)."
         },
         "amount": {
-          "value": 103,
+          "value": 102.86,
           "unit": "€/ha",
           "range": [
-            84,
-            103
+            84.15,
+            102.86
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "good",
           "placeholder": false,
@@ -630,21 +630,21 @@
           "it": "Accoppiato leguminose da granella"
         },
         "condition": {
-          "en": "Paid on chickpea, faba bean, lentil or pea grown to full ripeness.",
-          "it": "Lo prendi su cece, favino, lenticchia o pisello portati fino a maturazione piena."
+          "en": "Paid on chickpea, lentil, pea, faba bean, lupin and beans, not soybean, grown to full ripeness. The plan says 40.04 €/ha; 41.78 was paid in 2024 and 44.04 (the cap) in 2025.",
+          "it": "Lo prendi su cece, lenticchia, pisello, favino, lupino e fagioli, non su soia, portati fino a maturazione piena. Il piano dice 40,04 €/ha; nel 2024 sono stati pagati 41,78 e nel 2025 44,04 (il massimo)."
         },
         "amount": {
-          "value": 44,
+          "value": 44.04,
           "unit": "€/ha",
           "range": [
             29,
-            44
+            44.04
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "good",
           "placeholder": false,
@@ -661,31 +661,31 @@
       {
         "id": "coupled-oilseeds",
         "level": "italy",
-        "defaultOn": true,
+        "defaultOn": false,
         "name": {
           "en": "Coupled oilseeds",
           "it": "Accoppiato per le oleaginose"
         },
         "condition": {
-          "en": "Applies to oilseed crops, using the 2023 payment rate.",
-          "it": "Va alle colture oleaginose; l'importo è quello del 2023."
+          "en": "For rapeseed and sunflower, only with a contract with a processor, seed company or feed mill, and certified seed. 98.16 €/ha was paid in 2024 and 111.10 in 2025.",
+          "it": "Per colza e girasole, solo con un contratto con un'industria di trasformazione, una ditta sementiera o un mangimificio, e con seme certificato. Nel 2024 sono stati pagati 98,16 €/ha e nel 2025 111,10."
         },
         "amount": {
-          "value": 98,
+          "value": 111.1,
           "unit": "€/ha",
           "range": [
-            80,
-            98
+            90.9,
+            111.1
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
-          "confidence": "fair",
+          "confidence": "good",
           "placeholder": false,
-          "asOf": "2023"
+          "asOf": "2025"
         },
         "crops": [
           "rapeseed"
@@ -701,23 +701,23 @@
           "it": "Eco-schema 4: rotazione con leguminosa"
         },
         "condition": {
-          "en": "Pays about 60 €/ha in the years that qualify (about 2 out of 3). You cannot use herbicides or pesticides on the legume, and you have to work the residues into the soil.",
-          "it": "Dà circa 60 €/ha negli anni validi, circa 2 su 3. Non puoi usare diserbi o fitofarmaci sulla leguminosa, e devi interrare i residui."
+          "en": "Paid 49.48 €/ha in 2024 and 60.36 in 2025 (the plan said 110, but more land applied), in the years that qualify: the legume year and the durum year after it, about 2 out of 3. No chemical weedkillers or pesticides on the legume, and work the residues into the soil.",
+          "it": "Ha pagato 49,48 €/ha nel 2024 e 60,36 nel 2025 (il piano diceva 110, ma hanno chiesto l'aiuto più ettari del previsto) negli anni validi: l'anno della leguminosa e quello del grano duro dopo, circa 2 su 3. Niente diserbi chimici o fitofarmaci sulla leguminosa, e interra i residui."
         },
         "amount": {
           "value": 40,
           "unit": "€/ha",
           "range": [
-            37,
-            72
+            33,
+            43
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
-          "confidence": "low",
+          "confidence": "fair",
           "placeholder": false,
           "asOf": "2025"
         },
@@ -738,21 +738,21 @@
           "it": "Eco-schema 4: anno di veccia-avena"
         },
         "condition": {
-          "en": "Sources disagree on whether vetch-oat before durum counts. Ask your adviser.",
-          "it": "Le fonti non concordano sul fatto che la veccia-avena prima del grano duro valga. Chiedi al tecnico."
+          "en": "Sources disagree on whether vetch-oat before durum counts. No chemical weedkillers or pesticides on the vetch-oat. Ask your adviser.",
+          "it": "Le fonti non concordano sul fatto che la veccia-avena prima del grano duro valga. Niente diserbi chimici o fitofarmaci sulla veccia-avena. Chiedi al tecnico."
         },
         "amount": {
           "value": 40,
           "unit": "€/ha",
           "range": [
             0,
-            72
+            43
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "low",
           "placeholder": false,
@@ -772,21 +772,21 @@
           "it": "Eco-schema 4: coltura da rinnovo"
         },
         "condition": {
-          "en": "You get this only if rapeseed or coriander count as renewal crops. Ask your CAA office.",
-          "it": "Lo prendi solo se colza o coriandolo valgono come colture da rinnovo. Chiedi al tuo CAA."
+          "en": "You get this only if rapeseed or coriander count as renewal crops; AGEA's own example pays coriander then durum. The renewal crop must be grown by integrated or organic rules. Ask your CAA office.",
+          "it": "Lo prendi solo se colza o coriandolo valgono come colture da rinnovo; l'esempio di AGEA paga coriandolo e poi grano duro. La coltura da rinnovo va condotta con la difesa integrata o biologica. Chiedi al tuo CAA."
         },
         "amount": {
           "value": 40,
           "unit": "€/ha",
           "range": [
             0,
-            72
+            43
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "low",
           "placeholder": false,
@@ -807,21 +807,21 @@
           "it": "Eco-schema 4: a strisce"
         },
         "condition": {
-          "en": "Applies only if each strip is declared as its own parcel and no herbicide or pesticide touches the legume strip. Ask your CAA office.",
-          "it": "Vale solo se dichiari ogni striscia come appezzamento a sé e nessun diserbo o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA."
+          "en": "Applies only if each strip is declared as its own parcel and no chemical weedkiller or pesticide touches the legume strip. Ask your CAA office.",
+          "it": "Vale solo se dichiari ogni striscia come appezzamento a sé e nessun diserbo chimico o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA."
         },
         "amount": {
           "value": 40,
           "unit": "€/ha",
           "range": [
             0,
-            72
+            43
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "low",
           "placeholder": false,
@@ -854,9 +854,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -876,8 +876,8 @@
           "it": "Fondo grano duro"
         },
         "condition": {
-          "en": "Needs a supply contract of at least 3 years and certified seed. Covers up to 50 ha, and the payout is cut if too many apply.",
-          "it": "Serve un contratto di filiera di almeno 3 anni e seme certificato. Copre fino a 50 ha; se arrivano troppe domande, l'importo viene tagliato."
+          "en": "Needs a 3-year supply contract with a cooperative, consortium, producer organisation or a processor such as a mill or pasta maker, and certified seed. Up to 50 ha and 50,000 € over three years; cut in proportion if too many apply. The cap was 200 €/ha in 2024 and 2025, 100 for 2026.",
+          "it": "Serve un contratto di filiera di 3 anni con una cooperativa, un consorzio, un'organizzazione di produttori o un trasformatore come un mulino o un pastificio, e seme certificato. Fino a 50 ha e 50.000 € in tre anni; se arrivano troppe domande, l'aiuto si riduce in proporzione. Il massimo era 200 €/ha nel 2024 e nel 2025, 100 per il 2026."
         },
         "amount": {
           "value": 100,
@@ -888,9 +888,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "MASAF decrees and AGEA instructions",
+            "dataset": "MASAF decree DM 585284 of 30 October 2025: durum wheat supply-chain fund (up to 100 €/ha)",
             "resolution": "national",
-            "url": "https://www.masaf.gov.it/"
+            "url": "https://www.masaf.gov.it/flex/cm/pages/ServeAttachment.php/L/IT/D/1%252Ff%252F2%252FD.b517ae94300369dfdb7e/P/BLOB%3AID%3D24153/E/pdf?mode=download"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -910,29 +910,31 @@
           "it": "Fondo sovranità per le leguminose"
         },
         "condition": {
-          "en": "Needs a 3-year supply contract and pays on the legume hectares above the 3-year average. Caps at 250 €/ha, and is cut if too many apply.",
-          "it": "Ci vuole un contratto di filiera di 3 anni, e paga gli ettari a leguminose sopra la media dei 3 anni. Al massimo dà 250 €/ha; se ci sono troppe domande, viene tagliato."
+          "en": "Needs a 3-year supply contract (a cooperative member's yearly pledge must link to one). Pays only on legume hectares above your 3-year average, up to 50 ha. Up to 250 €/ha; in 2025 cuts brought it to 137.",
+          "it": "Ci vuole un contratto di filiera di 3 anni (l'impegno annuale del socio di una cooperativa deve rifarsi a uno). Paga solo gli ettari a leguminose sopra la tua media dei 3 anni, fino a 50 ha. Al massimo 250 €/ha; nel 2025, coi tagli, sono stati 137."
         },
         "amount": {
-          "value": 200,
+          "value": 250,
           "unit": "€/ha",
           "range": [
-            0,
+            137,
             250
           ],
           "scale": "area",
           "source": {
-            "dataset": "MASAF decrees and AGEA instructions",
+            "dataset": "Interministerial decree of 22 December 2025 (DM 688617): food-sovereignty fund 2025-26, legumes 250 €/ha with a supply-chain contract",
             "resolution": "national",
-            "url": "https://www.masaf.gov.it/"
+            "url": "https://www.masaf.gov.it/flex/cm/pages/ServeAttachment.php/L/IT/D/1%252Fe%252F3%252FD.6b2cc4eca1e0649ff298/P/BLOB%3AID%3D24096/E/pdf?mode=download"
           },
-          "confidence": "low",
+          "confidence": "fair",
           "placeholder": false,
           "asOf": "2026"
         },
         "crops": [
           "chickpea",
-          "faba"
+          "faba",
+          "lentil",
+          "pea"
         ],
         "options": []
       },
@@ -945,8 +947,8 @@
           "it": "Semina su sodo (SRA03)"
         },
         "condition": {
-          "en": "Requires 5 years of no-till sowing across all crops. The 2026 call is closed.",
-          "it": "Ti impegni per 5 anni a seminare su sodo su tutte le colture. Il bando 2026 è chiuso."
+          "en": "Requires 5 years of no-till sowing across all crops. Not on the same field as integrated production or organic. The 2026 call closed on 30 June 2026.",
+          "it": "Ti impegni per 5 anni a seminare su sodo su tutte le colture. Non sullo stesso campo della produzione integrata o del biologico. Il bando 2026 ha chiuso il 30 giugno 2026."
         },
         "amount": {
           "value": 300,
@@ -957,11 +959,11 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
+            "dataset": "CSR Basilicata: SRA03 no-till call 2026 (Determination 100 of 13 Feb 2026, extended to 30 June 2026 by Determination 423)",
             "resolution": "regional",
-            "url": "https://www.basilicatacsr.it/"
+            "url": "https://basilicatacsr.it/bando-csr/sra03-semina-su-sodo-annualita-2026/"
           },
-          "confidence": "fair",
+          "confidence": "good",
           "placeholder": false,
           "asOf": "2026"
         },
@@ -977,8 +979,8 @@
           "it": "Produzione integrata (SRA01)"
         },
         "condition": {
-          "en": "Requires 5 years following the regional integrated production rules. You cannot combine it with organic on the same field.",
-          "it": "Devi seguire per 5 anni le regole regionali della produzione integrata. Non puoi prenderlo insieme al biologico sullo stesso campo."
+          "en": "Requires 5 years following the regional integrated production rules. 171 €/ha on arable land, 114 on forage. Not on the same field as organic or no-till.",
+          "it": "Devi seguire per 5 anni le regole regionali della produzione integrata. 171 €/ha sui seminativi, 114 sulle foraggere. Non sullo stesso campo del biologico o della semina su sodo."
         },
         "amount": {
           "value": 171,
@@ -989,11 +991,11 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan): SRA01 and SRA29 payment tables",
             "resolution": "regional",
-            "url": "https://www.basilicatacsr.it/"
+            "url": "https://europa.regione.basilicata.it/feasr/wp-content/uploads/2023/07/CSR-GIUGNO2023-Completo-web.pdf"
           },
-          "confidence": "fair",
+          "confidence": "good",
           "placeholder": false,
           "asOf": "2026"
         },
@@ -1009,23 +1011,23 @@
           "it": "Biologico (SRA29)"
         },
         "condition": {
-          "en": "Requires 5 years of certified organic farming. Sources disagree on the arable rate, and the last call closed in May 2025.",
-          "it": "Serve il biologico certificato per 5 anni. Le fonti non concordano sul premio per i seminativi, e l'ultimo bando ha chiuso a maggio 2025."
+          "en": "Requires 5 years of certified organic farming. Arable land 258 €/ha to stay organic, 291 while converting; legumes 208 and 233. The last call closed in May 2025.",
+          "it": "Serve il biologico certificato per 5 anni. Seminativi 258 €/ha per restare nel biologico, 291 durante la conversione; leguminose 208 e 233. L'ultimo bando ha chiuso a maggio 2025."
         },
         "amount": {
           "value": 258,
           "unit": "€/ha",
           "range": [
-            163,
-            362
+            208,
+            291
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan): SRA01 and SRA29 payment tables",
             "resolution": "regional",
-            "url": "https://www.basilicatacsr.it/"
+            "url": "https://europa.regione.basilicata.it/feasr/wp-content/uploads/2023/07/CSR-GIUGNO2023-Completo-web.pdf"
           },
-          "confidence": "low",
+          "confidence": "good",
           "placeholder": false,
           "asOf": "2025"
         },
@@ -1877,7 +1879,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 470,
+          "value": 469,
           "unit": "€/ha",
           "range": [
             230,
@@ -1941,7 +1943,7 @@
       },
       "scores": {
         "normal": {
-          "income": 0.47,
+          "income": 0.469,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
@@ -1953,7 +1955,7 @@
           "forage": 0.3
         },
         "much-drier": {
-          "income": 0.306,
+          "income": 0.305,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
@@ -2114,7 +2116,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 470,
+            "value": 469,
             "unit": "€/ha",
             "range": [
               230,
@@ -2155,7 +2157,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 477,
+          "value": 476,
           "unit": "€/ha",
           "range": [
             200,
@@ -2219,19 +2221,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.477,
+          "income": 0.476,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.95
         },
         "drier": {
-          "income": 0.421,
+          "income": 0.42,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.95
         },
         "much-drier": {
-          "income": 0.342,
+          "income": 0.341,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.95
@@ -2395,7 +2397,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 477,
+            "value": 476,
             "unit": "€/ha",
             "range": [
               200,
@@ -2436,7 +2438,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 558,
+          "value": 557,
           "unit": "€/ha",
           "range": [
             270,
@@ -2496,19 +2498,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.558,
+          "income": 0.557,
           "water": 0.55,
           "soil": 0.2,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.474,
+          "income": 0.473,
           "water": 0.55,
           "soil": 0.2,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.363,
+          "income": 0.362,
           "water": 0.55,
           "soil": 0.2,
           "forage": 0.05
@@ -2663,7 +2665,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 558,
+            "value": 557,
             "unit": "€/ha",
             "range": [
               270,
@@ -2981,11 +2983,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 530,
+          "value": 529,
           "unit": "€/ha",
           "range": [
             230,
-            800
+            790
           ],
           "scale": "area",
           "source": {
@@ -3045,19 +3047,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.53,
+          "income": 0.529,
           "water": 0.55,
           "soil": 0.633,
           "forage": 0.3
         },
         "drier": {
-          "income": 0.451,
+          "income": 0.45,
           "water": 0.55,
           "soil": 0.633,
           "forage": 0.3
         },
         "much-drier": {
-          "income": 0.345,
+          "income": 0.344,
           "water": 0.55,
           "soil": 0.633,
           "forage": 0.3
@@ -3219,11 +3221,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 530,
+            "value": 529,
             "unit": "€/ha",
             "range": [
               230,
-              800
+              790
             ],
             "scale": "area",
             "source": {
@@ -3260,7 +3262,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 454,
+          "value": 453,
           "unit": "€/ha",
           "range": [
             200,
@@ -3320,13 +3322,13 @@
       },
       "scores": {
         "normal": {
-          "income": 0.454,
+          "income": 0.453,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.401,
+          "income": 0.4,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
@@ -3487,7 +3489,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 454,
+            "value": 453,
             "unit": "€/ha",
             "range": [
               200,
@@ -3527,11 +3529,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 628,
+          "value": 595,
           "unit": "€/ha",
           "range": [
-            270,
-            990
+            230,
+            950
           ],
           "scale": "area",
           "source": {
@@ -3587,19 +3589,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.628,
+          "income": 0.595,
           "water": 0.55,
           "soil": 0.3,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.534,
+          "income": 0.506,
           "water": 0.55,
           "soil": 0.3,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.408,
+          "income": 0.387,
           "water": 0.55,
           "soil": 0.3,
           "forage": 0.05
@@ -3610,7 +3612,7 @@
         "cereal-machinery",
         "no-buyer"
       ],
-      "supportTag": true,
+      "supportTag": false,
       "why": {
         "suggested": "why.rapeseed-durum-durum.suggested",
         "evidence": [
@@ -3757,11 +3759,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 628,
+            "value": 595,
             "unit": "€/ha",
             "range": [
-              270,
-              990
+              230,
+              950
             ],
             "scale": "area",
             "source": {
@@ -3798,7 +3800,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 555,
+          "value": 554,
           "unit": "€/ha",
           "range": [
             230,
@@ -3858,19 +3860,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.555,
+          "income": 0.554,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.49,
+          "income": 0.489,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.398,
+          "income": 0.397,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
@@ -4028,7 +4030,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 555,
+            "value": 554,
             "unit": "€/ha",
             "range": [
               230,
@@ -4364,7 +4366,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 471,
+          "value": 470,
           "unit": "€/ha",
           "range": [
             210,
@@ -4428,13 +4430,13 @@
       },
       "scores": {
         "normal": {
-          "income": 0.471,
+          "income": 0.47,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "drier": {
-          "income": 0.4,
+          "income": 0.399,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
@@ -4601,7 +4603,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 471,
+            "value": 470,
             "unit": "€/ha",
             "range": [
               210,

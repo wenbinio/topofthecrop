@@ -26,7 +26,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 ## 3. Options (Income first, Water second)
 
 - [ ] *What we see*: bare after harvest **2 months**, hot flowering **4 days**, autumn rain **156 mm**.
-- [ ] Order: **Chickpea 715 €/ha/yr** (Best fit), Lentil 603, Coriander 555, Rapeseed 628.
+- [ ] Order: **Chickpea 715 €/ha/yr** (Best fit), Lentil 603, Rapeseed 595, Coriander 554 (rapeseed is lower since coupled oilseeds starts switched off: it needs a contract).
 
 ## 4. Why (tap Chickpea)
 
