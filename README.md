@@ -319,7 +319,7 @@ public/parcels/ cadastral parcels for Genzano di Lucania
 data/           the data team's files (HANDOVER.md); never edited by hand, served at data/basin/
 ColabNotebooks/ the data team's notebooks that make data/
 scripts/        builders for the demo bundle, the basin map picture and the parcels
-docs/           scoring.md, crops-research.md, support-and-prices.md, checking-the-app.md, mockups/
+docs/           scoring.md, crops-research.md, support-and-prices.md, durum-vs-faba-rotation-margins.md, checking-the-app.md, mockups/
 ```
 
 ## Submission

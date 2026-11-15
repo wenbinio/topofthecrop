@@ -2,6 +2,8 @@
 
 Researched on 14 November 2026 for rain-fed clay hills around Genzano di Lucania (about 350 m, clay loam, roughly 550 mm of rain from October to May). Two researchers worked independently from the same brief: a Claude Opus agent, which marked every figure as verified in a source it opened, taken from a search excerpt, or recalled; and a Gemini Hydrogen agent, whose links were search redirects, so its figures count as a second opinion. Nobody on the team has checked these against the sources. **Treat every figure as a starting point for the farmer and adviser to correct.**
 
+A third account, supplied by the project owner on 15 November 2026, compares continuous durum with a faba bean–wheat rotation and disagrees with the app on durum's costs and on which of the two earns more: `docs/durum-vs-faba-rotation-margins.md`. The app's figures have not been changed to match it.
+
 The app's figures are the "In the app" columns. Where the two researchers differ, the app takes a value between them and the range covers both.
 
 ## In the app
