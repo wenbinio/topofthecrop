@@ -62,7 +62,7 @@ NASA POWER (live) ────── drawn, outside ──── AreaWeather scr
 
 ### 4a. The demo field
 
-1. The data team's `data/field.json` holds the figures measured inside the demo field's own outline.
+1. The data team's `data/field.json` holds the demo field's figures: its greenness from inside its own outline, its soil at its centre, and its weather, water and future values from the grids over it (6–28 km).
 2. `scripts/real-field.mjs` reads it and builds the field parts: outline, last crop, the three findings, the twelve months, the risk icons, the hot-day stops and the evidence lines.
 3. `scripts/make-placeholder-bundle.mjs` adds the nine rotations and the money figures (from `docs/crops-research.md` and `docs/support-and-prices.md`) and writes `public/data/genzano-demo.json`.
 4. The app fetches that one file. `src/data/validate.ts` checks its shape on load and refuses a broken one.
@@ -105,16 +105,18 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 | "By 2050" and the slider's stops | `ssp245.hot`, `ssp585.hot`, through the helper's `projected()` | `cells_future.json` |
 | Hottest season | `hot_days_flower_by_season` | `cells_weather.json` |
 | Usual high at flowering (hover on "hot days") | `tmax_flower`, `ssp245.tmaxfl` | weather, future |
-| Evidence lines on Why | `rain_season`, `durum_need`, `clay` | weather, water, soil |
+| Evidence lines on Why | `rain_season`, `durum_need`, `clay`, `sm_spring` (SMAP), `aet_season` (MODIS; `moreEvidence` in `field-rules.js`) | weather, water, soil |
 | Pre-filled last crop | `durum22` (share of durum on the 2022 crop map) | `grid.geojson` |
 | Basin outline on the map | the whole file | `area.geojson` |
 | Source names and resolutions | `meta.sources` | `field.json` |
 | Why: the signal steps (less green, more hot days, less water used) | `peak_by_season`, `hot_days_flower_by_season`, `aet_by_season`: the last five seasons against 2001–2020 (`measuredSignals` in `field-rules.js`) | greenness, weather, water |
 | Year: what each slider stop means, and its Oct–May rain now and by 2050 | `rain_season` and `rain_season_by_season` (typical, 1-in-10 dry, driest since 2001), `ssp245.rainse`, `ssp585.rainse` (`rainStops`) | weather, future |
+| Year: 2024 and 2026 against a usual season (`src/components/SeasonCompare.tsx`) | `rain_season`, `sm_spring`, `peak_ndvi`, `aet_season`, typical and by season (`fieldData.seasons`) | weather, water, greenness |
+| Year, demo field only: seasons much less green than nearby fields | `peak_vs_nearby_z` at or below −1.5 (`stressSeasons`) | `field.json` `greenness.seasons` |
 
-### 4f. The rest of the data: in the bundle, not yet on a screen
+### 4f. The rest of the data: in the bundle, mostly not yet on a screen
 
-`bundle.fieldData` (type `FieldData` in `src/data/types.ts`) carries the rest of the data team's figures, for both the demo field and a drawn field, so a screen only has to read them. Each is a `Fact` (or, for one value per season, a `Series` with the same source, scale and confidence). One function, `fieldData()` in `src/data/field-rules.js`, builds it for both: `FIELD_DATA_RULES` there sets each figure's unit, dataset, decimals and scale. A value that is `null` in the data is left out, never turned into 0. Labels are the dictionary keys `data.<key>`.
+`bundle.fieldData` (type `FieldData` in `src/data/types.ts`) carries the rest of the data team's figures, for both the demo field and a drawn field, so a screen only has to read them. Each is a `Fact` (or, for one value per season, a `Series` with the same source, scale and confidence). One function, `fieldData()` in `src/data/field-rules.js`, builds it for both: `FIELD_DATA_RULES` there sets each figure's unit, dataset, decimals and scale. A value that is `null` in the data is left out, never turned into 0. Labels are the dictionary keys `data.<key>`. Spring soil water, crop water use, peak greenness and their season series are on screen (4e); the rest is not yet.
 
 | `fieldData.` | Data key | From (drawn field / demo field) |
 |---|---|---|
@@ -170,7 +172,7 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 
 ## 8. Tests and publishing
 
-- `npm test` runs about 450 tests. Screens are tested with a frozen bundle, `src/test-fixtures/money-bundle.json`, so changing the shipped figures does not break them. One test, `src/data/public-bundle.test.ts`, checks the shipped file.
+- `npm test` runs about 480 tests. Screens are tested with a frozen bundle, `src/test-fixtures/money-bundle.json`, so changing the shipped figures does not break them. One test, `src/data/public-bundle.test.ts`, checks the shipped file.
 - The map is mocked in tests. Check map changes by hand in a browser.
 - Every push to `main` runs `.github/workflows/pages.yml`: typecheck, test, build, publish.
 - After switching branches, restart `npm run dev`; it can serve stale files.
@@ -189,5 +191,5 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 ## 10. Ideas already scoped
 
 - **More communes for the parcel lookup, and parcel lines on the map.** Only Genzano di Lucania (`D971`) ships. Each further commune is one run of `scripts/fetch-parcels.mjs`. Drawing the parcel lines on the map, so a farmer can tap a parcel instead of typing its number, is the natural next step; a field made of several parcels cannot be joined yet.
-- **Show more of the data.** See the "not yet shown" list in 4e.
+- **Show more of the data.** See the list in 4f.
 - **Submission materials.** The 30-second video, the written description, the NASA data list and the AI-use statement are not started.

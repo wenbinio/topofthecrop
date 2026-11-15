@@ -1743,6 +1743,42 @@
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
             "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -1984,6 +2020,42 @@
             "confidence": "fair",
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
             "placeholder": false
           }
         ],
@@ -2230,6 +2302,42 @@
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
             "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -2465,6 +2573,42 @@
             "confidence": "fair",
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
             "placeholder": false
           }
         ],
@@ -2703,6 +2847,42 @@
             "confidence": "fair",
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
             "placeholder": false
           }
         ],
@@ -2946,6 +3126,42 @@
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
             "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -3182,6 +3398,42 @@
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
             "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
+            "placeholder": false
           }
         ],
         "benefits": [
@@ -3415,6 +3667,42 @@
             "confidence": "fair",
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
             "placeholder": false
           }
         ],
@@ -3650,6 +3938,42 @@
             "confidence": "fair",
             "label": "evidence.clay",
             "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
             "placeholder": false
           }
         ],

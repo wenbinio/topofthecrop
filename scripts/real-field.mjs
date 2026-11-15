@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import {
   FINDINGS, fieldData as makeFieldData, finding, flowerHigh as makeFlowerHigh, groundCheckFrom, hotDayStops, makeSources,
-  measuredSignals, one, rainStops, real, risksByScenario as makeRisks, trialSoilFrom, yearMonths,
+  measuredSignals, moreEvidence, one, rainStops, real, risksByScenario as makeRisks, trialSoilFrom, yearMonths,
 } from "../src/data/field-rules.js";
 
 const data = JSON.parse(readFileSync(new URL("../data/field.json", import.meta.url), "utf8"));
@@ -125,6 +125,7 @@ const evidence = [
   real(w.typical.rain_season, "mm", "area", sources.rain, "fair", "evidence.rainSeason", baseline),
   real(wt.typical.durum_need, "mm", "area", sources.water, "fair", "evidence.durumNeed", baseline),
   one(data.soil.values.clay, "%", data.soil.range_90pc.clay, "field", sources.soil, "fair", "evidence.clay", "SoilGrids 2.0"),
+  ...moreEvidence(fieldData), // NASA SMAP soil water in spring, NASA MODIS crop water use
 ];
 
 export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays, flowerHigh, rainSeason }, evidence, fieldData };

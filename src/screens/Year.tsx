@@ -13,6 +13,7 @@ import { AreaNote } from "../components/BundleProvider";
 import { openRing } from "../components/FieldShape";
 import { ForecastNext } from "../components/ForecastNext";
 import { SeasonNow } from "../components/SeasonNow";
+import { SeasonCompare } from "../components/SeasonCompare";
 import { centroid } from "../geo/geometry";
 
 const RISK_ORDER: Risk[] = ["dry", "frost", "heat", "rain"];
@@ -125,6 +126,10 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
           <CoverLegend none={months.some((m) => m.cover === "none")} />
           <RiskLegend risks={risks} />
         </div>
+      </div>
+
+      <div className="pt-3">
+        <SeasonCompare bundle={bundle} />
       </div>
 
       <div className="px-4 py-3">

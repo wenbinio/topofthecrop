@@ -23,7 +23,7 @@ Six steps, each one screen on a phone.
 
 | Step | What the farmer sees | How it stays simple |
 |---|---|---|
-| 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn anywhere else gets live NASA weather history for its area. |
+| 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn on the basin's farmland gets the same steps from the 1 km squares around it; anywhere else gets live NASA weather history for its area. |
 | 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); put the priorities (income, water, soil, forage) in order by tapping them, most important first: at least 2, up to all 4. | Big buttons. Last crop is pre-filled from the EU crop map. |
 | 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029): continuous durum plus three alternatives. The top one says "Best fit for you". | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
 | 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | Every number shows its source, its range, and whether it describes "your field" or "your area". Terms such as NDVI open a one-line explanation. |
@@ -73,27 +73,34 @@ Languages: English and Italian, switchable on every screen. The demo video and s
 
 ### NASA data
 
-| Dataset | What we take from it | Shown as | Resolution |
+What the app uses, from the data team's files (`data/`, made by the notebooks in `ColabNotebooks/`) and two live services. `DATA_SOURCES.md` gives each dataset's licence, citation and resolution.
+
+| Dataset | What we take from it | On screen | Resolution |
 |---|---|---|---|
-| Landsat / HLS (Harmonized Landsat Sentinel-2) | Vegetation index over the seasons: green and bare months, stress years | Your field | 30 m |
-| SRTM elevation | Slope, for erosion risk on bare soil | Your field | 30 m |
-| ECOSTRESS | Land surface temperature and plant water stress, where scenes exist | Your field | 70 m |
-| NASA POWER | Daily temperature and rainfall history: hot days at flowering, frost days, dry autumns. Also, live, this season's rain since 1 September against the same weeks in the ten seasons before | Your area | about 50 km |
-| GPM IMERG | Heavy-rain events | Your area | about 10 km |
-| SMAP | Soil moisture anomalies as regional context | Your area | 9–36 km |
-| NEX-GDDP-CMIP6 | Hot days at flowering by 2050 | Your area | about 25 km |
+| MODIS Terra vegetation indices (MOD13Q1, v6.1) | Greenness: the green, patchy and bare months on the year strip, the bare months after harvest, and peak greenness each season (the Why screen's "less green than usual" step, the Year screen's 2024 and 2026 card, and the demo field's seasons much less green than nearby fields). Also green-up and dry-off dates | Yes. Demo field "your field"; a drawn field "your area" (1 km mean) | 250 m |
+| MODIS Terra evapotranspiration (MOD16A2GF, v6.1; MOD16A2 for the latest months) | Water the crops used each season (the Why screen's "crops used less water" step) | Yes: a Why evidence line, and the Year screen's 2024 and 2026 card | 500 m |
+| GPM IMERG Final, monthly (V07) | One of the three rain sources (with CHIRPS and ERA5-Land; the app shows their median): autumn rain, October–May rain, the slider's rain | Yes | about 11 km |
+| NEX-GDDP-CMIP6 | Change by 2041–2060 from 29 climate models, on the middle (SSP2-4.5) and high (SSP5-8.5) paths: hot days at flowering, the usual high at flowering, the slider's rain; frost and rain for the evidence screens | Yes | about 28 km |
+| SMAP L4 soil moisture (SPL4SMGP, v8) | Root-zone soil water at sowing (November) and in spring (March–April), 2016–2025 | Spring soil water: a Why evidence line, and the Year screen's 2024 and 2026 card. Sowing: in the data only | 9 km |
+| NASADEM | Height and slope | Not yet: in the data | 30 m |
+| Harmonized Landsat Sentinel-2 (HLSL30 and HLSS30, v2.0) | 30 m greenness at the demo field, used to check MODIS | No | 30 m |
+| NASA POWER | Live: weather history for a field outside the basin, and this season's rain so far. In the data: a check on rain and temperature at the demo field | Yes, live | about 50 km |
+| NASA GIBS Blue Marble | The map picture, zoomed out | Yes | 500 m |
 
-Left out on purpose: GRACE (about 300 km, far too coarse for a field) and GEDI (sparse, poor over annual crops).
-
-Resolutions above are from general knowledge and must be checked against each product page before submission.
+Not used: ECOSTRESS (not processed in time, so the app has no surface-temperature data), GRACE (about 300 km, far too coarse for a field) and GEDI (sparse, poor over annual crops).
 
 ### Other data
 
 | Source | Use |
 |---|---|
-| EU Crop Map (JRC, 10 m) | Pre-filling the last crop |
-| SoilGrids (ISRIC, 250 m) | Soil texture and organic carbon |
-| Published agronomy trials and regional price data | Income (gross margin), nitrogen and water figures for each three-year rotation (sources to be chosen in the data phase) |
+| ERA5-Land (ECMWF, Copernicus Climate Change Service), about 11 km. Copernicus licence: free, with credit | Temperature: hot days at flowering, the usual high at flowering, frost nights. One of the three rain sources. The reference evapotranspiration behind durum's water need |
+| CHIRPS daily rainfall (Climate Hazards Center, UCSB), about 5.6 km. Public domain | One of the three rain sources; with ERA5-Land, the daily rain behind rain onset and spring dry spells |
+| ESA WorldCover 2021, CORINE Land Cover 2018, HydroSHEDS | The basin's outline and the mask of rain-fed farmland the 1 km squares cover |
+| EU Crop Map (JRC, 10 m) | Pre-filling the last crop from the share of durum in the 2022 map. That map labels 86% of the basin's arable land as durum, so the farmer can change the answer |
+| SoilGrids (ISRIC, 250 m) | Topsoil clay on the Why screen; sand, silt, organic carbon, pH, nitrogen, CEC and water-holding capacity in the data |
+| FAO-56 (Allen et al. 1998) | The method behind reference evapotranspiration and durum's water need |
+| Denora et al. (2025), the vetch trial at the demo field | The trial's own weather station and soil, typed in from the paper and used only to check our figures |
+| Published agronomy trials and regional price data | Income (gross margin), nitrogen and water figures for each three-year rotation: see `docs/crops-research.md` and `docs/support-and-prices.md` |
 | Map picture, zoomed out: NASA Blue Marble (MODIS), from NASA GIBS. Public domain. | Finding the area |
 | Map picture, zoomed in, anywhere: Sentinel-2 cloudless 2016 by EOX (contains modified Copernicus Sentinel data 2016), 10 m, CC BY 4.0 | Finding and drawing a field outside the basin |
 | Map picture, zoomed in, Bradano basin: our own tiles in `public/tiles/s2/`, cut by `scripts/build-basemap.py` from four Sentinel-2 L2A scenes of 30 May 2026 (contains modified Copernicus Sentinel data 2026), 10 m | Finding and drawing a field in the basin |
@@ -103,7 +110,7 @@ Resolutions above are from general knowledge and must be checked against each pr
 
 ### Rules for honest numbers
 
-- **Field or area.** Every number carries a badge: "your field" (30–70 m data) or "your area" (10–50 km data). Coarse data is never presented as a measurement of the field.
+- **Field or area.** Every number carries a badge: "your field" (figures from the demo field itself: MODIS greenness at 250 m, SoilGrids at 250 m, NASADEM at 30 m) or "your area" (the 1 km squares around a drawn field, and weather and climate grids of 5 to 50 km). Coarse data is never presented as a measurement of the field.
 - **Source and range.** Every number links to its dataset and shows a range, not only a point value.
 - **Confidence word.** Each option carries one: good, fair or low.
 - **Income is a gross margin.** It is the average per year over the three-year sequence, in €/ha, and the "Why?" screen states the prices used and their date.
@@ -166,7 +173,7 @@ The tree's branches and the score definitions are set in the data phase and writ
 | Part | Choice | Why |
 |---|---|---|
 | App | React + TypeScript, built with Vite | Fast to build, no server needed |
-| Hosting | Static site on Cloudflare Pages | Free, public demo link with no login |
+| Hosting | Static site on GitHub Pages, built and published by `.github/workflows/pages.yml` on every push to `main` | Free, public demo link with no login |
 | Map | MapLibre GL JS | No API key; draws the field outline and the finger-drawn shape |
 | Town search | Photon (OpenStreetMap geocoder) | No key, no account |
 | Styling | Tailwind CSS, with the two views as two sets of design tokens | One set of screens, two looks |
@@ -174,9 +181,9 @@ The tree's branches and the score definitions are set in the data phase and writ
 | State and sharing | Field, answers, view and language stored in the URL | The WhatsApp link reopens the same state with no backend |
 | Printout | A dedicated print page with a print stylesheet | One page, no PDF library |
 | Data | One typed JSON bundle per field in `public/data/` | The handover point between the screens and the data work |
-| Tests | Vitest on ranking and on URL round-trip | The only real logic in the frontend |
+| Tests | Vitest: ranking, the link, money, the data builders against the real data files, and the screens | Run on every pull request |
 
-Not included: user accounts, a database, offline mode, an AI chat inside the app, automatic field-boundary detection.
+Not included: user accounts, a database, offline mode, an AI chat inside the app, automatic field-boundary detection ("Find edges" only grows a region from the spot the farmer taps).
 
 ### The data contract
 
@@ -269,7 +276,7 @@ type AreaWeather = {
   - autumn rain (total, September to November)
   - late frost days (below 0 °C, March and April)
 
-  The thresholds and dates are placeholders for the team to correct, and live in `docs/scoring.md`. The same counting code produces the demo bundle's weather facts, so the two always agree. The "by 2050" number and the slider need climate projections, so outside the basin they are not shown. If the call fails or takes longer than 8 seconds, the app says the weather history is not available right now and offers the demo field.
+  The thresholds and dates are placeholders for the team to correct, and live in `docs/scoring.md`. These live counts are not the same figures as a basin field's. The demo field and drawn basin fields use the data team's 2001–2020 values (ERA5-Land temperature; for rain the median of CHIRPS, IMERG and ERA5-Land, with autumn as October–November), while this live count uses NASA POWER over the last ten years and starts autumn in September. The "by 2050" number and the slider need climate projections, so outside the basin they are not shown. If the call fails or takes longer than 8 seconds, the app says the weather history is not available right now and offers the demo field.
 - **The nine options are three-year sequences** for the harvests of 2027, 2028 and 2029, after the durum just harvested. Crop figures come from `docs/crops-research.md`; each option's facts, limits and scores are derived from its crops by the rules written in `scripts/make-placeholder-bundle.mjs`:
   - chickpea → durum → durum (one legume break)
   - faba bean → durum → faba bean (legume every other year)
@@ -298,10 +305,13 @@ src/
   theme/        standard.css, simple.css
 public/data/    genzano-demo.json
 data/           the data team's basin files (HANDOVER.md); never edited by hand, served at data/basin/
-docs/           scoring.md, data-sources.md, mockups/
+ColabNotebooks/ the data team's notebooks that make data/ (HANDOVER.md, DATA_SOURCES.md)
+docs/           scoring.md, crops-research.md, support-and-prices.md, mockups/
 ```
 
 ## Build plan
+
+This was the plan on Saturday 14 November, kept for the record; `AGENTS.md` says where things stand.
 
 Frontend first, on placeholder data. The data work follows and swaps in real numbers through the data contract. Times are Finland time.
 
@@ -338,6 +348,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 
 - **The idea and the six-step design** came from the team.
 - **AI coding and research tools** were used to build it: Claude (Opus for interface code and design, Sonnet for background research), OpenAI Codex (Sol, for audits), and Gemini (Hydrogen, for read-only reviews and for editing the app's wording in English and Italian, which Claude then checked and applied; no native Italian speaker has read it), coordinated with a multi-agent tool called fleet.
+- **The data** in `data/` and `DATA_SOURCES.md` comes from Google Colab notebooks (`ColabNotebooks/`) written with Claude (Anthropic) on claude.ai and run by the team with Google Earth Engine. Claude also wrote the notebooks' checks, `HANDOVER.md`, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark.
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.

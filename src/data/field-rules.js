@@ -413,3 +413,31 @@ export function rainStops({ rain, driest, projected245, change585, scale, source
     },
   };
 }
+
+// --- more of the data on the screens --------------------------------------------------------------
+
+/**
+ * Evidence lines added under "Why?" for every option, from the field's own figures (`fieldData`): soil water in
+ * spring (NASA SMAP) and the water crops used (NASA MODIS). A figure the field has no data for is left out.
+ */
+export function moreEvidence(data) {
+  const lines = [
+    [data?.water?.soilWaterSpring, "evidence.soilWaterSpring"],
+    [data?.water?.cropWaterUse, "evidence.cropWaterUse"],
+  ];
+  return lines.filter(([fact]) => fact).map(([fact, label]) => ({ ...fact, label }));
+}
+
+/**
+ * Our judgement (docs/scoring.md, "Seasons much less green than nearby fields"): a season is flagged when the
+ * demo field's peak greenness, against nearby rain-fed fields and its own usual gap to them, is at or below
+ * this z-score. Every flag ends in "check locally": a satellite sees stress, not its cause.
+ */
+export const STRESS_RULES = { z: -1.5 };
+
+/** The seasons a field was much less green than its neighbours, from `fieldData.seasons` (demo field only). */
+export function stressSeasons(seasons) {
+  const values = seasons?.series?.peakVsNearby?.values;
+  if (!Array.isArray(values)) return [];
+  return values.flatMap((z, i) => (isNum(z) && z <= STRESS_RULES.z ? [{ season: seasons.years[i], z }] : []));
+}

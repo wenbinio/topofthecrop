@@ -17,6 +17,14 @@ import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { unknownsFor } from "../data/caveats";
 import { AreaNote } from "../components/BundleProvider";
 
+/** Two facts that are the same figure: same number, unit, scale, period, range and dataset (labels may differ). */
+function sameFigure(a: Fact, b: Fact): boolean {
+  return (
+    a.value === b.value && a.unit === b.unit && a.scale === b.scale && a.asOf === b.asOf &&
+    String(a.range) === String(b.range) && a.source.dataset === b.source.dataset && a.source.resolution === b.source.resolution
+  );
+}
+
 /** A fact in full: label, value, range, scale badge, dataset and resolution, date, confidence. */
 export function FactRow({ fact, perYear = false, flowerHigh }: { fact: Fact; perYear?: boolean; flowerHigh?: FieldBundle["year"]["flowerHigh"] }) {
   const t = useT();
@@ -217,7 +225,10 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
   const benefits = option.why.benefits.map((f) =>
     bundle.economics && f.label === "benefit.income" ? { ...facts.income, label: f.label } : f,
   );
-  const allFacts = [...Object.values(facts), ...option.why.evidence, ...benefits, ...(finding ? [finding.fact] : [])];
+  // The finding's own figure heads the evidence; the shared evidence list holds the same figure again (hot days or
+  // bare months), so the repeat is left out.
+  const evidence = finding ? option.why.evidence.filter((f) => !sameFigure(f, finding.fact)) : option.why.evidence;
+  const allFacts = [...Object.values(facts), ...evidence, ...benefits, ...(finding ? [finding.fact] : [])];
 
   return (
     <div className="flex flex-col flex-1">
@@ -304,7 +315,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         ) : null}
         <ul>
           {finding ? <FactRow fact={finding.fact} flowerHigh={bundle.year.flowerHigh} /> : null}
-          {option.why.evidence.map((f, i) => (
+          {evidence.map((f, i) => (
             <FactRow key={i} fact={f} flowerHigh={bundle.year.flowerHigh} />
           ))}
         </ul>

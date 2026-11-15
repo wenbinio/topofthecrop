@@ -133,13 +133,13 @@ Say so if you rely on any of these.
 - The app on a real phone beyond one screenshot of the Why screen in Android Chrome: touch drawing, edge-finding, the Settings inputs, rotation, voice with a real microphone.
 - The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures. The yield lift comes from the team's research compilation; nobody opened the papers.
 - Each rotation's risk rating, the priority score rules and the weights for the farmer's order of priorities (4, 3, 2, 1), which are our judgement.
-- NASA POWER's 592 mm for autumn 2025 at the demo field, about five times the usual.
+- NASA POWER's 592 mm for autumn 2025 at the demo field, about five times the usual. The data team's notebook 03 found POWER's October 2025, February 2026 and March 2026 impossible (more than three times what CHIRPS, IMERG and ERA5-Land measured) and left them out of its checks; the app's live POWER counts still include them.
 - The forecast against another forecast, and AGEA's service under load.
 
 ## State on 15 November 2026
 
 - Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
-- Also live: the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
+- Also live: the Year screen's card comparing 2024 and 2026 with a usual season (with the demo field's seasons much less green than nearby fields), two more evidence lines on Why (NASA SMAP soil water, NASA MODIS crop water use), the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
 - Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
 - Step 6 is "Check and share", for farmers with or without an adviser. It names kinds of people to ask (cooperative, CAA office, regional advisory service, neighbour, agronomist), never a named office or a phone number. Nobody has confirmed with a farmer or a CAA that these are the right places to send each question.
 - Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.
