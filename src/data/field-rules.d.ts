@@ -98,3 +98,4 @@ export function rainStops(input: {
 export function moreEvidence(data: FieldData | undefined): Fact[];
 export const STRESS_RULES: { z: number };
 export function stressSeasons(seasons: FieldData["seasons"] | undefined): { season: number; z: number }[];
+export function seasonBand(years: number[], values: (number | null)[]): { low: number; high: number; recent: number[]; now: number } | null;

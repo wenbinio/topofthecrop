@@ -336,3 +336,12 @@ The fingerprint is the one `vite.config.ts` makes from the shipped data. A chang
 - **Credit:** "Contains modified Copernicus Sentinel data" with the years the pictures span, as the Sentinel Data
   Legal Notice asks.
 
+## The printout's graphs
+
+The printout ends, before the credits, with one graph for each of peak greenness, hot flowering days, water used
+by crops and October–May rain, season by season since 2001 (`src/components/TrendChart.tsx`). Each draws the
+same comparison as the Why steps' signals (`seasonBand` beside `seasonSignal` in `src/data/field-rules.js`): the
+grey band is the 25th to 75th percentile of 2001–2020, and the dark dots and line are the last five seasons after
+2020 and their median. A season with no data has no dot. Rain has no signal; its graph shows what lies behind the
+Year screen's usual, dry and driest years.
+

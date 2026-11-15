@@ -1,7 +1,7 @@
 // The rules behind the Why screen's signals and the slider's rain (src/data/field-rules.js), on made-up series.
 // Written with AI assistance (Claude, Anthropic).
 import { describe, expect, it } from "vitest";
-import { makeSources, measuredSignals, moreEvidence, rainStops, seasonSignal, SIGNAL_RULES, STRESS_RULES, stressSeasons } from "./field-rules.js";
+import { makeSources, measuredSignals, moreEvidence, rainStops, seasonBand, seasonSignal, SIGNAL_RULES, STRESS_RULES, stressSeasons } from "./field-rules.js";
 import type { FieldData } from "./types";
 
 const YEARS = Array.from({ length: 26 }, (_, i) => 2001 + i); // seasons 2001-2026
@@ -99,5 +99,23 @@ describe("stressSeasons: seasons much less green than nearby fields", () => {
   it("flags nothing for a field without the comparison (every drawn field)", () => {
     expect(stressSeasons({ years: [2018], series: {} })).toEqual([]);
     expect(stressSeasons(undefined)).toEqual([]);
+  });
+});
+
+describe("seasonBand: the Why steps' comparison, laid out for the printout's graphs", () => {
+  const years = Array.from({ length: 26 }, (_, i) => 2001 + i);
+  it("gives the middle half of 2001-2020, the last five seasons and their middle, as seasonSignal reads them", () => {
+    const values = years.map((y) => (y <= 2020 ? y - 2000 : y === 2023 ? null : 2)); // 1..20, then low seasons
+    const band = seasonBand(years, values)!;
+    expect(band.low).toBeCloseTo(5.75, 5); // 25th percentile of 1..20, between neighbours
+    expect(band.high).toBeCloseTo(15.25, 5);
+    expect(band.recent).toEqual([2021, 2022, 2024, 2025, 2026]); // 2023 has no data
+    expect(band.now).toBe(2);
+    expect(band.now < band.low).toBe(seasonSignal(years, values) === "falling");
+  });
+  it("is null wherever seasonSignal says no data", () => {
+    const values = years.map((y) => (y <= 2010 ? 1 : null));
+    expect(seasonBand(years, values)).toBeNull();
+    expect(seasonSignal(years, values)).toBe("no-data");
   });
 });
