@@ -759,4 +759,10 @@ export const it: Dict = {
   "plans.current": "Le tue risposte attuali",
   "plans.open": "Apri",
   "plans.remove": "Togli",
+  // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
+  "options.weak.yield": "la resa in zona ({crop})",
+  "options.weak.price": "il prezzo ({crop})",
+  "options.weak.costs": "i costi ({crop})",
+  "options.weak.lift": "il grano duro in più dopo {crop}",
+  "options.sureWhy.lowParts": "Dati non ancora verificati con una fonte locale: {parts}. Prima di seminare, confrontati con un tecnico.",
 };

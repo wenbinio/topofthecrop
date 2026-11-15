@@ -775,6 +775,11 @@ export const en = {
   "plans.current": "Your current answers",
   "plans.open": "Open",
   "plans.remove": "Remove",
+  "options.weak.yield": "the {crop} yield here",
+  "options.weak.price": "the {crop} price",
+  "options.weak.costs": "the {crop} costs",
+  "options.weak.lift": "the extra durum after {crop}",
+  "options.sureWhy.lowParts": "Not yet checked against a local source: {parts}. Talk it over with an adviser before you sow.",
 } as const;
 
 export type DictKey = keyof typeof en;

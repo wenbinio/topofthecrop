@@ -1,14 +1,21 @@
 // How an intercrop sits on the field: the split into strips or halves, and the map that draws it.
 // Written with AI assistance (Claude, Anthropic).
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import shipped from "../../public/data/genzano-demo.json";
 import type { FieldBundle, Option } from "../data/types";
 import { STRIP_METRES, StripMap, backdropScene, layoutPieces, moistFirst, pairFit, piecesIn } from "./StripMap";
 
 type Pt = [number, number];
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+// The map fetches a satellite picture on the first tap; the tests never reach the network.
+beforeEach(() => {
+  vi.stubGlobal("fetch", vi.fn(() => Promise.reject(new Error("offline in tests"))));
+});
 
 /** Shoelace area of a polygon in metres. */
 function area(poly: Pt[]): number {

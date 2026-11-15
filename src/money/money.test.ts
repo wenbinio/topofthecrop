@@ -1,10 +1,10 @@
-import { expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import fixture from '../test-fixtures/money-bundle.json';
-import type { Economics, Money, Option } from '../data/types';
-import { CROPS, SCENARIOS } from '../data/types';
+import type { Economics, FieldBundle, Money, Option } from '../data/types';
+import { CROPS, DEFAULT_STATE, SCENARIOS } from '../data/types';
 import { validateBundle } from '../data/validate';
 import { rankOptions } from '../ranking/rank';
-import { incomeConfidence, incomeFact, optionMoney, resolveMoney, setMoney, withMoney } from './money';
+import { incomeConfidence, incomeFact, optionMoney, resolveMoney, setMoney, weakLinks, withMoney } from './money';
 
 const bundle = validateBundle(fixture);
 const economics = bundle.economics!;
@@ -240,4 +240,19 @@ it('a figure the farmer typed counts as fair', () => {
   good.support.find(item => item.id === 'coupled-durum')!.amount.confidence = 'low';
   expect(incomeConfidence(durum, good, {})).toBe('low');
   expect(incomeConfidence(durum, good, { 's.coupled-durum': 120 })).toBe('fair');
+});
+
+describe("weakLinks", () => {
+  it("names the unsure figures behind chickpea then durum, crediting the extra durum to chickpea", async () => {
+    const shipped = (await import("../../public/data/genzano-demo.json")).default as unknown as FieldBundle;
+    const option = shipped.options.find((o) => o.id === "chickpea-durum-durum")!;
+    const weak = weakLinks(option, shipped.economics!, DEFAULT_STATE.money);
+    expect(weak).toContainEqual({ crop: "chickpea", kind: "yield" });
+    expect(weak).toContainEqual({ crop: "chickpea", kind: "lift" });
+    // Checked figures are not named: chickpea's price (southern exchange lists) and every durum figure.
+    expect(weak).not.toContainEqual({ crop: "chickpea", kind: "price" });
+    expect(weak.some((w) => w.crop === "durum")).toBe(false);
+    const durum = shipped.options.find((o) => o.id === "durum-durum-durum")!;
+    expect(weakLinks(durum, shipped.economics!, DEFAULT_STATE.money)).toEqual([]);
+  });
 });

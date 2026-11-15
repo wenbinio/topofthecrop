@@ -99,8 +99,18 @@ const COST_SOURCE = { durum: money.ismea, chickpea: money.chickpeaCost };
 // A crop that is not a legume leaves no extra nitrogen.
 const N_SOURCE = { chickpea: money.giambalvo, faba: money.tedone, pea: money.preissel, lentil: money.grdc, 'vetch-oat': money.grdc };
 
-const cropFact = (crop, [value, low, high], unit, source = money.notes) =>
-  researched(value, unit, [low, high], source, CROP_TABLE[crop].confidence, '2026-11');
+// Each figure's own confidence. A figure someone checked in a source they opened (docs/crops-research.md, "What is solid
+// and what is not") is fair: durum's yield from the trial at the demo field, durum's costs from ISMEA's survey, and the
+// southern exchange prices for durum, chickpea, faba bean, barley and lentil. Everything else keeps its crop's
+// confidence from the table above (low for every crop but durum): the pea price comes from a northern market, hay from
+// northern quotes, and chickpea's costs are worked out from one study's ratio rather than a published budget.
+const CHECKED = {
+  yield: ['durum'],
+  price: ['durum', 'chickpea', 'faba', 'barley', 'lentil'],
+  costs: ['durum'],
+};
+const cropFact = (crop, kind, [value, low, high], unit, source = money.notes) =>
+  researched(value, unit, [low, high], source, CHECKED[kind].includes(crop) ? 'fair' : CROP_TABLE[crop].confidence, '2026-11');
 
 // SUPPORT: switched on by default only where the payment needs no extra commitment or contract.
 const support = [
@@ -216,9 +226,9 @@ const support = [
 
 const economics = {
   crops: Object.fromEntries(Object.entries(CROP_TABLE).map(([crop, row]) => [crop, {
-    yield: cropFact(crop, row.y, 't/ha', YIELD_SOURCE[crop]),
-    price: cropFact(crop, row.p, '€/t', PRICE_SOURCE[crop]),
-    costs: cropFact(crop, row.c, '€/ha', COST_SOURCE[crop]),
+    yield: cropFact(crop, 'yield', row.y, 't/ha', YIELD_SOURCE[crop]),
+    price: cropFact(crop, 'price', row.p, '€/t', PRICE_SOURCE[crop]),
+    costs: cropFact(crop, 'costs', row.c, '€/ha', COST_SOURCE[crop]),
     ...(DURUM_AFTER[crop] ? { durumAfter: durumAfter(crop) } : {}),
   }])),
   support,

@@ -184,6 +184,8 @@ describe("Options", () => {
     expect(sure).toHaveAttribute("data-confidence", "low");
     expect(sure).toHaveTextContent("How sure we are: low.");
     expect(sure).toHaveTextContent("Talk it over with an adviser before you sow.");
+    // It names what is unsure rather than a general warning.
+    expect(screen.getByTestId("how-sure-weak")).toHaveTextContent(/^Not yet checked against a local source: .+\. Talk it over/);
   });
 });
 

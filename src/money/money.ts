@@ -304,3 +304,32 @@ export function setMoney(economics: Economics, money: Money, key: string, value:
   else result[key] = value;
   return result;
 }
+
+/** One figure behind an option's income that is still unsure. */
+export type WeakLink = { crop: CropId; kind: "yield" | "price" | "costs" | "lift" };
+
+/**
+ * The figures that make an option's income unsure: each crop's yield, price or costs, and the extra durum after a
+ * legume, where that figure's confidence is low and the farmer has not typed their own. Each crop and kind once,
+ * in the order the rotation grows them. This is what the plan screen names when it says how sure it is.
+ */
+export function weakLinks(option: Option, economics: Economics, money: Money): WeakLink[] {
+  const resolved = resolveMoney(economics, money);
+  const out: WeakLink[] = [];
+  const add = (crop: CropId, kind: WeakLink["kind"]) => {
+    if (!out.some((w) => w.crop === crop && w.kind === kind)) out.push({ crop, kind });
+  };
+  sequencesOf(option).forEach((sequence) =>
+    sequence.forEach((crop, index) => {
+      const figures = cropFigures(economics, crop);
+      if (!yieldOf(resolved, economics, crop).edited && figures.yield.confidence === "low") add(crop, "yield");
+      if (!priceOf(resolved, economics, crop).edited && figures.price.confidence === "low") add(crop, "price");
+      if (!costsOf(resolved, economics, crop).edited && figures.costs.confidence === "low") add(crop, "costs");
+      const lifted = yieldLift(sequence, index, economics, money);
+      // The lift is credited to the legume that gave it: the last crop before this durum that was not durum.
+      const legume = sequence.slice(0, index).reverse().find((c) => c !== "durum");
+      if (lifted && !lifted.edited && lifted.fact.confidence === "low" && legume) add(legume, "lift");
+    }),
+  );
+  return out;
+}

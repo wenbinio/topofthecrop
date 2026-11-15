@@ -174,26 +174,38 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const win = useMemo(() => tileWindow(outline), [outline]);
   const box = useRef<HTMLElement>(null);
   const [backdrop, setBackdrop] = useState<{ scene: Scene; format: "jpg" | "png" } | null>(null);
-  // The picture loads once the card is on screen (never while it sits in a closed fold).
+  const asked = useRef(false);
+  const gone = useRef(false);
+  /** Fetch the picture under the map, once. */
+  const loadBackdrop = () => {
+    if (asked.current) return;
+    asked.current = true;
+    fetchScenes(win.centre)
+      .then((scenes) => {
+        const scene = backdropScene(scenes);
+        if (!gone.current && scene) setBackdrop({ scene, format: "jpg" });
+      })
+      .catch(() => {
+        asked.current = false;
+      });
+  };
+  // The picture loads once the card is on screen (never while it sits in a closed fold), or at the farmer's first tap
+  // on the card, whichever comes first.
   useEffect(() => {
+    gone.current = false;
     const el = box.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
-    let gone = false;
     const seen = new IntersectionObserver((entries) => {
       if (!entries.some((e) => e.isIntersecting)) return;
       seen.disconnect();
-      fetchScenes(win.centre)
-        .then((scenes) => {
-          const scene = backdropScene(scenes);
-          if (!gone && scene) setBackdrop({ scene, format: "jpg" });
-        })
-        .catch(() => undefined);
+      loadBackdrop();
     });
     seen.observe(el);
     return () => {
-      gone = true;
+      gone.current = true;
       seen.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [win]);
   const [layout, setLayout] = useState<Layout>("strips");
   const [year, setYear] = useState<0 | 1>(0);
@@ -208,6 +220,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const crops: [CropId, CropId] = year === 0 ? ordered : [ordered[1], ordered[0]];
   const pieces = layout === "space" ? [] : piecesIn(win.points, layout, STRIP_METRES / metresPerPixel(win.z, win.centre[1]));
   const pick = (id: Layout) => {
+    loadBackdrop();
     setLayout(id);
     if (id === "space" && zones.status !== "ready" && zones.status !== "loading") {
       setZones({ status: "loading" });
@@ -222,7 +235,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const fit = pairFit(bundle, pair);
   const pts = (poly: Pt[]) => poly.map((p) => p.join(",")).join(" ");
   // See-through over the picture, so the field shows under the colours; nearly solid when there is no picture.
-  const alpha = backdrop ? 0.45 : 0.9;
+  const alpha = backdrop ? 0.28 : 0.9;
   const seg = "flex-1 min-h-11 px-2 font-bold text-small";
 
   return (
@@ -247,7 +260,10 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
         </div>
         <div role="radiogroup" aria-label={t("strips.year")} className="flex border-2 border-line-strong rounded-box overflow-hidden">
           {([0, 1] as const).map((y) => (
-            <button key={y} type="button" role="radio" aria-checked={year === y} onClick={() => setYear(y)} className={`${seg} ${year === y ? "bg-primary text-on-primary" : "bg-surface text-ink"}`}>
+            <button key={y} type="button" role="radio" aria-checked={year === y} onClick={() => {
+                loadBackdrop();
+                setYear(y);
+              }} className={`${seg} ${year === y ? "bg-primary text-on-primary" : "bg-surface text-ink"}`}>
               {option.firstHarvestYear + y}
             </button>
           ))}
@@ -290,7 +306,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
               ? space.cells.map((c, i) => (
                   <rect key={i} x={c.x} y={c.y} width={c.size + 0.4} height={c.size + 0.4} fill={FILL[sides[i] === "weak" ? crops[0] : crops[1]]} />
                 ))
-              : pieces.map((piece, i) => <polygon key={i} points={pts(piece.poly)} fill={FILL[crops[piece.crop]]} stroke="#fffcf6" strokeWidth={0.6} />)}
+              : pieces.map((piece, i) => <polygon key={i} points={pts(piece.poly)} fill={FILL[crops[piece.crop]]} stroke="#fffcf6" strokeOpacity={0.5} strokeWidth={0.4} />)}
           </g>
           <polygon points={pts(win.points)} fill="none" stroke="#fffcf6" strokeWidth={3} strokeLinejoin="round" />
           <polygon points={pts(win.points)} fill="none" stroke="#1f3a2b" strokeWidth={1.2} strokeLinejoin="round" />
