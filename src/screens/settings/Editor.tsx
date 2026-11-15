@@ -198,7 +198,6 @@ export function Editor({ economics }: { economics: Economics }) {
           open={open.support}
           onToggle={() => toggle("support")}
         >
-          <FactLine fact={economics.support[0]?.amount} />
           <ul className="border-t border-line bg-surface" data-testid="support-list">
             {economics.support.map((item) => {
               const r = resolved.support.find((s) => s.id === item.id);
@@ -206,7 +205,7 @@ export function Editor({ economics }: { economics: Economics }) {
               const amount = r ? r.amount : (item.amount.value as number);
               const name = item.name[lang];
               return (
-                <SupportRow key={item.id} id={item.id} name={name} condition={item.condition[lang]} level={t(`level.${item.level}`)} edited={r?.edited ?? false}
+                <SupportRow key={item.id} id={item.id} name={name} condition={item.condition[lang]} level={t(`level.${item.level}`)} fact={item.amount} edited={r?.edited ?? false}
                   on={on}
                   onToggle={(next) => commit(`on.${item.id}`, next ? 1 : 0)}
                 >

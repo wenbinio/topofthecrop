@@ -112,6 +112,32 @@ describe("Settings", () => {
     expect(screen.getByRole("button", { name: "Reset figures" })).toBeDisabled();
   });
 
+  it("each support row has its own Source button that links to that payment's page", async () => {
+    const body = structuredClone(fixture);
+    body.economics.support.forEach((item, i) => {
+      item.amount.source.url = `https://example.org/support/${i}`;
+    });
+    stubBundleFetch(body);
+    renderAt(SETTINGS);
+    await openSection(SUPPORT);
+    const items = await screen.findAllByTestId("support-item");
+    expect(items).toHaveLength(body.economics.support.length);
+    for (const item of body.economics.support) {
+      const el = items.find((i) => i.getAttribute("data-support-id") === item.id)!;
+      const button = within(el).getByTestId("source-button");
+      fireEvent.pointerDown(button);
+      fireEvent.click(button);
+      const bubble = within(el).getByTestId("source-bubble");
+      const link = within(bubble).getByRole("link");
+      expect(link).toHaveAttribute("href", item.amount.source.url);
+      expect(link).toHaveAttribute("target", "_blank");
+    }
+    // opening one row's bubble closes the previous one (tap outside)
+    expect(screen.getAllByTestId("source-bubble")).toHaveLength(1);
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByTestId("source-bubble")).toBeNull();
+  });
+
   it("(b) a durum price of 400 goes into the link, and Options shows 835 marked Yours", async () => {
     renderAt(SETTINGS);
     await openSection(PRICES);
