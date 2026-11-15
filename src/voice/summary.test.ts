@@ -30,7 +30,7 @@ describe("screenSummary", () => {
       "Plant faba bean next. About 60 kilos of nitrogen per hectare for the next crop. About 57 euro per hectare a year more than durum on durum. This is a suggestion: check locally first.",
     );
     expect(screenSummary("/options", bundle, state("it", ["soil", "income"]))).toBe(
-      "Semina favino la prossima annata. Lascia circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno rispetto al ringrano. È solo un consiglio: prima verifica sul posto.",
+      "Semina favino la prossima annata. Lascia circa 60 chili di azoto per ettaro alla coltura successiva. Circa più 57 euro per ettaro all'anno rispetto al ringrano. È solo un consiglio: prima verifica sul posto.",
     );
   });
 

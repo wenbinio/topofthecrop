@@ -4,6 +4,7 @@ import type { Economics, Fact, FieldBundle } from "../data/types";
 import { SCENARIOS } from "../data/types";
 import { cropFigures, economicsCrops, resolveMoney } from "../money/money";
 import { useLang, useT } from "../i18n";
+import { sourceText } from "../i18n/sources";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
 import { CropName, OptionName, PaidIn, Slotted } from "../components/Crops";
@@ -197,15 +198,15 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           <ul>
             {bundle.findings.map((f) => (
               <li key={f.title} className="py-0.5">
-                <b>{t(f.title)}</b>: <FactText fact={f.fact} /> · {f.fact.source.dataset} {f.fact.source.resolution}. {t(f.detail)}
+                <b>{t(f.title)}</b>: <FactText fact={f.fact} /> · {sourceText(f.fact.source.dataset, lang)} {sourceText(f.fact.source.resolution, lang)}. {t(f.detail)}
               </li>
             ))}
             {soil ? (
               <li className="py-0.5" data-testid="print-soil">
                 <b>{t("soil.print")}</b>: {t(`soil.weight.${soil.weight}`)} ({t(`soil.texture.${soil.texture}`)})
                 {soil.band && soil.ph ? `; ${t(`soil.ph.${soil.band}`)}, pH ${valueText(soil.ph, t, lang)}` : ""}
-                {soil.measuredPh ? ` (${t("soil.measured")} ${valueText(soil.measuredPh, t, lang)})` : ""} · {soil.figures[0].source.dataset}{" "}
-                {soil.figures[0].source.resolution}. {t("soil.estimate")} {t("soil.notRanked")}
+                {soil.measuredPh ? ` (${t("soil.measured")} ${valueText(soil.measuredPh, t, lang)})` : ""} · {sourceText(soil.figures[0].source.dataset, lang)}{" "}
+                {sourceText(soil.figures[0].source.resolution, lang)}. {t("soil.estimate")} {t("soil.notRanked")}
               </li>
             ) : null}
           </ul>
@@ -347,10 +348,11 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
         ) : null}
 
         <Block title={t("print.sources")}>
-          <ul>
+          {/* Long web addresses break anywhere, so a narrow phone never scrolls sideways. */}
+          <ul className="[overflow-wrap:anywhere]">
             {[...sources.values()].map((s) => (
               <li key={s.dataset}>
-                {s.dataset} · {s.resolution}
+                {sourceText(s.dataset, lang)} · {sourceText(s.resolution, lang)}
                 {s.url ? ` · ${s.url}` : ""}
               </li>
             ))}

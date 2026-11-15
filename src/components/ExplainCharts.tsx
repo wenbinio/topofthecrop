@@ -4,6 +4,7 @@
 // weather station. Each picture is left out when its figures are missing. Written with AI assistance (Claude, Anthropic).
 import type { Fact, FieldBundle } from "../data/types";
 import { useLang, useT } from "../i18n";
+import { sourceText } from "../i18n/sources";
 import { BarChart, formatNumber, type Bar } from "./BarChart";
 import { compareRows } from "./SeasonCompare";
 
@@ -84,7 +85,7 @@ export function ExplainCharts({ bundle }: { bundle: FieldBundle }) {
                   { key: "middle", label: `${years(heat.middle.asOf)}\n${t("explain.middle")}\nSSP2-4.5`, value: num(heat.middle), range: heat.middle.range, color: HEAT_COLOR.middle },
                   { key: "high", label: `${years(heat.high.asOf)}\n${t("explain.high")}\nSSP5-8.5`, value: num(heat.high), range: heat.high.range, color: HEAT_COLOR.high },
                 ]}
-                source={[heat.now.source.dataset, heat.middle.source.dataset].join(" · ")}
+                source={[heat.now.source.dataset, heat.middle.source.dataset].map((d) => sourceText(d, lang)).join(" · ")}
               />
               <p className="mt-1 text-small text-ink-soft">
                 {t("explain.heatCaption")}
@@ -112,7 +113,7 @@ export function ExplainCharts({ bundle }: { bundle: FieldBundle }) {
                     { key: `${row.season}-satellites`, label: t("explain.satellites"), value: num(row.satellites), color: CHECK_COLOR.satellites, group },
                   ];
                 })}
-                source={[rain[0].station.source.dataset, rain[0].satellites.source.dataset].join(" · ")}
+                source={[rain[0].station.source.dataset, rain[0].satellites.source.dataset].map((d) => sourceText(d, lang)).join(" · ")}
               />
               <p className="mt-1 text-small text-ink-soft">{t("explain.checkCaption")}</p>
             </section>

@@ -8,6 +8,7 @@ import { rankOptions } from "../ranking/rank";
 import { reasonsFor } from "../ranking/reasons";
 import { ReasonList } from "../components/Reasons";
 import { useLang, useT } from "../i18n";
+import { sourceText } from "../i18n/sources";
 import { useAppState, useTo } from "../state/useAppState";
 import { CropName, CropSequence, OptionName, Slotted, optionWords } from "../components/Crops";
 import { PlaceholderNote, ScaleBadge, SourceButton, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
@@ -150,10 +151,10 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
                 {i > 0 ? "; " : ""}
                 {source.url ? (
                   <a href={source.url} target="_blank" rel="noreferrer" className="underline">
-                    {source.dataset}
+                    {sourceText(source.dataset, lang)}
                   </a>
                 ) : (
-                  source.dataset
+                  sourceText(source.dataset, lang)
                 )}
               </span>
             ))}
