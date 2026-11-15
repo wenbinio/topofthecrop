@@ -18,6 +18,7 @@ export const CREDIT_KEYS = [
   "credits.crops",
   "credits.land",
   "credits.basin",
+  "credits.osm",
   "credits.forecast",
   "credits.timelapse",
   "credits.dem",

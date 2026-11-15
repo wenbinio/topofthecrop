@@ -45,13 +45,7 @@ export function rankOptions(input: RankInput): RankResult {
   const repeatCrop = LEGUMES.find(crop => crop === lastCrop);
   const ordered = priorities.slice(0, RANK_WEIGHTS.length);
   const others = ordered.length ? PRIORITIES.filter(priority => !ordered.includes(priority)) : [];
-  const mean = (option: Option, keys: readonly Priority[]) => keys.length
-    ? keys.reduce((sum, key) => sum + option.scores[scenario][key], 0) / keys.length : 0;
   const total = ordered.reduce((sum, _, place) => sum + RANK_WEIGHTS[place], 0);
-  // No order given: the four count equally. Otherwise a weighted average by place.
-  const score = (option: Option) => ordered.length
-    ? ordered.reduce((sum, key, place) => sum + RANK_WEIGHTS[place] * option.scores[scenario][key], 0) / total
-    : mean(option, PRIORITIES);
   const removed: RankResult['removed'] = [];
   const repeats: Option[] = [];
   const waiting: Option[] = [];
@@ -64,8 +58,29 @@ export function rankOptions(input: RankInput): RankResult {
     if (by.length && !option.isCurrent) { removed.push({ option, by }); return; }
     const flags = LIMITS.filter(limit => limits.includes(limit) &&
       (option.flaggedBy.includes(limit) || (option.isCurrent && by.includes(limit))));
-    candidates.push({ option, index, flags, score: score(option), tie: mean(option, others) });
+    candidates.push({ option, index, flags, score: 0, tie: 0 });
   });
+  // Each priority's scores are put on one scale across the options still in the running: the lowest 0, the highest 1.
+  // Without it a priority whose scores spread widely (soil, 0.2 to 0.95) outweighed one that spreads little (income,
+  // about 0.45 to 0.72) even when the farmer put the second first. A priority on which all options score the same
+  // counts 1 for all, so it changes nothing (docs/scoring.md, "Ranking").
+  const span = Object.fromEntries(PRIORITIES.map(key => {
+    const values = candidates.map(c => c.option.scores[scenario][key]);
+    return [key, [Math.min(...values), Math.max(...values)]];
+  })) as Record<Priority, [number, number]>;
+  const scaled = (option: Option, key: Priority) => {
+    const [low, high] = span[key];
+    return high > low ? (option.scores[scenario][key] - low) / (high - low) : 1;
+  };
+  const mean = (option: Option, keys: readonly Priority[]) => keys.length
+    ? keys.reduce((sum, key) => sum + scaled(option, key), 0) / keys.length : 0;
+  // No order given: the four count equally. Otherwise a weighted average by place.
+  for (const c of candidates) {
+    c.score = ordered.length
+      ? ordered.reduce((sum, key, place) => sum + RANK_WEIGHTS[place] * scaled(c.option, key), 0) / total
+      : mean(c.option, PRIORITIES);
+    c.tie = mean(c.option, others);
+  }
   candidates.sort((a, b) => b.score - a.score || b.tie - a.tie || a.index - b.index);
   return { ranked: candidates.map(({ option, flags }, index) => ({ option, flags, rank: index + 1, best: index === 0 })), removed, repeats, intercrops: waiting };
 }

@@ -20,11 +20,26 @@ it('ranks income then water and marks only first as best without mutation', () =
   expect(result.removed).toEqual([]);
   expect(input).toEqual(before);
 });
-it('puts forage then chickpea first in much-drier weather', () => {
-  expect(ids(rankOptions({ ...input, scenario: 'much-drier' })).slice(0, 2)).toEqual([forage, chickpea]);
+it('puts vetch-oat second, ahead of faba, in much-drier weather', () => {
+  expect(ids(rankOptions({ ...input, scenario: 'much-drier' })).slice(0, 2)).toEqual([chickpea, forage]);
 });
-it('puts faba then chickpea first for income and soil', () => {
-  expect(ids(rankOptions({ ...input, priorities: ['income', 'soil'] })).slice(0, 2)).toEqual([faba, chickpea]);
+it('puts chickpea then faba first for income and soil', () => {
+  expect(ids(rankOptions({ ...input, priorities: ['income', 'soil'] })).slice(0, 2)).toEqual([chickpea, faba]);
+});
+it('puts each priority on one scale, so income first is not outweighed by soil scores that spread wider', () => {
+  // The demo field's own scores: chickpea earns most, faba bean leaves the most for the soil but earns least.
+  const make = (id: string, income: number, soil: number) => {
+    const o = structuredClone(options[0]);
+    o.id = id;
+    o.scores.normal = { income, water: 0.6, soil, forage: 0.05 };
+    return o;
+  };
+  const trio = [make('chick', 0.715, 0.567), make('faba', 0.469, 0.95), make('durum', 0.557, 0.2)];
+  // Unscaled, faba bean won (0.675 against 0.652) though income came first; scaled, chickpea does.
+  expect(ids(rankOptions({ ...input, options: trio, priorities: ['income', 'soil'] }))[0]).toBe('chick');
+  // Water is the same for all three, so it changes nothing.
+  expect(ids(rankOptions({ ...input, options: trio, priorities: ['income', 'water', 'soil'] }))).toEqual(
+    ids(rankOptions({ ...input, options: trio, priorities: ['income', 'soil'] })));
 });
 it('counts the first priority more than the second, so the order matters', () => {
   // Income first: faba (income 0.7, water 0.5) beats vetch-oat (0.45, 0.8). Water first: the other way round.
@@ -33,11 +48,11 @@ it('counts the first priority more than the second, so the order matters', () =>
 });
 it('counts a third and a fourth priority, each less than the one before', () => {
   expect(RANK_WEIGHTS).toEqual([4, 3, 2, 1]);
-  expect(ids(rankOptions({ ...input, priorities: ['soil', 'income'] }))).toEqual([faba, chickpea, forage, durum]);
-  // Forage in third place lifts vetch-oat past chickpea.
-  expect(ids(rankOptions({ ...input, priorities: ['soil', 'income', 'forage'] }))).toEqual([faba, forage, chickpea, durum]);
+  expect(ids(rankOptions({ ...input, priorities: ['soil', 'income'] }))).toEqual([chickpea, faba, forage, durum]);
+  // Forage in third place lifts faba bean past chickpea.
+  expect(ids(rankOptions({ ...input, priorities: ['soil', 'income', 'forage'] }))).toEqual([faba, chickpea, forage, durum]);
   expect(ids(rankOptions({ ...input, priorities: ['income', 'soil', 'water', 'forage'] }))).toEqual([chickpea, faba, forage, durum]);
-  expect(ids(rankOptions({ ...input, priorities: ['soil', 'water', 'income', 'forage'] }))[0]).toBe(forage);
+  expect(ids(rankOptions({ ...input, priorities: ['soil', 'water', 'income', 'forage'] }))[0]).toBe(chickpea);
 });
 it('gives a priority left out of the order no weight', () => {
   const plain = structuredClone(options[0]);
@@ -47,10 +62,10 @@ it('gives a priority left out of the order no weight', () => {
   hay.scores.normal = { income: 0.5, water: 0.5, soil: 0.5, forage: 1 };
   const pair = { ...input, options: [hay, plain] };
   expect(ids(rankOptions({ ...pair, priorities: ['income', 'water', 'soil'] }))).toEqual(['plain', 'hay']);
-  expect(ids(rankOptions({ ...pair, priorities: ['income', 'water', 'soil', 'forage'] }))).toEqual(['hay', 'plain']);
+  expect(ids(rankOptions({ ...pair, priorities: ['forage', 'income', 'water', 'soil'] }))).toEqual(['hay', 'plain']);
 });
 it('averages all priorities when none are selected', () => {
-  expect(ids(rankOptions({ ...input, priorities: [] }))).toEqual([forage, faba, chickpea, durum]);
+  expect(ids(rankOptions({ ...input, priorities: [] }))).toEqual([forage, chickpea, faba, durum]);
 });
 it('removes chickpea for cereal machinery and renumbers the survivors', () => {
   const result = rankOptions({ ...input, limits: ['cereal-machinery'] });

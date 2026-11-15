@@ -27,7 +27,7 @@ Three quick steps to a plan, then three places to come back to. Each is one scre
 | 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn on the basin's farmland gets the same steps from the 1 km squares around it; anywhere else gets live NASA weather history for its area. |
 | 2. Three questions | One at a time, as real questions: what did you harvest here last year (pictures of the nine crops, the EU crop map's guess already ticked); does any of this apply to your farm (no irrigation, cereal machinery only, no buyer nearby, broomrape before, each with a small "?" that says what it means); what matters most (tap income, water, soil, forage in order, at least two). | Big buttons and botanical pictures. A back arrow on every screen. |
 | 3. Your plan (the Advice tab) | One answer: the crop to sow next with its picture, the three harvests, the reasons, and one line on how sure the app is. Then "Keep this plan", "Why this plan?" and "Share it", the farmer's priorities with "Change my answers", and rows to open: what the satellites see on the field, "Your soil" (heavy, medium or light ground, named from the soil map; the farmer can change it and add a soil-test pH), where to intercrop on the field, and the other choices. | Nothing else is on screen until asked for. The other choices are a folded list with the same four facts per rotation (income in €/ha per year, water, nitrogen, risk). |
-| Where to intercrop | The farmer's own outline split between the two crops of a strip intercrop, see-through over the latest clear Sentinel-2 picture: in 24 m strips, in two halves, or "From space", where each 10 m square is placed by spring greenness, leaf moisture (Sentinel-2) and high or low ground (Copernicus DEM). It says how far the three agree, and why the pair suits this field from its soil, heat at flowering and rain. | A rule of thumb, labelled as one. The switch that adds intercrops to the ranking sits in the same row. |
+| Where to intercrop | The farmer's own outline split between the two crops of a strip intercrop, see-through over the latest clear Sentinel-2 picture: in 24 m strips, in two halves, or "From space", where each 10 m square is placed by spring greenness, leaf moisture (Sentinel-2) and high or low ground (Copernicus DEM), for the first harvest year only. It says how far the three agree, and why the pair suits this field from its soil, heat at flowering and rain. | A rule of thumb, labelled as one. The switch that adds intercrops to the ranking sits in the same row. |
 | Why (from the advice) | One rotation: why it is suggested, what the satellite and weather data found on the field, the best rotation in a usual, a dry and the driest year (with a link to the weather in detail), and folded rows for the money over three harvests, the evidence, and what we don't know. | Every number shows its range and whether it describes "your field" or "your area"; a tap on "Source" opens its dataset, date and confidence. |
 | My field (the My field tab) | Whether new data has changed the advice, a tick list of what to check before sowing, what is usual this month, this season's rain so far and the next seven days (live), the timelapse of the field from space, and the usual, dry and driest years. | The plan is kept on the phone, never sent. |
 | My plans (the My plans tab) | Every plan the farmer kept, newest first, with its date, field and rotation; open one as it was left, or remove it. | Kept only on the phone. |
@@ -35,20 +35,20 @@ Three quick steps to a plan, then three places to come back to. Each is one scre
 
 Prices and support, bigger text, voice commands and the data credits sit in the "More" menu at the top.
 
-The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named on the Share your plan screen. It never tells the farmer what to do, and every option lists what must be checked locally.
+The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named on the Share your plan screen. It gives advice with its reasons and how sure it is, and the farmer decides. Every option lists what must be checked locally.
 
 ### How it sits beside existing tools
 
 Rotation planners already exist. Assolia, a French tool sold through cooperatives, plans a whole farm's crops over 3 to 7 years to maximise gross margin from farm records, prices and constraints, and is mostly run by an adviser (as described in a 2022 trade article; we could not check its current state). We found no sign that it uses satellite or climate data, or explains its choices.
 
-Top of the Crop does the step before that. It reads what satellites show on one field, turns that into a short ranked list of options with their reasons and unknowns, and hands the farmer a page to take to the adviser. The adviser, with a whole-farm tool, does the money.
+Top of the Crop does the step before that. It reads what satellites show on one field and shows it beside a short ranked list of options with their reasons and unknowns, and hands the farmer a page to take to the adviser. The adviser, with a whole-farm tool, does the money.
 
 ### How this answers the challenge
 
 | The challenge asks for | Where it is in the app |
 |---|---|
 | A decision-support tool combining NASA observations, local soil information, crop characteristics and farmer priorities | Steps 1 to 3 |
-| At least three rotation strategies including the existing one | Step 3: nine options, each a three-year sequence, the current rotation always among them |
+| At least three rotation strategies including the existing one | Step 3: nine rotations plus two strip intercrops, each a three-year sequence, the current rotation always among them |
 | For each: why suggested, evidence, benefits, information gaps, risks needing local review | The Why screen, opened from the plan, using the same five headings |
 | Bare-field periods and seasons of vulnerability | The year screen's month strip and the plan's findings |
 | Explaining terms, satellite versus ground measurements, uncertainty | Explanations on the Why screen, scale badges, ranges and confidence words |
@@ -63,7 +63,7 @@ The app has one set of screens and two looks, switched from the top bar. The cho
 | | Standard view | Simple view |
 |---|---|---|
 | For | A farmer or adviser who wants to see the data | A farmer who wants the answer at a glance |
-| Look | Satellite first: the map fills the screen, and the options screen opens with a vegetation thumbnail of the field and a 12-month green/bare strip | Weather app: one big headline for the field, then the findings and options as forecast-style rows, each led by an icon and one number |
+| Look | Satellite first: the map fills the screen, and the Year and My field screens show a 12-month green/bare strip | Weather app: one big headline for the field, then the findings and options as forecast-style rows, each led by an icon and one number |
 | Detail | Ranges and field-or-area badges on screen; each figure's dataset (for example "NASA MODIS (MOD13Q1) · 250 m"), date and confidence in a bubble on tap | The same bubble; risk shown as an icon plus one word |
 
 The design test for both: it must look like something a working farmer would have open on their phone next to WhatsApp and the weather app. Not a dashboard, not a concept piece.
@@ -110,8 +110,9 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 | Aerial photos on top, where they exist: AGEA orthophotos, flights 2022 to 2024, loaded live from AGEA's tile service. CC BY 4.0 (AGEA legal notes: "messe a disposizione per il riutilizzo alle condizioni della licenza Creative Commons BY 4.0"). About 1.8 m in Basilicata, finer in Puglia. | Seeing tracks, trees and field corners |
 | Cadastral parcels of Genzano di Lucania: Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS). CC BY 4.0, stated in the service's own capabilities document. Downloaded ahead of time into `public/parcels/`. | Finding a field by its sheet and parcel numbers |
 | Weather forecast: MET Norway, Locationforecast 2.0, loaded live. CC BY 4.0 and NLOD 2.0 (MET Norway's licence page); its terms allow calls straight from a web page. Credit shown: "Data from MET Norway". | Rain and the coldest night over the next seven days |
-| Field timelapse ("Your field from space", linked from the Year screen): Sentinel-2 L2A from Microsoft Planetary Computer, loaded live. Its STAC API finds the scenes and its data API draws map tiles of them; neither needs an account or key. Copernicus Sentinel data are free, full and open (Sentinel Data Legal Notice); the Planetary Computer's Supplemental Terms of Use for Previews say previews are not meant for production use, though that is not prohibited. Credit shown: "Contains modified Copernicus Sentinel data [years]". | One clear picture a month of the farmer's own field, last three years |
-| Intercrop map ("Where to intercrop on your field", on the plan with the intercropping switch): Sentinel-2 L2A greenness and leaf moisture over several springs, and Copernicus DEM GLO-30 heights (30 m), both from Microsoft Planetary Computer, loaded live. GLO-30 has a free worldwide licence; its notice is on the credits page: "produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved". | Where on the farmer's field each of the two strip crops should go |
+| Field timelapse ("Your field from space", linked from My field): Sentinel-2 L2A from Microsoft Planetary Computer, loaded live. Its STAC API finds the scenes and its data API draws map tiles of them; neither needs an account or key. Copernicus Sentinel data are free, full and open (Sentinel Data Legal Notice); the Planetary Computer's Supplemental Terms of Use for Previews say previews are not meant for production use, though that is not prohibited. Credit shown: "Contains modified Copernicus Sentinel data [years]". | One clear picture a month of the farmer's own field, last three years |
+| Intercrop map ("Where to intercrop on your field", on the plan with the intercropping switch): Sentinel-2 L2A greenness and leaf moisture over several springs, and Copernicus DEM GLO-30 heights (30 m), both from Microsoft Planetary Computer, loaded live. GLO-30 has a free worldwide licence; its notice is on the credits page: "produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved". | Where on the farmer's field each of the two strip crops should go in the first harvest year |
+| Town search: Photon by komoot, loaded live. Credit shown on Data and credits: "Photon by komoot, © OpenStreetMap contributors (ODbL)". | Finding a town |
 
 ### Rules for honest numbers
 
@@ -119,12 +120,12 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 - **Source and range.** Every number shows a range, not only a point value, and its dataset, resolution, date and confidence are one tap away in a bubble that closes when the farmer taps elsewhere.
 - **Confidence word.** Each option carries one: good, fair or low.
 - **Income is a gross margin.** It is the average per year over the three-year sequence, in €/ha, and the "Why?" screen states the prices used and their date.
-- **Placeholders are labelled.** A figure nobody has sourced yet, such as each rotation's risk rating, is marked on screen.
+- **Placeholders are labelled.** Each rotation's risk rating has no source yet and is marked on screen as a placeholder. Crop figures nobody has checked carry a confidence (often low), and the plan's "How sure" line names them.
 - **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. For the whole Bradano basin the data team extracted every 1 km square of farmland ahead of time too (`data/`, documented in `HANDOVER.md`); the app downloads those files only when a farmer draws a field. NASA POWER needs no login and allows calls from any website, so the app calls it live: for fields outside the basin, and for this season's rain on every field.
 
 ### How options are ranked
 
-Diagnose, match, filter, rank. Every stage is a written rule an adviser can read; there is no trained model.
+Diagnose, match, filter, rank. The NASA data describes the field and is shown as evidence beside the advice; it does not change the order. The order comes from each option's fixed scores, the farmer's limits and the farmer's priorities. Every stage is a written rule an adviser can read; there is no trained model.
 
 **1. A decision tree diagnoses the field from agreement between signals.** Three signals are measured for the field from the data team's season series, each comparing the field's last five seasons with its normal seasons, 2001–2020 (`measuredSignals` in `src/data/field-rules.js`; the thresholds are our judgement, written in `docs/scoring.md`):
 
@@ -150,13 +151,13 @@ Two checks run before the table is read, so the tree does not blame the field fo
 - **Is the field bare on purpose?** After harvest, low greenness is expected and is reported as a bare-soil period, not as decline.
 - **Is the whole area affected?** Heat and autumn rain come from area grids (ERA5-Land; CHIRPS, NASA GPM IMERG and ERA5-Land), so those findings are marked as weather-driven, not specific to this field.
 
-The table is our own judgement and needs an agronomist's check. The findings it produces are the "What we see on your field" strip in step 3, and the signals behind each one are the "Evidence" in step 4.
+The table is our own judgement and needs an agronomist's check. The findings it produces are the "What we see" row on the plan, and the signals behind each one are "What the data shows" on the Why screen.
 
-**2. Each finding points to rotation traits that address it.** For example: repeated water stress at grain fill points to crops that finish earlier or use less water; bare soil through summer points to a crop or cover that shortens the bare period; decline under continuous durum with no heat or water signal points to a legume break. This mapping from finding to rotation is the agronomy the team writes down in `docs/scoring.md`.
+**2. Each finding is linked to the rotations it speaks to, for the Why screen only.** For example: repeated water stress at grain fill speaks to crops that finish earlier or use less water; bare soil through summer to a crop or cover that shortens the bare period; decline under continuous durum with no heat or water signal to a legume break. These links only choose which finding and evidence the Why screen shows; they do not change the order. A drawn field uses the demo field's options and scores. This mapping is the agronomy the team writes down in `docs/scoring.md`.
 
 **3. The farmer's limits rule options in or out.** The limits from step 2 are yes/no facts, so they are also branches, not scores. Each either removes an option or flags it, and keeps its reason:
 
-- No irrigation → options that need irrigation are removed.
+- No irrigation → nothing yet: every option already relies on rain alone, and the app says so.
 - Cereal machinery only → options needing other equipment are removed.
 - No buyer nearby → cash crops without a local outlet are flagged.
 - Broomrape seen before → susceptible legumes are flagged.
@@ -165,11 +166,11 @@ A dealbreaker stays a dealbreaker: no score can outvote it. The current rotation
 
 **3a. A legume just grown is not grown again.** If the farmer's last crop is a legume (chickpea, faba bean, lentil, pea, vetch-oat), an option that starts with the same crop is left out, and the Options screen says so in one line. The current rotation is never left out.
 
-**4. The options that remain are ordered by the farmer's priorities, in the farmer's order.** Each option has a score from 0 to 1 for income, water, soil and forage. The farmer ranks at least two of the four; the first counts 4, the second 3, the third 2, the fourth 1, and the scores are averaged with those weights. A priority left out has no weight and only breaks ties. The weights are our own judgement (`docs/scoring.md`). This is the only place an index is used, and only to put a short list in order.
+**4. The options that remain are ordered by the farmer's priorities, in the farmer's order.** Each option has a fixed score from 0 to 1 for income, water, soil and forage, worked out from its crops' figures (and, for a dry year, a fixed factor per crop), not from the field's data; the farmer's own prices and payments in Settings change the income score. First each priority's scores are rescaled across the options still in the running, so the lowest is 0 and the highest is 1 (if all score the same on a priority, it counts 1 for all and changes nothing). Without this, soil scores spread from 0.2 to 0.95 but income only from about 0.45 to 0.72, so income in first place barely counted: income first and soil second picked faba bean, which earns less than durum on durum. The farmer ranks at least two of the four; the first counts 4, the second 3, the third 2, the fourth 1, and the rescaled scores are averaged with those weights. A priority left out has no weight and only breaks ties, using the mean of its rescaled scores. The weights are our own judgement (`docs/scoring.md`). This is the only place an index is used, and only to put a short list in order.
 
 **5. The ordering is re-run for a dry year and for the driest year**, and the Year screen shows all three results at once. Each kind of year is defined from the data: usual is a typical season (2001–2020), dry a 1-in-10 dry and hot season, driest the driest and hottest seasons since 2001, each also shown by 2050. The farmer does not pick one: every other screen ranks for a usual year (`docs/scoring.md`, "Usual, dry and driest years").
 
-**6. The farmer sees the path, never the score.** The "Why?" screen shows the route taken as plain steps, for example "greenness falling and water use dropping → water stress → no irrigation → you chose income and soil". Score numbers are not shown anywhere in the app.
+**6. The farmer sees the path, never the score.** The "Why?" screen shows what was found and what the farmer chose as plain steps, for example "greenness falling and water use dropping → water stress → no irrigation → you chose income and soil". Score numbers are not shown anywhere in the app.
 
 The tree's branches and the score definitions are written down in `docs/scoring.md`.
 
@@ -285,7 +286,7 @@ type AreaWeather = {
   - late frost days (below 0 °C, March and April)
 
   The thresholds and dates are placeholders for the team to correct, and live in `docs/scoring.md`. These live counts are not the same figures as a basin field's. The demo field and drawn basin fields use the data team's 2001–2020 values (ERA5-Land temperature; for rain the median of CHIRPS, IMERG and ERA5-Land, with autumn as October–November), while this live count uses NASA POWER over the last ten years and starts autumn in September. Three NASA POWER rain months the data team found impossible at the demo field (October 2025, February and March 2026) are left out, and the screen says so. The "by 2050" number and the slider need climate projections, so outside the basin they are not shown. If the call fails or takes longer than 8 seconds, the app says the weather history is not available right now and offers the demo field.
-- **The nine options are three-year sequences** for the harvests of 2027, 2028 and 2029, after the durum just harvested. Crop figures come from `docs/crops-research.md`; each option's facts, limits and scores are derived from its crops by the rules written in `scripts/make-placeholder-bundle.mjs`:
+- **The nine rotations (and two strip intercrops) are three-year sequences** for the harvests of 2027, 2028 and 2029, after the durum just harvested. Crop figures come from `docs/crops-research.md`; each option's facts, limits and scores are derived from its crops by the rules written in `scripts/make-placeholder-bundle.mjs`:
   - chickpea → durum → durum (one legume break)
   - faba bean → durum → faba bean (legume every other year)
   - vetch-oat forage → durum → durum (one forage year)
@@ -361,7 +362,7 @@ A log of how AI was used during the competition, with what we asked it to do and
 - **The data notebooks** in `ColabNotebooks/` were written with Claude (Anthropic) on claude.ai, as were their checks, `HANDOVER.md`, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark. The nine crop pictures (botanical plates in `public/crops/`) were drawn with ChatGPT image generation from a written brief; each file carries a visible "AI" badge.
-- **The app says so too.** A short version of this section, with the credit lines the data licences ask for, is on the "Data and credits" page, linked from Check and share, and on the printout (`src/components/DataCredits.tsx`).
+- **The app says so too.** A short version of this section (Gemini wrote the on-screen wording; AI research agents gathered the crop and price figures), with the credit lines the data licences ask for, is on the "Data and credits" page, linked from Check and share, and on the printout (`src/components/DataCredits.tsx`).
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
 - **Voice uses the phone, not us.** The app contains no hosted AI model and sends nothing to a server of ours. Its voice commands and "read aloud" use the browser's built-in speech recognition and speech synthesis, which the phone maker (Google, Apple, Samsung) provides; recognition may send the audio to the phone maker's servers. Spoken words become commands through a written list of phrases (`src/voice/commands.ts`), not a model.
 
@@ -416,7 +417,7 @@ The basin data needs no extra step: a small plugin in `vite.config.ts` serves `d
 
 ### Updating the data
 
-The demo field's figures come from `data/field.json`. `scripts/real-field.mjs` turns it into field facts, and `scripts/make-placeholder-bundle.mjs` (named from when its figures were made up) adds the rotations and money and writes `public/data/genzano-demo.json`. Run `node scripts/make-placeholder-bundle.mjs` after replacing `data/field.json` or changing a crop figure. The bundle's shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. A figure nobody has sourced carries `placeholder: true`, and the screen showing it says so.
+The demo field's figures come from `data/field.json`. `scripts/real-field.mjs` turns it into field facts, and `scripts/make-placeholder-bundle.mjs` (named from when its figures were made up) adds the rotations and money and writes `public/data/genzano-demo.json`. Run `node scripts/make-placeholder-bundle.mjs` after replacing `data/field.json` or changing a crop figure. The bundle's shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. A figure with no source yet (each rotation's risk rating) carries `placeholder: true`, and the screen showing it says so; crop figures carry a confidence instead.
 
 The basin files in `data/` come from the data team's notebooks; to update them, replace the files as `HANDOVER.md` section 9 says. Keys stay the same, so the app needs no change.
 

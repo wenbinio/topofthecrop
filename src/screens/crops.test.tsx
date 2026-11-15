@@ -216,7 +216,7 @@ describe("explanations", () => {
 
 describe("crop icons beside crop names", () => {
   it("in the headline, the option rows, the Year best fit and Settings", async () => {
-    renderAt("/options?f=genzano-demo&p=soil,income");
+    renderAt("/options?f=genzano-demo&p=soil");
     const headline = await screen.findByTestId("rec-headline");
     expect(headline).toHaveTextContent("Plant faba bean next");
     // The headline names the crop in words; its plate stands beside it, so there is no icon inside the sentence.
@@ -346,7 +346,7 @@ describe("strip intercrops", () => {
   it("the strips' own checks are on the field's to-do list", async () => {
     vi.stubGlobal("localStorage", memoryStorage());
     serve(shipped);
-    renderAt("/today?f=genzano-demo&p=income,soil&i=1");
+    renderAt("/today?f=genzano-demo&p=water,soil&i=1");
     const todo = await screen.findByTestId("today-todo");
     expect(within(todo).getByText("Which strip width suits your drill and the combine header?")).toBeInTheDocument();
   });

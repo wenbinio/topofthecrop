@@ -55,10 +55,11 @@ describe("reasonsFor", () => {
 });
 
 describe("forage reason", () => {
-  it("says yes only for a hay crop, not for faba or pea", () => {
+  it("says some for faba or pea, as the forage score counts their grain for livestock", () => {
     const pea: Option = { ...chickpea, id: "pea-durum-durum", sequence: ["pea", "durum", "durum"] };
     const faba = byId("faba-durum-faba");
-    expect(reasonsFor(pea, current, ["forage"])[0].key).toBe("reason.forage.no");
-    expect(reasonsFor(faba, current, ["forage"])[0].key).toBe("reason.forage.no");
+    expect(reasonsFor(pea, current, ["forage"])[0].key).toBe("reason.forage.some");
+    expect(reasonsFor(faba, current, ["forage"])[0].key).toBe("reason.forage.some");
+    expect(reasonsFor(chickpea, current, ["forage"])[0].key).toBe("reason.forage.no");
   });
 });

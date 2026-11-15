@@ -118,3 +118,6 @@ How AI tools were used during the competition (14–15 November 2026): what we a
 - **AI statement, submission text and this log**
   - **We:** asked for the NASA data list, the references, the AI statement and this log, and reviewed them
   - **AI:** drafted them from our chat records and the repository's history, and kept them up to date as the app changed (new payment sources, the new flow); added the AI note to the app and the printout, and to the header of every file it helped write; kept our chat records and data notes up to date
+- **Adversarial reviews before submission (15 November, evening)**
+  - **We:** asked for adversarial reviews of the main branch before submission, and chose what to fix before the deadline
+  - **AI:** three AI reviewers (Claude Opus, OpenAI Codex Sol, Google Gemini Argon) read the main branch separately; Claude checked their findings against the code. Fixed: the ranking scale, wrong lines (the faba strips' nitrogen, a forage reason, an Italian headline), the intercrop map's year two and its fallback pair, the OpenStreetMap credit, the Copernicus DEM notice now shown under the intercrop map, overclaims in the documents, and a personal cloud project ID in the notebooks. Left for later: a cloud check for the intercrop zones, payments that exclude each other, rain gaps this season, and the saved-plan wording after a price change

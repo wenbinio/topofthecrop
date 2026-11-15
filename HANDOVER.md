@@ -6,7 +6,7 @@ This file sits at the top of the repo, and `AGENTS.md` tells any person or AI ag
 
 ## 0. Briefing for a person or an AI assistant
 
-- **Project.** Field Shift (NASA Space Apps Challenge 2026) helps family durum-wheat farmers in the Bradano basin (Basilicata, southern Italy) compare crop rotations under a changing climate. The app, Top of the Crop, is a static web app on GitHub Pages for phones: no backend, no login, in English and Italian, in six steps (`AGENTS.md`).
+- **Project.** Field Shift (NASA Space Apps Challenge 2026) helps family durum-wheat farmers in the Bradano basin (Basilicata, southern Italy) compare crop rotations under a changing climate. The app, Top of the Crop, is a static web app on GitHub Pages for phones: no backend, no login, in English and Italian, in three setup steps (find the field, questions, plan), then the tabs My field, Advice and My plans (`AGENTS.md`).
 - **The data is finished.** Everything the app needs is in `data/`, made by the Colab notebooks in `ColabNotebooks/` and checked. **Never edit files in `data/` by hand.** If a value looks wrong, ask Edison to rerun the notebook that made it.
 - **`src/data/fieldshift-data.js`** (tested against these files) loads the data and reads the values for a tap or a drawn outline; the app builds a drawn field's figures with it. Sections 3–5 explain what it returns.
 - **Ground rules for the screens:**

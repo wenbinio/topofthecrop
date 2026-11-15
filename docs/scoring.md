@@ -60,10 +60,14 @@ Repeated water stress can favour crops that finish earlier or use less water.
 A long bare-soil period can favour a crop or cover that shortens that period.
 Decline under continuous durum can suggest a legume break. The field bundle
 states which options address each finding; the team must review those links.
+These links only choose which finding and evidence the Why screen shows. They
+do not change the order: the NASA data describes the field and is shown as
+evidence beside the advice. A drawn field copies the demo field's options.
 
 ## Apply the farmer's limits — placeholder rules
 
-- No irrigation removes options listed as needing irrigation.
+- No irrigation changes nothing yet: every option relies on rain alone, and
+  the app says so.
 - Cereal machinery only removes options listed as needing other equipment.
 - No nearby buyer flags crops listed as needing a local outlet.
 - Previous broomrape flags susceptible legumes listed in the bundle.
@@ -78,13 +82,23 @@ alternatives disappear, the current rotation still appears first.
 
 For each weather scenario, the bundle supplies a score between zero and one
 for income, water, soil and forage. Higher means a better fit to that priority.
+These scores are fixed per option, from its crops' figures and, for a dry year,
+a fixed factor per crop; the field's data does not change them. The farmer's
+own prices and payments in Settings change the income score (below).
 The farmer puts the priorities in order by tapping them, most important first:
-at least two, up to all four. Each place has a weight: first 4, second 3,
-third 2, fourth 1. An option's score is the weighted average of its scores for
-the ranked priorities. A priority the farmer leaves out has no weight. If none
+at least two, up to all four. First, each priority's scores are rescaled across
+the options still in the running, so the lowest is 0 and the highest is 1. If
+all options score the same on a priority, it counts 1 for all and changes
+nothing. Without this, soil scores spread from 0.2 to 0.95 but income only from
+about 0.45 to 0.72, so income in first place barely counted (income first, soil
+second recommended faba bean, which earns less than durum on durum).
+Each place has a weight: first 4, second 3,
+third 2, fourth 1. An option's score is the weighted average of its rescaled
+scores for the ranked priorities. A priority the farmer leaves out has no
+weight. If none
 are ranked (an old or hand-made link), average all four equally. A higher
-score comes first. If two options tie, compare their plain average for the
-priorities left out. If they still tie, keep the order in the supplied bundle.
+score comes first. If two options tie, compare their plain average of the
+rescaled scores for the priorities left out. If they still tie, keep the order in the supplied bundle.
 Number the survivors from one; only first is best fit.
 
 The weights 4, 3, 2, 1 are our own judgement (`RANK_WEIGHTS` in
@@ -187,12 +201,14 @@ spring (SMAP) and the water crops used (MODIS), each with its usual range.
 For each harvest, income per hectare is yield × crop price − direct costs +
 the support payments switched on for that crop and rotation. Average the three
 harvests and round to a whole euro. Losses stay negative. These starting yields,
-prices, costs and payments are placeholders, not a promise of eligibility.
+prices, costs and payments are not marked as placeholders; each carries a
+confidence (often low), and the plan's "How sure" line names the unchecked
+ones. They are not a promise of eligibility.
 
 The farmer can change crop prices and payment amounts, or switch each payment
 on or off. Changes travel in the shared link. Income using changed figures is
-marked “Yours”, with no old range or dataset attribution; it remains a placeholder
-if any yield or cost it uses is still a placeholder.
+marked “Yours”, with no old range or dataset attribution; it would be marked a placeholder
+if any yield or cost it uses were one (none is now).
 
 Starting figures leave ranking scores unchanged. A change multiplies each
 scenario's income score by the new annual income divided by the starting annual
@@ -327,7 +343,7 @@ The fingerprint is the one `vite.config.ts` makes from the shipped data. A chang
 
 ## Field timelapse
 
-"Your field from space", linked from the Year screen (`#/timelapse`). `src/timelapse/frames.ts` holds the rules; each is
+"Your field from space", linked from My field (`#/timelapse`). `src/timelapse/frames.ts` holds the rules; each is
 **our judgement** (`TIMELAPSE_RULES`).
 
 - **Pictures:** Sentinel-2 L2A at 10 m, from Microsoft Planetary Computer, loaded live for the farmer's own outline,

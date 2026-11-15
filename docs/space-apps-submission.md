@@ -26,7 +26,7 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
   - Our own map tiles of the Bradano basin, from four L2A scenes of 30 May 2026 (Sentinel-2 COGs on AWS Open Data). https://registry.opendata.aws/sentinel-2-l2a-cogs/
   - The field timelapse ("Your field from space") and the intercrop map (greenness and leaf moisture), loaded live through Microsoft Planetary Computer. https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a
   - Sentinel-2 cloudless 2016 by EOX (CC BY 4.0), the zoomed-in map outside the basin. https://s2maps.eu
-- Copernicus DEM GLO-30 (ESA / European Union), 30 m. Used for high and low ground in the intercrop map, loaded live through Microsoft Planetary Computer. Notice: produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved. https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-30
+- Copernicus DEM GLO-30 (ESA / European Union), 30 m. Used for high and low ground in the intercrop map (placement for the first harvest year only), loaded live through Microsoft Planetary Computer. Notice: produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved. https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-30
 - ESA WorldCover 10 m 2021 v200 (CC BY 4.0). Used for the cropland mask. https://doi.org/10.5281/zenodo.7254221
 - JAXA GSMaP operational v8, gauge-adjusted. Used for a rain comparison at the demo field. GSMaP data were provided by JAXA. https://sharaku.eorc.jaxa.jp/GSMaP/
 
@@ -43,7 +43,7 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
 - AGEA orthophotos, 2022-2024 flights (CC BY 4.0). Aerial photos on the map. https://geoportale.agea.gov.it/
 - Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS, CC BY 4.0). Used to find a field by its parcel numbers in Genzano di Lucania. https://wfs.cartografia.agenziaentrate.gov.it/inspire/wfs/owfs01.php
 - MET Norway Locationforecast 2.0 (CC BY 4.0 and NLOD 2.0). The seven-day forecast. Data from MET Norway. https://api.met.no/
-- Photon geocoder by komoot (OpenStreetMap data, © OpenStreetMap contributors). Used for town search. https://photon.komoot.io/
+- Photon geocoder by komoot (OpenStreetMap data, © OpenStreetMap contributors, ODbL). Used for town search. https://photon.komoot.io/
 - Microsoft Planetary Computer, STAC API and data API. Used to find and draw the Sentinel-2 pictures and the heights for the timelapse and the intercrop map. https://planetarycomputer.microsoft.com/
 
 ## Research, prices and payment rules (references)
@@ -95,9 +95,9 @@ What the team did:
 
 What AI tools did:
 - Claude (Anthropic) wrote most of the app's code, the data notebooks, their checks and the documentation.
-- AI research agents (Claude and Google Gemini) gathered crop yields, prices, costs and support payments. The team chose the figures. Each figure in the app names its source, and figures nobody has sourced are marked as placeholders.
+- AI research agents (Claude and Google Gemini) gathered crop yields, prices, costs and support payments. The team chose the figures. Each figure in the app names its source and how sure we are (often low); the plan's "How sure" line names the unchecked ones. Only the rotations' risk ratings, which have no source yet, are marked as placeholders.
 - OpenAI Codex audited the code.
-- Google Gemini reviewed the code and edited the app's wording in English and Italian.
+- Google Gemini reviewed the code and wrote the app's on-screen wording in English and Italian, which Claude checked and applied.
 - The data values come from the cited datasets, not from AI. The exception is a few published values from the trial at the demo field, typed in from the paper and labelled as such.
-- The app itself contains no AI model. Its options come from a written decision tree and ranking rules. Voice commands use the phone's built-in speech recognition and a written list of phrases.
+- The app itself contains no AI model. Its options are ordered by written ranking rules from fixed crop scores and the farmer's limits and priorities; a written decision tree reads the NASA data, which is shown as evidence beside the advice and does not change the order. Voice commands use the phone's built-in speech recognition and a written list of phrases.
 - No AI-generated images or video are used without a visible watermark. The nine crop pictures were drawn with ChatGPT image generation; each carries a visible "AI" badge.

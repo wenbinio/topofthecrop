@@ -371,6 +371,14 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
       </Section>
 
 
+      <Section fold title={t("why.h.benefits")}>
+        <ul data-testid="why-benefits">
+          {option.why.benefits.map((f, i) => (
+            <FactRow key={i} fact={f} flowerHigh={bundle.year.flowerHigh} />
+          ))}
+        </ul>
+      </Section>
+
       <Section fold title={t("why.h.unknowns")}>
         <ul className="list-disc pl-5 py-1 text-body">
           {unknownsFor(option).map((k) => (
@@ -381,6 +389,16 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
+
+      <Section fold title={t("why.h.check")}>
+        <ul className="list-disc pl-5 py-1 text-body" data-testid="why-check">
+          {option.why.checkLocally.map((k) => (
+            <li key={k} className="py-0.5">
+              {t(k)}
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       <div className="px-4 py-3">
         <PlaceholderNote facts={allFacts} />
