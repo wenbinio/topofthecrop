@@ -346,7 +346,7 @@ export const en = {
   "credits.forecast": "Forecast: MET Norway, CC BY 4.0. Map layers are credited on the map.",
   "credits.timelapse": "Your field from space: Sentinel-2 pictures, contains modified Copernicus Sentinel data, through Microsoft Planetary Computer.",
   "credits.trial": "Demo field: the site of the durum and vetch trial of Denora et al. (2025).",
-  "credits.ai": "AI help: the idea and the app's design are the team's. The app's code and the data notebooks were written with AI tools, mainly Claude (Anthropic), with reviews by OpenAI Codex and Google Gemini. The team ran the notebooks in Google Earth Engine and checked the results. Field and weather figures come from the datasets above, not from AI; placeholder figures are unverified.",
+  "credits.ai": "AI help: the idea and the app's design are the team's. The app's code and the data notebooks were written with AI tools, mainly Claude (Anthropic), with reviews by OpenAI Codex and Google Gemini. The team ran the notebooks in Google Earth Engine and checked the results. Field and weather figures come from the datasets above, not from AI; placeholder figures are unverified. The crop pictures were made with AI (ChatGPT) and each carries an \"AI\" mark.",
   "credits.all": "Every dataset, licence and citation: github.com/wenbinio/topofthecrop, DATA_SOURCES.md",
   "timelapse.title": "Your field from space",
   "timelapse.sub": "One clear satellite picture a month, last three years",

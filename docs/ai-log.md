@@ -1,6 +1,6 @@
 # AI log: Field Shift, NASA Space Apps 2026
 
-How AI tools were used during the competition (14–15 November 2026): what we asked them to do, and how they helped. Work done before the competition started is left out. Written with AI assistance (Claude, Anthropic).
+How AI tools were used during the competition (14–15 November 2026): what we asked them to do, and how they helped. Work done before the competition started is left out. Work is still going on, so more will be added. Written with AI assistance (Claude, Anthropic).
 
 **AI tools**
 - Claude (Anthropic): claude.ai chats with web search and code execution, and Claude Code for the app
@@ -70,6 +70,17 @@ How AI tools were used during the competition (14–15 November 2026): what we a
 - **Printout graphs**
   - **We:** found the first graphs (dots) hard to read; asked for line graphs, and for our three data pictures
   - **AI:** redrew them as line graphs, and redrew the three pictures from each field's own data
+- **The redesign**
+  - **We:** decided each change (a simpler flow, saved plans, an intercrop map, letting farmers correct their soil, "left fallow" as a last crop), tried it and reviewed it
+  - **AI:** Claude Code wrote the code and Gemini the new wording:
+    - three setup steps, then tabs (My field, Advice, My plans), with the rest in a menu
+    - "My plans": every plan kept on the phone, to reopen or remove
+    - where to intercrop on the farmer's own field: the field split between the two crops from three satellite signals over several springs (Sentinel-2 greenness and leaf moisture, and high and low ground from the Copernicus DEM), showing where they agree
+    - changing the soil type, and the pH from a soil analysis
+    - "Nothing, left fallow" as a last crop
+- **AI badge on the crop pictures**
+  - **We:** asked for a visible AI mark on every AI-made picture, as the competition's rules require
+  - **AI:** added a see-through "AI" badge to each crop picture, and named ChatGPT in the AI statement and the app's AI note
 
 ## Sources and checks
 
@@ -82,6 +93,14 @@ How AI tools were used during the competition (14–15 November 2026): what we a
 - **Crop costs and nitrogen**
   - **We:** asked AI to check every crop's costs and nitrogen, and to find a source wherever one was missing
   - **AI:** found published sources: durum's costs now follow a 2025 ISMEA survey (675 €/ha); chickpea's were too low and went from 540 to 600 €/ha; each legume's nitrogen figure cites a study. It found no published costs for the other seven crops, which stay marked as our own notes
+- **Support payments checked against official pages**
+  - **We:** supplied a research compilation on the payments, and audited the funds and the regional payments
+  - **AI:** checked each payment against AGEA's 2024 and 2025 circulars and the decrees, corrected the figures, and linked each payment to its own official page
+- **Saying how sure the advice is**
+  - **AI:** the confidence line now counts each figure's own source and names the figures that are still unchecked
+- **The Italian, screen by screen**
+  - **We:** asked AI to make sure the language works on every screen
+  - **AI:** read every string in both languages and opened every screen in Italian and English on two phone widths. It fixed English source labels on Italian screens, a printout too wide for small phones, a graph unit and about a dozen Italian wordings
 - **Testing what AI told us**
   - **We:** tested an AI research agent's claims about a licence and a web service address before relying on them, and made it a rule that such claims are leads to test, not facts
 - **Checks**
@@ -92,4 +111,4 @@ How AI tools were used during the competition (14–15 November 2026): what we a
 
 - **AI statement, submission text and this log**
   - **We:** asked for the NASA data list, the references, the AI statement and this log, and reviewed them
-  - **AI:** drafted them from our chat records and the repository's history; added the AI note to the app and the printout, and to the header of every file it helped write; kept our chat records and data notes up to date
+  - **AI:** drafted them from our chat records and the repository's history, and kept them up to date as the app changed (new payment sources, the new flow); added the AI note to the app and the printout, and to the header of every file it helped write; kept our chat records and data notes up to date
