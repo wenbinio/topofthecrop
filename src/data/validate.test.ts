@@ -119,3 +119,43 @@ it('rejects an unknown crop in economics', () => {
   Object.assign(bundle.economics!.crops, { maize: bundle.economics!.crops.durum });
   expect(() => validateBundle(bundle)).toThrow(/^bundle: economics\.crops\.maize/);
 });
+
+/** A small `fieldData` with one figure of each kind, for the checks below. */
+const fieldDataSample = () => {
+  const source = { dataset: 'CHIRPS + NASA GPM + ERA5-Land', resolution: '6 to 11 km', url: '' };
+  const fact = (value: unknown, label: string) =>
+    ({ value, unit: 'mm', range: [100, 200], scale: 'area', confidence: 'fair', placeholder: false, label, source });
+  return {
+    greenness: {}, weather: { rainSpring: fact(188, 'data.rainSpring') }, water: {}, soil: {}, land: {},
+    by2050: { ssp245: { rainSeason: fact(520, 'data.rainSeason') }, ssp585: {} },
+    seasons: {
+      years: [2024, 2025, 2026],
+      series: { rainSeason: { values: [413, null, 651], unit: 'mm', scale: 'area', confidence: 'fair', placeholder: false, label: 'data.rainSeason', source } },
+    },
+    groundCheck: {
+      rain: [{ season: '2022-23', window: 'oct-may', station: fact(673.6, 'data.station'), satellites: fact(656, 'data.satellites') }],
+      temperature: [],
+    },
+  };
+};
+type FieldDataSample = ReturnType<typeof fieldDataSample>;
+it('accepts a bundle with fieldData, and one without', () => {
+  expect('fieldData' in fixture).toBe(false);
+  const bundle = structuredClone(fixture) as unknown as FieldBundle;
+  Object.assign(bundle, { fieldData: fieldDataSample() });
+  expect(validateBundle(bundle)).toBe(bundle);
+});
+it.each<[string, (d: FieldDataSample) => void]>([
+  ['an unknown figure', d => { Object.assign(d.weather, { rainfall: d.weather.rainSpring }); }],
+  ['a string figure', d => { d.weather.rainSpring.value = '188'; }],
+  ['a missing scenario', d => { Reflect.deleteProperty(d.by2050, 'ssp585'); }],
+  ['a series one season short', d => { d.seasons.series.rainSeason.values.pop(); }],
+  ['a word for a missing season', d => { Object.assign(d.seasons.series.rainSeason.values, { 1: 'none' }); }],
+  ['a series without a source', d => { Reflect.deleteProperty(d.seasons.series.rainSeason, 'source'); }],
+  ['a ground check over unknown months', d => { Object.assign(d.groundCheck.rain[0], { window: 'Jan-Dec' }); }],
+])('rejects fieldData with %s', (_name, mutate) => {
+  const data = fieldDataSample();
+  mutate(data);
+  const bundle = Object.assign(structuredClone(fixture), { fieldData: data });
+  expect(() => validateBundle(bundle)).toThrow(/^bundle: fieldData/);
+});

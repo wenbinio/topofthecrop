@@ -311,6 +311,8 @@ const bundle = {
     option('rapeseed-durum-durum', ['rapeseed', 'durum', 'durum'], ['check.contract', 'check.seed', 'check.adviser']),
     option('coriander-durum-durum', ['coriander', 'durum', 'durum'], ['check.contract', 'check.seed', 'check.adviser']),
   ],
+  // The rest of the team's figures for the field, for the evidence screens (also from field.json).
+  fieldData: realField.fieldData,
 };
 
 mkdirSync("public/data", { recursive: true });

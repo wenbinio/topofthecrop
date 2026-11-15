@@ -238,6 +238,8 @@ type FieldBundle = {
     support: { id: string; name: { en: string; it: string }; condition: { en: string; it: string };
       level: "eu" | "italy" | "basilicata"; amount: Fact; crops: CropId[]; options: string[]; defaultOn: boolean }[];
   };
+  fieldData?: FieldData;               // the rest of the data team's figures as Facts, for evidence screens:
+                                       // see FieldData in src/data/types.ts and HANDOVER-FRONTEND.md section 4f
 };
 ```
 

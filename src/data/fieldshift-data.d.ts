@@ -12,6 +12,8 @@ export type Greenness = {
   greenup_day: Triple;
   dryoff_day: Triple;
   season_days: Triple;
+  peak_by_season: (number | null)[];
+  dryoff_by_season: (number | null)[];
   [key: string]: unknown;
 };
 export type Weather = {
@@ -22,14 +24,31 @@ export type Weather = {
   frost_month: Triple[];
   rain_autumn: Triple;
   rain_season: Triple;
+  rain_spring: Triple;
+  rain_year: Triple;
+  rain_onset_day: Triple;
+  dry_spell_spring: Triple;
   hot_days_flower: Triple;
   tmax_flower: Triple;
   frost_days_winter: Triple;
   late_frost_days: Triple;
   hot_days_flower_by_season: (number | null)[];
+  rain_season_by_season: (number | null)[];
+  rain_autumn_by_season: (number | null)[];
   [key: string]: unknown;
 };
-export type Water = { durum_need: Triple; et0_season: Triple; aet_season: Triple; [key: string]: unknown };
+export type Water = {
+  durum_need: Triple;
+  et0_season: Triple;
+  aet_season: Triple; // null for squares with no MODIS pixel that is mostly rain-fed arable
+  sm_sowing: Triple;
+  sm_spring: Triple;
+  durum_need_by_season: (number | null)[];
+  sm_sowing_by_season: (number | null)[]; // null before season 2016 (SMAP starts in spring 2015)
+  sm_spring_by_season: (number | null)[];
+  aet_by_season: (number | null)[];
+  [key: string]: unknown;
+};
 export type FutureChange = Record<"ssp245" | "ssp585", Record<"hot" | "tmaxfl" | "frost" | "late" | "rainse" | "rainau", Triple>>;
 export type Soil = Record<"clay" | "sand" | "silt" | "soc" | "phh2o" | "bdod" | "cfvo" | "nitrogen" | "cec" | "awc", Triple>;
 
@@ -47,7 +66,11 @@ export type OutlineValues = SquareValues & {
   farmlandShare: number;
 };
 
-export type SquareProps = { lon: number; lat: number; durum22: number; durum18: number; farm: boolean; [key: string]: unknown };
+export type SquareProps = {
+  lon: number; lat: number; durum22: number; durum18: number; farm: boolean;
+  elev_m: number; slope_deg: number; // NASADEM, mean over the square
+  [key: string]: unknown;
+};
 export type SourceMeta = { name: string; res_m: number; licence?: string; cite?: string; ee_id?: string };
 type CellsFile = { meta: { sources: Record<string, SourceMeta>; indicators?: Record<string, unknown>; [key: string]: unknown }; cells: Record<string, unknown>; records?: Record<string, unknown> };
 
