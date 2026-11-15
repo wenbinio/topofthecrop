@@ -22,6 +22,8 @@ const AreaWeather = lazy(() => import("./screens/AreaWeather"));
 const Print = lazy(() => import("./screens/Print"));
 const Settings = lazy(() => import("./screens/Settings"));
 const Credits = lazy(() => import("./screens/Credits"));
+// Not linked from the steps yet: the team tries it at #/timelapse with a field's link.
+const Timelapse = lazy(() => import("./screens/Timelapse"));
 
 /** While a screen loaded on demand arrives: the same one loading line as the bundle gate. */
 function ScreenLoading() {
@@ -67,7 +69,7 @@ function Shell() {
 
   const isPrint = pathname.startsWith("/print");
   // Settings sits outside the six steps: reachable from any of them, it belongs to none.
-  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits";
+  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits" || pathname === "/timelapse";
 
   return (
     <LangContext.Provider value={state.lang}>
@@ -100,6 +102,7 @@ function Shell() {
             <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="/credits" element={<Credits />} />
+            <Route path="/timelapse" element={field((b) => <Timelapse bundle={b} />)} />
             <Route path="*" element={<RedirectHome />} />
           </Routes>
           </Suspense>

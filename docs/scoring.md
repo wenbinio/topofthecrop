@@ -280,3 +280,21 @@ Background and sources: `docs/crops-research.md`, "Intercropping".
 - The lift raises that harvest's sales. It shows on Why as a line under the durum harvest and names its study.
 - **How sure:** low. The figures come from the team's research compilation, which cites the papers; we have not opened the papers ourselves. The chickpea study worked with wheat at 5 t/ha, well above this area's 3 t/ha, so its percentage may not carry over.
 - **Lentil, pea and vetch get no lift** because no figure was found for them. That is a gap in the evidence, not a finding that they give nothing, and it tilts the comparison towards chickpea and faba bean.
+
+## Field timelapse
+
+Not linked from the steps yet: `#/timelapse` with a field's link. `src/timelapse/frames.ts` holds the rules; each is
+**our judgement** (`TIMELAPSE_RULES`).
+
+- **Pictures:** Sentinel-2 L2A at 10 m, from Microsoft Planetary Computer, loaded live for the farmer's own outline,
+  demo field or drawn. Only scenes whose footprint covers the middle of the field are searched.
+- **Which scenes:** from 1 January three years back until today, leaving out any scene with more than 25% cloud over
+  its whole 100 km tile. Of each month's scenes, the least cloudy is shown, then the one nearest mid-month. A scene
+  with little cloud overall can still have a cloud over the field; no check is made at the field itself.
+- **How close:** the closest zoom (at most map zoom 16, about 1.8 m a screen pixel) at which the field spans no more
+  than half the picture's width and height. The picture is a block of 2 × 2 map tiles, about 0.9 km a side at
+  zoom 16, with the field's outline in yellow; the field sits within a quarter of the picture's middle.
+- **Date and time:** each picture's acquisition time in Italian time.
+- **Credit:** "Contains modified Copernicus Sentinel data" with the years the pictures span, as the Sentinel Data
+  Legal Notice asks.
+

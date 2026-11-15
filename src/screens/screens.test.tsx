@@ -263,6 +263,39 @@ describe("Data and credits", () => {
   });
 });
 
+describe("Field timelapse (#/timelapse, not linked yet)", () => {
+  const stac = (features: object[]) => ({ type: "FeatureCollection", features, links: [] });
+  const scene = (id: string, datetime: string, cloud: number) => ({ id, properties: { datetime, "eo:cloud_cover": cloud } });
+  function serve(search: () => Response | Promise<Response>) {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => (String(url).includes("/api/stac/") ? search() : okJson(fixture))));
+  }
+
+  it("plays one clear picture a month of the farmer's field, with its date, the outline and the Copernicus notice", async () => {
+    serve(() => okJson(stac([scene("S2A_1", "2024-06-15T09:52:00Z", 1), scene("S2B_2", "2024-07-10T09:52:00Z", 4)])));
+    renderAt("/timelapse?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("frame-date")).toHaveTextContent("15 Jun 2024 · 11:52");
+    const picture = screen.getByTestId("timelapse-picture");
+    expect(picture.querySelectorAll("img")).toHaveLength(8); // two frames of four tiles
+    expect(picture.querySelector("img")!.getAttribute("src")).toContain("item=S2A_1");
+    expect(picture.querySelector("polygon")).not.toBeNull();
+    expect(screen.getByTestId("timelapse-credit")).toHaveTextContent("Contains modified Copernicus Sentinel data 2024.");
+    expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
+    fireEvent.change(screen.getByRole("slider", { name: "Picture" }), { target: { value: "1" } });
+    expect(screen.getByTestId("frame-date")).toHaveTextContent("10 Jul 2024");
+    expect(screen.getByRole("button", { name: "Play" })).toBeInTheDocument();
+  });
+
+  it("says so when no clear picture is found, and offers a retry when the service fails", async () => {
+    serve(() => okJson(stac([])));
+    renderAt("/timelapse?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("timelapse-none")).toBeInTheDocument();
+    cleanup();
+    serve(() => new Response("down", { status: 503 }));
+    renderAt("/timelapse?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("timelapse-error")).toHaveTextContent("Try again");
+  });
+});
+
 describe("Why: the reasons first, sources one tap away", () => {
   it("opens with why it is suggested, before the numbers, and shows no dataset until a Source is tapped", async () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
