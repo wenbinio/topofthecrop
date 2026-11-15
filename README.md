@@ -2,6 +2,7 @@
 
 **What should I plant after the wheat?** A phone web app that helps a durum wheat farmer in the Bradano river valley (Basilicata, southern Italy) compare crop rotations for their own field using NASA Earth observations, and check the answer locally before sowing, with an adviser or without one.
 
+- **Team:** Top of the Crop
 - **Event:** NASA International Space Apps Challenge 2026 (14–15 November 2026)
 - **Challenge:** [Field Shift: Adapting Farms with NASA Data](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/)
 - **Status:** built and live at https://wenbinio.github.io/topofthecrop/. This README is the agreed design, with the decisions made while building.
@@ -26,7 +27,7 @@ Six steps, each one screen on a phone.
 | 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn on the basin's farmland gets the same steps from the 1 km squares around it; anywhere else gets live NASA weather history for its area. |
 | 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); put the priorities (income, water, soil, forage) in order by tapping them, most important first: at least 2, up to all 4. | Big buttons. Last crop is pre-filled from the EU crop map. |
 | 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029). The top one is marked "Best fit", and its income is compared with durum after durum, what the farmer grows now. A switch under the list adds strip intercrops (two crops side by side, half the field each, swapped every year) to the ranking. | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
-| 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | Every number shows its source, its range, and whether it describes "your field" or "your area". Terms such as NDVI open a one-line explanation. |
+| 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | It opens with why the rotation is suggested. Every number shows its range and whether it describes "your field" or "your area"; a tap on "Source" opens its dataset, date and confidence in a bubble. Terms such as NDVI open a one-line explanation. |
 | 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. Below: this season's rain so far and the next seven days (live), and 2024 and 2026 against a usual season. | Two headline figures: hot days at flowering and October–May rain, now and by 2050. |
 | 6. Check and share | What the farmer can check alone for the best-fit rotation; who can look at the plan if there is no adviser (cooperative or seed dealer, the CAA office, the region's farm advisory service, a neighbour, an agronomist); a one-page printout and a WhatsApp link. | The link reopens the same field and answers. No names or phone numbers: we could not keep them right. |
 
@@ -59,7 +60,7 @@ The app has one set of screens and two looks, switched from the top bar. The cho
 |---|---|---|
 | For | A farmer or adviser who wants to see the data | A farmer who wants the answer at a glance |
 | Look | Satellite first: the map fills the screen, and the options screen opens with a vegetation thumbnail of the field and a 12-month green/bare strip | Weather app: one big headline for the field, then the findings and options as forecast-style rows, each led by an icon and one number |
-| Detail | Dataset and resolution labels on screen (for example "NASA MODIS (MOD13Q1) · 250 m") | Dataset labels hidden until tapped; risk shown as an icon plus one word |
+| Detail | Ranges and field-or-area badges on screen; each figure's dataset (for example "NASA MODIS (MOD13Q1) · 250 m"), date and confidence in a bubble on tap | The same bubble; risk shown as an icon plus one word |
 
 The mockups for both are in `docs/mockups/`: direction B is the Standard view and direction D is the Simple view.
 
@@ -111,7 +112,7 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 ### Rules for honest numbers
 
 - **Field or area.** Every number carries a badge: "your field" (figures from the demo field itself: MODIS greenness at 250 m, SoilGrids at 250 m, NASADEM at 30 m) or "your area" (the 1 km squares around a drawn field, and weather and climate grids of 5 to 50 km). Coarse data is never presented as a measurement of the field.
-- **Source and range.** Every number links to its dataset and shows a range, not only a point value.
+- **Source and range.** Every number shows a range, not only a point value, and its dataset, resolution, date and confidence are one tap away in a bubble that closes when the farmer taps elsewhere.
 - **Confidence word.** Each option carries one: good, fair or low.
 - **Income is a gross margin.** It is the average per year over the three-year sequence, in €/ha, and the "Why?" screen states the prices used and their date.
 - **Placeholders are labelled.** A figure nobody has sourced yet, such as each rotation's risk rating, is marked on screen.
@@ -352,7 +353,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - **The data notebooks** in `ColabNotebooks/` were written with Claude (Anthropic) on claude.ai, as were their checks, `HANDOVER.md`, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark.
-- **The app says so too.** A short version of this section, with the credit lines the data licences ask for, is under "Data and credits" at the end of Check and share and on the printout (`src/components/DataCredits.tsx`).
+- **The app says so too.** A short version of this section, with the credit lines the data licences ask for, is on the "Data and credits" page, linked from Check and share, and on the printout (`src/components/DataCredits.tsx`).
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
 - **Voice uses the phone, not us.** The app contains no hosted AI model and sends nothing to a server of ours. Its voice commands and "read aloud" use the browser's built-in speech recognition and speech synthesis, which the phone maker (Google, Apple, Samsung) provides; recognition may send the audio to the phone maker's servers. Spoken words become commands through a written list of phrases (`src/voice/commands.ts`), not a model.
 

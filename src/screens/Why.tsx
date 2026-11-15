@@ -10,9 +10,9 @@ import { ReasonList } from "../components/Reasons";
 import { useLang, useT } from "../i18n";
 import { useAppState, useTo } from "../state/useAppState";
 import { CropName, CropSequence, OptionName, Slotted } from "../components/Crops";
-import { ConfidenceWord, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
+import { PlaceholderNote, ScaleBadge, SourceButton, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
-import { HOT_DAY_LABELS, HotDaysTerm, RichText, Term } from "../components/Term";
+import { HOT_DAY_LABELS, HotDaysTerm, RichText } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
 import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { unknownsFor } from "../data/caveats";
@@ -48,28 +48,14 @@ export function FactRow({ fact, perYear = false, flowerHigh }: { fact: Fact; per
         </span>
       </div>
       <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-small text-ink-soft">
-        <ScaleBadge scale={fact.scale} long />
+        <ScaleBadge scale={fact.scale} />
         {range ? (
           <span>
             {t("common.range")} {range}
           </span>
         ) : null}
-        {fact.edited ? (
-          <YoursTag />
-        ) : fact.source.url ? (
-          <a href={fact.source.url} target="_blank" rel="noreferrer" className="font-mono uppercase underline">
-            {fact.source.dataset} · {fact.source.resolution}
-          </a>
-        ) : (
-          <span className="font-mono uppercase">
-            {fact.source.dataset} · {fact.source.resolution}
-          </span>
-        )}
-        {fact.asOf ? <span>{t("common.asOf", { date: fact.asOf })}</span> : null}
-        <span className="inline-flex items-center gap-1">
-          <Term id="confidence" />
-          <ConfidenceWord confidence={fact.confidence} />
-        </span>
+        {/* Dataset, date and confidence wait in a bubble, so the row is the figure and little else. */}
+        {fact.edited ? <YoursTag /> : <SourceButton fact={fact} />}
         {fact.placeholder ? <span className="font-bold text-warn">*</span> : null}
       </div>
     </li>
@@ -141,8 +127,10 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
           </tr>
         </tbody>
       </table>
-      {/* what the three columns hold, in plain words */}
-      <ul className="mt-2 text-small text-ink-soft" data-testid="money-key">
+      {/* what the three columns hold, in plain words: one tap away, so the table stays short */}
+      <details className="mt-2 text-small text-ink-soft">
+      <summary className="py-2 font-bold text-ink cursor-pointer">{t("money.keyHead")}</summary>
+      <ul data-testid="money-key">
         {(["sales", "costs", "support"] as const).map((column) => (
           <li key={column}>
             <span className="font-bold text-ink">{t(`money.${column}`)}:</span> {t(`money.${column}Means`)}
@@ -172,6 +160,7 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
           </li>
         ) : null}
       </ul>
+      </details>
       <Link
         to={to(SETTINGS_PATH)}
         state={settingsFrom(pathname, null)}
@@ -277,18 +266,6 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
       {/* Held sideways: the numbers and the reasons on the left, the evidence and the rest on the right. */}
       <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
       <div className="flex flex-col min-w-0">
-      <Section title={t("why.numbers")}>
-        <ul>
-          <FactRow fact={facts.income} perYear />
-        </ul>
-        {bundle.economics ? <MoneyWorking option={option} economics={bundle.economics} /> : null}
-        <ul>
-          <FactRow fact={facts.water} />
-          <FactRow fact={facts.nitrogen} />
-          <FactRow fact={facts.risk} />
-        </ul>
-      </Section>
-
       <Section title={t("why.h.suggested")}>
         <div className="my-2">
           <ReasonList
@@ -312,6 +289,18 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         <p className="text-body py-2">
           <RichText text={t(option.why.suggested)} />
         </p>
+      </Section>
+
+      <Section title={t("why.numbers")}>
+        <ul>
+          <FactRow fact={facts.income} perYear />
+        </ul>
+        {bundle.economics ? <MoneyWorking option={option} economics={bundle.economics} /> : null}
+        <ul>
+          <FactRow fact={facts.water} />
+          <FactRow fact={facts.nitrogen} />
+          <FactRow fact={facts.risk} />
+        </ul>
       </Section>
 
       </div>

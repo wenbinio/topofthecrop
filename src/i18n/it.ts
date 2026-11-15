@@ -342,6 +342,7 @@ export const it: Dict = {
   "money.total": "Totale",
   "money.perYear": "All'anno",
   "money.working": "Calcolo del reddito",
+  "money.keyHead": "Cosa vogliono dire le colonne",
   "money.change": "Cambia prezzi, aiuti",
   "print.money": "Prezzi, aiuti usati",
   "print.on": "sì",
