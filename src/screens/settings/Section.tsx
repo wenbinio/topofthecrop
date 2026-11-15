@@ -50,10 +50,10 @@ export function Section({
               {summary}
             </span>
           </span>
-          <ChevronIcon className={`w-6 h-6 flex-none motion-safe:transition-transform ${open ? "rotate-90" : ""}`} />
+          <ChevronIcon className={`w-6 h-6 flex-none tc-turn ${open ? "rotate-90" : ""}`} />
         </button>
       </h2>
-      <div id={panelId} role="region" aria-labelledby={headId} hidden={!open} className="pb-2">
+      <div id={panelId} role="region" aria-labelledby={headId} hidden={!open} className="pb-2 tc-reveal">
         {children}
       </div>
     </section>

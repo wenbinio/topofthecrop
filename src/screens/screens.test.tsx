@@ -567,6 +567,11 @@ describe("Back buttons", () => {
   ];
   it.each(steps)("%s goes back to %s keeping the query string", async (entry, target) => {
     renderAt(entry);
+    // Questions opens on its last question when the priorities are already in order: Back first steps through them.
+    if (entry.startsWith("/questions")) {
+      fireEvent.click(await screen.findByTestId("question-back"));
+      fireEvent.click(screen.getByTestId("question-back"));
+    }
     fireEvent.click(await screen.findByRole("link", { name: "Back" }));
     await waitFor(() => expect(lastPath.startsWith(`${target}?`)).toBe(true));
     expect(lastPath).toContain("f=genzano-demo");
@@ -589,10 +594,74 @@ describe("Back buttons", () => {
   });
 });
 
+describe("Options as a decision tree", () => {
+  it("shows the one advice, then rows to open: nothing else is in reach until asked for", async () => {
+    renderAt("/options?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
+    const branches = screen.getByTestId("branches");
+    expect(within(branches).getByTestId("branch-why")).toHaveAttribute("href", expect.stringContaining("/why/chickpea-durum-durum?"));
+    const folds = ["fold-options", "fold-priorities", "fold-seen"].map((id) => screen.getByTestId(id));
+    for (const fold of folds) {
+      expect(fold).toHaveAttribute("data-open", "false");
+      expect(within(fold).getByTestId("fold-toggle")).toHaveAttribute("aria-expanded", "false");
+      expect(within(fold).getByRole("region", { hidden: true })).toHaveAttribute("inert");
+    }
+    expect(within(folds[0]).getByTestId("fold-toggle")).toHaveTextContent("The other options (3)");
+    expect(screen.getByTestId("priority-summary")).toHaveTextContent("1 Income, 2 Water");
+  });
+
+  it("a row opens on a tap and closes on the next", async () => {
+    renderAt("/options?f=genzano-demo&p=income,water");
+    const fold = await screen.findByTestId("fold-options");
+    const toggle = within(fold).getByTestId("fold-toggle");
+    fireEvent.click(toggle);
+    expect(fold).toHaveAttribute("data-open", "true");
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(within(fold).getByRole("region")).not.toHaveAttribute("inert");
+    expect(within(fold).getAllByTestId("option-row").length).toBeGreaterThan(0);
+    fireEvent.click(toggle);
+    expect(fold).toHaveAttribute("data-open", "false");
+  });
+
+  it("Why keeps the reasons open and folds the rest", async () => {
+    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+    expect(await screen.findByRole("heading", { name: "Why this option" })).toBeInTheDocument();
+    const toggles = screen.getAllByTestId("fold-toggle");
+    expect(toggles.map((toggle) => toggle.textContent)).toEqual(["Over three harvests", "What the data shows", "Benefits", "What we don't know", "Check locally"]);
+    for (const toggle of toggles) expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+});
+
 describe("Questions", () => {
+  it("asks one question at a time: last crop, then limits, then priorities", async () => {
+    renderAt("/questions?f=genzano-demo");
+    expect(await screen.findByTestId("question-step")).toHaveTextContent("Question 1 of 3");
+    expect(screen.getByTestId("question-1")).not.toHaveAttribute("inert");
+    expect(screen.getByTestId("question-2")).toHaveAttribute("inert");
+    expect(screen.getByTestId("question-3")).toHaveClass("hidden");
+    // The first two questions never hold the farmer back.
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+    expect(screen.getByRole("link", { name: "Back" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByTestId("question-step")).toHaveTextContent("Question 2 of 3");
+    expect(screen.getByTestId("question-2")).not.toHaveAttribute("inert");
+    expect(screen.getByTestId("question-1")).toHaveAttribute("inert");
+    fireEvent.click(screen.getByTestId("question-back"));
+    expect(screen.getByTestId("question-step")).toHaveTextContent("Question 1 of 3");
+    expect(lastPath.startsWith("/questions")).toBe(true);
+  });
+
+  it("a farmer coming back with the priorities in order lands on the last question", async () => {
+    renderAt("/questions?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("question-step")).toHaveTextContent("Question 3 of 3");
+    expect(screen.getByTestId("question-3")).not.toHaveAttribute("inert");
+  });
+
   it("priorities are tapped in order, each showing its place, and Next needs two", async () => {
     renderAt("/questions?f=genzano-demo");
-    const next = await screen.findByRole("button", { name: "Next" });
+    fireEvent.click(await screen.findByRole("button", { name: "Next" }));
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    const next = screen.getByRole("button", { name: "Next" });
     expect(next).toBeDisabled();
     expect(screen.getByTestId("rank-hint")).toHaveTextContent("Pick at least 2");
     fireEvent.click(screen.getByRole("checkbox", { name: "Income" }));

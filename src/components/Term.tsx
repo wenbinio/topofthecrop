@@ -12,7 +12,7 @@ export const TERMS = ["ndvi", "et", "gm", "confidence"] as const;
 export type TermId = (typeof TERMS)[number];
 
 /** The look of the short line a term opens. */
-const NOTE_CLASS = "block my-1 px-2 py-1 bg-sunk text-small text-ink font-normal normal-case tracking-normal rounded-sm";
+const NOTE_CLASS = "tc-reveal block my-1 px-2 py-1 bg-sunk text-small text-ink font-normal normal-case tracking-normal rounded-sm";
 
 /** Dotted-underlined words that open one short line under them on tap; `title` shows the same line on hover. */
 export function TermButton({

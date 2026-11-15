@@ -10,12 +10,13 @@ import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../componen
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
 import { SoilCard } from "../components/SoilCard";
+import { Fold } from "../components/Fold";
+import { soilSummary } from "../data/soil";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
 import { CropName, Slotted, stripsNext } from "../components/Crops";
 import { PriorityHelp } from "../components/Term";
 import { OptionRow } from "../components/OptionRow";
-import { YearStrip } from "../components/YearStrip";
-import { BackButton, BottomBar, LinkButton, SectionTitle } from "../components/ui";
+import { BackButton, BottomBar, LinkButton } from "../components/ui";
 import { PriorityChips, ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
@@ -107,6 +108,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
   const optionScales = new Set(ranked.flatMap((r) => Object.values(r.option.facts).map((f) => f.scale)));
   const sharedScale = optionScales.size === 1 ? [...optionScales][0] : null;
   const simple = state.view === "simple";
+  const soil = soilSummary(bundle);
 
   return (
     <div className="flex flex-col flex-1">
@@ -124,9 +126,6 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
               </p>
             </div>
           </div>
-          <div className="mt-2">
-            <YearStrip months={bundle.year.months} risks={false} compact />
-          </div>
         </div>
       )}
 
@@ -138,25 +137,27 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
         </p>
       ) : null}
       <Recommendation best={best} current={current} simple={simple} />
-      <div className="px-4 pt-2">
-        <PriorityHelp>
-          <p className="text-small font-bold text-ink-soft">{t("options.priorities")}</p>
-        </PriorityHelp>
-        <PriorityChips chosen={state.priorities} onChange={(priorities) => setState({ priorities })} />
-      </div>
       </div>
       <div className="flex flex-col min-w-0">
 
-      <SectionTitle>{t("options.seen")}</SectionTitle>
-      <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
-      <SoilCard bundle={bundle} view={state.view} />
-
-      <SectionTitle>
-        <span className="flex items-center justify-between">
-          {t("options.list")}
-          {sharedScale ? <ScaleBadge scale={sharedScale} /> : null}
-        </span>
-      </SectionTitle>
+      {/* One answer above; everything else is a row the farmer may open, none of which they must. */}
+      <p className="px-4 pt-4 pb-2 text-small font-bold uppercase tracking-wider text-ink-soft">{t("options.moreHead")}</p>
+      <div className="border-t border-line" data-testid="branches">
+      {best ? (
+        <Link
+          to={to(`/why/${best.option.id}`)}
+          data-testid="branch-why"
+          className="tc-tap flex items-center gap-3 px-4 py-2 bg-surface border-b border-line font-bold text-body"
+        >
+          <span className="flex-1">{t("why.h.suggested")}</span>
+          <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
+        </Link>
+      ) : null}
+      <Fold
+        testId="fold-options"
+        title={t("options.others", { n: Math.max(0, ranked.length - 1) })}
+        summary={sharedScale ? <ScaleBadge scale={sharedScale} /> : null}
+      >
       <ul className="border-t border-line" data-testid="option-list">
         {shown.map((item) => (
           <OptionRow key={item.option.id} item={item} view={state.view} sharedScale={sharedScale !== null} />
@@ -171,7 +172,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
               className="tc-tap w-full flex items-center gap-2 px-4 bg-surface border-b border-line font-bold text-body text-left"
             >
               <span className="flex-1">{more ? t("options.fewer") : t("options.more", { n: hidden })}</span>
-              <ChevronIcon className={`w-5 h-5 flex-none text-ink-soft ${more ? "-rotate-90" : "rotate-90"}`} />
+              <ChevronIcon className={`tc-turn w-5 h-5 flex-none text-ink-soft ${more ? "-rotate-90" : "rotate-90"}`} />
             </button>
           </li>
         ) : null}
@@ -187,21 +188,50 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
               className="tc-tap w-full flex items-center gap-2 px-4 py-2 bg-surface border-b border-line text-left"
             >
               <span className="flex-1">
-                <span className="block font-bold text-body">
-                  {state.intercrops ? t("options.intercropsOn") : t("options.intercropsOff", { n: waiting.length })}
-                </span>
+                <span className="block font-bold text-body">{t("options.intercrops")}</span>
                 <span className="block text-small text-ink-soft">{t("options.intercropsMeans")}</span>
               </span>
               <span
                 aria-hidden="true"
-                className={`flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary justify-end" : "bg-surface justify-start"}`}
+                className={`tc-knob flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary" : "bg-surface"}`}
               >
-                <span className={`w-4 h-4 rounded-full ${state.intercrops ? "bg-surface" : "bg-line-strong"}`} />
+                <span className={`tc-knob w-4 h-4 rounded-full ${state.intercrops ? "bg-surface translate-x-5" : "bg-line-strong translate-x-0"}`} />
               </span>
             </button>
           </li>
         ) : null}
       </ul>
+      {removed.length > 0 ? (
+        <p className="px-4 py-3 flex items-start gap-2 text-body font-bold" data-testid="ruled-out">
+          <WarnIcon className="w-5 h-5 flex-none mt-0.5 text-warn" />
+          {t("options.ruledOut", {
+            n: removed.length,
+            limits: removedBy.map((l) => t(`limit.${l}`)).join(", "),
+          })}
+        </p>
+      ) : null}
+      {repeats.length ? <RepeatLines repeats={repeats} /> : null}
+      </Fold>
+      <Fold
+        testId="fold-priorities"
+        title={t("options.priorities")}
+        summary={<span data-testid="priority-summary">{state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ")}</span>}
+      >
+        <div className="px-4 pb-3">
+          <PriorityHelp>
+            <p className="text-small font-bold text-ink-soft">{t("q.priorities")}</p>
+          </PriorityHelp>
+          <PriorityChips chosen={state.priorities} onChange={(priorities) => setState({ priorities })} />
+        </div>
+      </Fold>
+      <Fold testId="fold-seen" title={t("options.seen")}>
+        <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
+      </Fold>
+      {soil ? (
+        <Fold testId="fold-soil" title={t("soil.title")} summary={t(`soil.weight.${soil.weight}`)}>
+          <SoilCard bundle={bundle} view={state.view} bare />
+        </Fold>
+      ) : null}
       {bundle.economics ? (
         <Link
           to={to(SETTINGS_PATH)}
@@ -215,16 +245,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
         </Link>
       ) : null}
-      {removed.length > 0 ? (
-        <p className="px-4 py-3 flex items-start gap-2 text-body font-bold" data-testid="ruled-out">
-          <WarnIcon className="w-5 h-5 flex-none mt-0.5 text-warn" />
-          {t("options.ruledOut", {
-            n: removed.length,
-            limits: removedBy.map((l) => t(`limit.${l}`)).join(", "),
-          })}
-        </p>
-      ) : null}
-      {repeats.length ? <RepeatLines repeats={repeats} /> : null}
+      </div>
       <div className="px-4 py-2">
         <PlaceholderNote facts={shownFacts} />
       </div>

@@ -91,7 +91,8 @@ describe("a drawn field", () => {
     await waitFor(() => expect(lastPath.startsWith("/questions?")).toBe(true));
     fireEvent.click(await screen.findByRole("checkbox", { name: "Income" }, { timeout: 10000 }));
     fireEvent.click(screen.getByRole("checkbox", { name: "Water" }));
-    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    // Three questions, one at a time: Next walks through them, then on to Options.
+    for (let i = 0; i < 3; i++) fireEvent.click(screen.getByRole("button", { name: "Next" }));
     await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent(/^Plant .+ next$|Keep durum/);
     expect(screen.getByTestId("area-note")).toHaveTextContent("For the 1 km area around your field");

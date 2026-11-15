@@ -14,6 +14,7 @@ import { PlaceholderNote, ScaleBadge, SourceButton, YoursTag, formatNumber, rang
 import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm, RichText } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
+import { Fold } from "../components/Fold";
 import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { unknownsFor } from "../data/caveats";
 import { AreaNote } from "../components/BundleProvider";
@@ -174,7 +175,15 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
   );
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+/** The first section stands open; the others (`fold`) are rows that open on a tap. */
+function Section({ title, fold = false, children }: { title: string; fold?: boolean; children: ReactNode }) {
+  if (fold) {
+    return (
+      <Fold title={title}>
+        <div className="px-4 pb-3">{children}</div>
+      </Fold>
+    );
+  }
   return (
     <section className="px-4 pt-4">
       <h2 className="text-big mb-1 pb-1 border-b-2 border-line-strong">{title}</h2>
@@ -290,7 +299,9 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </p>
       </Section>
 
-      <Section title={t("why.numbers")}>
+      <p className="px-4 pt-4 pb-2 text-small font-bold uppercase tracking-wider text-ink-soft">{t("why.moreHead")}</p>
+      <div className="border-t border-line" />
+      <Section fold title={t("why.numbers")}>
         <ul>
           <FactRow fact={facts.income} perYear />
         </ul>
@@ -304,7 +315,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
 
       </div>
       <div className="flex flex-col min-w-0">
-      <Section title={t("why.h.evidence")}>
+      <Section fold title={t("why.h.evidence")}>
         {finding ? (
           <div className="flex gap-2 py-2">
             <FindingIcon titleKey={finding.title} className="w-6 h-6 flex-none" />
@@ -321,7 +332,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
-      <Section title={t("why.h.benefits")}>
+      <Section fold title={t("why.h.benefits")}>
         <ul>
           {benefits.map((f, i) => (
             <FactRow key={i} fact={f} perYear={f.label === "benefit.income"} />
@@ -329,7 +340,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
-      <Section title={t("why.h.unknowns")}>
+      <Section fold title={t("why.h.unknowns")}>
         <ul className="list-disc pl-5 py-1 text-body">
           {unknownsFor(option).map((k) => (
             <li key={k} className="py-0.5">
@@ -339,7 +350,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
-      <Section title={t("why.h.check")}>
+      <Section fold title={t("why.h.check")}>
         <ul className="list-disc pl-5 py-1 text-body">
           {option.why.checkLocally.map((k) => (
             <li key={k} className="py-0.5">

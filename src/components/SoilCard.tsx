@@ -11,7 +11,7 @@ import { SectionTitle } from "./ui";
  * class second, so nobody has to look it up. It says plainly that it is an estimate and that the ranking does
  * not use it. Hidden when the bundle has no soil figures.
  */
-export function SoilCard({ bundle, view }: { bundle: FieldBundle; view: View }) {
+export function SoilCard({ bundle, view, bare = false }: { bundle: FieldBundle; view: View; bare?: boolean }) {
   const t = useT();
   const lang = useLang();
   const [open, setOpen] = useState(false);
@@ -20,13 +20,15 @@ export function SoilCard({ bundle, view }: { bundle: FieldBundle; view: View }) 
   const simple = view === "simple";
   return (
     <section data-testid="soil-card" data-texture={soil.texture}>
-      <SectionTitle>
-        <span className="flex items-center justify-between">
-          {t("soil.title")}
-          <ScaleBadge scale={soil.scale} />
-        </span>
-      </SectionTitle>
-      <div className="px-4 pb-3 bg-surface border-y border-line">
+      {bare ? null : (
+        <SectionTitle>
+          <span className="flex items-center justify-between">
+            {t("soil.title")}
+            <ScaleBadge scale={soil.scale} />
+          </span>
+        </SectionTitle>
+      )}
+      <div className={`px-4 pb-3 bg-surface ${bare ? "" : "border-y border-line"}`}>
         <div className="flex items-start gap-2 pt-3">
           <BareSoilIcon className="w-6 h-6 flex-none mt-0.5" />
           <div className="min-w-0">
@@ -56,10 +58,10 @@ export function SoilCard({ bundle, view }: { bundle: FieldBundle; view: View }) 
           className="tc-tap mt-1 ml-8 flex items-center gap-2 font-bold text-body text-left"
         >
           {open ? t("soil.fewer") : t("soil.figures")}
-          <ChevronIcon className={`w-5 h-5 flex-none text-ink-soft ${open ? "-rotate-90" : "rotate-90"}`} />
+          <ChevronIcon className={`tc-turn w-5 h-5 flex-none text-ink-soft ${open ? "-rotate-90" : "rotate-90"}`} />
         </button>
         {open ? (
-          <ul className="pl-8" data-testid="soil-list">
+          <ul className="tc-reveal pl-8" data-testid="soil-list">
             {soil.figures.map((fact) => {
               const range = rangeText(fact, lang);
               return (
