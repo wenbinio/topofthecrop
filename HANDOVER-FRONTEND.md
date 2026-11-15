@@ -19,7 +19,7 @@ A farmer goes through six steps. Each step is one screen and one route.
 | 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days and October–May rain now and by 2050, the drier-year slider, this season's rain and the forecast (live), 2024 and 2026 against a usual season |
 | 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Check and share": what to check alone for the best fit, who can look at the plan without an adviser, then the link and a one-page printout. The route keeps its old name so shared links still open |
 
-Two more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin) and `/settings` (`Settings.tsx`, the farmer's own prices and support payments).
+Three more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin), `/settings` (`Settings.tsx`, the farmer's own prices and support payments) and `/credits` (`Credits.tsx`, the data credits and the AI note, linked from Check and share).
 
 Routes and their guards are in `src/App.tsx`. A screen that needs field data is wrapped in `BundleGate`, which shows one loading line, a retry on failure, or sends a field outside the basin to `/area`.
 
@@ -166,6 +166,7 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 - **Languages:** `src/i18n/en.ts` and `it.ts` hold every string under the same keys. `useT()` gives a screen its translate function.
 - **Two views:** Standard shows sources and ranges; Simple shows bigger text and fewer figures. Same screens, different theme file and a few `simple` branches.
 - **Crop symbols:** `src/components/Crops.tsx`. Use `CropName` wherever a crop is named.
+- **Sources behind a tap:** a figure shows its value, field-or-area and range; its dataset, resolution, date and confidence open in a bubble (`FactButton` for a tappable figure, `SourceButton` beside a row, both in `src/components/FactParts.tsx`). The bubble closes on a tap outside it or on Escape.
 - **Voice:** `src/voice/`. A push-to-talk microphone and a read-aloud button, using the phone browser's own speech service. `commands.ts` is a pure parser for English and Italian; `apply.ts` turns a command into a state change. Hidden where the browser has no speech support.
 - **Settings in fold-out sections:** `Settings.tsx` is the screen's entry; its parts are in `src/screens/settings/` (`Editor.tsx` puts the sections together, `path.ts` holds `SETTINGS_PATH` for links into it). Settings, Print and Area weather load on demand (`React.lazy` in `App.tsx`). The editor groups the figures into six sections (crop prices, crop costs, crop yields, more durum after a legume, support payments, the farmer's own payments), each behind a header button with a one-line summary. All start closed except a section holding something the farmer changed; which are open is plain component state, not part of the link. Reset, the adviser line and the voice note stay outside the sections.
 - **Sideways phones:** the custom Tailwind variant `phone-land` (landscape, at most 500 px tall and 1000 px wide) rearranges screens into two columns.

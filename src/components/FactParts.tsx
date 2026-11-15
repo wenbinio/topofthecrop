@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Confidence, Fact, Lang, Scale } from "../data/types";
 import { hasKey, useLang, useT } from "../i18n";
@@ -106,27 +106,80 @@ export function LevelMeter({ level, label }: { level: string; label: string }) {
   );
 }
 
-/** One fact, tappable: the value and its badge; tap shows range, source and date. */
-export function FactButton({
-  fact,
-  label,
-  big = false,
-  suffix,
-  showDataset = true,
-}: {
-  fact: Fact;
-  label: string;
-  big?: boolean;
-  suffix?: string;
-  showDataset?: boolean;
-}) {
+/**
+ * Open-or-closed state for a source bubble. It closes on a tap anywhere outside `ref` or on Escape, so a farmer never
+ * has to find a close button.
+ */
+export function useBubble() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (event: PointerEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", away);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", away);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+  return { open, setOpen, ref };
+}
+
+/** The bubble: field or area in words, then range, dataset and resolution (linked) and date, then confidence. */
+export function SourcePanel({ fact, id, align = "start" }: { fact: Fact; id: string; align?: "start" | "end" }) {
+  return (
+    <span
+      id={id}
+      role="note"
+      data-testid="source-bubble"
+      className={`absolute z-30 top-full mt-1 ${align === "end" ? "right-0" : "left-0"} w-64 max-w-[80vw] p-2.5 flex flex-col gap-1 bg-surface text-ink border-2 border-line-strong rounded-sm shadow-lg text-small text-left font-normal normal-case tracking-normal whitespace-normal`}
+    >
+      <ScaleBadge scale={fact.scale} long />
+      <span>
+        <FactDetail fact={fact} />
+      </span>
+      <ConfidenceWord confidence={fact.confidence} />
+    </span>
+  );
+}
+
+/** "Source", beside a figure: opens the bubble. */
+export function SourceButton({ fact, align = "start" }: { fact: Fact; align?: "start" | "end" }) {
+  const t = useT();
+  const { open, setOpen, ref } = useBubble();
+  const id = useId();
+  return (
+    <span ref={ref} className="relative inline-flex">
+      <button
+        type="button"
+        data-testid="source-button"
+        className="py-2 -my-2 text-small font-bold text-ink-soft underline underline-offset-2"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen((o) => !o)}
+      >
+        {t("common.source")}
+      </button>
+      {open ? <SourcePanel fact={fact} id={id} align={align} /> : null}
+    </span>
+  );
+}
+
+/** One fact, tappable: the value and whether it is the field or the area; a tap opens its source bubble. */
+export function FactButton({ fact, label, big = false, suffix }: { fact: Fact; label: string; big?: boolean; suffix?: string }) {
   const t = useT();
   const lang = useLang();
-  const [open, setOpen] = useState(false);
+  const { open, setOpen, ref } = useBubble();
   const id = useId();
   const unit = unitText(fact.unit, t);
   return (
-    <span className="inline-flex flex-col items-start min-w-0">
+    <span ref={ref} className="relative inline-flex flex-col items-start min-w-0">
       <button
         type="button"
         className="text-left min-h-11 flex flex-col justify-center"
@@ -147,14 +200,10 @@ export function FactButton({
         </span>
         <span className="flex flex-wrap items-center gap-x-2 mt-1">
           <ScaleBadge scale={fact.scale} />
-          {showDataset || fact.edited ? <DatasetLabel fact={fact} /> : null}
+          {fact.edited ? <YoursTag /> : null}
         </span>
       </button>
-      {open ? (
-        <span id={id} className="mt-1 text-small text-ink">
-          <FactDetail fact={fact} />
-        </span>
-      ) : null}
+      {open ? <SourcePanel fact={fact} id={id} /> : null}
     </span>
   );
 }
