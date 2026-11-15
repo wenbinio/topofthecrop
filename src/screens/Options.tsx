@@ -9,6 +9,7 @@ import { useAppState, useTo } from "../state/useAppState";
 import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
+import { SoilCard } from "../components/SoilCard";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
 import { CropName, Slotted, stripsNext } from "../components/Crops";
 import { PriorityHelp } from "../components/Term";
@@ -148,6 +149,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
 
       <SectionTitle>{t("options.seen")}</SectionTitle>
       <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
+      <SoilCard bundle={bundle} view={state.view} />
 
       <SectionTitle>
         <span className="flex items-center justify-between">

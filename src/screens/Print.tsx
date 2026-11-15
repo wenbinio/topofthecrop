@@ -11,6 +11,7 @@ import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitTex
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
 import { unknownsFor } from "../data/caveats";
+import { soilSummary } from "../data/soil";
 import { CreditLines } from "../components/DataCredits";
 
 function Block({ title, children }: { title: ReactNode; children: ReactNode }) {
@@ -130,6 +131,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
   });
   const best = ranked[0];
   const link = shareLink("/options", state);
+  const soil = soilSummary(bundle);
   // The best fit in each kind of year (usual, dry, driest), as on Field year.
   const kinds = SCENARIOS.map((scenario) => ({
     scenario,
@@ -196,6 +198,14 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                 <b>{t(f.title)}</b>: <FactText fact={f.fact} /> · {f.fact.source.dataset} {f.fact.source.resolution}. {t(f.detail)}
               </li>
             ))}
+            {soil ? (
+              <li className="py-0.5" data-testid="print-soil">
+                <b>{t("soil.print")}</b>: {t(`soil.weight.${soil.weight}`)} ({t(`soil.texture.${soil.texture}`)})
+                {soil.band && soil.ph ? `; ${t(`soil.ph.${soil.band}`)}, pH ${valueText(soil.ph, t, lang)}` : ""}
+                {soil.measuredPh ? ` (${t("soil.measured")} ${valueText(soil.measuredPh, t, lang)})` : ""} · {soil.figures[0].source.dataset}{" "}
+                {soil.figures[0].source.resolution}. {t("soil.estimate")} {t("soil.notRanked")}
+              </li>
+            ) : null}
           </ul>
         </Block>
 

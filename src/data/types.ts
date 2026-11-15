@@ -122,7 +122,7 @@ export type FieldBundle = {
   };
   options: Option[]; // 3 to 12, exactly one with isCurrent
   economics?: Economics; // prices, yields, costs and support behind the income figures
-  /** The rest of the data team's figures for this field, for the evidence screens. Not shown on a screen yet. */
+  /** The rest of the data team's figures for this field, for the evidence screens. The soil group is shown on Options ("Your soil"); most of the rest is not shown yet. */
   fieldData?: FieldData;
 };
 
