@@ -16,6 +16,10 @@ function Where() {
       <button type="button" onClick={() => navigate(-1)}>
         back
       </button>
+      {/* "Next" on Questions: builds the plan's link from this screen's own copy of the link. */}
+      <button type="button" onClick={() => navigate({ pathname: "/options", search: location.search })}>
+        next
+      </button>
     </>
   );
 }
@@ -38,7 +42,7 @@ describe("carryFigures", () => {
 });
 
 describe("KeepFiguresOnBack", () => {
-  it("going back from Settings keeps the new figures, and a further Back moves on", () => {
+  it("going back from Settings keeps the new figures, and every further Back keeps them too", () => {
     render(
       <MemoryRouter
         initialEntries={["/questions?f=genzano-demo", "/options?f=genzano-demo", "/settings?f=genzano-demo&m=p.durum~400"]}
@@ -55,12 +59,19 @@ describe("KeepFiguresOnBack", () => {
     expect(path).toBe("/options");
     expect(figures(query).get("m")).toBe("p.durum~400");
     fireEvent.click(screen.getByText("back"));
-    expect(screen.getByTestId("where").textContent).toBe("/questions?f=genzano-demo");
+    const [path2, query2] = (screen.getByTestId("where").textContent ?? "").split("?");
+    expect(path2).toBe("/questions");
+    expect(figures(query2).get("m")).toBe("p.durum~400");
+    // Next from the questions builds the plan from that copy: the new price is still there.
+    fireEvent.click(screen.getByText("next"));
+    const [path3, query3] = (screen.getByTestId("where").textContent ?? "").split("?");
+    expect(path3).toBe("/options");
+    expect(figures(query3).get("m")).toBe("p.durum~400");
   });
 
-  it("leaves other Back steps alone", () => {
+  it("leaves a Back to another field alone", () => {
     render(
-      <MemoryRouter initialEntries={["/questions?f=genzano-demo", "/options?f=genzano-demo&m=p.durum~400"]} initialIndex={1}>
+      <MemoryRouter initialEntries={["/questions?f=other-field", "/options?f=genzano-demo&m=p.durum~400"]} initialIndex={1}>
         <KeepFiguresOnBack />
         <Routes>
           <Route path="*" element={<Where />} />
@@ -68,6 +79,19 @@ describe("KeepFiguresOnBack", () => {
       </MemoryRouter>,
     );
     fireEvent.click(screen.getByText("back"));
-    expect(screen.getByTestId("where").textContent).toBe("/questions?f=genzano-demo");
+    expect(screen.getByTestId("where").textContent).toBe("/questions?f=other-field");
+  });
+
+  it("leaves a Back alone when the figures already match", () => {
+    render(
+      <MemoryRouter initialEntries={["/questions?f=genzano-demo&m=p.durum~400", "/options?f=genzano-demo&m=p.durum~400"]} initialIndex={1}>
+        <KeepFiguresOnBack />
+        <Routes>
+          <Route path="*" element={<Where />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByText("back"));
+    expect(screen.getByTestId("where").textContent).toBe("/questions?f=genzano-demo&m=p.durum~400");
   });
 });
