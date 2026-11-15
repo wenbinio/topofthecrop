@@ -6,6 +6,8 @@
 import type { Lang, Series } from "../data/types";
 import { seasonBand } from "../data/field-rules.js";
 import { useLang, useT } from "../i18n";
+import { sourceText } from "../i18n/sources";
+import { unitText } from "./FactParts";
 
 const W = 320;
 const H = 140;
@@ -48,7 +50,7 @@ export function TrendChart({ title, years, series, digits }: { title: string; ye
   const path = (run: Point[]) => run.map((p, i) => `${i ? "L" : "M"}${x(p.year).toFixed(1)} ${y(p.v).toFixed(1)}`).join(" ");
   // The last five seasons drawn again on top in dark ink, broken where a season has no data.
   const recentRuns = runs.map((run) => run.filter((p) => recent.has(p.year))).filter((run) => run.length > 0);
-  const unit = series.unit && series.unit !== "NDVI" ? ` ${series.unit}` : "";
+  const unit = series.unit && series.unit !== "NDVI" ? ` ${unitText(series.unit, t)}` : "";
   const ticks = [x0, ...[2010, 2020].filter((yr) => yr > x0 + 3 && yr < x1 - 3), x1];
   const summary = band
     ? t("trends.summary", {
@@ -154,7 +156,7 @@ export function TrendChart({ title, years, series, digits }: { title: string; ye
           </circle>
         ))}
       </svg>
-      <p className="text-small text-ink-soft font-mono uppercase tracking-wide">{series.source.dataset}</p>
+      <p className="text-small text-ink-soft font-mono uppercase tracking-wide">{sourceText(series.source.dataset, lang)}</p>
     </figure>
   );
 }
