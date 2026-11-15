@@ -21,6 +21,7 @@ import { VoiceProvider } from "./voice/Voice";
 const AreaWeather = lazy(() => import("./screens/AreaWeather"));
 const Print = lazy(() => import("./screens/Print"));
 const Settings = lazy(() => import("./screens/Settings"));
+const Credits = lazy(() => import("./screens/Credits"));
 
 /** While a screen loaded on demand arrives: the same one loading line as the bundle gate. */
 function ScreenLoading() {
@@ -66,7 +67,7 @@ function Shell() {
 
   const isPrint = pathname.startsWith("/print");
   // Settings sits outside the six steps: reachable from any of them, it belongs to none.
-  const isSettings = pathname === SETTINGS_PATH;
+  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits";
 
   return (
     <LangContext.Provider value={state.lang}>
@@ -98,6 +99,7 @@ function Shell() {
             <Route path="/adviser" element={field((b) => <Adviser bundle={b} />)} />
             <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
+            <Route path="/credits" element={<Credits />} />
             <Route path="*" element={<RedirectHome />} />
           </Routes>
           </Suspense>

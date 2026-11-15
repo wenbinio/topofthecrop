@@ -57,7 +57,7 @@ Scripts that rebuild shipped data (each says in its header how to run it):
 **Data honesty**
 - Never show a made-up number as if it were real. A figure nobody has sourced carries `placeholder: true` and the app marks it.
 - `null` in the data means "no data". Show "no data" or leave the part out. Never turn it into 0.
-- Every number on screen is a `Fact` with a source, a resolution and a confidence. Do not add a bare number.
+- Every number on screen is a `Fact` with a source, a resolution and a confidence. Do not add a bare number. On screen the source waits behind a tap (`FactButton`, `SourceButton` in `src/components/FactParts.tsx`); keep it one tap away.
 - Figures for a drawn field come from 1 km squares. They are labelled "For the 1 km area around your field" and carry scale `"area"`, never `"field"`.
 - A range `[low, typical, high]` is the 10th percentile, the median and the 90th percentile. New ranges follow the same rule.
 - Measurements and model output (bare months, hot days, rain, the 2050 outlook, the forecast) are never editable by the farmer. Assumptions behind the income are: see "What the farmer can change".
@@ -140,7 +140,7 @@ Say so if you rely on any of these.
 ## State on 15 November 2026
 
 - Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
-- Also live: "Data and credits" (the licences' credit lines and the AI note) on Check and share and the printout; NASA POWER's three impossible rain months left out of the live rain; the Year screen's card comparing 2024 and 2026 with a usual season (with the demo field's seasons much less green than nearby fields), two more evidence lines on Why (NASA SMAP soil water, NASA MODIS crop water use), the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
+- Also live: fewer words on screen (each figure's dataset, date and confidence in a tap-to-open bubble; Why opens with why it is suggested); "Data and credits" (the licences' credit lines and the AI note) on a page of its own, linked from Check and share, and on the printout; NASA POWER's three impossible rain months left out of the live rain; the Year screen's card comparing 2024 and 2026 with a usual season (with the demo field's seasons much less green than nearby fields), two more evidence lines on Why (NASA SMAP soil water, NASA MODIS crop water use), the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
 - Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
 - Step 6 is "Check and share", for farmers with or without an adviser. It names kinds of people to ask (cooperative, CAA office, regional advisory service, neighbour, agronomist), never a named office or a phone number. Nobody has confirmed with a farmer or a CAA that these are the right places to send each question.
 - Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.

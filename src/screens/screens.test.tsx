@@ -243,22 +243,37 @@ describe("what each slider stop means", () => {
 });
 
 describe("Data and credits", () => {
-  it("Check and share ends with a folded credits list: the Copernicus notice, NASA's datasets and the AI note", async () => {
+  it("Check and share ends with one link to the credits page: the Copernicus notice, NASA's datasets and the AI note", async () => {
     renderAt("/adviser?f=genzano-demo&p=income,water");
-    const credits = await screen.findByTestId("data-credits");
-    expect(credits.tagName).toBe("DETAILS");
-    expect(credits).not.toHaveAttribute("open");
-    expect(within(credits).getByText("Data and credits")).toBeInTheDocument();
-    expect(credits).toHaveTextContent("Contains modified Copernicus Climate Change Service information 2026 (ERA5-Land).");
-    expect(credits).toHaveTextContent("SMAP soil water");
-    expect(within(credits).getByTestId("ai-note")).toHaveTextContent("The app's code and the data notebooks were written with AI tools, mainly Claude (Anthropic)");
-    expect(within(credits).getByRole("link", { name: /DATA_SOURCES\.md/ })).toHaveAttribute("href", expect.stringContaining("DATA_SOURCES.md"));
+    const link = await screen.findByTestId("credits-link");
+    expect(link).toHaveTextContent("Data and credits");
+    expect(screen.queryByTestId("credit-lines")).toBeNull();
+    fireEvent.click(link);
+    const page = await screen.findByTestId("credits-page");
+    expect(page).toHaveTextContent("Contains modified Copernicus Climate Change Service information 2026 (ERA5-Land).");
+    expect(page).toHaveTextContent("SMAP soil water");
+    expect(within(page).getByTestId("ai-note")).toHaveTextContent("The app's code and the data notebooks were written with AI tools, mainly Claude (Anthropic)");
+    expect(within(page).getByRole("link", { name: /DATA_SOURCES\.md/ })).toHaveAttribute("href", expect.stringContaining("DATA_SOURCES.md"));
   });
 
   it("the printout carries the same credits", async () => {
     renderAt("/print?f=genzano-demo&p=income,water");
     expect(await screen.findByTestId("credit-lines")).toHaveTextContent("ISRIC");
     expect(screen.getByTestId("ai-note")).toBeInTheDocument();
+  });
+});
+
+describe("Why: the reasons first, sources one tap away", () => {
+  it("opens with why it is suggested, before the numbers, and shows no dataset until a Source is tapped", async () => {
+    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+    const reasons = await screen.findByRole("heading", { name: "Why suggested" });
+    const numbers = screen.getByRole("heading", { name: "Over three harvests" });
+    expect(reasons.compareDocumentPosition(numbers) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const evidence = screen.getByRole("heading", { name: "Evidence" }).closest("section")!;
+    // The fixture's hot days come from NASA POWER: hidden until the first Source is tapped.
+    expect(within(evidence).queryByText(/NASA POWER/)).toBeNull();
+    fireEvent.click(within(evidence).getAllByRole("button", { name: "Source" })[0]);
+    expect(within(evidence).getByTestId("source-bubble")).toHaveTextContent("NASA POWER");
   });
 });
 

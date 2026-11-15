@@ -347,6 +347,7 @@ export const en = {
   "money.total": "Total",
   "money.perYear": "Per year",
   "money.working": "Income calculation",
+  "money.keyHead": "What the columns mean",
   "money.change": "Edit prices, support",
   "print.money": "Prices, support used",
   "print.on": "on",
