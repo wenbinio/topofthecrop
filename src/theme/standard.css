@@ -1,25 +1,28 @@
 /*
- * Standard view: data visible, satellite first.
+ * Standard view: warm paper, serif headings, rounded cards (the storyboard look).
  * Every colour, font, radius and shadow in the app comes from these variables.
  * simple.css defines the same names; a restyle only edits these two files.
  */
 :root,
 [data-view="standard"] {
   /* surfaces */
-  --tc-paper: #f4f2ec;
-  --tc-surface: #ffffff;
-  --tc-sunk: #e9e6dc;
-  --tc-line: #cfcbbf;
-  --tc-line-strong: #1d2a22;
+  --tc-paper: #f4eee2;
+  --tc-surface: #fffcf6;
+  --tc-sunk: #ece4d6;
+  --tc-line: #ddd3c2;
+  --tc-line-strong: #1f3a2b;
 
   /* text */
-  --tc-ink: #16201a;
-  --tc-ink-soft: #46514a;
+  --tc-ink: #1c2620;
+  --tc-ink-soft: #545e55;
 
   /* actions and tags */
   --tc-primary: #1f3a2b;
   --tc-on-primary: #f7f5ef;
   --tc-best: #e0b43c;
+  /* wheat-gold text on paper (4.6:1) and the soft band behind the "how sure" note */
+  --tc-wheat-ink: #7d5b14;
+  --tc-note: #f3e8cf;
   --tc-on-best: #16201a;
   --tc-warn: #9c3b12;
   --tc-on-warn: #ffffff;
@@ -42,19 +45,19 @@
 
   /* type */
   --tc-font-body: "Atkinson Hyperlegible Next", "Verdana", sans-serif;
-  --tc-font-display: "Atkinson Hyperlegible Next", "Verdana", sans-serif;
+  --tc-font-display: "Fraunces", "Georgia", serif;
   --tc-font-mono: "IBM Plex Mono", "Courier New", monospace;
   --tc-text-small: 0.8125rem;
-  --tc-text-body: 1rem;
+  --tc-text-body: 1.0625rem;
   --tc-text-big: 1.1875rem;
-  --tc-text-head: 1.375rem;
+  --tc-text-head: 1.75rem;
   --tc-text-hero: 2rem;
-  --tc-weight-head: 700;
+  --tc-weight-head: 600;
 
   /* shape */
-  --tc-radius-sm: 3px;
-  --tc-radius: 6px;
-  --tc-radius-sheet: 12px;
+  --tc-radius-sm: 6px;
+  --tc-radius: 12px;
+  --tc-radius-sheet: 16px;
   --tc-shadow-float: 0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
   --tc-shadow-sheet: 0 -2px 12px rgba(0, 0, 0, 0.18);
 

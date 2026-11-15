@@ -30,15 +30,17 @@ export function LinkButton({
   to,
   look = "primary",
   className = "",
+  testId,
   children,
 }: {
   to: { pathname: string; search: string };
   look?: Look;
   className?: string;
+  testId?: string;
   children: ReactNode;
 }) {
   return (
-    <Link to={to} className={`${base} ${looks[look]} ${className}`}>
+    <Link to={to} data-testid={testId} className={`${base} ${looks[look]} ${className}`}>
       {children}
     </Link>
   );

@@ -28,6 +28,8 @@
   --color-primary: var(--tc-primary);
   --color-on-primary: var(--tc-on-primary);
   --color-best: var(--tc-best);
+  --color-wheat-ink: var(--tc-wheat-ink);
+  --color-note: var(--tc-note);
   --color-on-best: var(--tc-on-best);
   --color-warn: var(--tc-warn);
   --color-on-warn: var(--tc-on-warn);
@@ -75,11 +77,15 @@
     margin: 0;
     min-height: 100dvh;
   }
-  h1,
-  h2,
-  h3 {
+  /* Only a screen's headline is in the serif; section titles stay in the plain, very legible body face. */
+  h1 {
     font-family: var(--tc-font-display);
     font-weight: var(--tc-weight-head);
+  }
+  h2,
+  h3 {
+    font-family: var(--tc-font-body);
+    font-weight: 700;
   }
   button,
   a,
@@ -297,4 +303,10 @@ summary {
 .maplibregl-map .maplibregl-ctrl-group button {
   width: 44px;
   height: 44px;
+}
+
+/* Botanical plates (CropPlate): the paper is transparent and the edges are feathered in the files themselves,
+   so a painting sits straight on the page with no box around it. */
+.tc-plate {
+  background: transparent;
 }

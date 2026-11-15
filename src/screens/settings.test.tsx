@@ -62,6 +62,17 @@ function incomeOf(id: string): string {
   return label.replace(/^Yearly income \(gross margin\): /, "").split(" ")[0];
 }
 
+/** The Why page's "Over three harvests" fold: the income figure and the money table behind it. */
+function whyNumbers(): HTMLElement {
+  return screen.getByTestId("money-working").closest("section")!;
+}
+
+/** The per-year total in the Why page's money table (the best option's income, now that it has no row). */
+function perYearOnWhy(): string {
+  const cell = within(screen.getByTestId("money-working")).getByText("Per year").closest("tr")!.lastElementChild!;
+  return cell.textContent ?? "";
+}
+
 const SETTINGS = "/settings?f=genzano-demo&p=income,water";
 
 const PRICES = /^Crop prices/;
@@ -154,16 +165,16 @@ describe("Settings", () => {
     await screen.findAllByTestId("option-row");
     expect(incomeOf("durum-durum-durum")).toBe("835");
     expect(within(row("durum-durum-durum")).getByTestId("tag-yours")).toBeInTheDocument();
-    expect(within(screen.getByTestId("money-row")).getByTestId("tag-yours")).toBeInTheDocument();
   });
 
   it("(c) switching off the rotation eco-scheme takes chickpea from 753 to 643", async () => {
-    renderAt("/options?f=genzano-demo&p=income,water");
-    await screen.findAllByTestId("option-row");
-    expect(incomeOf("chickpea-durum-durum")).toBe("753");
-    expect(within(screen.getByTestId("money-row")).queryByTestId("tag-yours")).toBeNull();
+    // Chickpea is the advice, so its income is on its Why page rather than in a row.
+    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+    await screen.findByTestId("money-working");
+    expect(perYearOnWhy()).toBe("753");
+    expect(within(whyNumbers()).queryByTestId("tag-yours")).toBeNull();
 
-    fireEvent.click(screen.getByTestId("money-row"));
+    fireEvent.click(screen.getByTestId("money-change"));
     await openSection(SUPPORT);
     const eco = await screen.findByRole("checkbox", { name: "Eco-scheme: rotation with legumes or forage" });
     act(() => {
@@ -173,9 +184,14 @@ describe("Settings", () => {
     expect(screen.getByRole("textbox", { name: "Eco-scheme: rotation with legumes or forage: amount" })).toBeDisabled();
 
     fireEvent.click(screen.getByRole("link", { name: "Back" }));
-    await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+    await waitFor(() => expect(lastPath.startsWith("/why/chickpea-durum-durum?")).toBe(true));
+    await screen.findByTestId("money-working");
+    expect(perYearOnWhy()).toBe("643");
+    expect(within(whyNumbers()).getAllByTestId("tag-yours").length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByTestId("tab-advice"));
     await screen.findAllByTestId("option-row");
-    expect(incomeOf("chickpea-durum-durum")).toBe("643");
+    expect(screen.getByTestId("recommendation")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     expect(incomeOf("durum-durum-durum")).toBe("595");
     expect(within(row("durum-durum-durum")).queryByTestId("tag-yours")).toBeNull();
   });
@@ -230,18 +246,26 @@ describe("Settings", () => {
     stubBundleFetch(bare);
     const { unmount } = renderAt("/options?f=genzano-demo&p=income,water");
     const rows = await screen.findAllByTestId("option-row");
-    expect(rows).toHaveLength(4);
-    for (const option of fixture.options) expect(incomeOf(option.id)).toBe(String(option.facts.income.value));
-    expect(screen.queryByTestId("money-row")).toBeNull();
+    expect(rows).toHaveLength(3);
+    expect(screen.getByTestId("recommendation")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    for (const option of fixture.options.filter((o) => o.id !== "chickpea-durum-durum")) {
+      expect(incomeOf(option.id)).toBe(String(option.facts.income.value));
+    }
     expect(screen.queryAllByTestId("tag-yours")).toHaveLength(0);
     unmount();
+
+    // The advice's Why page has its income figure but no money table to work it out.
+    const why = renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+    await screen.findByTestId("why-years");
+    expect(screen.queryByTestId("money-working")).toBeNull();
+    why.unmount();
 
     renderAt(SETTINGS);
     expect(await screen.findByTestId("settings-nothing")).toBeInTheDocument();
     expect(screen.queryAllByRole("textbox")).toHaveLength(0);
   });
 
-  it("(h) the gear is on every route and keeps the query string", async () => {
+  it("(h) the gear is in the More menu on every route and keeps the query string", async () => {
     const routes = [
       "/?g=it",
       "/questions?f=genzano-demo&g=it",
@@ -254,7 +278,9 @@ describe("Settings", () => {
     ];
     for (const route of routes) {
       const { unmount } = renderAt(route);
-      const gear = await screen.findByRole("link", { name: "Prezzi e aiuti" });
+      fireEvent.click(await screen.findByTestId("more"));
+      const gear = within(screen.getByTestId("more-menu")).getByRole("link", { name: "Prezzi e aiuti" });
+      expect(gear).toHaveAttribute("data-testid", "gear");
       const href = gear.getAttribute("href") ?? "";
       expect(href.startsWith("/settings?"), route).toBe(true);
       expect(href, route).toContain("g=it");
@@ -433,10 +459,13 @@ describe("Settings", () => {
       fireEvent.click(screen.getByRole("link", { name: "Back" }));
       await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
       await screen.findAllByTestId("option-row");
-      expect(incomeOf("chickpea-durum-durum")).toBe("783");
-      expect(within(row("chickpea-durum-durum")).getByTestId("tag-yours")).toBeInTheDocument();
       expect(incomeOf("durum-durum-durum")).toBe("595");
       expect(within(row("durum-durum-durum")).queryByTestId("tag-yours")).toBeNull();
+      // Chickpea, the advice, shows its new income on its Why page.
+      fireEvent.click(screen.getByTestId("branch-why"));
+      await screen.findByTestId("money-working");
+      expect(perYearOnWhy()).toBe("783");
+      expect(within(whyNumbers()).getAllByTestId("tag-yours").length).toBeGreaterThan(0);
     });
 
     it("unchosen crops fall back to Every year, and an empty name keeps Add disabled", async () => {

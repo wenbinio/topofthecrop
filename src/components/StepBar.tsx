@@ -1,38 +1,22 @@
 import { Link } from "react-router-dom";
 import { useT } from "../i18n";
-import { rankOptions } from "../ranking/rank";
-import { useAppState, useTo } from "../state/useAppState";
-import { useBundle } from "./BundleProvider";
+import { useTo } from "../state/useAppState";
 
-/** Which of the six steps a route belongs to. */
+/** The setup is three steps: find the field, answer three questions, get the plan. Everything after lives in the tabs. */
+export const STEPS = 3;
+
+/** Which of the three setup steps a route belongs to. */
 export function stepOf(pathname: string): number {
   if (pathname.startsWith("/questions")) return 2;
-  if (pathname.startsWith("/options")) return 3;
-  if (pathname.startsWith("/why")) return 4;
-  if (pathname.startsWith("/year")) return 5;
-  if (pathname.startsWith("/adviser")) return 6;
-  return 1;
+  if (pathname === "/" || pathname.startsWith("/area")) return 1;
+  return 3;
 }
 
 export function StepBar({ pathname }: { pathname: string }) {
   const t = useT();
   const to = useTo();
-  const [state] = useAppState();
-  const bundle = useBundle();
   const current = stepOf(pathname);
-
-  let whyPath = "/options";
-  if (bundle.status === "ready") {
-    const { ranked } = rankOptions({
-      options: bundle.bundle.options,
-      limits: state.limits,
-      priorities: state.priorities,
-        lastCrop: state.lastCrop,
-    intercrops: state.intercrops,
-    });
-    if (ranked[0]) whyPath = `/why/${ranked[0].option.id}`;
-  }
-  const paths = ["/", "/questions", "/options", whyPath, "/year", "/adviser"];
+  const paths = ["/", "/questions", "/options"];
 
   return (
     <nav aria-label={t("step.label", { n: current })} data-testid="step-bar"
@@ -55,12 +39,11 @@ export function StepBar({ pathname }: { pathname: string }) {
             >
               {n}
             </span>
-            {/* On a narrow phone the step's name shortens with "…" rather than push the bar off the screen. */}
-            {isCurrent ? <span className="font-bold text-body truncate">{t(`step.${n}`)}</span> : null}
+            {/* On a narrow phone only the current step keeps its name; the others show their number. */}
+            <span className={`text-body truncate ${isCurrent ? "font-bold" : "text-ink-soft hidden min-[440px]:inline"}`}>{t(`step.${n}`)}</span>
           </>
         );
-        // Under 380 px the other steps lose a little side padding, so the current step's name still fits.
-        const cls = `min-h-11 flex items-center gap-1.5 ${isCurrent ? "flex-auto min-w-0 px-1" : "flex-none px-1 min-[380px]:px-1.5"}`;
+        const cls = `min-h-11 min-w-0 flex items-center gap-1.5 px-1 ${isCurrent ? "flex-auto" : "flex-none min-[440px]:flex-1"}`;
         if (reachable) {
           return (
             <Link key={n} to={to(path)} className={cls} aria-label={`${n}. ${t(`step.${n}`)}`}>

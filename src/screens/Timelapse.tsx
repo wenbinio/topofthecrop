@@ -60,7 +60,7 @@ export default function Timelapse({ bundle }: { bundle: FieldBundle }) {
         )}
       </div>
       <BottomBar>
-        <BackButton to={to("/year")} />
+        <BackButton to={to("/today")} />
       </BottomBar>
     </div>
   );

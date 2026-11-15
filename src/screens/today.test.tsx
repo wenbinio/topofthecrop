@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import { AppRoutes } from "../App";
 import type { SavedPlan } from "../state/plan";
-import { PLAN_STORAGE_KEY, dayStamp, monthIndex, planChange, planKey, readPlan, writePlan } from "../state/plan";
+import { PLAN_STORAGE_KEY, dayStamp, monthIndex, planChange, planKey, readPlan, readPlans, recordPlan, writePlan } from "../state/plan";
 import { decodeState } from "../state/url";
 
 vi.mock("../components/Map", () => ({
@@ -181,10 +181,25 @@ describe("Your field today", () => {
 });
 
 describe("coming back", () => {
-  it("the last step leads to the field's day", async () => {
+  it("the plan's Keep this plan leads to the field's day", async () => {
+    renderAt(`/options?${QUERY}`);
+    const keep = await screen.findByRole("link", { name: "Keep this plan" });
+    expect(keep).toHaveAttribute("href", `/today?${QUERY}`);
+    fireEvent.click(keep);
+    expect(await screen.findByTestId("plan-change")).toHaveAttribute("data-change", "first");
+  });
+
+  it("the My field tab leads to the field's day from sharing too", async () => {
     renderAt(`/adviser?${QUERY}`);
-    const link = await screen.findByRole("link", { name: "My field today" });
-    expect(link).toHaveAttribute("href", expect.stringContaining("/today?f=genzano-demo"));
+    const tab = await screen.findByTestId("tab-field");
+    expect(tab).toHaveTextContent("My field");
+    expect(tab).toHaveAttribute("href", `/today?${QUERY}`);
+  });
+
+  it("links to the field from space", async () => {
+    renderAt(`/today?${QUERY}`);
+    expect(await screen.findByTestId("timelapse-link")).toHaveAttribute("href", `/timelapse?${QUERY}`);
+    expect(screen.getByTestId("tab-field")).toHaveAttribute("aria-current", "page");
   });
 
   it("the first screen offers the way back when a plan is kept, and can start afresh", async () => {
@@ -202,5 +217,35 @@ describe("coming back", () => {
     renderAt("/");
     await screen.findByTestId("find-field");
     expect(screen.queryByTestId("welcome-back")).toBeNull();
+  });
+});
+
+describe("My plans", () => {
+  it("keeping a plan puts it on the list, newest first, marked as the current answers; Open reopens it; Remove takes it off", async () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    renderAt("/today?f=genzano-demo&p=income,water");
+    await screen.findByTestId("today-todo");
+    cleanup();
+    renderAt("/plans?f=genzano-demo&p=income,water");
+    const list = await screen.findByTestId("plans-list");
+    const records = within(list).getAllByTestId("plan-record");
+    expect(records).toHaveLength(1);
+    expect(records[0]).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    expect(within(records[0]).getByTestId("plan-current")).toHaveTextContent("Your current answers");
+    expect(within(records[0]).getByTestId("plan-open")).toHaveAttribute("href", expect.stringContaining("/options?"));
+    fireEvent.click(within(records[0]).getByTestId("plan-remove"));
+    expect(await screen.findByTestId("plans-empty")).toHaveTextContent("No plans kept yet");
+    expect(readPlans()).toEqual([]);
+  });
+
+  it("the same answers kept twice stay one plan, with the newer date", () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    recordPlan({ query: "f=a", key: "k1", bestId: "x", field: "A", savedAt: "2026-11-01" });
+    recordPlan({ query: "f=b", key: "k2", bestId: "y", field: "B", savedAt: "2026-11-02" });
+    recordPlan({ query: "f=a", key: "k1", bestId: "z", field: "A", savedAt: "2026-11-03" });
+    expect(readPlans().map((p) => [p.key, p.savedAt, p.bestId])).toEqual([
+      ["k1", "2026-11-03", "z"],
+      ["k2", "2026-11-02", "y"],
+    ]);
   });
 });

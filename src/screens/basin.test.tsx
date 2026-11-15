@@ -82,7 +82,7 @@ describe("a drawn field", () => {
     expect(screen.queryByTestId("area-note")).toBeNull();
   });
 
-  it("inside the basin, Done leads to Questions and on to Options with a headline and the 1 km line", async () => {
+  it("inside the basin, Done leads to Questions and on to Options with a headline and the 1 km line, and Why to the findings", async () => {
     stubFetch();
     renderAt("/");
     fireEvent.click(await screen.findByRole("button", { name: "Draw your field" }));
@@ -97,9 +97,12 @@ describe("a drawn field", () => {
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent(/^Plant .+ next$|Keep durum/);
     expect(screen.getByTestId("area-note")).toHaveTextContent("For the 1 km area around your field");
     expect(screen.queryByTestId("farmland-note")).toBeNull();
-    expect(within(screen.getByTestId("findings")).getAllByRole("listitem")).toHaveLength(3);
-    // The step bar's Field step goes back to Find field, keeping the outline.
-    fireEvent.click(screen.getByRole("link", { name: "1. Field" }));
+    // What we see sits on the plan screen, folded.
+    const seen = await screen.findByTestId("fold-seen");
+    expect(within(seen).getAllByRole("listitem", { hidden: true })).toHaveLength(3);
+    // Change my answers, then the step bar's Field step goes back to Find field, keeping the outline.
+    fireEvent.click(await screen.findByTestId("change-answers"));
+    fireEvent.click(await screen.findByRole("link", { name: "1. Field" }));
     await waitFor(() => expect(lastPath.startsWith("/?")).toBe(true));
     expect(lastPath).toContain("o=");
   }, 20000);
@@ -119,7 +122,7 @@ describe("a drawn field", () => {
     const o = `o=${ring(MATERA)}&p=income,water`;
     const first = renderAt(`/options?${o}`);
     const headline = (await screen.findByTestId("rec-headline", {}, { timeout: 10000 })).textContent;
-    const findings = screen.getByTestId("findings").textContent;
+    const others = screen.getByTestId("option-list").textContent;
     expect(screen.getByTestId("farmland-note")).toHaveTextContent("Part of this outline isn't farmland.");
     first.unmount();
     // A fresh load of the same link.
@@ -129,19 +132,25 @@ describe("a drawn field", () => {
     cleanup();
     renderAt(`/options?${o}`);
     expect((await screen.findByTestId("rec-headline", {}, { timeout: 10000 })).textContent).toBe(headline);
-    expect(screen.getByTestId("findings").textContent).toBe(findings);
+    expect(screen.getByTestId("option-list").textContent).toBe(others);
     cleanup();
 
     renderAt(`/year?${o}`);
     expect(await screen.findByTestId("hot-normal", {}, { timeout: 10000 })).toBeInTheDocument();
     expect(screen.getByTestId("area-note")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("link", { name: "Back" }));
-    await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+    fireEvent.click(screen.getByTestId("year-back"));
+    await waitFor(() => expect(lastPath.startsWith("/why/")).toBe(true));
     expect(lastPath).toContain("o=");
     cleanup();
 
+    renderAt(`/options?${o}`);
+    const findings = await screen.findByTestId("fold-seen", {}, { timeout: 10000 });
+    expect(within(findings).getAllByRole("listitem", { hidden: true }).length).toBeGreaterThan(0);
+    cleanup();
+
     renderAt(`/why/chickpea-durum-durum?${o}`);
-    const unknowns = await screen.findByRole("heading", { name: "What we don't know" }, { timeout: 10000 });
+    await screen.findByTestId("why-years", {}, { timeout: 10000 });
+    const unknowns = screen.getByRole("heading", { name: "What we don't know" });
     const list = unknowns.parentElement!;
     expect(list).toHaveTextContent("estimates for a 1 km area");
     expect(list).toHaveTextContent("hot days are likely undercounted");
@@ -177,7 +186,7 @@ describe("a drawn field", () => {
     stubFetch();
     renderAt("/");
     await waitFor(() => expect(map.basinOutline?.type).toBe("FeatureCollection"));
-    expect(screen.getByText("Full results are for fields inside the white line")).toBeInTheDocument();
+    expect(screen.getByText("Full advice is for fields in the Bradano valley, inside the white line.")).toBeInTheDocument();
   });
 });
 

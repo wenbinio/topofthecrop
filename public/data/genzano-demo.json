@@ -37,7 +37,7 @@
           "asOf": "2026-11"
         },
         "costs": {
-          "value": 685,
+          "value": 675,
           "unit": "€/ha",
           "range": [
             600,
@@ -45,9 +45,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
+            "dataset": "ISMEA cost survey 2025: durum in Puglia, Sicily and Basilicata",
             "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "url": "https://agronotizie.imagelinenetwork.com/agricoltura-economia-politica/2025/12/31/frumento-duro-produzione-piu-competitiva-al-centro-che-al-sud/88636"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -90,17 +90,17 @@
           "asOf": "2026-11"
         },
         "costs": {
-          "value": 540,
+          "value": 600,
           "unit": "€/ha",
           "range": [
             480,
-            750
+            800
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
+            "dataset": "Worked out from Lago-Olveira et al. 2023 (Puglia) and ISMEA 2025",
             "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#costs-and-nitrogen-the-sources"
           },
           "confidence": "low",
           "placeholder": false,
@@ -1600,11 +1600,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 728,
+          "value": 715,
           "unit": "€/ha",
           "range": [
-            370,
-            1130
+            360,
+            1120
           ],
           "scale": "area",
           "source": {
@@ -1639,9 +1639,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "Giambalvo et al. 2004 (Sicily) and Preissel et al. 2015 (Europe)",
+            "resolution": "one trial, one review",
+            "url": "https://om.ciheam.org/article.php?IDPDF=4600059"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -1664,19 +1664,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.728,
+          "income": 0.715,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.643,
+          "income": 0.632,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.522,
+          "income": 0.512,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
@@ -1828,9 +1828,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "Giambalvo et al. 2004 (Sicily) and Preissel et al. 2015 (Europe)",
+              "resolution": "one trial, one review",
+              "url": "https://om.ciheam.org/article.php?IDPDF=4600059"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -1838,11 +1838,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 728,
+            "value": 715,
             "unit": "€/ha",
             "range": [
-              370,
-              1130
+              360,
+              1120
             ],
             "scale": "area",
             "source": {
@@ -1879,11 +1879,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 466,
+          "value": 469,
           "unit": "€/ha",
           "range": [
-            220,
-            740
+            230,
+            750
           ],
           "scale": "area",
           "source": {
@@ -1918,9 +1918,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "Tedone et al. 2023: faba bean before durum, southern Italy",
+            "resolution": "one long-term trial",
+            "url": "https://doi.org/10.3390/agronomy13010105"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -1943,19 +1943,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.466,
+          "income": 0.469,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "drier": {
-          "income": 0.396,
+          "income": 0.399,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "much-drier": {
-          "income": 0.303,
+          "income": 0.305,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
@@ -2106,9 +2106,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "Tedone et al. 2023: faba bean before durum, southern Italy",
+              "resolution": "one long-term trial",
+              "url": "https://doi.org/10.3390/agronomy13010105"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -2116,11 +2116,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 466,
+            "value": 469,
             "unit": "€/ha",
             "range": [
-              220,
-              740
+              230,
+              750
             ],
             "scale": "area",
             "source": {
@@ -2157,11 +2157,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 470,
+          "value": 476,
           "unit": "€/ha",
           "range": [
             200,
-            760
+            770
           ],
           "scale": "area",
           "source": {
@@ -2196,9 +2196,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "GRDC 2018: soil nitrogen after legumes in 16 dryland trials",
+            "resolution": "eastern Australia",
+            "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -2221,19 +2221,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.47,
+          "income": 0.476,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.95
         },
         "drier": {
-          "income": 0.415,
+          "income": 0.42,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.95
         },
         "much-drier": {
-          "income": 0.337,
+          "income": 0.341,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.95
@@ -2387,9 +2387,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "GRDC 2018: soil nitrogen after legumes in 16 dryland trials",
+              "resolution": "eastern Australia",
+              "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -2397,11 +2397,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 470,
+            "value": 476,
             "unit": "€/ha",
             "range": [
               200,
-              760
+              770
             ],
             "scale": "area",
             "source": {
@@ -2438,11 +2438,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 547,
+          "value": 557,
           "unit": "€/ha",
           "range": [
-            260,
-            840
+            270,
+            850
           ],
           "scale": "area",
           "source": {
@@ -2473,9 +2473,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+            "resolution": "eastern Australia",
+            "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
           },
           "confidence": "fair",
           "label": "fact.nitrogen",
@@ -2498,19 +2498,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.547,
+          "income": 0.557,
           "water": 0.55,
           "soil": 0.2,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.465,
+          "income": 0.473,
           "water": 0.55,
           "soil": 0.2,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.356,
+          "income": 0.362,
           "water": 0.55,
           "soil": 0.2,
           "forage": 0.05
@@ -2655,9 +2655,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+              "resolution": "eastern Australia",
+              "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
             },
             "confidence": "fair",
             "label": "benefit.nitrogen",
@@ -2665,11 +2665,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 547,
+            "value": 557,
             "unit": "€/ha",
             "range": [
-              260,
-              840
+              270,
+              850
             ],
             "scale": "area",
             "source": {
@@ -2705,10 +2705,10 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 596,
+          "value": 603,
           "unit": "€/ha",
           "range": [
-            270,
+            280,
             1000
           ],
           "scale": "area",
@@ -2744,9 +2744,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "GRDC 2018: soil nitrogen after legumes in 16 dryland trials",
+            "resolution": "eastern Australia",
+            "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -2769,19 +2769,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.596,
+          "income": 0.603,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.526,
+          "income": 0.533,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.427,
+          "income": 0.432,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
@@ -2933,9 +2933,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "GRDC 2018: soil nitrogen after legumes in 16 dryland trials",
+              "resolution": "eastern Australia",
+              "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -2943,10 +2943,10 @@
             "asOf": "2026-11"
           },
           {
-            "value": 596,
+            "value": 603,
             "unit": "€/ha",
             "range": [
-              270,
+              280,
               1000
             ],
             "scale": "area",
@@ -2983,10 +2983,10 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 522,
+          "value": 529,
           "unit": "€/ha",
           "range": [
-            220,
+            230,
             790
           ],
           "scale": "area",
@@ -3022,9 +3022,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "Preissel et al. 2015: legumes before cereals in Europe",
+            "resolution": "review of 29 trials",
+            "url": "https://doi.org/10.1016/j.fcr.2015.01.012"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3047,19 +3047,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.522,
+          "income": 0.529,
           "water": 0.55,
           "soil": 0.633,
           "forage": 0.3
         },
         "drier": {
-          "income": 0.444,
+          "income": 0.45,
           "water": 0.55,
           "soil": 0.633,
           "forage": 0.3
         },
         "much-drier": {
-          "income": 0.339,
+          "income": 0.344,
           "water": 0.55,
           "soil": 0.633,
           "forage": 0.3
@@ -3211,9 +3211,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "Preissel et al. 2015: legumes before cereals in Europe",
+              "resolution": "review of 29 trials",
+              "url": "https://doi.org/10.1016/j.fcr.2015.01.012"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -3221,10 +3221,10 @@
             "asOf": "2026-11"
           },
           {
-            "value": 522,
+            "value": 529,
             "unit": "€/ha",
             "range": [
-              220,
+              230,
               790
             ],
             "scale": "area",
@@ -3262,11 +3262,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 446,
+          "value": 453,
           "unit": "€/ha",
           "range": [
-            190,
-            700
+            200,
+            710
           ],
           "scale": "area",
           "source": {
@@ -3297,9 +3297,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+            "resolution": "eastern Australia",
+            "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3322,19 +3322,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.446,
+          "income": 0.453,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.394,
+          "income": 0.4,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.32,
+          "income": 0.325,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
@@ -3479,9 +3479,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+              "resolution": "eastern Australia",
+              "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -3489,11 +3489,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 446,
+            "value": 453,
             "unit": "€/ha",
             "range": [
-              190,
-              700
+              200,
+              710
             ],
             "scale": "area",
             "source": {
@@ -3529,7 +3529,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 588,
+          "value": 595,
           "unit": "€/ha",
           "range": [
             230,
@@ -3564,9 +3564,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+            "resolution": "eastern Australia",
+            "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3589,19 +3589,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.588,
+          "income": 0.595,
           "water": 0.55,
           "soil": 0.3,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.5,
+          "income": 0.506,
           "water": 0.55,
           "soil": 0.3,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.382,
+          "income": 0.387,
           "water": 0.55,
           "soil": 0.3,
           "forage": 0.05
@@ -3749,9 +3749,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+              "resolution": "eastern Australia",
+              "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -3759,7 +3759,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 588,
+            "value": 595,
             "unit": "€/ha",
             "range": [
               230,
@@ -3800,11 +3800,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 547,
+          "value": 554,
           "unit": "€/ha",
           "range": [
-            220,
-            870
+            230,
+            880
           ],
           "scale": "area",
           "source": {
@@ -3835,9 +3835,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+            "resolution": "eastern Australia",
+            "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3860,19 +3860,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.547,
+          "income": 0.554,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.483,
+          "income": 0.489,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.392,
+          "income": 0.397,
           "water": 0.667,
           "soil": 0.3,
           "forage": 0.05
@@ -4020,9 +4020,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "GRDC 2018: no extra nitrogen after wheat, barley or canola",
+              "resolution": "eastern Australia",
+              "url": "https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -4030,11 +4030,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 547,
+            "value": 554,
             "unit": "€/ha",
             "range": [
-              220,
-              870
+              230,
+              880
             ],
             "scale": "area",
             "source": {
@@ -4076,11 +4076,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 692,
+          "value": 667,
           "unit": "€/ha",
           "range": [
-            320,
-            1130
+            300,
+            1110
           ],
           "scale": "area",
           "source": {
@@ -4115,9 +4115,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "Giambalvo et al. 2004 (Sicily) and Preissel et al. 2015 (Europe)",
+            "resolution": "one trial, one review",
+            "url": "https://om.ciheam.org/article.php?IDPDF=4600059"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -4140,19 +4140,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.692,
+          "income": 0.667,
           "water": 0.725,
           "soil": 0.7,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.623,
+          "income": 0.6,
           "water": 0.725,
           "soil": 0.7,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.519,
+          "income": 0.5,
           "water": 0.725,
           "soil": 0.7,
           "forage": 0.05
@@ -4304,9 +4304,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "Giambalvo et al. 2004 (Sicily) and Preissel et al. 2015 (Europe)",
+              "resolution": "one trial, one review",
+              "url": "https://om.ciheam.org/article.php?IDPDF=4600059"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -4314,11 +4314,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 692,
+            "value": 667,
             "unit": "€/ha",
             "range": [
-              320,
-              1130
+              300,
+              1110
             ],
             "scale": "area",
             "source": {
@@ -4366,7 +4366,7 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 465,
+          "value": 470,
           "unit": "€/ha",
           "range": [
             210,
@@ -4405,9 +4405,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Our crop research notes, 14 Nov 2026",
-            "resolution": "southern Italy",
-            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+            "dataset": "Tedone et al. 2023: faba bean before durum, southern Italy",
+            "resolution": "one long-term trial",
+            "url": "https://doi.org/10.3390/agronomy13010105"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -4430,19 +4430,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.465,
+          "income": 0.47,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "drier": {
-          "income": 0.395,
+          "income": 0.399,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "much-drier": {
-          "income": 0.302,
+          "income": 0.306,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
@@ -4593,9 +4593,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Our crop research notes, 14 Nov 2026",
-              "resolution": "southern Italy",
-              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
+              "dataset": "Tedone et al. 2023: faba bean before durum, southern Italy",
+              "resolution": "one long-term trial",
+              "url": "https://doi.org/10.3390/agronomy13010105"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -4603,7 +4603,7 @@
             "asOf": "2026-11"
           },
           {
-            "value": 465,
+            "value": 470,
             "unit": "€/ha",
             "range": [
               210,

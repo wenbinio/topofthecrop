@@ -8,7 +8,7 @@ import { optionWords } from "../components/Crops";
 import { rankOptions } from "../ranking/rank";
 import type { Reason } from "../ranking/reasons";
 import { reasonsFor } from "../ranking/reasons";
-import { WHO, ownChecks } from "../screens/check-share";
+import { WHO } from "../screens/check-share";
 import { SETTINGS_PATH } from "../screens/settings/path";
 
 /** Unit marks and signs written out, so the phone says "euro per hectare a year" rather than reading symbols. */
@@ -70,16 +70,14 @@ export function optionsSummary(bundle: FieldBundle, state: AppState): string {
   return [sentence(headline), ...reasonsLines(option, bundle, state), sentence(translate(lang, "options.adviser"))].join(" ");
 }
 
-/** Why: the option, its reasons and what to check locally. */
+/** Why: the option and its reasons. (What to check locally is read on the field's page, where the to-do list is.) */
 export function whySummary(bundle: FieldBundle, state: AppState, optionId: string): string {
   const lang = state.lang;
   const option = bundle.options.find((o) => o.id === optionId);
   if (!option) return sentence(translate(lang, "why.notFound"));
-  const checks = option.why.checkLocally.map((k) => sentence(translate(lang, k).replace(/\?$/, "")));
   return [
     sentence(optionWords(option, (key, vars) => translate(lang, key, vars))),
     ...reasonsLines(option, bundle, state),
-    checks.length ? `${translate(lang, "why.h.check")}: ${checks.join(" ")}` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -123,15 +121,13 @@ export function questionsSummary(state: AppState): string {
   return lines.join(" ");
 }
 
-/** Check and share: what to check alone for the best fit, then who else can look at it. */
-export function checkSummary(bundle: FieldBundle, state: AppState): string {
+/** Share your plan: the screen's title and lead, then who can look at the plan. */
+export function checkSummary(_bundle: FieldBundle, state: AppState): string {
   const lang = state.lang;
   const t = (key: string) => translate(lang, key);
-  const best = ranking(bundle, state).ranked[0];
-  const checks = best ? ownChecks(best.option.why.checkLocally).map((k) => sentence(t(k).replace(/\?$/, ""))) : [];
   return [
     sentence(t("adviser.title")),
-    checks.length ? `${t("adviser.self")}: ${checks.join(" ")}` : "",
+    sentence(t("adviser.lead")),
     sentence(`${t("adviser.who")}: ${WHO.map((who) => t(`adviser.who.${who}`)).join("; ")}`),
   ]
     .filter(Boolean)

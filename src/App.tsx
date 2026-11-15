@@ -7,6 +7,7 @@ import { LangContext, useT } from "./i18n";
 import { useAppState, useTo } from "./state/useAppState";
 import { BundleGate, BundleProvider } from "./components/BundleProvider";
 import { StepBar } from "./components/StepBar";
+import { TabBar, isPlanRoute } from "./components/TabBar";
 import { TopBar } from "./components/TopBar";
 import { WelcomeBack } from "./components/WelcomeBack";
 import Adviser from "./screens/Adviser";
@@ -14,6 +15,7 @@ import FindField from "./screens/FindField";
 import Options from "./screens/Options";
 import Questions from "./screens/Questions";
 import Today from "./screens/Today";
+import Plans from "./screens/Plans";
 import { SETTINGS_PATH } from "./screens/settings/path";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
@@ -72,7 +74,9 @@ function Shell() {
   const isPrint = pathname.startsWith("/print");
   // Settings sits outside the six steps: reachable from any of them, it belongs to none.
   // So do "Your field today", the page a farmer comes back to, and the field timelapse.
-  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits" || pathname === "/today" || pathname === "/timelapse";
+  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits";
+  // Setting up (field, questions) shows three steps at the top; once there is a plan, three tabs sit at the bottom.
+  const inPlan = isPlanRoute(pathname);
 
   return (
     <LangContext.Provider value={state.lang}>
@@ -84,7 +88,7 @@ function Shell() {
           isPrint ? "min-h-dvh max-w-[52rem] print:max-w-none" : "h-dvh max-w-[30rem] phone-land:max-w-none"
         }`}
       >
-        <TopBar steps={isPrint || isSettings ? null : <StepBar pathname={pathname} />} />
+        <TopBar steps={isPrint || isSettings || inPlan ? null : <StepBar pathname={pathname} />} />
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
           <Suspense fallback={<ScreenLoading />}>
           {/* Each screen eases in (tc-screen, index.css) instead of snapping into place. */}
@@ -113,6 +117,7 @@ function Shell() {
             <Route path="/year" element={field((b) => <Year bundle={b} />)} />
             <Route path="/adviser" element={field((b) => <Adviser bundle={b} />)} />
             <Route path="/today" element={field((b) => <Today bundle={b} />)} />
+            <Route path="/plans" element={field((b) => <Plans bundle={b} />)} />
             <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="/credits" element={<Credits />} />
@@ -122,6 +127,7 @@ function Shell() {
           </div>
           </Suspense>
         </main>
+        {inPlan && !isPrint ? <TabBar pathname={pathname} /> : null}
       </div>
       </VoiceProvider>
     </LangContext.Provider>

@@ -3,30 +3,32 @@ import { Link } from "react-router-dom";
 import type { CropId, Fact, FieldBundle, Limit, Option } from "../data/types";
 import { LIMITS } from "../data/types";
 import { useLang, useT } from "../i18n";
-import { resolveMoney } from "../money/money";
 import { rankOptions } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
-import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
+import { PlaceholderNote, ScaleBadge, formatNumber } from "../components/FactParts";
 import { FieldShape, openRing } from "../components/FieldShape";
+import { Fold } from "../components/Fold";
 import { Findings } from "../components/Findings";
 import { SoilCard } from "../components/SoilCard";
-import { Fold } from "../components/Fold";
 import { soilSummary } from "../data/soil";
-import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
-import { CropName, Slotted, stripsNext } from "../components/Crops";
-import { PriorityHelp } from "../components/Term";
+import { CropPlate } from "../components/CropPlate";
+import { ChevronIcon, WarnIcon } from "../components/Icons";
+import { CropName, CropSequence, Slotted, stripPair, stripsNext } from "../components/Crops";
 import { OptionRow } from "../components/OptionRow";
-import { BackButton, BottomBar, LinkButton } from "../components/ui";
-import { PriorityChips, ReasonList } from "../components/Reasons";
+import { LinkButton } from "../components/ui";
+import { ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
-import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { AreaNote } from "../components/BundleProvider";
 import { FARMLAND_NOTE_BELOW } from "../data/caveats";
 import { ReadButton } from "../voice/Voice";
+import { StripMap } from "../components/StripMap";
 
-/** What to plant next and why, in a few plain lines. */
-function Recommendation({ best, current, simple }: { best: RankedOption | undefined; current: Option | undefined; simple: boolean }) {
+/**
+ * The plan: one answer, the three harvests, the reasons and how sure the app is, then what to do with it.
+ * Everything else (the other choices, the evidence) is a tap away, never on screen by default.
+ */
+function Recommendation({ best, current }: { best: RankedOption | undefined; current: Option | undefined }) {
   const t = useT();
   const [state] = useAppState();
   if (!best) return null;
@@ -39,18 +41,43 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   ) : (
     <Slotted text={t("options.plant")} slots={{ crop: <CropName crop={option.sequence[0]} lower /> }} />
   );
+  const sowNext = option.isCurrent ? "durum" : option.sequence[0];
+  const sure = option.facts.income.confidence;
   return (
-    <div className="px-4 pt-4 pb-1" data-testid="recommendation" data-option-id={option.id}>
-      <div className="flex items-start justify-between gap-2">
-        <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
-          {headline}
-        </h1>
-        <ReadButton />
+    <div className="px-4 pt-3 pb-2" data-testid="recommendation" data-option-id={option.id}>
+      <div className="flex items-center gap-3">
+        <CropPlate crop={sowNext} big className="w-24 h-24" />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-small font-bold uppercase tracking-wider text-wheat-ink">{t("options.kicker")}</p>
+            <ReadButton />
+          </div>
+          <h1 className="text-head" data-testid="rec-headline">
+            {headline}
+          </h1>
+        </div>
       </div>
-      <div className="mt-2">
+      <div className="mt-3" data-testid="rec-harvests">
+        <CropSequence option={option} size="lg" />
+      </div>
+      {/* The warnings the farmer's own limits add to the advice (the same marks as on the other choices' rows). */}
+      {best.flags.length ? (
+        <p className="mt-2 flex flex-wrap gap-2" data-testid="rec-flags">
+          {best.flags.map((flag) => (
+            <span key={flag} data-testid="flag" className="inline-flex items-center gap-1 px-1 text-small font-bold bg-warn text-on-warn rounded-sm">
+              <WarnIcon className="w-3.5 h-3.5" />
+              {t(`flag.${flag}`)}
+            </span>
+          ))}
+        </p>
+      ) : null}
+      <div className="mt-3">
         <ReasonList reasons={reasonsFor(option, current, state.priorities)} option={option} testId="rec-reasons" />
       </div>
-      <p className="mt-2 text-small text-ink-soft">{t("options.adviser")}</p>
+      {/* One honest line on how sure the app is, right beside the claim, instead of a badge on every row. */}
+      <p className="mt-3 px-3 py-2 rounded-box bg-note text-body" data-testid="how-sure" data-confidence={sure}>
+        <b>{t("options.sure", { level: t(`confidence.${sure}`).toLocaleLowerCase() })}</b> {t(`options.sureWhy.${sure}`)}
+      </p>
     </div>
   );
 }
@@ -61,7 +88,7 @@ function StayHeadline() {
   return <Slotted text={t("options.stay")} slots={{ crop: <CropName crop="durum" lower /> }} />;
 }
 
-/** How many rows show before "More options". */
+/** How many other choices show before "More options". */
 export const SHOWN_OPTIONS = 4;
 
 /** One line per crop left out because it was just grown. */
@@ -96,39 +123,37 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   });
-  const hidden = Math.max(0, ranked.length - SHOWN_OPTIONS);
-  const shown = more ? ranked : ranked.slice(0, SHOWN_OPTIONS);
-  const removedBy: Limit[] = LIMITS.filter((l) => removed.some((r) => r.by.includes(l)));
-  const shownFacts: Fact[] = [
-    ...bundle.findings.map((f) => f.fact),
-    ...ranked.flatMap((r) => Object.values(r.option.facts)),
-  ];
   const best = ranked[0];
+  // The answer is not repeated in the list of other choices.
+  const others = ranked.slice(1);
+  const hidden = Math.max(0, others.length - SHOWN_OPTIONS);
+  const shown = more ? others : others.slice(0, SHOWN_OPTIONS);
+  const removedBy: Limit[] = LIMITS.filter((l) => removed.some((r) => r.by.includes(l)));
+  const shownFacts: Fact[] = ranked.flatMap((r) => Object.values(r.option.facts));
   // When every option fact shares one scale, one badge on the list stands for all of them.
   const optionScales = new Set(ranked.flatMap((r) => Object.values(r.option.facts).map((f) => f.scale)));
   const sharedScale = optionScales.size === 1 ? [...optionScales][0] : null;
-  const simple = state.view === "simple";
+  // When every other choice is as sure (or unsure) as the next, it is said once above the list, not on every row.
+  const sures = new Set(others.map((r) => r.option.facts.income.confidence));
+  const sharedSure = sures.size === 1 ? [...sures][0] : null;
   const soil = soilSummary(bundle);
+  // Where an intercrop would go on this field: the strip option that pairs the advised crop, else the first one.
+  const sowNext = best ? best.option.sequence[0] : undefined;
+  const intercrop = best?.option.strips
+    ? undefined
+    : (bundle.options.find((o) => o.strips && sowNext && stripPair(o)?.includes(sowNext)) ?? bundle.options.find((o) => o.strips));
 
   return (
     <div className="flex flex-col flex-1">
-      {/* Held sideways: the advice and priorities on the left, what was seen and the options on the right. */}
+      {/* Held sideways: the plan on the left, the other choices on the right. */}
       <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
       <div className="flex flex-col min-w-0">
-      {simple ? null : (
-        <div className="px-4 pt-3 pb-3 bg-surface border-b border-line">
-          <div className="flex items-center gap-3">
-            <FieldShape ring={openRing(bundle.field.outline.coordinates)} className="w-12 h-12 flex-none" />
-            <div className="min-w-0">
-              <p className="text-big font-bold">{bundle.field.name}</p>
-              <p className="text-small font-bold text-ink-soft">
-                {formatNumber(bundle.field.areaHa, lang)} ha
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
+      <p className="px-4 pt-3 flex items-center gap-2 text-small font-bold text-ink-soft" data-testid="field-line">
+        <FieldShape ring={openRing(bundle.field.outline.coordinates)} className="w-6 h-6 flex-none" />
+        <span>
+          {bundle.field.name} · {formatNumber(bundle.field.areaHa, lang)} ha
+        </span>
+      </p>
       <AreaNote bundle={bundle} />
       {bundle.field.basin && bundle.field.basin.farmlandShare < FARMLAND_NOTE_BELOW ? (
         <p className="px-4 pt-1 flex items-start gap-2 text-small font-bold" data-testid="farmland-note">
@@ -136,31 +161,84 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           {t("basin.notFarmland")}
         </p>
       ) : null}
-      <Recommendation best={best} current={current} simple={simple} />
-      </div>
-      <div className="flex flex-col min-w-0">
+      <Recommendation best={best} current={current} />
+      {best?.option.strips ? <StripMap option={best.option} bundle={bundle} /> : null}
 
-      {/* One answer above; everything else is a row the farmer may open, none of which they must. */}
-      <p className="px-4 pt-4 pb-2 text-small font-bold uppercase tracking-wider text-ink-soft">{t("options.moreHead")}</p>
-      <div className="border-t border-line" data-testid="branches">
-      {best ? (
-        <Link
-          to={to(`/why/${best.option.id}`)}
-          data-testid="branch-why"
-          className="tc-tap flex items-center gap-3 px-4 py-2 bg-surface border-b border-line font-bold text-body"
-        >
-          <span className="flex-1">{t("why.h.suggested")}</span>
-          <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
-        </Link>
+      {/* What to do with the plan: keep it, share it, or ask why. */}
+      <div className="px-4 pt-2 pb-3 flex flex-col gap-2" data-testid="plan-actions">
+        <LinkButton to={to("/today")} testId="keep-plan" className="min-h-14 text-big">
+          {t("options.keep")}
+        </LinkButton>
+        <div className="grid grid-cols-2 gap-2">
+          {best ? (
+            <LinkButton to={to(`/why/${best.option.id}`)} look="secondary" testId="branch-why" className="min-h-12">
+              {t("options.why")}
+            </LinkButton>
+          ) : null}
+          <LinkButton to={to("/adviser")} look="secondary" testId="share-plan" className="min-h-12">
+            {t("options.share")}
+          </LinkButton>
+        </div>
+        <p className="self-center flex flex-wrap items-baseline justify-center gap-x-2 text-body">
+          <span className="text-ink-soft" data-testid="priority-summary">
+            {t("options.priorities")}: {state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ") || t("common.noData")}
+          </span>
+          <Link to={to("/questions")} data-testid="change-answers" className="min-h-11 inline-flex items-center underline underline-offset-4">
+            {t("options.change")}
+          </Link>
+        </p>
+      </div>
+      </div>
+
+      <div className="flex flex-col min-w-0 border-t border-line">
+      <Fold testId="fold-seen" title={t("options.seen")}>
+        <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
+      </Fold>
+      {soil ? (
+        <Fold testId="fold-soil" title={t("soil.title")} summary={t(`soil.weight.${soil.weight}`)}>
+          <SoilCard bundle={bundle} view={state.view} bare />
+        </Fold>
+      ) : null}
+      {intercrop || best?.option.strips || waiting.length || state.intercrops ? (
+        <Fold testId="fold-intercrop" title={t("strips.where")}>
+          {/* Strip intercrops stay out of the ranking until asked for: nobody here has tried them. The switch lives
+              here, with the map, so intercropping is one row on the plan screen rather than two. */}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={state.intercrops}
+            data-testid="intercrops-toggle"
+            onClick={() => setState({ intercrops: !state.intercrops })}
+            className="tc-tap w-full flex items-center gap-2 px-4 py-2 bg-surface border-y border-line text-left"
+          >
+            <span className="flex-1">
+              <span className="block font-bold text-body">{t("options.intercrops")}</span>
+              <span className="block text-small text-ink-soft">{t("options.intercropsMeans")}</span>
+            </span>
+            <span
+              aria-hidden="true"
+              className={`tc-knob flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary" : "bg-surface"}`}
+            >
+              <span className={`tc-knob w-4 h-4 rounded-full ${state.intercrops ? "bg-surface translate-x-5" : "bg-line-strong translate-x-0"}`} />
+            </span>
+          </button>
+          {intercrop ? <StripMap option={intercrop} bundle={bundle} /> : null}
+          <div className="h-3" />
+        </Fold>
       ) : null}
       <Fold
         testId="fold-options"
-        title={t("options.others", { n: Math.max(0, ranked.length - 1) })}
+        title={t("options.others", { n: others.length })}
         summary={sharedScale ? <ScaleBadge scale={sharedScale} /> : null}
       >
+      {sharedSure ? (
+        <p className="px-4 pb-2 text-small font-bold text-ink-soft" data-testid="others-sure">
+          {t("options.othersSure", { level: t(`confidence.${sharedSure}`).toLocaleLowerCase() })}
+        </p>
+      ) : null}
       <ul className="border-t border-line" data-testid="option-list">
         {shown.map((item) => (
-          <OptionRow key={item.option.id} item={item} view={state.view} sharedScale={sharedScale !== null} />
+          <OptionRow key={item.option.id} item={item} view={state.view} sharedScale={sharedScale !== null} hideConfidence={sharedSure !== null} />
         ))}
         {hidden ? (
           <li>
@@ -176,30 +254,6 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
             </button>
           </li>
         ) : null}
-        {/* Strip intercrops stay out of the ranking until asked for: nobody here has tried them. */}
-        {waiting.length || state.intercrops ? (
-          <li>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={state.intercrops}
-              data-testid="intercrops-toggle"
-              onClick={() => setState({ intercrops: !state.intercrops })}
-              className="tc-tap w-full flex items-center gap-2 px-4 py-2 bg-surface border-b border-line text-left"
-            >
-              <span className="flex-1">
-                <span className="block font-bold text-body">{t("options.intercrops")}</span>
-                <span className="block text-small text-ink-soft">{t("options.intercropsMeans")}</span>
-              </span>
-              <span
-                aria-hidden="true"
-                className={`tc-knob flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary" : "bg-surface"}`}
-              >
-                <span className={`tc-knob w-4 h-4 rounded-full ${state.intercrops ? "bg-surface translate-x-5" : "bg-line-strong translate-x-0"}`} />
-              </span>
-            </button>
-          </li>
-        ) : null}
       </ul>
       {removed.length > 0 ? (
         <p className="px-4 py-3 flex items-start gap-2 text-body font-bold" data-testid="ruled-out">
@@ -212,52 +266,11 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       ) : null}
       {repeats.length ? <RepeatLines repeats={repeats} /> : null}
       </Fold>
-      <Fold
-        testId="fold-priorities"
-        title={t("options.priorities")}
-        summary={<span data-testid="priority-summary">{state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ")}</span>}
-      >
-        <div className="px-4 pb-3">
-          <PriorityHelp>
-            <p className="text-small font-bold text-ink-soft">{t("q.priorities")}</p>
-          </PriorityHelp>
-          <PriorityChips chosen={state.priorities} onChange={(priorities) => setState({ priorities })} />
-        </div>
-      </Fold>
-      <Fold testId="fold-seen" title={t("options.seen")}>
-        <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
-      </Fold>
-      {soil ? (
-        <Fold testId="fold-soil" title={t("soil.title")} summary={t(`soil.weight.${soil.weight}`)}>
-          <SoilCard bundle={bundle} view={state.view} bare />
-        </Fold>
-      ) : null}
-      {bundle.economics ? (
-        <Link
-          to={to(SETTINGS_PATH)}
-          state={settingsFrom("/options", null)}
-          data-testid="money-row"
-          className="flex items-center gap-3 min-h-11 px-4 py-2 bg-surface border-b border-line font-bold text-body"
-        >
-          <EuroIcon className="w-5 h-5 flex-none" />
-          <span className="flex-1">{t("settings.title")}</span>
-          {resolveMoney(bundle.economics, state.money).edited || state.extras.length ? <YoursTag /> : null}
-          <ChevronIcon className="w-5 h-5 flex-none text-ink-soft" />
-        </Link>
-      ) : null}
-      </div>
       <div className="px-4 py-2">
         <PlaceholderNote facts={shownFacts} />
       </div>
       </div>
       </div>
-
-      <BottomBar>
-        <BackButton to={to("/questions")} />
-        <LinkButton to={to("/year")} className="flex-1">
-          {t("options.next")}
-        </LinkButton>
-      </BottomBar>
     </div>
   );
 }

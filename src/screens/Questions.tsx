@@ -6,11 +6,12 @@ import { useT } from "../i18n";
 import { economicsCrops } from "../money/money";
 import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
-import { CropName } from "../components/Crops";
+import { CropPlate } from "../components/CropPlate";
+import { HelpTip } from "../components/HelpTip";
 import { BackIcon, CheckIcon } from "../components/Icons";
 import { MIN_RANKED, PRIORITY_ICON, RankMark, togglePriority } from "../components/Reasons";
 import { PriorityHelp, priorityLine } from "../components/Term";
-import { BackButton, Button, BottomBar, SectionTitle } from "../components/ui";
+import { BackButton, Button, BottomBar } from "../components/ui";
 
 function Choice({
   on,
@@ -21,7 +22,10 @@ function Choice({
   title,
   label,
   place,
+  light = false,
 }: {
+  /** Chosen stays light (a thick green edge, not a dark fill), so a crop's painting stays easy to see. */
+  light?: boolean;
   on: boolean;
   disabled?: boolean;
   onClick: () => void;
@@ -44,7 +48,11 @@ function Choice({
       disabled={disabled}
       onClick={onClick}
       className={`tc-tap w-full flex items-center gap-2 px-3 py-2 rounded-box border-2 text-left font-bold text-body ${
-        on ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"
+        on
+          ? light
+            ? "bg-surface text-ink border-primary ring-2 ring-primary"
+            : "bg-primary text-on-primary border-primary"
+          : "bg-surface text-ink border-line-strong"
       } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       {children}
@@ -83,20 +91,22 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       </p>
       <div data-testid="two-cols" className="flex flex-col phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
       <div {...part(0)}>
-      <SectionTitle>
-        <span className="flex flex-wrap items-baseline gap-x-2">
-          {t("q.lastCrop")}
-          {!bundle.lastCrop.appDefault ? (
-            <span className="tc-dataset font-mono normal-case tracking-normal">
-              {bundle.lastCrop.source.dataset} · {bundle.lastCrop.source.resolution}
-            </span>
-          ) : null}
-        </span>
-      </SectionTitle>
+      {/* A real question in the farmer's words; where the satellite's guess comes from is a plain line under it. */}
+      <div className="px-4 pt-2 pb-3">
+        <h1 className="text-head">{t("q.lastCropQ")}</h1>
+        {!bundle.lastCrop.appDefault ? (
+          <p className="mt-1 text-body text-ink-soft" data-testid="last-crop-hint">
+            {t("q.lastCropHint", { crop: t(`crop.${bundle.lastCrop.crop}`).toLocaleLowerCase(), source: bundle.lastCrop.source.dataset })}
+          </p>
+        ) : null}
+      </div>
       <div role="radiogroup" aria-label={t("q.lastCrop")} className="grid grid-cols-2 gap-2 px-4" data-testid="last-crop">
         {crops.map((crop) => (
-          <Choice key={crop} role="radio" on={state.lastCrop === crop} onClick={() => setState({ lastCrop: crop, lastCropName: "" })}>
-            <CropName crop={crop} iconClassName="w-6 h-6" wrap />
+          <Choice key={crop} role="radio" light on={state.lastCrop === crop} onClick={() => setState({ lastCrop: crop, lastCropName: "" })}>
+            <span className="flex flex-col items-center gap-1 text-center" data-crop={crop}>
+              <CropPlate crop={crop} className="w-20 h-20" />
+              {t(`crop.${crop}`)}
+            </span>
           </Choice>
         ))}
         <Choice role="radio" on={state.lastCrop === "other"} onClick={() => setState({ lastCrop: "other", lastCropName: name })}>
@@ -125,12 +135,21 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <div {...part(1)}>
-      <SectionTitle>{t("q.limits")}</SectionTitle>
+      <div className="px-4 pt-2 pb-3">
+        <h1 className="text-head">{t("q.limitsQ")}</h1>
+        <p className="mt-1 text-body text-ink-soft">{t("q.limitsHint")}</p>
+      </div>
       <div className="grid grid-cols-1 gap-2 px-4">
         {LIMITS.map((limit) => (
-          <Choice key={limit} on={state.limits.includes(limit)} onClick={() => onLimit(limit)}>
-            {t(`limit.${limit}`)}
-          </Choice>
+          <div key={limit} className="flex items-start gap-1">
+            <div className="flex-1 min-w-0">
+              <Choice on={state.limits.includes(limit)} onClick={() => onLimit(limit)}>
+                {t(`limit.${limit}`)}
+              </Choice>
+            </div>
+            {/* What the choice means and what it does to the advice: on hover, or a tap on a phone. */}
+            <HelpTip label={t("q.limitHelp", { limit: t(`limit.${limit}`) })} text={t(`limit.${limit}.def`)} testId={`limit-help-${limit}`} />
+          </div>
         ))}
       </div>
       </div>
@@ -138,9 +157,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
 
       <div className="px-4 pt-2 pb-1 phone-land:pt-4">
         <PriorityHelp>
-          <h2 className="text-small font-bold uppercase tracking-wider text-ink-soft">
-            {t("q.priorities")}
-          </h2>
+          <h1 className="text-head">{t("q.prioritiesQ")}</h1>
         </PriorityHelp>
         <p className="text-small text-ink-soft" data-testid="rank-hint">{t("q.prioritiesHint")}</p>
       </div>
