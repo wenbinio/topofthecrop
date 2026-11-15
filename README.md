@@ -66,8 +66,6 @@ The app has one set of screens and two looks, switched from the top bar. The cho
 | Look | Satellite first: the map fills the screen, and the options screen opens with a vegetation thumbnail of the field and a 12-month green/bare strip | Weather app: one big headline for the field, then the findings and options as forecast-style rows, each led by an icon and one number |
 | Detail | Ranges and field-or-area badges on screen; each figure's dataset (for example "NASA MODIS (MOD13Q1) · 250 m"), date and confidence in a bubble on tap | The same bubble; risk shown as an icon plus one word |
 
-The mockups for both are in `docs/mockups/`: direction B is the Standard view and direction D is the Simple view.
-
 The design test for both: it must look like something a working farmer would have open on their phone next to WhatsApp and the weather app. Not a dashboard, not a concept piece.
 
 Few words. A farmer will not read through a screen of text, so each screen leads with a number, an icon or a picture of the field, and keeps sentences for the "Why?" screen. As a working limit: no more than about 40 words visible on any screen outside "Why?" and the printout.
@@ -324,7 +322,7 @@ public/parcels/ cadastral parcels for Genzano di Lucania
 data/           the data team's files (HANDOVER.md); never edited by hand, served at data/basin/
 ColabNotebooks/ the data team's notebooks that make data/
 scripts/        builders for the demo bundle, the basin map picture and the parcels
-docs/           scoring.md, crops-research.md, support-and-prices.md, durum-vs-faba-rotation-margins.md, checking-the-app.md, mockups/
+docs/           scoring.md, crops-research.md, support-and-prices.md, checking-the-app.md, space-apps-submission.md, ai-log.md
 ```
 
 ## Submission

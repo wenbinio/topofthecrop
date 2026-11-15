@@ -16,7 +16,6 @@ Top of the Crop is a phone web app for NASA Space Apps 2026 (challenge: Field Sh
 | `DATA_SOURCES.md` | Every dataset, its licence and citation |
 | `docs/scoring.md` | Every rule and threshold in plain words: ranking, weather, this season's rain, the forecast, the yield lift |
 | `docs/support-and-prices.md`, `docs/crops-research.md` | Where the money and crop figures come from, and which are unverified |
-| `docs/durum-vs-faba-rotation-margins.md` | A research compilation the owner supplied (15 November 2026): continuous durum against a faba rotation, with ranges. It disagrees with the app's durum costs and has the faba rotation ahead; the app's figures were not changed. Its last section sets the two side by side |
 | `research-compilation/research-compilation.md` | The owner's research compilation (15 November 2026): CAP 2023–2027 support for the Bradano valley, legume-rotation economics. Summary below, under "Support payments from the research compilation" |
 | `docs/checking-the-app.md` | A screen-by-screen check of the live app, with the demo field's expected figures |
 | `docs/space-apps-submission.md`, `docs/ai-log.md` | The text for the Space Apps project page (NASA data, other references, AI statement), and a log of how AI was used from the start of the project |
