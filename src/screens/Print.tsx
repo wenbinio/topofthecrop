@@ -60,6 +60,17 @@ function MoneyUsed({ economics }: { economics: Economics }) {
             </li>
           );
         })}
+        {/* Costs only where the farmer changed them; ours are part of the income sum on Why. */}
+        {economicsCrops(economics).map((c) => {
+          const cost = r.costs[c];
+          if (!cost?.edited) return null;
+          return (
+            <li key={`c.${c}`} data-testid="print-cost">
+              <CropName crop={c} />, {t("print.costs")}: <b>{formatNumber(cost.value, lang)} €/ha</b>
+              {changed(true)}
+            </li>
+          );
+        })}
         {economics.support.map((item) => {
           const s = r.support.find((x) => x.id === item.id);
           if (!s) return null;

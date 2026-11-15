@@ -44,7 +44,7 @@ Everything the farmer chose is in the link, after the `#`. There is no local sto
 | `p` | The two priorities: income, water, soil, forage |
 | `s` | Scenario for the slider: normal, drier, much-drier |
 | `v`, `g` | View (standard or simple) and language (en or it) |
-| `m` | The farmer's own prices and support switches |
+| `m` | The farmer's own figures: `p.<crop>` price, `c.<crop>` a crop's direct costs, `s.<id>` support amount, `on.<id>` support switch |
 | `x` | Payments the farmer added |
 
 ## 4. How the app links to the data
@@ -145,6 +145,7 @@ All map code is in `src/components/Map.tsx`. The picture is four open layers sta
 - **Two views:** Standard shows sources and ranges; Simple shows bigger text and fewer figures. Same screens, different theme file and a few `simple` branches.
 - **Crop symbols:** `src/components/Crops.tsx`. Use `CropName` wherever a crop is named.
 - **Voice:** `src/voice/`. A push-to-talk microphone and a read-aloud button, using the phone browser's own speech service. `commands.ts` is a pure parser for English and Italian; `apply.ts` turns a command into a state change. Hidden where the browser has no speech support.
+- **Settings in fold-out sections:** `Settings.tsx` groups the figures into four sections (crop prices, crop costs, support payments, the farmer's own payments), each behind a header button with a one-line summary. All start closed except a section holding something the farmer changed; which are open is plain component state, not part of the link. Reset, the adviser line and the voice note stay outside the sections.
 - **Sideways phones:** the custom Tailwind variant `phone-land` (landscape, at most 500 px tall and 1000 px wide) rearranges screens into two columns.
 
 ## 8. Tests and publishing

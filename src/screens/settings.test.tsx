@@ -64,6 +64,24 @@ function incomeOf(id: string): string {
 
 const SETTINGS = "/settings?f=genzano-demo&p=income,water";
 
+const PRICES = /^Crop prices/;
+const COSTS = /^Crop costs/;
+const SUPPORT = /^Support payments/;
+const OWN = /^Your own payments/;
+const SECTIONS = [PRICES, COSTS, SUPPORT, OWN];
+
+/** Opens a fold-out section of Settings (once it has loaded), unless it is open already. */
+async function openSection(name: RegExp): Promise<HTMLElement> {
+  const button = await screen.findByRole("button", { name });
+  if (button.getAttribute("aria-expanded") !== "true") fireEvent.click(button);
+  return button;
+}
+
+/** The summary line in a section's header. */
+function summaryOf(name: RegExp): string {
+  return within(screen.getByRole("button", { name })).getByTestId("section-summary").textContent ?? "";
+}
+
 beforeEach(() => {
   stubBundleFetch();
 });
@@ -76,6 +94,8 @@ afterEach(() => {
 describe("Settings", () => {
   it("(a) lists four price inputs and every support item with its condition", async () => {
     renderAt(SETTINGS);
+    await openSection(PRICES);
+    await openSection(SUPPORT);
     for (const crop of ["Durum", "Chickpea", "Faba bean", "Vetch-oat"]) {
       expect(await screen.findByRole("textbox", { name: `${crop} price` })).toBeInTheDocument();
     }
@@ -94,6 +114,7 @@ describe("Settings", () => {
 
   it("(b) a durum price of 400 goes into the link, and Options shows 835 marked Yours", async () => {
     renderAt(SETTINGS);
+    await openSection(PRICES);
     const durum = await screen.findByRole("textbox", { name: "Durum price" });
     act(() => {
       fireEvent.change(durum, { target: { value: "400" } });
@@ -117,6 +138,7 @@ describe("Settings", () => {
     expect(within(screen.getByTestId("money-row")).queryByTestId("tag-yours")).toBeNull();
 
     fireEvent.click(screen.getByTestId("money-row"));
+    await openSection(SUPPORT);
     const eco = await screen.findByRole("checkbox", { name: "Eco-scheme: rotation with legumes or forage" });
     act(() => {
       fireEvent.click(eco);
@@ -134,6 +156,7 @@ describe("Settings", () => {
 
   it("(d) clearing or mistyping an input shows the error and leaves the link alone", async () => {
     renderAt(SETTINGS);
+    await openSection(PRICES);
     const durum = await screen.findByRole("textbox", { name: "Durum price" });
     const before = lastPath;
     act(() => {
@@ -218,6 +241,7 @@ describe("Settings", () => {
     renderAt("/why/faba-durum-faba?f=genzano-demo&p=income,water");
     expect(await screen.findByTestId("money-working")).toBeInTheDocument();
     fireEvent.click(screen.getByTestId("money-change"));
+    await openSection(PRICES);
     const durum = await screen.findByRole("textbox", { name: "Durum price" });
     act(() => {
       fireEvent.change(durum, { target: { value: "400" } });
@@ -238,9 +262,124 @@ describe("Settings", () => {
     expect(block).toHaveTextContent("Basic income support (EU): on, 160 €/ha");
   });
 
+  describe("fold-out sections", () => {
+    it("all start closed, with their rows out of reach, and open and close on a tap", async () => {
+      renderAt(SETTINGS);
+      await screen.findByRole("button", { name: PRICES });
+      for (const name of SECTIONS) {
+        const button = screen.getByRole("button", { name });
+        expect(button).toHaveAttribute("aria-expanded", "false");
+        const panel = document.getElementById(button.getAttribute("aria-controls") ?? "");
+        expect(panel).not.toBeNull();
+        expect(panel).not.toBeVisible();
+      }
+      expect(screen.queryAllByRole("textbox")).toHaveLength(0);
+      expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
+      expect(screen.queryByRole("button", { name: "Add a payment" })).toBeNull();
+      // Outside the sections, always there.
+      expect(screen.getByRole("button", { name: "Reset figures" })).toBeDisabled();
+      expect(screen.getByTestId("adviser-line")).toBeInTheDocument();
+      expect(screen.getByTestId("voice-privacy")).toBeInTheDocument();
+
+      const prices = await openSection(PRICES);
+      expect(prices).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByRole("textbox", { name: "Durum price" })).toBeVisible();
+      await openSection(COSTS);
+      expect(screen.getByRole("textbox", { name: "Durum costs" })).toBeVisible();
+      expect(screen.getByRole("textbox", { name: "Durum price" })).toBeVisible();
+      fireEvent.click(prices);
+      expect(prices).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByRole("textbox", { name: "Durum price" })).toBeNull();
+    });
+
+    it("summaries say how many crops, payments on and payments added", async () => {
+      renderAt(SETTINGS);
+      await screen.findByRole("button", { name: PRICES });
+      expect(summaryOf(PRICES)).toBe("4 crops");
+      expect(summaryOf(COSTS)).toBe("4 crops");
+      expect(summaryOf(SUPPORT)).toBe("4 on");
+      expect(summaryOf(OWN)).toBe("None");
+    });
+
+    it("a section with a changed figure starts open and counts the change", async () => {
+      renderAt(`${SETTINGS}&m=c.durum:700;on.eco-rotation:0&x=${encodeURIComponent("A~10~|B~20~durum")}`);
+      await screen.findByRole("button", { name: PRICES });
+      expect(screen.getByRole("button", { name: PRICES })).toHaveAttribute("aria-expanded", "false");
+      expect(screen.getByRole("button", { name: COSTS })).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByRole("button", { name: SUPPORT })).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByRole("button", { name: OWN })).toHaveAttribute("aria-expanded", "true");
+      expect(summaryOf(PRICES)).toBe("4 crops");
+      expect(summaryOf(COSTS)).toBe("4 crops · 1 changed");
+      expect(summaryOf(SUPPORT)).toBe("3 on · 1 changed");
+      expect(summaryOf(OWN)).toBe("2 added");
+      expect(screen.getByRole("textbox", { name: "Durum costs" })).toHaveValue("700");
+    });
+
+    it("the summaries are in Italian too", async () => {
+      renderAt(`${SETTINGS}&g=it&m=p.durum:350`);
+      const prices = await screen.findByRole("button", { name: /^Prezzi/ });
+      expect(prices).toHaveAttribute("aria-expanded", "true");
+      expect(within(prices).getByTestId("section-summary")).toHaveTextContent("4 colture · 1 cambiato");
+    });
+  });
+
+  describe("crop costs", () => {
+    it("editing a cost writes c.<crop> into the link and shows Yours and the starting figure", async () => {
+      renderAt(SETTINGS);
+      await openSection(COSTS);
+      expect(screen.getByTestId("costs-means")).toHaveTextContent("seed, fertiliser");
+      const durum = screen.getByRole("textbox", { name: "Durum costs" });
+      expect(durum).toHaveValue("620");
+      const row = screen.getAllByTestId("cost-row").find((r) => r.getAttribute("data-crop") === "durum")!;
+      expect(within(row).queryByTestId("tag-yours")).toBeNull();
+      act(() => {
+        fireEvent.change(durum, { target: { value: "700" } });
+      });
+      await waitFor(() => expect(linkMoney()).toContain("c.durum:700"));
+      expect(within(row).getByTestId("tag-yours")).toBeInTheDocument();
+      expect(row).toHaveTextContent("Start 620");
+      expect(summaryOf(COSTS)).toBe("4 crops · 1 changed");
+      expect(screen.getByRole("button", { name: "Reset figures" })).toBeEnabled();
+    });
+
+    it("an out-of-range cost shows the error and is not stored", async () => {
+      renderAt(SETTINGS);
+      await openSection(COSTS);
+      const durum = screen.getByRole("textbox", { name: "Durum costs" });
+      act(() => {
+        fireEvent.change(durum, { target: { value: "6000" } });
+      });
+      expect(screen.getByTestId("money-error")).toHaveTextContent("0 to 5,000");
+      expect(durum).toHaveAttribute("aria-invalid", "true");
+      expect(linkMoney()).toBeNull();
+    });
+
+    it("Reset clears a changed cost", async () => {
+      renderAt(`${SETTINGS}&m=c.durum:700`);
+      const reset = await screen.findByRole("button", { name: "Reset figures" });
+      expect(reset).toBeEnabled();
+      act(() => {
+        fireEvent.click(reset);
+      });
+      await waitFor(() => expect(linkMoney()).toBeNull());
+      expect(screen.getByRole("textbox", { name: "Durum costs" })).toHaveValue("620");
+      expect(screen.getByRole("button", { name: "Reset figures" })).toBeDisabled();
+      expect(summaryOf(COSTS)).toBe("4 crops");
+    });
+
+    it("the printout lists a changed cost, and only the changed ones", async () => {
+      renderAt("/print?f=genzano-demo&p=income,water&m=c.durum:700");
+      const block = await screen.findByTestId("print-money");
+      const costs = within(block).getAllByTestId("print-cost");
+      expect(costs).toHaveLength(1);
+      expect(costs[0]).toHaveTextContent("Durum, costs: 700 €/ha · farmer-edited");
+    });
+  });
+
   describe("added payments", () => {
     it("adding New legume aid of 90 for chickpea goes into the link and raises chickpea by 30, marked Yours", async () => {
       renderAt(SETTINGS);
+      await openSection(OWN);
       fireEvent.click(await screen.findByRole("button", { name: "Add a payment" }));
       const form = screen.getByTestId("extra-form");
       const add = within(form).getByRole("button", { name: "Add" });
@@ -276,6 +415,7 @@ describe("Settings", () => {
 
     it("unchosen crops fall back to Every year, and an empty name keeps Add disabled", async () => {
       renderAt(SETTINGS);
+      await openSection(OWN);
       fireEvent.click(await screen.findByRole("button", { name: "Add a payment" }));
       const form = screen.getByTestId("extra-form");
       const add = within(form).getByRole("button", { name: "Add" });

@@ -9,7 +9,7 @@ import { useAppState } from "../state/useAppState";
 import { BundleGate } from "../components/BundleProvider";
 import { DatasetLabel, PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../components/FactParts";
 import { CropName, PaidIn } from "../components/Crops";
-import { BackIcon } from "../components/Icons";
+import { BackIcon, ChevronIcon } from "../components/Icons";
 import { Button, SectionTitle } from "../components/ui";
 
 export const SETTINGS_PATH = "/settings";
@@ -126,21 +126,106 @@ function AmountBox({
   );
 }
 
-function Heading({ title, unit, fact }: { title: string; unit: string; fact: Fact | undefined }) {
+/** Where a section's default figures come from: the scale and the dataset, as on every other figure. */
+function FactLine({ fact }: { fact: Fact | undefined }) {
+  if (!fact) return null;
   return (
-    <SectionTitle>
-      <span className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span>
-          {title} <span className="normal-case tracking-normal">{unit}</span>
-        </span>
-        {fact ? (
-          <span className="flex flex-wrap items-center gap-x-2 normal-case tracking-normal">
-            <ScaleBadge scale={fact.scale} />
-            <DatasetLabel fact={fact} />
+    <p className="px-4 pt-2 pb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <ScaleBadge scale={fact.scale} />
+      <DatasetLabel fact={fact} />
+    </p>
+  );
+}
+
+type SectionId = "prices" | "costs" | "support" | "own";
+
+/**
+ * A fold-out part of Settings: a header button with the section's name, a one-line summary and a chevron.
+ * A closed section's rows are `hidden`, so they are out of the tab order and the accessibility tree.
+ */
+function Section({
+  id,
+  title,
+  unit,
+  summary,
+  open,
+  onToggle,
+  children,
+}: {
+  id: SectionId;
+  title: string;
+  unit?: string;
+  summary: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  const headId = useId();
+  const panelId = useId();
+  return (
+    <section className="border-b border-line" data-testid={`section-${id}`}>
+      <h2>
+        <button
+          type="button"
+          id={headId}
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={onToggle}
+          data-testid="section-toggle"
+          className="tc-tap min-h-11 w-full flex items-center gap-3 px-4 py-2 text-left phone-land:py-1"
+        >
+          <span className="flex-1 min-w-0 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <span className="font-bold text-big">
+              {title}
+              {unit ? <span className="font-normal text-body text-ink-soft"> {unit}</span> : null}
+            </span>
+            <span className="text-small font-bold text-ink-soft" data-testid="section-summary">
+              {summary}
+            </span>
+          </span>
+          <ChevronIcon className={`w-6 h-6 flex-none motion-safe:transition-transform ${open ? "rotate-90" : ""}`} />
+        </button>
+      </h2>
+      <div id={panelId} role="region" aria-labelledby={headId} hidden={!open} className="pb-2">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+type CropFigure = { value: number; default: number; edited: boolean };
+
+/** One crop's editable figure (a price or its costs), with "Yours" and the starting figure once changed. */
+function CropFigureRow({
+  crop,
+  figure,
+  limits,
+  label,
+  testId,
+  onCommit,
+}: {
+  crop: CropId;
+  figure: CropFigure;
+  limits: Limits;
+  label: string;
+  testId: string;
+  onCommit: (value: number) => void;
+}) {
+  const t = useT();
+  const lang = useLang();
+  return (
+    <li className="flex items-start gap-3 px-4 py-2 border-b border-line" data-testid={testId} data-crop={crop}>
+      <span className="flex-1 min-w-0 flex flex-col pt-2.5">
+        <CropName crop={crop} iconClassName="w-7 h-7" className="font-bold text-big" wrap />
+        {figure.edited ? (
+          <span className="flex flex-wrap items-center gap-2 mt-0.5 text-small text-ink-soft">
+            <YoursTag />
+            {t("settings.start", { n: formatNumber(figure.default, lang) })}
           </span>
         ) : null}
       </span>
-    </SectionTitle>
+      <MoneyInput value={figure.value} limits={limits} label={label} onCommit={onCommit} />
+    </li>
   );
 }
 
@@ -155,7 +240,31 @@ function Editor({ economics }: { economics: Economics }) {
   const setExtra = (index: number, extra: ExtraSupport | null) =>
     setState({ extras: extra ? extras.map((e, i) => (i === index ? extra : e)) : extras.filter((_, i) => i !== index) });
 
-  const firstPrice = crops.length ? cropFigures(economics, crops[0]).price : undefined;
+  const figure = (key: "price" | "costs", crop: CropId): CropFigure => {
+    const fallback = Number(cropFigures(economics, crop)[key].value);
+    const r = (key === "price" ? resolved.prices : resolved.costs)[crop];
+    return r ?? { value: fallback, default: fallback, edited: false };
+  };
+  const pricesChanged = crops.filter((c) => figure("price", c).edited).length;
+  const costsChanged = crops.filter((c) => figure("costs", c).edited).length;
+  const supportChanged = resolved.support.filter((s) => s.edited).length;
+  const supportOn = economics.support.filter((item) => resolved.support.find((s) => s.id === item.id)?.on ?? item.defaultOn).length;
+
+  // A section holding the farmer's own figures starts open, so they see them without hunting; the rest start closed.
+  const [open, setOpen] = useState<Record<SectionId, boolean>>(() => ({
+    prices: pricesChanged > 0,
+    costs: costsChanged > 0,
+    support: supportChanged > 0,
+    own: extras.length > 0,
+  }));
+  const toggle = (id: SectionId) => setOpen((now) => ({ ...now, [id]: !now[id] }));
+
+  const count = (n: number, one: string, many: string) => (n === 1 ? t(one) : t(many, { n }));
+  const withChanged = (text: string, changed: number) =>
+    changed ? `${text} · ${count(changed, "settings.sumChangedOne", "settings.sumChanged")}` : text;
+  const cropCount = count(crops.length, "settings.sumCropsOne", "settings.sumCrops");
+
+  const first = crops.length ? cropFigures(economics, crops[0]) : undefined;
   const shownDefaults: Fact[] = [
     ...crops.flatMap((c) => {
       const figures = cropFigures(economics, c);
@@ -166,58 +275,102 @@ function Editor({ economics }: { economics: Economics }) {
 
   return (
     <>
-      <Heading title={t("settings.prices")} unit="€/t" fact={firstPrice} />
-      <ul className="border-t border-line bg-surface" data-testid="price-list">
-        {crops.map((crop) => {
-          const fallback = Number(cropFigures(economics, crop).price.value);
-          const price = resolved.prices[crop] ?? { value: fallback, default: fallback, edited: false };
-          return (
-            <li key={crop} className="flex items-start gap-3 px-4 py-2 border-b border-line" data-testid="price-row" data-crop={crop}>
-              <span className="flex-1 min-w-0 flex flex-col pt-2.5">
-                <CropName crop={crop} iconClassName="w-7 h-7" className="font-bold text-big" wrap />
-                {price.edited ? (
-                  <span className="flex flex-wrap items-center gap-2 mt-0.5 text-small text-ink-soft">
-                    <YoursTag />
-                    {t("settings.start", { n: formatNumber(price.default, lang) })}
-                  </span>
-                ) : null}
-              </span>
-              <MoneyInput
-                value={price.value}
+      <div className="mt-2 border-t border-line">
+        <Section
+          id="prices"
+          title={t("settings.prices")}
+          unit="€/t"
+          summary={withChanged(cropCount, pricesChanged)}
+          open={open.prices}
+          onToggle={() => toggle("prices")}
+        >
+          <FactLine fact={first?.price} />
+          <ul className="border-t border-line bg-surface" data-testid="price-list">
+            {crops.map((crop) => (
+              <CropFigureRow
+                key={crop}
+                crop={crop}
+                figure={figure("price", crop)}
                 limits={MONEY_LIMITS.price}
                 label={t("settings.priceOf", { crop: t(`crop.${crop}`) })}
+                testId="price-row"
                 onCommit={(v) => commit(`p.${crop}`, v)}
               />
-            </li>
-          );
-        })}
-      </ul>
+            ))}
+          </ul>
+        </Section>
 
-      <Heading title={t("settings.support")} unit="€/ha" fact={economics.support[0]?.amount} />
-      <ul className="border-t border-line bg-surface" data-testid="support-list">
-        {economics.support.map((item) => {
-          const r = resolved.support.find((s) => s.id === item.id);
-          const on = r ? r.on : item.defaultOn;
-          const amount = r ? r.amount : (item.amount.value as number);
-          const name = item.name[lang];
-          return (
-            <SupportRow key={item.id} id={item.id} name={name} condition={item.condition[lang]} level={t(`level.${item.level}`)} edited={r?.edited ?? false}
-              on={on}
-              onToggle={(next) => commit(`on.${item.id}`, next ? 1 : 0)}
-            >
-              <MoneyInput
-                value={amount}
-                limits={MONEY_LIMITS.support}
-                label={t("settings.amountOf", { name })}
-                disabled={!on}
-                onCommit={(v) => commit(`s.${item.id}`, v)}
+        <Section
+          id="costs"
+          title={t("settings.costs")}
+          unit="€/ha"
+          summary={withChanged(cropCount, costsChanged)}
+          open={open.costs}
+          onToggle={() => toggle("costs")}
+        >
+          <p className="px-4 pt-2 text-body" data-testid="costs-means">
+            <span className="font-bold">{t("money.costs")}:</span> {t("money.costsMeans")}
+          </p>
+          <FactLine fact={first?.costs} />
+          <ul className="border-t border-line bg-surface" data-testid="cost-list">
+            {crops.map((crop) => (
+              <CropFigureRow
+                key={crop}
+                crop={crop}
+                figure={figure("costs", crop)}
+                limits={MONEY_LIMITS.costs}
+                label={t("settings.costOf", { crop: t(`crop.${crop}`) })}
+                testId="cost-row"
+                onCommit={(v) => commit(`c.${crop}`, v)}
               />
-            </SupportRow>
-          );
-        })}
-      </ul>
+            ))}
+          </ul>
+        </Section>
 
-      <Extras crops={crops} extras={extras} onChange={setExtra} onAdd={(extra) => setState({ extras: [...extras, extra] })} />
+        <Section
+          id="support"
+          title={t("settings.secSupport")}
+          unit="€/ha"
+          summary={withChanged(count(supportOn, "settings.sumOnOne", "settings.sumOn"), supportChanged)}
+          open={open.support}
+          onToggle={() => toggle("support")}
+        >
+          <FactLine fact={economics.support[0]?.amount} />
+          <ul className="border-t border-line bg-surface" data-testid="support-list">
+            {economics.support.map((item) => {
+              const r = resolved.support.find((s) => s.id === item.id);
+              const on = r ? r.on : item.defaultOn;
+              const amount = r ? r.amount : (item.amount.value as number);
+              const name = item.name[lang];
+              return (
+                <SupportRow key={item.id} id={item.id} name={name} condition={item.condition[lang]} level={t(`level.${item.level}`)} edited={r?.edited ?? false}
+                  on={on}
+                  onToggle={(next) => commit(`on.${item.id}`, next ? 1 : 0)}
+                >
+                  <MoneyInput
+                    value={amount}
+                    limits={MONEY_LIMITS.support}
+                    label={t("settings.amountOf", { name })}
+                    disabled={!on}
+                    onCommit={(v) => commit(`s.${item.id}`, v)}
+                  />
+                </SupportRow>
+              );
+            })}
+          </ul>
+        </Section>
+
+        <Section
+          id="own"
+          title={t("settings.secOwn")}
+          unit="€/ha"
+          summary={extras.length ? count(extras.length, "settings.sumAddedOne", "settings.sumAdded") : t("settings.sumNone")}
+          open={open.own}
+          onToggle={() => toggle("own")}
+        >
+          <Extras crops={crops} extras={extras} onChange={setExtra} onAdd={(extra) => setState({ extras: [...extras, extra] })} />
+        </Section>
+      </div>
 
       <div className="px-4 pt-4 flex flex-col gap-3 items-stretch">
         <Button
@@ -255,9 +408,6 @@ function Extras({
     <>
       {extras.length ? (
         <>
-          <SectionTitle>
-            {t("settings.added")} <span className="normal-case tracking-normal">€/ha</span>
-          </SectionTitle>
           <ul className="border-t border-line bg-surface" data-testid="extra-list">
             {extras.map((extra, i) => (
               <li key={`${i}-${extra.name}`} className="px-4 py-2 border-b border-line" data-testid="extra-item">
@@ -461,7 +611,10 @@ function Body({ bundle }: { bundle: FieldBundle }) {
   return <Editor economics={bundle.economics} />;
 }
 
-/** Prices and support: the farmer's own figures behind the income. Every change applies at once. */
+/**
+ * Prices, costs and support: the farmer's own figures behind the income, in fold-out sections.
+ * Every change applies at once.
+ */
 export default function Settings() {
   const t = useT();
   const [state] = useAppState();
