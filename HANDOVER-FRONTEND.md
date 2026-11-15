@@ -132,7 +132,7 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 
 The demo field's greenness, soil and slope are badged "your field" (250 m or finer, from the field itself); everything else is "your area". `src/data/validate.ts` checks the section when the bundle loads; `src/data/public-bundle.test.ts` and `src/data/fieldFromBasin.test.ts` check its values against the data files.
 
-**Still only in the data files:** monthly highs and lows, ET₀ and soil water by month, each rain source's yearly total, the demo field's 30 m and 10 m greenness views (with red-edge NDRE), the GSMaP and NASA POWER comparisons, the plain description of every key (`meta.indicators`) and the AI note (`index.json`). `sourcesFor()` in the helper gives the datasets behind any of them.
+**Still only in the data files:** monthly highs and lows, ET₀ and soil water by month, each rain source's yearly total, the demo field's 30 m and 10 m greenness views (with red-edge NDRE), the GSMaP and NASA POWER comparisons, and the plain description of every key (`meta.indicators`). `sourcesFor()` in the helper gives the datasets behind any of them. The AI note (`index.json`) and the licences' credit lines are shown under "Data and credits" (`src/components/DataCredits.tsx`), on Check and share and the printout.
 
 ## 5. From data to a recommendation
 
