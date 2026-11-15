@@ -115,3 +115,27 @@ history label remains 2001–2025; each measure may use different valid years.
 These live facts carry fair confidence, an “as of 2025” date and no placeholder
 flag because the measurements are live. Their interpretation thresholds remain
 placeholders for the team to correct. Future projections stay in the demo bundle.
+
+## This season so far
+
+Shown on the Year screen and on Area weather, for the field's centre, live from NASA POWER (daily rain, about 50 km). The code is `src/weather/season.ts`; the thresholds are our own judgement, for the team to correct.
+
+- **The season** starts on 1 September. Rain is added up from that day to the latest day NASA POWER has, which is usually two to four days ago. The block shows both dates.
+- **Usual by now** is the middle value of the same days in the ten seasons before. Its range is the 10th to 90th percentile of those seasons, as in the data team's files, so one freak season does not stretch it.
+- **A season is left out** of the comparison when more than one day in ten is missing. With fewer than three seasons left, no comparison is shown.
+- **The verdict:** under three quarters of the usual rain is "Drier than usual", over one and a quarter is "Wetter than usual", otherwise "About usual".
+- **Last proper rain** is the latest day with 5 mm or more.
+- If NASA POWER does not answer within 8 seconds, the block says the rain is unavailable and offers to try again. The rest of the screen is unaffected.
+- This is a record of what has fallen, not a forecast.
+
+## The next seven days
+
+Shown under "This season so far", for the field's centre, from MET Norway's open forecast (Locationforecast 2.0). The code is `src/weather/forecast.ts`; the thresholds are our own judgement.
+
+- **Seven days:** what is left of today and the six days after, by the phone's own calendar.
+- **Rain** is added up from the forecast's six-hour blocks, taking blocks that do not overlap. Each day's cell shows its total in mm; 5 mm or more is in bold.
+- **"Little or no rain"** is shown when the seven days total under 1 mm.
+- **Coldest night** is the lowest forecast air temperature. At 1 °C or below the block adds "Frost possible", because the forecast is for air at 2 m and the ground is colder.
+- A forecast is a best guess, most of all for rain a week ahead, so its figures carry low confidence and the block says to check again before sowing.
+- If MET Norway does not answer within 8 seconds, the block says the forecast is unavailable and offers to try again.
+- The link under it opens MET Norway's public forecast page (yr.no) for the same place. A web page cannot read the phone's own weather app.

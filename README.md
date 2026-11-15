@@ -78,7 +78,7 @@ Languages: English and Italian, switchable on every screen. The demo video and s
 | Landsat / HLS (Harmonized Landsat Sentinel-2) | Vegetation index over the seasons: green and bare months, stress years | Your field | 30 m |
 | SRTM elevation | Slope, for erosion risk on bare soil | Your field | 30 m |
 | ECOSTRESS | Land surface temperature and plant water stress, where scenes exist | Your field | 70 m |
-| NASA POWER | Daily temperature and rainfall history: hot days at flowering, frost days, dry autumns | Your area | about 50 km |
+| NASA POWER | Daily temperature and rainfall history: hot days at flowering, frost days, dry autumns. Also, live, this season's rain since 1 September against the same weeks in the ten seasons before | Your area | about 50 km |
 | GPM IMERG | Heavy-rain events | Your area | about 10 km |
 | SMAP | Soil moisture anomalies as regional context | Your area | 9–36 km |
 | NEX-GDDP-CMIP6 | Hot days at flowering by 2050 | Your area | about 25 km |
@@ -99,6 +99,7 @@ Resolutions above are from general knowledge and must be checked against each pr
 | Map picture, zoomed in, Bradano basin: our own tiles in `public/tiles/s2/`, cut by `scripts/build-basemap.py` from four Sentinel-2 L2A scenes of 30 May 2026 (contains modified Copernicus Sentinel data 2026), 10 m | Finding and drawing a field in the basin |
 | Aerial photos on top, where they exist: AGEA orthophotos, flights 2022 to 2024, loaded live from AGEA's tile service. CC BY 4.0 (AGEA legal notes: "messe a disposizione per il riutilizzo alle condizioni della licenza Creative Commons BY 4.0"). About 1.8 m in Basilicata, finer in Puglia. | Seeing tracks, trees and field corners |
 | Cadastral parcels of Genzano di Lucania: Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS). CC BY 4.0, stated in the service's own capabilities document. Downloaded ahead of time into `public/parcels/`. | Finding a field by its sheet and parcel numbers |
+| Weather forecast: MET Norway, Locationforecast 2.0, loaded live. CC BY 4.0 and NLOD 2.0 (MET Norway's licence page); its terms allow calls straight from a web page. Credit shown: "Data from MET Norway". | Rain and the coldest night over the next seven days |
 
 ### Rules for honest numbers
 
