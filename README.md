@@ -349,7 +349,7 @@ The video opens on the Genzano field and the hot-days number, not on a logo.
 Space Apps allows AI tools if their use is disclosed and they do not produce the core idea. In short: the idea, the choices and the checking are the team's; most of the code and the notebooks were written with AI tools.
 
 **What the team did**
-- **The idea and the design.** The farmer's question, the six steps, and a phone web app rather than a dashboard came from the team.
+- **The idea and the design.** The farmer's question, the steps from field to plan (now three setup steps, then tabs), and a phone web app rather than a dashboard came from the team.
 - **The place.** The team picked rain-fed durum in southern Italy after its own Earth Engine run (10 November 2026) compared how often satellites get a clear view of cropland in 17 areas. It chose the demo field, the site of a published durum and vetch trial (Denora et al. 2025), so the satellite figures could be checked against what was measured there.
 - **The data.** The data lead ran every notebook in Google Earth Engine, checked the results against the trial's own weather station and against other datasets, and decided what reaches the app (`HANDOVER.md`). Those checks caught, for example, NASA POWER's impossible rain months, which the app now leaves out.
 - **The research.** The team's research compilation (`research-compilation/`) is behind the extra durum after a legume.
