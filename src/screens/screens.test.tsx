@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import App, { AppRoutes } from "../App";
 import { WHO, ownChecks } from "./check-share";
+import type { FieldBundle } from "../data/types";
+import { blockTiles, tileWindow } from "../timelapse/frames";
 
 vi.mock("../components/Map", () => ({
   default: () => <div data-testid="map" />,
@@ -297,6 +299,57 @@ describe("Data and credits", () => {
     renderAt("/print?f=genzano-demo&p=income,water");
     expect(await screen.findByTestId("credit-lines")).toHaveTextContent("ISRIC");
     expect(screen.getByTestId("ai-note")).toBeInTheDocument();
+  });
+});
+
+describe("Field timelapse (Your field from space)", () => {
+  const stac = (features: object[]) => ({ type: "FeatureCollection", features, links: [] });
+  const scene = (id: string, datetime: string, cloud: number) => ({ id, properties: { datetime, "eo:cloud_cover": cloud } });
+  /** The STAC search, the ground check at the field (clear unless the scene's id says cloudy), and the bundle. */
+  function serve(search: () => Response | Promise<Response>) {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      const u = String(url);
+      if (u.includes("/api/stac/")) return search();
+      if (u.includes("/item/point/")) return okJson({ values: [u.includes("cloudy") ? 9 : 5] });
+      return okJson(fixture);
+    }));
+  }
+
+  it("plays one clear picture a month of the farmer's field, with its date, the outline and the Copernicus notice", async () => {
+    // June's least cloudy scene is cloudy over the field, so June shows its next scene.
+    serve(() => okJson(stac([
+      scene("S2A_cloudy", "2024-06-15T09:52:00Z", 0.5), scene("S2A_1", "2024-06-15T09:52:00Z", 1), scene("S2B_2", "2024-07-10T09:52:00Z", 4),
+    ])));
+    renderAt("/timelapse?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("frame-date")).toHaveTextContent("15 Jun 2024 · 11:52");
+    const picture = screen.getByTestId("timelapse-picture");
+    const perFrame = blockTiles(tileWindow((fixture as unknown as FieldBundle).field.outline)).length;
+    expect(picture.querySelectorAll("img")).toHaveLength(2 * perFrame); // two frames
+    expect(picture.querySelector("img")!.getAttribute("src")).toContain("item=S2A_1");
+    expect(picture.innerHTML).not.toContain("S2A_cloudy");
+    expect(picture.querySelector("polygon")).not.toBeNull();
+    expect(screen.getByTestId("timelapse-credit")).toHaveTextContent("Contains modified Copernicus Sentinel data 2024.");
+    expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
+    fireEvent.change(screen.getByRole("slider", { name: "Picture" }), { target: { value: "1" } });
+    expect(screen.getByTestId("frame-date")).toHaveTextContent("10 Jul 2024");
+    expect(screen.getByRole("button", { name: "Play" })).toBeInTheDocument();
+  });
+
+  it("opens from the Year screen", async () => {
+    serve(() => okJson(stac([scene("S2A_1", "2024-06-15T09:52:00Z", 1)])));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    fireEvent.click(await screen.findByTestId("timelapse-link"));
+    expect(await screen.findByTestId("frame-date")).toHaveTextContent("15 Jun 2024");
+  });
+
+  it("says so when no clear picture is found, and offers a retry when the service fails", async () => {
+    serve(() => okJson(stac([])));
+    renderAt("/timelapse?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("timelapse-none")).toBeInTheDocument();
+    cleanup();
+    serve(() => new Response("down", { status: 503 }));
+    renderAt("/timelapse?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("timelapse-error")).toHaveTextContent("Try again");
   });
 });
 

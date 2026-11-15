@@ -312,3 +312,25 @@ What a returning farmer is told (`planChange` in `src/state/plan.ts`), comparing
 | Another best fit | | Warning: the advice has changed, with both rotations named |
 
 The fingerprint is the one `vite.config.ts` makes from the shipped data. A change stays on screen until the farmer taps "Got it". The live rain and forecast do not enter the ranking, so they can never change the advice. "What to watch" is the bundle's usual cover and risks for the calendar month; the to-do list is the best fit's own checks.
+
+## Field timelapse
+
+"Your field from space", linked from the Year screen (`#/timelapse`). `src/timelapse/frames.ts` holds the rules; each is
+**our judgement** (`TIMELAPSE_RULES`).
+
+- **Pictures:** Sentinel-2 L2A at 10 m, from Microsoft Planetary Computer, loaded live for the farmer's own outline,
+  demo field or drawn. Only scenes whose footprint covers the middle of the field are searched.
+- **Which scenes:** from 1 January three years back until today, leaving out any scene with more than 25% cloud over
+  its whole 100 km tile. Each month keeps up to three scenes, least cloudy first, then nearest mid-month.
+- **Clear at the field:** a scene can have little cloud overall and still a cloud over the field (16 May 2024 was
+  one). So each candidate's scene class (Sentinel-2's own SCL layer) is read at the middle of the field, and the
+  first that sees the ground (vegetation, bare soil, water, dark features, unclassified, snow) is shown. Cloud,
+  cirrus, cloud shadow, no data and defective pixels are not. A month with no clear candidate is left out. If the
+  check cannot be made at all, each month shows its least cloudy scene. A picture whose tiles fail to load is skipped.
+- **How close:** the picture is the square around the field with a margin of 8% of the field's longer side on each
+  side, so the outline fills it. Map tiles come from the closest zoom (at most 18) at which that square is no more
+  than one tile wide, so a frame needs at most 2 × 2 tiles; the screen stretches the square to the picture.
+- **Date and time:** each picture's acquisition time in Italian time.
+- **Credit:** "Contains modified Copernicus Sentinel data" with the years the pictures span, as the Sentinel Data
+  Legal Notice asks.
+

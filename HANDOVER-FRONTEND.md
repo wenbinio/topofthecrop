@@ -21,7 +21,7 @@ A farmer goes through six steps. Each step is one screen and one route.
 
 "Your field today" (`/today`, `src/screens/Today.tsx`) is where a farmer comes back: whether new data has changed the advice since the last visit, a tick list of what to do before sowing, what is usual this month, and the live rain and forecast. It opens from step 6 and from a card on step 1 (`src/components/WelcomeBack.tsx`). The plan is kept in the phone's `localStorage` (`src/state/plan.ts`), never sent. There are no push notifications: the app has no server, so it can only compare when the page is opened, and the page says so.
 
-Three more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin), `/settings` (`Settings.tsx`, the farmer's own prices and support payments) and `/credits` (`Credits.tsx`, the data credits and the AI note, linked from Check and share).
+Three more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin), `/settings` (`Settings.tsx`, the farmer's own prices and support payments) and `/credits` (`Credits.tsx`, the data credits and the AI note, linked from Check and share). `/timelapse` (`Timelapse.tsx`, one clear Sentinel-2 picture a month of the farmer's field, fetched live by `src/timelapse/frames.ts`) is linked from the Year screen ("Your field from space").
 
 Routes and their guards are in `src/App.tsx`. A screen that needs field data is wrapped in `BundleGate`, which shows one loading line, a retry on failure, or sends a field outside the basin to `/area`.
 

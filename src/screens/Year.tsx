@@ -5,8 +5,9 @@ import { rankOptions } from "../ranking/rank";
 import type { RankedOption } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
 import { CropSequence, OptionName, Slotted } from "../components/Crops";
+import { Link } from "react-router-dom";
 import { FactButton, PlaceholderNote } from "../components/FactParts";
-import { DropIcon, HeatIcon } from "../components/Icons";
+import { ChevronIcon, DropIcon, HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
 import { HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, LinkButton } from "../components/ui";
@@ -103,6 +104,15 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
           <HeatIcon className="w-5 h-5 flex-none" />
           <HotDaysTerm high={bundle.year.flowerHigh}>{t("year.hotHead")}</HotDaysTerm>
         </p>
+        {/* The farmer's own field from space, one clear picture a month (src/screens/Timelapse.tsx). */}
+        <Link
+          to={to("/timelapse")}
+          data-testid="timelapse-link"
+          className="mt-1 inline-flex items-center gap-1 min-h-11 font-bold text-body underline underline-offset-4"
+        >
+          {t("timelapse.title")}
+          <ChevronIcon className="w-4 h-4" />
+        </Link>
       </div>
 
       {holds ? (

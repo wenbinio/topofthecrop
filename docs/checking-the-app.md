@@ -40,6 +40,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 - [ ] **Dry year:** **8** and **10** days, **418** and **393 mm**. **Driest year:** **13** and **15** days, **390** and **367 mm**. Each card ends with its best fit.
 - [ ] *This season so far* (live): rain since 1 September, usual by now, a verdict, the last day with 5 mm or more, and "Not counted: NASA POWER rain for October 2025…".
 - [ ] *Next 7 days* (live): rain for each day and the coldest night.
+- [ ] *Your field from space* (under the slider) opens a timelapse: dated pictures with the field's yellow outline filling the frame, play, pause and a slider. *Back* returns.
 - [ ] *2024 and 2026 against a usual season*: 2024 **413 mm ↓, 27.3% ↓, 0.60, 258 mm ↓**; 2026 **651 mm ↑, 32.8% ↑, 0.72, 326 mm**; then "Much less green than nearby fields in 2018 and 2023…". Nothing cut off on a phone.
 
 ## 6. Check and share
