@@ -106,11 +106,11 @@ Seed certification list:
 
 Env impact:
 
-![](images/image1.png)
+*Figure not reproduced here: see the environmental-impact figure in Lago-Olveira et al. (2023), https://doi.org/10.1016/j.scitotenv.2023.165124 (CC BY-NC-ND 4.0).*
 
 Economic impact:
 
-![](images/image2.png)
+*Figure not reproduced here: see the economic-impact figure in Lago-Olveira et al. (2023), https://doi.org/10.1016/j.scitotenv.2023.165124 (CC BY-NC-ND 4.0).*
 
 **Table S1.** Field operations and inventory data (per hectare) for wheat cultivation.
 
@@ -175,7 +175,7 @@ Production costs (C) included all variable expenses related to seed, soil prepar
 
 Contribution Margin = Gross Production Value (GPV) − Production Costs
 
-![](images/image3.png)
+*Figure not reproduced here: see the contribution-margin results in Denora et al. (2025), https://doi.org/10.1016/j.ijagro.2025.100045 (CC BY-NC-ND 4.0).*
 
 | **Growing season** | **Cropping system** | **GPV (€/ha)** | **Costs (€/ha)** | **CM (€/ha)** |
 |---|---|---|---|---|
@@ -210,7 +210,7 @@ Contribution Margin = Gross Production Value (GPV) − Production Costs
 
 **Wheat grain yields**
 
-![Wheat grain yields by soil water-holding capacity, rotation and management](images/image4.png)
+*Figure not reproduced here: see the wheat grain yields by soil water-holding capacity, rotation and management in Nasrallah et al. (2020), https://doi.org/10.1016/j.eja.2019.125968.*
 
 **Other important findings**
 

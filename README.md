@@ -35,7 +35,7 @@ Three quick steps to a plan, then three places to come back to. Each is one scre
 
 Prices and support, bigger text, voice commands and the data credits sit in the "More" menu at the top.
 
-The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named in step 6. It never tells the farmer what to do, and every option lists what must be checked locally.
+The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named on the Share your plan screen. It never tells the farmer what to do, and every option lists what must be checked locally.
 
 ### How it sits beside existing tools
 
@@ -49,12 +49,12 @@ Top of the Crop does the step before that. It reads what satellites show on one 
 |---|---|
 | A decision-support tool combining NASA observations, local soil information, crop characteristics and farmer priorities | Steps 1 to 3 |
 | At least three rotation strategies including the existing one | Step 3: nine options, each a three-year sequence, the current rotation always among them |
-| For each: why suggested, evidence, benefits, information gaps, risks needing local review | Step 4, using the same five headings |
-| Bare-field periods and seasons of vulnerability | Step 5 strip and step 3 findings |
-| Explaining terms, satellite versus ground measurements, uncertainty | Step 4 explanations, scale badges, ranges and confidence words |
-| Dry-year scenarios | Step 5 |
+| For each: why suggested, evidence, benefits, information gaps, risks needing local review | The Why screen, opened from the plan, using the same five headings |
+| Bare-field periods and seasons of vulnerability | The year screen's month strip and the plan's findings |
+| Explaining terms, satellite versus ground measurements, uncertainty | Explanations on the Why screen, scale badges, ranges and confidence words |
+| Dry-year scenarios | The year screen: a usual, a dry and the driest year |
 | Farmer inputs for priorities and constraints | Step 2 |
-| Support, not replace, local expertise | Step 6 and "check locally" on every option |
+| Support, not replace, local expertise | Share your plan, and "check locally" on every option |
 
 ## Two views
 
@@ -113,6 +113,7 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 | Cadastral parcels of Genzano di Lucania: Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS). CC BY 4.0, stated in the service's own capabilities document. Downloaded ahead of time into `public/parcels/`. | Finding a field by its sheet and parcel numbers |
 | Weather forecast: MET Norway, Locationforecast 2.0, loaded live. CC BY 4.0 and NLOD 2.0 (MET Norway's licence page); its terms allow calls straight from a web page. Credit shown: "Data from MET Norway". | Rain and the coldest night over the next seven days |
 | Field timelapse ("Your field from space", linked from the Year screen): Sentinel-2 L2A from Microsoft Planetary Computer, loaded live. Its STAC API finds the scenes and its data API draws map tiles of them; neither needs an account or key. Copernicus Sentinel data are free, full and open (Sentinel Data Legal Notice); the Planetary Computer's Supplemental Terms of Use for Previews say previews are not meant for production use, though that is not prohibited. Credit shown: "Contains modified Copernicus Sentinel data [years]". | One clear picture a month of the farmer's own field, last three years |
+| Intercrop map ("Where to intercrop on your field", on the plan with the intercropping switch): Sentinel-2 L2A greenness and leaf moisture over several springs, and Copernicus DEM GLO-30 heights (30 m), both from Microsoft Planetary Computer, loaded live. GLO-30 has a free worldwide licence; its notice is on the credits page: "produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved". | Where on the farmer's field each of the two strip crops should go |
 
 ### Rules for honest numbers
 
@@ -293,7 +294,7 @@ type AreaWeather = {
   - lentil, pea, barley, rapeseed or coriander → durum → durum (one break year)
   - durum → durum → durum (what the farmer does now)
 - **Three years, fixed.** Every option has exactly three crops. The card shows them as three icons with the year under each, not as a sentence. Longer or shorter rotations are out of scope for this version.
-- **The year strip in step 5** still shows the field's year as observed under the current rotation. A separate strip for each option is out of scope.
+- **The year strip on the year screen** still shows the field's year as observed under the current rotation. A separate strip for each option is out of scope.
 - **Three kinds of year** are shown at once on the Year screen: usual, dry (1 in 10) and the driest since 2001, each with its hot days, rain and best fit. There used to be a slider; it read as if the farmer were setting the weather, so it went. All three are precomputed in the bundle; the browser does no climate maths.
 - **Simple view** is the same components with a `view` flag. It swaps the design tokens, hides dataset labels until tapped, and shows the findings and options as weather-style rows under one big headline. No separate screens.
 - **Sharing link.** Hash routing (`/#/options?...`), so it works on any static host. The demo field travels as its id. A drawn field travels as its outline, simplified to at most 12 points at 5 decimal places. The farmer's own figures from Settings travel in `m`, only where they differ from ours: `p.<crop>` a crop's price (€/t), `c.<crop>` a crop's direct costs (€/ha), `y.<crop>` its yield (t/ha), `l1.<crop>` and `l2.<crop>` the extra durum after it (%), `s.<support id>` a support amount (€/ha) and `on.<support id>` 1 or 0 for a payment switched on or off. Payments the farmer added travel in `x`. Nothing is stored on a server.

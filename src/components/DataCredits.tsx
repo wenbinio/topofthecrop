@@ -20,6 +20,7 @@ export const CREDIT_KEYS = [
   "credits.basin",
   "credits.forecast",
   "credits.timelapse",
+  "credits.dem",
   "credits.trial",
 ] as const;
 

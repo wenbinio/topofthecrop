@@ -217,7 +217,7 @@ Written before the app was built, as guidance. For how the app actually uses eac
 - **Headline numbers** show today against 2041–2060 with `projected()`: hot days at flowering, October–May rain, and frost.
 - **Water need against rain:** compare a crop's need with rain over the same months, using `rain_month`. `durum_need` covers mid-November to mid-July, while `rain_season` is October–May, so don't compare those two directly.
 
-**Rotation comparison.** The scorer gives each rotation 0–1 on eight criteria, weighted by the farmer's sliders.
+**Rotation comparison.** The scorer gives each rotation 0–1 on eight criteria, weighted by the order the farmer puts priorities in.
 - These criteria come from the data:
   - **Water use:** sum `et0_month` × the crop's monthly Kc over its season. Compare that with rain over the same months and the soil's `awc`.
   - **Climate risk:** `hot30_month` in the crop's flowering months, `frost_month` in its frost-sensitive months, a dry autumn at sowing (`rain_autumn`, `rain_onset_day`), and the 2041–2060 versions from `projected()`.
