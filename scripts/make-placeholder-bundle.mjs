@@ -128,16 +128,16 @@ const support = [
   {
     id: 'eco-rotation', level: 'eu', defaultOn: true,
     name: { en: "Eco-scheme 4: legume rotation", it: "Eco-schema 4: rotazione con leguminosa" },
-    condition: { en: "Pays about 60 €/ha in the years that qualify (about 2 out of 3); the plan said 110 €/ha, but more land applied. No synthetic herbicides or pesticides on the field, and work the residues into the soil.",
-      it: "Dà circa 60 €/ha negli anni validi, circa 2 su 3; il piano diceva 110 €/ha, ma hanno chiesto l'aiuto più ettari del previsto. Niente diserbi o fitofarmaci di sintesi sul campo, e interra i residui." },
+    condition: { en: "Pays about 60 €/ha in the years that qualify (about 2 out of 3); the plan said 110 €/ha, but more land applied. No chemical weedkillers or pesticides on the legume, and work the residues into the soil.",
+      it: "Dà circa 60 €/ha negli anni validi, circa 2 su 3; il piano diceva 110 €/ha, ma hanno chiesto l'aiuto più ettari del previsto. Niente diserbi chimici o fitofarmaci sulla leguminosa, e interra i residui." },
     amount: researched(40, '€/ha', [37, 72], money.capPlan, 'low', '2025'), crops: [],
     options: ['chickpea-durum-durum', 'faba-durum-faba', 'lentil-durum-durum', 'pea-durum-durum'],
   },
   {
     id: 'eco-rotation-forage', level: 'eu', defaultOn: false,
     name: { en: "Eco-scheme 4: vetch-oat year", it: "Eco-schema 4: anno di veccia-avena" },
-    condition: { en: "Sources disagree on whether vetch-oat before durum counts. No synthetic herbicides or pesticides. Ask your adviser.",
-      it: "Le fonti non concordano sul fatto che la veccia-avena prima del grano duro valga. Niente diserbi o fitofarmaci di sintesi. Chiedi al tecnico." },
+    condition: { en: "Sources disagree on whether vetch-oat before durum counts. No chemical weedkillers or pesticides on the vetch-oat. Ask your adviser.",
+      it: "Le fonti non concordano sul fatto che la veccia-avena prima del grano duro valga. Niente diserbi chimici o fitofarmaci sulla veccia-avena. Chiedi al tecnico." },
     amount: researched(40, '€/ha', [0, 72], money.capPlan, 'low', '2025'), crops: [], options: ['vetch-oat-durum-durum'],
   },
   {
@@ -154,8 +154,8 @@ const support = [
     // parcel. Nobody on the team has checked, so it is off until the farmer's CAA office says yes.
     id: 'eco-rotation-strips', level: 'eu', defaultOn: false,
     name: { en: "Eco-scheme 4: strips", it: "Eco-schema 4: a strisce" },
-    condition: { en: "Applies only if each strip is declared as its own parcel and no synthetic herbicide or pesticide touches the legume strip. Ask your CAA office.",
-      it: "Vale solo se dichiari ogni striscia come appezzamento a sé e nessun diserbo o fitofarmaco di sintesi tocca la striscia di leguminosa. Chiedi al tuo CAA." },
+    condition: { en: "Applies only if each strip is declared as its own parcel and no chemical weedkiller or pesticide touches the legume strip. Ask your CAA office.",
+      it: "Vale solo se dichiari ogni striscia come appezzamento a sé e nessun diserbo chimico o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA." },
     amount: researched(40, '€/ha', [0, 72], money.capPlan, 'low', '2025'), crops: [],
     options: ['strips-chickpea-durum', 'strips-faba-durum'],
   },
