@@ -8,22 +8,25 @@ Live site: https://wenbinio.github.io/topofthecrop/
 
 ## 1. The app in one minute
 
-A farmer goes through six steps. Each step is one screen and one route.
+Since 15 November 2026 the farmer sets up in three steps, then moves between three tabs. The setup steps show a step bar at the top (`src/components/StepBar.tsx`); the plan routes show a tab bar at the bottom (`src/components/TabBar.tsx`, `isPlanRoute`, `tabOf`).
 
-| Step | Route | Screen file | What it shows |
+| Where | Route | Screen file | What it shows |
 |---|---|---|---|
-| 1 | `/` | `src/screens/FindField.tsx` | Map, town search, "My location", tap or draw a field, or find it by parcel number |
-| 2 | `/questions` | `src/screens/Questions.tsx` | Last crop, limits, priorities tapped in order (at least two) |
-| 3 | `/options` | `src/screens/Options.tsx` | What the satellites see, the recommendation, ranked rotations |
-| 4 | `/why/:optionId` | `src/screens/Why.tsx` | One rotation: income sum, evidence, what we don't know, what to check locally |
-| 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days and October–May rain now and by 2050, a usual, a dry and the driest year side by side with the best fit in each, this season's rain and the forecast (live), 2024 and 2026 against a usual season |
-| 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Check and share": what to check alone for the best fit, who can look at the plan without an adviser, then the link and a one-page printout. The route keeps its old name so shared links still open |
+| Step 1 | `/` | `src/screens/FindField.tsx` | Map, town search, "My location", tap or draw a field, or find it by parcel number |
+| Step 2 | `/questions` | `src/screens/Questions.tsx` | Three questions one at a time: last crop (botanical plates), limits (each with a `HelpTip` "?"), priorities tapped in order |
+| Step 3, Plan tab | `/options` | `src/screens/Options.tsx` | The plan: recommendation, three harvests, reasons, "how sure"; Keep, Why, Share; priorities with "Change my answers"; folds for what we see, soil, where to intercrop (`StripMap`) and the other choices |
+| Why tab | `/why/:optionId` | `src/screens/Why.tsx` | Reasons, what the data found (`buildPath`, without the priorities), usual / dry / driest year card, folds for money, evidence, unknowns |
+| Why tab | `/year` | `src/screens/Year.tsx` | The weather in detail: the three kinds of year with hot days and rain now and by 2050, the month strip, 2024 and 2026 against a usual season |
+| My field tab | `/today`, `/timelapse` | `src/screens/Today.tsx`, `Timelapse.tsx` | Whether the advice changed, the to-do list (the only place the checks show), this month, season rain and forecast (live), links to the timelapse and the weather |
+| Plan tab | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Share your plan": the plan, who can look at it, printout, WhatsApp, copy link. The route keeps its old name so shared links still open |
 
-"Your field today" (`/today`, `src/screens/Today.tsx`) is where a farmer comes back: whether new data has changed the advice since the last visit, a tick list of what to do before sowing, what is usual this month, and the live rain and forecast. It opens from step 6 and from a card on step 1 (`src/components/WelcomeBack.tsx`). The plan is kept in the phone's `localStorage` (`src/state/plan.ts`), never sent. There are no push notifications: the app has no server, so it can only compare when the page is opened, and the page says so.
+The top bar (`src/components/TopBar.tsx`) has a back arrow (previous screen, or `parentOf` the route on a link opened straight on a screen), the app's mark and name, IT/EN, and a "More" menu with voice, prices and support (`/settings`), bigger text (the simple view) and the data credits (`/credits`).
 
-Since 15 November 2026 the screens show one thing first and fold the rest: Questions asks its three questions one at a time (a farmer whose priorities are already in order lands on the last); Options shows the advice and then rows that open on a tap; Why keeps the reasons open and folds the money, the evidence, the benefits, the unknowns and the checks. The rows are `src/components/Fold.tsx`, and the motion classes are in `src/index.css` under "Motion".
+The intercrop map (`src/components/StripMap.tsx`) draws in the satellite tiles' frame (`tileWindow` from `src/timelapse/frames.ts`): strips and halves are cut from the outline (`piecesIn`), and "From space" uses `src/satellite/zones.ts`, which fetches spring NDVI and NDMI tiles and the Copernicus 30 m elevation from Microsoft Planetary Computer, puts each 10 m cell on one scale, and splits the field in half by area. The backdrop is the latest clear Sentinel-2 picture, loaded once the card is on screen.
 
-Three more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin), `/settings` (`Settings.tsx`, the farmer's own prices and support payments) and `/credits` (`Credits.tsx`, the data credits and the AI note, linked from Check and share). `/timelapse` (`Timelapse.tsx`, one clear Sentinel-2 picture a month of the farmer's field, fetched live by `src/timelapse/frames.ts`) is linked from the Year screen ("Your field from space").
+The crop pictures are AI-made botanical plates (`public/crops/`, `src/components/CropPlate.tsx`), each with a visible translucent "AI" badge in the file. Inside sentences crops keep their line icons (`CropName`).
+
+`/area` (`AreaWeather.tsx`) is live weather for a field outside the basin. The look is in `src/theme/standard.css` and `simple.css` (warm paper, Fraunces headlines, rounded cards); the motion classes are in `src/index.css` under "Motion".
 
 Routes and their guards are in `src/App.tsx`. A screen that needs field data is wrapped in `BundleGate`, which shows one loading line, a retry on failure, or sends a field outside the basin to `/area`.
 
