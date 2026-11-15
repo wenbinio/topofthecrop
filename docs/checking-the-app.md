@@ -65,3 +65,10 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 ## Reporting a problem
 
 Send a screenshot, the step number above, and the page's link (copy it from the address bar: it holds every choice made).
+
+## 10. Soil, and coming back
+
+- [ ] Options, demo field: *Your soil* reads **Heavy ground (clay loam)**, **Alkaline soil · pH 7.7 · measured in the trial here: 8.2**, then that it is an estimate and that the order does not use it. *Soil figures* opens ten rows and the trial's pH, each with a *Source*.
+- [ ] Step 6: **My field today** opens *Your field today*. First time: "This plan is now kept on this phone." Tick a check, reload: the tick is still there.
+- [ ] Open the first screen again: a card offers **My field today** and **Pick another field**.
+- [ ] *What to watch in <this month>* shows the usual cover and risks. The rain so far and the forecast load below.

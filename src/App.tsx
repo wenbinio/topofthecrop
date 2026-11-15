@@ -8,10 +8,12 @@ import { useAppState, useTo } from "./state/useAppState";
 import { BundleGate, BundleProvider } from "./components/BundleProvider";
 import { StepBar } from "./components/StepBar";
 import { TopBar } from "./components/TopBar";
+import { WelcomeBack } from "./components/WelcomeBack";
 import Adviser from "./screens/Adviser";
 import FindField from "./screens/FindField";
 import Options from "./screens/Options";
 import Questions from "./screens/Questions";
+import Today from "./screens/Today";
 import { SETTINGS_PATH } from "./screens/settings/path";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
@@ -67,7 +69,8 @@ function Shell() {
 
   const isPrint = pathname.startsWith("/print");
   // Settings sits outside the six steps: reachable from any of them, it belongs to none.
-  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits";
+  // So does "Your field today", the page a farmer comes back to.
+  const isSettings = pathname === SETTINGS_PATH || pathname === "/credits" || pathname === "/today";
 
   return (
     <LangContext.Provider value={state.lang}>
@@ -83,7 +86,15 @@ function Shell() {
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
           <Suspense fallback={<ScreenLoading />}>
           <Routes>
-            <Route path="/" element={<FindField />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <WelcomeBack />
+                  <FindField />
+                </>
+              }
+            />
             <Route
               path="/area"
               element={
@@ -97,6 +108,7 @@ function Shell() {
             <Route path="/why/:optionId" element={field((b) => <Why bundle={b} />)} />
             <Route path="/year" element={field((b) => <Year bundle={b} />)} />
             <Route path="/adviser" element={field((b) => <Adviser bundle={b} />)} />
+            <Route path="/today" element={field((b) => <Today bundle={b} />)} />
             <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="/credits" element={<Credits />} />

@@ -19,6 +19,8 @@ A farmer goes through six steps. Each step is one screen and one route.
 | 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days and October–May rain now and by 2050, a usual, a dry and the driest year side by side with the best fit in each, this season's rain and the forecast (live), 2024 and 2026 against a usual season |
 | 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Check and share": what to check alone for the best fit, who can look at the plan without an adviser, then the link and a one-page printout. The route keeps its old name so shared links still open |
 
+"Your field today" (`/today`, `src/screens/Today.tsx`) is where a farmer comes back: whether new data has changed the advice since the last visit, a tick list of what to do before sowing, what is usual this month, and the live rain and forecast. It opens from step 6 and from a card on step 1 (`src/components/WelcomeBack.tsx`). The plan is kept in the phone's `localStorage` (`src/state/plan.ts`), never sent. There are no push notifications: the app has no server, so it can only compare when the page is opened, and the page says so.
+
 Three more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin), `/settings` (`Settings.tsx`, the farmer's own prices and support payments) and `/credits` (`Credits.tsx`, the data credits and the AI note, linked from Check and share).
 
 Routes and their guards are in `src/App.tsx`. A screen that needs field data is wrapped in `BundleGate`, which shows one loading line, a retry on failure, or sends a field outside the basin to `/area`.

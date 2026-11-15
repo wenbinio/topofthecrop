@@ -290,3 +290,25 @@ Background and sources: `docs/crops-research.md`, "Intercropping".
 - The lift raises that harvest's sales. It shows on Why as a line under the durum harvest and names its study.
 - **How sure:** low. The figures come from the team's research compilation, which cites the papers; we have not opened the papers ourselves. The chickpea study worked with wheat at 5 t/ha, well above this area's 3 t/ha, so its percentage may not carry over.
 - **Lentil, pea and vetch get no lift** because no figure was found for them. That is a gap in the evidence, not a finding that they give nothing, and it tilts the comparison towards chickpea and faba bean.
+
+## Your soil
+
+The Options screen names the field's ground from the soil figures in the bundle (SoilGrids 2.0, 250 m; for a drawn field, the 1 km squares). Nothing here changes the order of the rotations.
+
+- **Texture class:** the USDA triangle on sand, silt and clay (`textureClass` in `src/data/soil.ts`). Clay is the listed figure, or what sand and silt leave.
+- **Heavy, medium or light** is our own grouping of the twelve classes: heavy for every class with "clay" in its name, medium for loam, silt loam and silt, light for sandy loam, loamy sand and sand.
+- **pH band:** acid under 6.5, alkaline over 7.3, neutral between (`PH_BANDS`). On the demo field the band follows the pH the trial measured (8.2), shown beside the map's 7.7.
+- **Honesty:** the map's own range is wide (clay 5.6 to 76.4% on the demo field), so the card calls itself an estimate and sends the farmer to a soil test. The one-line meanings ("drains slowly", "crops take up iron and phosphorus less easily") are textbook statements, not findings for this field.
+
+## Your field today
+
+What a returning farmer is told (`planChange` in `src/state/plan.ts`), comparing what the phone kept with what the app works out now for the same field and answers:
+
+| Kept on the phone | Now | Message |
+|---|---|---|
+| Nothing, or another field or other answers | | The plan is now kept |
+| Same best fit, same data fingerprint | | Nothing has changed |
+| Same best fit, other fingerprint | | The data was updated; the best fit holds |
+| Another best fit | | Warning: the advice has changed, with both rotations named |
+
+The fingerprint is the one `vite.config.ts` makes from the shipped data. A change stays on screen until the farmer taps "Got it". The live rain and forecast do not enter the ranking, so they can never change the advice. "What to watch" is the bundle's usual cover and risks for the calendar month; the to-do list is the best fit's own checks.
