@@ -7,6 +7,7 @@ import { useLang, useT } from "../i18n";
 import { useAppState, useGo } from "../state/useAppState";
 import { useDemoBundle } from "../components/BundleProvider";
 import { loadBasinOutline } from "../data/basin";
+import { PARCEL_COMMUNES, PARCEL_CREDIT, findParcel } from "../data/parcels";
 import type { FeatureCollection } from "geojson";
 import { formatNumber } from "../components/FactParts";
 import { openRing } from "../components/FieldShape";
@@ -24,6 +25,8 @@ type Mode =
   | { k: "demo" }
   /** Looking for the field's edges in the photo around a tap, before drawing. */
   | { k: "finding" }
+  /** Typing the sheet and parcel numbers from the farm file. `state` says how the last search went. */
+  | { k: "parcel"; sheet: string; parcel: string; state: "typing" | "searching" | "noSheet" | "noParcel" | "failed" }
   /**
    * Drawing the field: tap corners, pull dots, trace with one finger, or let the app find the edges.
    * `past` holds earlier shapes for Undo. `seeking`: the next tap is a point inside the field, not a corner.
@@ -51,6 +54,10 @@ const startDrawing = (ring: LngLat[] = [], past: LngLat[][] = [], note: Note = n
 });
 
 const NOTE_KEY = { max: "find.maxCorners", tooSmall: "find.tooSmall", noEdges: "find.noEdges" } as const;
+const startParcel = (): Mode => ({ k: "parcel", sheet: "", parcel: "", state: "typing" });
+const PARCEL_NOTE = { noSheet: "parcel.noSheet", noParcel: "parcel.noParcel", failed: "parcel.failed" } as const;
+/** Close enough to see the whole parcel on the aerial photo. */
+const PARCEL_ZOOM = 16;
 
 type Place = { name: string; detail: string; at: LngLat };
 
@@ -182,7 +189,7 @@ export default function FindField() {
   }
 
   function onTap(point: LngLat) {
-    if (mode.k === "finding") return;
+    if (mode.k === "finding" || mode.k === "parcel") return;
     if (mode.k === "drawing") {
       if (mode.tracing || mode.finding) return;
       if (mode.seeking) {
@@ -214,6 +221,25 @@ export default function FindField() {
   function cancel() {
     setEdgeRequest(null);
     setMode({ k: "idle" });
+  }
+
+  /** Look the typed parcel up; found, it becomes the shape to adjust, cut down to the corners a link can hold. */
+  function searchParcel() {
+    if (mode.k !== "parcel" || mode.state === "searching") return;
+    const { sheet, parcel } = mode;
+    if (!sheet.trim() || !parcel.trim()) return;
+    setMode({ ...mode, state: "searching" });
+    const still = (m: Mode) => m.k === "parcel" && m.sheet === sheet && m.parcel === parcel && m.state === "searching";
+    findParcel(PARCEL_COMMUNES[0].code, sheet, parcel).then(
+      (answer) => {
+        if (answer.found) {
+          const ring = simplifyRing(answer.ring, MAX_CORNERS);
+          setMode((m) => (still(m) ? startDrawing(ring, [[]]) : m));
+          flyTo(centroid(ring), PARCEL_ZOOM);
+        } else setMode((m) => (still(m) ? { ...m, state: answer.sheet ? "noParcel" : "noSheet" } : m));
+      },
+      () => setMode((m) => (still(m) ? { ...m, state: "failed" } : m)),
+    );
   }
 
   function onTrace(points: LngLat[]) {
@@ -368,15 +394,19 @@ export default function FindField() {
 
         {/* The demo sheet needs the bundle; until it arrives (or if it failed) keep the hint and the draw button. */}
         {mode.k === "idle" || (mode.k === "demo" && bundle.status !== "ready") ? (
-          <div className="flex items-center justify-between gap-3 phone-land:flex-col phone-land:items-stretch">
-            <div>
-              <p className="font-bold text-big">{t("find.hint")}</p>
-              <p className="text-small font-bold text-ink-soft">{t("find.basinHint")}</p>
+          <div>
+            <p className="font-bold text-big">{t("find.hint")}</p>
+            <p className="text-small font-bold text-ink-soft">{t("find.basinHint")}</p>
+            <div className="grid grid-cols-2 gap-2 mt-3 phone-land:grid-cols-1">
+              <Button look="secondary" className="px-2" onClick={() => setMode(startDrawing())}>
+                <PencilIcon className="w-5 h-5" />
+                {t("find.draw")}
+              </Button>
+              <Button look="secondary" className="px-2" onClick={() => setMode(startParcel())}>
+                <FieldScaleIcon className="w-5 h-5" />
+                {t("parcel.open")}
+              </Button>
             </div>
-            <Button look="secondary" onClick={() => setMode(startDrawing())}>
-              <PencilIcon className="w-5 h-5" />
-              {t("find.draw")}
-            </Button>
           </div>
         ) : null}
 
@@ -392,7 +422,56 @@ export default function FindField() {
                 {t("find.no")}
               </Button>
             </div>
+            <button type="button" className="mt-1 min-h-11 underline font-bold text-body" onClick={() => setMode(startParcel())}>
+              {t("parcel.open")}
+            </button>
           </div>
+        ) : null}
+
+        {mode.k === "parcel" ? (
+          <form
+            data-testid="parcel-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              searchParcel();
+            }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-bold text-big">{t("parcel.title")}</p>
+                <p className="text-small font-bold text-ink-soft">{t("parcel.commune", { name: PARCEL_COMMUNES[0].name })}</p>
+              </div>
+              <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={cancel}>
+                {t("find.cancel")}
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {(["sheet", "parcel"] as const).map((field) => (
+                <label key={field} className="block text-small font-bold">
+                  {t(`parcel.${field}`)}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    value={mode[field]}
+                    onChange={(e) => setMode({ ...mode, [field]: e.target.value, state: "typing" })}
+                    className="mt-1 w-full h-12 px-3 bg-surface border-2 border-line-strong rounded-box text-big font-bold"
+                  />
+                </label>
+              ))}
+            </div>
+            {mode.state === "noSheet" || mode.state === "noParcel" || mode.state === "failed" ? (
+              <p role="alert" className="mt-2 flex items-center gap-2 text-body font-bold" data-testid="parcel-note">
+                <WarnIcon className="w-5 h-5 flex-none text-warn" />
+                {t(PARCEL_NOTE[mode.state])}
+              </p>
+            ) : null}
+            <Button type="submit" className="w-full mt-3" disabled={mode.state === "searching" || !mode.sheet.trim() || !mode.parcel.trim()}>
+              {t(mode.state === "searching" ? "parcel.searching" : "parcel.find")}
+            </Button>
+            <p className="mt-2 text-small text-ink-soft">{t("parcel.note")}</p>
+            <p className="text-small text-ink-soft">{PARCEL_CREDIT}</p>
+          </form>
         ) : null}
 
         {mode.k === "finding" ? (

@@ -98,6 +98,7 @@ Resolutions above are from general knowledge and must be checked against each pr
 | Map picture, zoomed in, anywhere: Sentinel-2 cloudless 2016 by EOX (contains modified Copernicus Sentinel data 2016), 10 m, CC BY 4.0 | Finding and drawing a field outside the basin |
 | Map picture, zoomed in, Bradano basin: our own tiles in `public/tiles/s2/`, cut by `scripts/build-basemap.py` from four Sentinel-2 L2A scenes of 30 May 2026 (contains modified Copernicus Sentinel data 2026), 10 m | Finding and drawing a field in the basin |
 | Aerial photos on top, where they exist: AGEA orthophotos, flights 2022 to 2024, loaded live from AGEA's tile service. CC BY 4.0 (AGEA legal notes: "messe a disposizione per il riutilizzo alle condizioni della licenza Creative Commons BY 4.0"). About 1.8 m in Basilicata, finer in Puglia. | Seeing tracks, trees and field corners |
+| Cadastral parcels of Genzano di Lucania: Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS). CC BY 4.0, stated in the service's own capabilities document. Downloaded ahead of time into `public/parcels/`. | Finding a field by its sheet and parcel numbers |
 
 ### Rules for honest numbers
 
@@ -388,6 +389,8 @@ The app reads one file, `public/data/genzano-demo.json`. Its shape is defined in
 The basin files in `data/` come from the data team's notebooks; to update them, replace the files as `HANDOVER.md` section 9 says. Keys stay the same, so the app needs no change.
 
 The basin's map picture in `public/tiles/s2/` (1,597 tiles, about 25 MB, zooms 10 to 14) is cut by `scripts/build-basemap.py` from four Sentinel-2 L2A true-colour scenes of 30 May 2026, each under 1% cloud, downloaded without a login from the public `sentinel-cogs` archive. `public/tiles/s2/about.json` lists the scenes. To rebuild it for another day, download each scene's `TCI.tif`, name them `TCI_<square>.tif`, and run `python scripts/build-basemap.py <folder>` (needs rasterio, numpy, pillow, mercantile and shapely). The script was written with AI assistance.
+
+The cadastral parcels in `public/parcels/D971/` (Genzano di Lucania) are downloaded by `scripts/fetch-parcels.mjs`. The cadastre's service refuses calls from a web page and answers only for areas about 1.5 km across, so the script walks the commune in small squares and writes one small file per cadastral sheet. To add a commune, run it with that commune's code, name and a box that holds it, then add the commune to `PARCEL_COMMUNES` in `src/data/parcels.ts`. The script was written with AI assistance.
 
 Credits the map shows: "Contains modified Copernicus Sentinel data 2026" (our tiles), "Sentinel-2 cloudless by EOX, contains modified Copernicus Sentinel data 2016, CC BY 4.0", "Aerial photos © AGEA, flights 2022–2024, CC BY 4.0", and NASA GIBS for Blue Marble. We acknowledge the use of imagery provided by services from NASA's Global Imagery Browse Services (GIBS), part of NASA's Earth Science Data and Information System (ESDIS).
 
