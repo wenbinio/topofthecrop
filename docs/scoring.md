@@ -119,7 +119,9 @@ Each is defined from the data, the same way for hot days and for rain
 
 At the demo field: usual 542 mm and 4 hot days; dry 418 mm and 8 hot days;
 driest 390 mm (the 2017 season) and 13 hot days. By 2050 on the high path:
-393 mm and 10 hot days; 367 mm and 15 hot days.
+393 mm and 10 hot days; 367 mm and 15 hot days. The change is the models' median from the
+data file (`future.change`): added in days for hot days, and applied as a percentage for rain
+(−6% on the high path at the demo field, so 418 mm becomes 393).
 
 Two parts are still our judgement and are left fixed on purpose:
 

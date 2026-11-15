@@ -50,7 +50,9 @@ export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
   return (
     <section className="mx-4 mb-3 bg-surface border border-line" data-testid="season-compare">
       <h2 className="px-3 pt-3 font-bold text-body">{t("years.title")}</h2>
-      <table className="w-full text-body my-2">
+      {/* Smaller figures on narrow phones (under 400 px), and a sideways scroll as a last resort, so nothing is cut off. */}
+      <div className="overflow-x-auto">
+      <table className="w-full text-small min-[400px]:text-body my-2">
         <thead>
           <tr className="text-small">
             <th scope="col" className="px-3">
@@ -100,6 +102,7 @@ export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
           ))}
         </tbody>
       </table>
+      </div>
       <div className="px-3 pb-3 flex flex-col gap-1">
         <p className="text-small text-ink-soft">{t("years.arrows")}</p>
         {rainNote ? <p className="text-small text-ink-soft" data-testid="rain-2026-note">{t("years.rain2026")}</p> : null}
