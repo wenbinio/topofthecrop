@@ -51,7 +51,8 @@ export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
     <section className="mx-4 mb-3 bg-surface border border-line" data-testid="season-compare">
       <h2 className="px-3 pt-3 font-bold text-body">{t("years.title")}</h2>
       {/* Smaller figures on narrow phones (under 400 px), and a sideways scroll as a last resort, so nothing is cut off. */}
-      <div className="overflow-x-auto">
+      {/* relative: the hidden screen-reader text stays inside this scroll box instead of widening the page. */}
+      <div className="relative overflow-x-auto">
       <table className="w-full text-small min-[400px]:text-body my-2">
         <thead>
           <tr className="text-small">

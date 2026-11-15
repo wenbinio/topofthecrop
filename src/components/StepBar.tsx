@@ -37,7 +37,7 @@ export function StepBar({ pathname }: { pathname: string }) {
   return (
     <nav aria-label={t("step.label", { n: current })} data-testid="step-bar"
       // Under the name and switches, full width; held sideways, between them in the same row (see TopBar).
-      className="basis-full flex items-stretch gap-1 px-2 py-1 bg-surface border-t border-line print:hidden phone-land:basis-auto phone-land:flex-1 phone-land:min-w-0 phone-land:order-2 phone-land:px-0 phone-land:py-0 phone-land:border-t-0 phone-land:overflow-x-auto">
+      className="basis-full min-w-0 flex items-stretch gap-1 px-2 py-1 bg-surface border-t border-line print:hidden phone-land:basis-auto phone-land:flex-1 phone-land:min-w-0 phone-land:order-2 phone-land:px-0 phone-land:py-0 phone-land:border-t-0 phone-land:overflow-x-auto">
       {paths.map((path, i) => {
         const n = i + 1;
         const isCurrent = n === current;
@@ -55,10 +55,12 @@ export function StepBar({ pathname }: { pathname: string }) {
             >
               {n}
             </span>
-            {isCurrent ? <span className="font-bold text-body whitespace-nowrap">{t(`step.${n}`)}</span> : null}
+            {/* On a narrow phone the step's name shortens with "…" rather than push the bar off the screen. */}
+            {isCurrent ? <span className="font-bold text-body truncate">{t(`step.${n}`)}</span> : null}
           </>
         );
-        const cls = `min-h-11 flex items-center gap-1.5 ${isCurrent ? "flex-auto px-1" : "flex-none px-1.5"}`;
+        // Under 380 px the other steps lose a little side padding, so the current step's name still fits.
+        const cls = `min-h-11 flex items-center gap-1.5 ${isCurrent ? "flex-auto min-w-0 px-1" : "flex-none px-1 min-[380px]:px-1.5"}`;
         if (reachable) {
           return (
             <Link key={n} to={to(path)} className={cls} aria-label={`${n}. ${t(`step.${n}`)}`}>
