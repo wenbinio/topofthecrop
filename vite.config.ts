@@ -42,5 +42,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
     css: false,
+    // Only this checkout's tests: helper tools keep spare copies of the repo under .claude/.
+    include: ['src/**/*.test.{ts,tsx}'],
+    exclude: ['.claude/**', 'node_modules/**', 'dist/**'],
   },
 })
