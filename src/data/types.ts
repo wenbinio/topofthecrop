@@ -104,6 +104,71 @@ export type FieldBundle = {
   };
   options: Option[]; // 3 to 12, exactly one with isCurrent
   economics?: Economics; // prices, yields, costs and support behind the income figures
+  /** The rest of the data team's figures for this field, for the evidence screens. Not shown on a screen yet. */
+  fieldData?: FieldData;
+};
+
+/** Keys of each group in `FieldData`. A key is left out where the data has no value (null), never set to 0. */
+export const FIELD_DATA_KEYS = {
+  greenness: ["greenUp", "peak", "dryOff", "seasonLength", "peakGreenness"],
+  weather: ["rainOnset", "drySpellSpring", "frostWinter", "frostLate", "rainSpring", "rainYear"],
+  water: ["soilWaterSowing", "soilWaterSpring", "cropWaterUse", "referenceEt"],
+  soil: ["sand", "silt", "organicCarbon", "ph", "nitrogen", "cec", "waterHolding", "bulkDensity", "stones"],
+  land: ["slope", "height"],
+  by2050: ["hotDays", "flowerHigh", "frostWinter", "frostLate", "rainSeason", "rainAutumn"],
+  series: [
+    "peakGreenness", "dryOff", "peakVsNearby", "hotDays", "rainSeason", "rainAutumn",
+    "soilWaterSowing", "soilWaterSpring", "cropWaterUse", "durumNeed",
+  ],
+  trialSoil: ["ph", "nitrogen", "cec"],
+} as const;
+export type FieldDataKey<G extends keyof typeof FIELD_DATA_KEYS> = (typeof FIELD_DATA_KEYS)[G][number];
+
+/** The climate model scenarios: the middle emissions path (SSP2-4.5) and the high one (SSP5-8.5). */
+export const CLIMATE_SCENARIOS = ["ssp245", "ssp585"] as const;
+export type ClimateScenario = (typeof CLIMATE_SCENARIOS)[number];
+
+/** The months a ground-check total covers. The trial paper does not say which, so the data shows three. */
+export const CHECK_WINDOWS = ["oct-may", "nov-jun", "sowing-harvest"] as const;
+export type CheckWindow = (typeof CHECK_WINDOWS)[number];
+
+/**
+ * One value per season, lined up with `FieldData["seasons"].years` (a season is named by its harvest year:
+ * 2024 runs from September 2023 to August 2024). null: no data that season. Carries the same source,
+ * scale and confidence as a Fact, so no bare number reaches a screen.
+ */
+export type Series = {
+  values: (number | null)[];
+  unit?: string;
+  scale: Scale;
+  source: Source;
+  confidence: Confidence;
+  label: string; // dictionary key
+  placeholder: boolean;
+};
+
+/**
+ * The data team's figures beyond the findings and the year strip (src/data/field-rules.js `fieldData`).
+ * Day numbers (unit "dayOfSeason") count from 1 September. Ranges are the 10th to 90th percentile over
+ * 2001-2020 (SMAP soil water: 2016-2025; by 2050: across the 29 climate models; soil: within the 1 km area,
+ * or SoilGrids' own prediction range on the demo field).
+ */
+export type FieldData = {
+  greenness: Partial<Record<FieldDataKey<"greenness">, Fact>>;
+  weather: Partial<Record<FieldDataKey<"weather">, Fact>>;
+  water: Partial<Record<FieldDataKey<"water">, Fact>>;
+  soil: Partial<Record<FieldDataKey<"soil">, Fact>>;
+  land: Partial<Record<FieldDataKey<"land">, Fact>>;
+  /** Values by 2041-2060: today's typical value plus each climate model's change. */
+  by2050: Record<ClimateScenario, Partial<Record<FieldDataKey<"by2050">, Fact>>>;
+  seasons: { years: number[]; series: Partial<Record<FieldDataKey<"series">, Series>> };
+  /** Demo field only: satellite rain and ERA5-Land temperature against the trial's own weather station. */
+  groundCheck?: {
+    rain: { season: string; window: CheckWindow; station: Fact; satellites: Fact }[];
+    temperature: { season: string; window: CheckWindow; station: Fact; era5Land: Fact }[];
+  };
+  /** Demo field only: the soil the trial measured (Denora et al. 2025), beside SoilGrids' prediction. */
+  trialSoil?: Partial<Record<FieldDataKey<"trialSoil">, Fact>>;
 };
 
 /** Live weather for a field that has no bundle. All three facts are scale "area". */

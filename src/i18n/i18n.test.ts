@@ -14,7 +14,7 @@ describe("dictionaries", () => {
   test("every dictionary key in the placeholder bundle exists in English", () => {
     const keys = new Set<string>();
     JSON.stringify(fixture, (_k, v: unknown) => {
-      if (typeof v === "string" && /^(finding|why|evidence|benefit|unknown|check|fact|year|weather|level|crop)\.[\w.-]+$/.test(v)) {
+      if (typeof v === "string" && /^(finding|why|evidence|benefit|unknown|check|fact|year|weather|level|crop|data)\.[\w.-]+$/.test(v)) {
         keys.add(v);
       }
       return v;

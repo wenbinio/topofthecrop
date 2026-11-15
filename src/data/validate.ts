@@ -1,5 +1,5 @@
 import type { FieldBundle } from "./types";
-import { CROPS, LIMITS, PRIORITIES, SCENARIOS } from "./types";
+import { CHECK_WINDOWS, CLIMATE_SCENARIOS, CROPS, FIELD_DATA_KEYS, LIMITS, PRIORITIES, SCENARIOS } from "./types";
 
 function check(condition: unknown, path: string): asserts condition {
   if (!condition) throw new Error(`bundle: ${path}`);
@@ -41,6 +41,56 @@ function fact(value: unknown, path: string): void {
   boolean(record.placeholder, `${path}.placeholder`);
   if (record.range !== undefined) array(record.range, `${path}.range`, 2).forEach(n => number(n, `${path}.range`));
   for (const key of ['unit', 'asOf', 'label']) if (record[key] !== undefined) string(record[key], `${path}.${key}`);
+}
+
+/** A group of numeric facts named by `keys`. A key not in `keys` fails; a missing one is fine (no data). */
+function factGroup(value: unknown, path: string, keys: readonly string[]): void {
+  const group = object(value, path);
+  for (const [key, item] of Object.entries(group)) {
+    known(key, keys, `${path}.${key}`);
+    fact(item, `${path}.${key}`);
+    number(object(item, `${path}.${key}`).value, `${path}.${key}.value`);
+  }
+}
+
+/** `bundle.fieldData`: the rest of the data team's figures (src/data/field-rules.js `fieldData`). */
+function checkFieldData(value: unknown): void {
+  const data = object(value, 'fieldData');
+  for (const group of ['greenness', 'weather', 'water', 'soil', 'land'] as const) {
+    factGroup(data[group], `fieldData.${group}`, FIELD_DATA_KEYS[group]);
+  }
+  const by2050 = object(data.by2050, 'fieldData.by2050');
+  for (const scenario of CLIMATE_SCENARIOS) factGroup(by2050[scenario], `fieldData.by2050.${scenario}`, FIELD_DATA_KEYS.by2050);
+  const seasons = object(data.seasons, 'fieldData.seasons');
+  const years = array(seasons.years, 'fieldData.seasons.years');
+  years.forEach(year => { number(year, 'fieldData.seasons.years'); check(Number.isInteger(year), 'fieldData.seasons.years'); });
+  for (const [key, item] of Object.entries(object(seasons.series, 'fieldData.seasons.series'))) {
+    const path = `fieldData.seasons.series.${key}`, series = object(item, path);
+    known(key, FIELD_DATA_KEYS.series, path);
+    // One value per season, null where there is none: never a missing season, never a bare 0 for no data.
+    array(series.values, `${path}.values`, years.length).forEach(v => { if (v !== null) number(v, `${path}.values`); });
+    known(series.scale, ['field', 'area'], `${path}.scale`);
+    source(series.source, `${path}.source`);
+    known(series.confidence, ['good', 'fair', 'low'], `${path}.confidence`);
+    boolean(series.placeholder, `${path}.placeholder`);
+    string(series.label, `${path}.label`);
+    if (series.unit !== undefined) string(series.unit, `${path}.unit`);
+  }
+  if (data.groundCheck !== undefined) {
+    const groundCheck = object(data.groundCheck, 'fieldData.groundCheck');
+    for (const [kind, ours] of [['rain', 'satellites'], ['temperature', 'era5Land']] as const) {
+      array(groundCheck[kind], `fieldData.groundCheck.${kind}`).forEach((value, i) => {
+        const path = `fieldData.groundCheck.${kind}[${i}]`, row = object(value, path);
+        string(row.season, `${path}.season`);
+        known(row.window, CHECK_WINDOWS, `${path}.window`);
+        for (const key of ['station', ours]) {
+          fact(row[key], `${path}.${key}`);
+          number(object(row[key], `${path}.${key}`).value, `${path}.${key}.value`);
+        }
+      });
+    }
+  }
+  if (data.trialSoil !== undefined) factGroup(data.trialSoil, 'fieldData.trialSoil', FIELD_DATA_KEYS.trialSoil);
 }
 
 /**
@@ -138,6 +188,7 @@ export function validateBundle(json: unknown): FieldBundle {
     strings(why.unknowns, `${path}.why.unknowns`); strings(why.checkLocally, `${path}.why.checkLocally`);
   });
   check(currentCount === 1, 'options.isCurrent must identify exactly one option');
+  if (bundle.fieldData !== undefined) checkFieldData(bundle.fieldData);
   if (bundle.economics !== undefined) {
     const economics = object(bundle.economics, 'economics');
     const crops = object(economics.crops, 'economics.crops');

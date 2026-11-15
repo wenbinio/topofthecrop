@@ -4,7 +4,10 @@
 // as bare, when a risk icon shows, the slider's stops) live in src/data/field-rules.js, shared with the app,
 // which applies the same rules to a field the farmer draws (src/data/fieldFromBasin.ts).
 import { readFileSync } from "node:fs";
-import { FINDINGS, finding, flowerHigh as makeFlowerHigh, hotDayStops, makeSources, one, real, risksByScenario as makeRisks, yearMonths } from "../src/data/field-rules.js";
+import {
+  FINDINGS, fieldData as makeFieldData, finding, flowerHigh as makeFlowerHigh, groundCheckFrom, hotDayStops, makeSources, one, real,
+  risksByScenario as makeRisks, trialSoilFrom, yearMonths,
+} from "../src/data/field-rules.js";
 
 const data = JSON.parse(readFileSync(new URL("../data/field.json", import.meta.url), "utf8"));
 
@@ -63,4 +66,54 @@ const evidence = [
   one(data.soil.values.clay, "%", data.soil.range_90pc.clay, "field", sources.soil, "fair", "evidence.clay", "SoilGrids 2.0"),
 ];
 
-export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays, flowerHigh }, evidence };
+// --- the rest of the field's figures, for the evidence screens (bundle.fieldData) -------------
+// Keyed as FIELD_DATA_RULES in src/data/field-rules.js, which holds each figure's unit, dataset and scale.
+const years = w.seasons.map((s) => s.season); // 2001 ... 2026, named by harvest year
+const bySeason = (rows, key) => years.map((year) => {
+  const v = rows.find((r) => r.season === year)?.[key];
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+});
+const future2050 = (p) => ({
+  hotDays: p.hot, flowerHigh: p.tmaxfl, frostWinter: p.frost, frostLate: p.late, rainSeason: p.rainse, rainAutumn: p.rainau,
+});
+const soilValue = (key) => ({ value: data.soil.values[key], range: data.soil.range_90pc[key] });
+
+const fieldData = makeFieldData({
+  own: "field", sources, baseline, smapBaseline: "2016-2025", future,
+  today: {
+    greenness: {
+      greenUp: g.typical.greenup_day, peak: g.typical.peak_day, dryOff: g.typical.dryoff_day,
+      seasonLength: g.typical.season_days, peakGreenness: g.typical.peak,
+    },
+    weather: {
+      rainOnset: w.typical.rain_onset_day, drySpellSpring: w.typical.dry_spell_spring, frostWinter: w.typical.frost_days_winter,
+      frostLate: w.typical.late_frost_days, rainSpring: w.typical.rain_spring, rainYear: w.typical.rain_year,
+    },
+    water: {
+      soilWaterSowing: wt.typical.sm_sowing, soilWaterSpring: wt.typical.sm_spring,
+      cropWaterUse: wt.typical.water_use_modis, referenceEt: wt.typical.et0_season,
+    },
+  },
+  soil: {
+    sand: soilValue("sand"), silt: soilValue("silt"), organicCarbon: soilValue("soc"), ph: soilValue("phh2o"),
+    nitrogen: soilValue("nitrogen"), cec: soilValue("cec"), waterHolding: soilValue("awc"),
+    bulkDensity: soilValue("bdod"), stones: soilValue("cfvo"),
+  },
+  land: { slope: data.field.slope_deg, height: data.field.elev_m }, // NASADEM over the field's own outline
+  by2050: { ssp245: future2050(f.projected.ssp245), ssp585: future2050(f.projected.ssp585) },
+  seasons: {
+    years,
+    series: {
+      peakGreenness: bySeason(g.seasons, "peak"), dryOff: bySeason(g.seasons, "dryoff_day"),
+      peakVsNearby: bySeason(g.seasons, "peak_vs_nearby_z"),
+      hotDays: bySeason(w.seasons, "hot_days_flower"), rainSeason: bySeason(w.seasons, "rain_season"),
+      rainAutumn: bySeason(w.seasons, "rain_autumn"),
+      soilWaterSowing: bySeason(wt.seasons, "sm_sowing"), soilWaterSpring: bySeason(wt.seasons, "sm_spring"),
+      cropWaterUse: bySeason(wt.seasons, "water_use_modis"), durumNeed: bySeason(wt.seasons, "durum_need"),
+    },
+  },
+  groundCheck: groundCheckFrom(w.ground_check, sources),
+  trialSoil: trialSoilFrom(data.soil.trial_reported, sources),
+});
+
+export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays, flowerHigh }, evidence, fieldData };

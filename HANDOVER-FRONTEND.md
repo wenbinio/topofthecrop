@@ -110,7 +110,25 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 | Basin outline on the map | the whole file | `area.geojson` |
 | Source names and resolutions | `meta.sources` | `field.json` |
 
-**In the data but not yet shown:** soil water at sowing and in spring (`sm_sowing`, `sm_spring`), actual water use (`aet_season`), rain-onset day, dry spells in spring, late-frost and winter-frost counts, season dates from greenness (`greenup_day`, `peak_day`, `dryoff_day`), peak greenness by season, slope and elevation, and soil organic carbon, pH, nitrogen and water-holding capacity. Each is a possible next feature, and `sourcesFor()` in the helper gives the datasets behind any of them.
+### 4f. The rest of the data: in the bundle, not yet on a screen
+
+`bundle.fieldData` (type `FieldData` in `src/data/types.ts`) carries the rest of the data team's figures, for both the demo field and a drawn field, so a screen only has to read them. Each is a `Fact` (or, for one value per season, a `Series` with the same source, scale and confidence). One function, `fieldData()` in `src/data/field-rules.js`, builds it for both: `FIELD_DATA_RULES` there sets each figure's unit, dataset, decimals and scale. A value that is `null` in the data is left out, never turned into 0. Labels are the dictionary keys `data.<key>`.
+
+| `fieldData.` | Data key | From (drawn field / demo field) |
+|---|---|---|
+| `greenness.greenUp`, `peak`, `dryOff`, `seasonLength`, `peakGreenness` | `greenup_day`, `peak_day`, `dryoff_day` (day numbers from 1 September, unit `dayOfSeason`), `season_days`, `peak_ndvi` | `cells_greenness.json` / `field.json` `greenness.typical` |
+| `weather.rainOnset`, `drySpellSpring`, `frostWinter`, `frostLate`, `rainSpring`, `rainYear` | `rain_onset_day`, `dry_spell_spring`, `frost_days_winter`, `late_frost_days`, `rain_spring`, `rain_year` | `cells_weather.json` / `weather.typical` |
+| `water.soilWaterSowing`, `soilWaterSpring` (NASA SMAP, 2016–2025), `cropWaterUse` (NASA MODIS), `referenceEt` | `sm_sowing`, `sm_spring`, `aet_season` (`water_use_modis` in `field.json`), `et0_season` | `cells_water.json` / `water.typical` |
+| `soil.sand`, `silt`, `organicCarbon`, `ph`, `nitrogen`, `cec`, `waterHolding`, `bulkDensity`, `stones` | `sand`, `silt`, `soc`, `phh2o`, `nitrogen`, `cec`, `awc`, `bdod`, `cfvo` | `cells_soil.json` / `soil.values` |
+| `land.slope`, `height` (NASADEM) | `slope_deg`, `elev_m` | `grid.geojson` / `field.json` `field` |
+| `by2050.ssp245.*`, `by2050.ssp585.*`: `hotDays`, `flowerHigh`, `frostWinter`, `frostLate`, `rainSeason`, `rainAutumn` | today plus the change in `hot`, `tmaxfl`, `frost`, `late`, `rainse`, `rainau` (the helper's `projected()`) | `cells_future.json` / `future.projected` |
+| `seasons.years`, `seasons.series.*`: `peakGreenness`, `dryOff`, `hotDays`, `rainSeason`, `rainAutumn`, `soilWaterSowing`, `soilWaterSpring`, `cropWaterUse`, `durumNeed` | the `*_by_season` lists, one value per season 2001–2026 (soil water `null` before 2016) | the cells files / the `seasons` rows |
+| `seasons.series.peakVsNearby` (demo only) | `peak_vs_nearby_z`: the field's peak greenness against nearby fields, against its usual gap | `greenness.seasons` |
+| `groundCheck`, `trialSoil` (demo only) | the trial station's rain and temperature beside ours; the soil the trial measured (pH, nitrogen, CEC), both typed in from Denora et al. (2025) | `weather.ground_check`, `soil.trial_reported` |
+
+The demo field's greenness, soil and slope are badged "your field" (250 m or finer, from the field itself); everything else is "your area". `src/data/validate.ts` checks the section when the bundle loads; `src/data/public-bundle.test.ts` and `src/data/fieldFromBasin.test.ts` check its values against the data files.
+
+**Still only in the data files:** monthly highs and lows, ET₀ and soil water by month, each rain source's yearly total, the demo field's 30 m and 10 m greenness views (with red-edge NDRE), the GSMaP and NASA POWER comparisons, the plain description of every key (`meta.indicators`) and the AI note (`index.json`). `sourcesFor()` in the helper gives the datasets behind any of them.
 
 ## 5. From data to a recommendation
 
@@ -150,7 +168,7 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 
 ## 8. Tests and publishing
 
-- `npm test` runs about 360 tests. Screens are tested with a frozen bundle, `src/test-fixtures/money-bundle.json`, so changing the shipped figures does not break them. One test, `src/data/public-bundle.test.ts`, checks the shipped file.
+- `npm test` runs about 450 tests. Screens are tested with a frozen bundle, `src/test-fixtures/money-bundle.json`, so changing the shipped figures does not break them. One test, `src/data/public-bundle.test.ts`, checks the shipped file.
 - The map is mocked in tests. Check map changes by hand in a browser.
 - Every push to `main` runs `.github/workflows/pages.yml`: typecheck, test, build, publish.
 - After switching branches, restart `npm run dev`; it can serve stale files.

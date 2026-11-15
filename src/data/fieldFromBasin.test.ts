@@ -5,11 +5,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import shipped from "../../public/data/genzano-demo.json";
-import type { FieldBundle, LngLat } from "./types";
-import { DRAWN_FIELD_ID } from "./types";
+import type { Fact, FieldBundle, LngLat } from "./types";
+import { CLIMATE_SCENARIOS, DRAWN_FIELD_ID } from "./types";
 import { AREA_UNKNOWN } from "./caveats";
 import { fieldFromBasin, ringPolygon } from "./fieldFromBasin";
-import { loadData, outlineValues, squareAt } from "./fieldshift-data.js";
+import { loadData, outlineValues, projected, squareAt } from "./fieldshift-data.js";
 import type { BasinData } from "./fieldshift-data.js";
 import { validateBundle } from "./validate";
 
@@ -108,5 +108,60 @@ describe("a drawn field in the basin", () => {
 
   it("an outline outside the basin's farmland gives null", () => {
     expect(build(box([12.4964, 41.9028])).values).toBeNull(); // Rome
+  });
+});
+
+describe("a drawn field's other figures (bundle.fieldData)", () => {
+  const CENTRE: LngLat = [16.092837, 40.823353]; // inside one 1 km square
+  const round = (n: number | null, digits: number) => (n === null ? null : Math.round(n * 10 ** digits) / 10 ** digits);
+  const triple = (f: Fact | undefined) => (f ? [f.range![0], f.value, f.range![1]] : f);
+
+  it("are the square's own values, every one for the area, and the bundle passes the contract check", () => {
+    const { values, bundle } = build(box(CENTRE));
+    const b = bundle!, data = b.fieldData!, v = values!;
+    expect(() => validateBundle(structuredClone(b))).not.toThrow();
+    // The helper's overlap-weighted average leaves float noise (30.100000000000005); the bundle rounds it.
+    const r = (t: (number | null)[], digits: number) => t.map((n) => round(n, digits));
+    expect(triple(data.water.soilWaterSpring)).toEqual(r(v.water!.sm_spring, 1));
+    expect(triple(data.water.cropWaterUse)).toEqual(r(v.water!.aet_season, 0));
+    expect(triple(data.weather.frostWinter)).toEqual(r(v.weather!.frost_days_winter, 0));
+    expect(triple(data.weather.rainOnset)).toEqual(r(v.weather!.rain_onset_day, 0));
+    expect(triple(data.greenness.dryOff)).toEqual(r(v.greenness!.dryoff_day, 0));
+    const awc = r(v.soil!.awc, 0);
+    expect(data.soil.waterHolding).toMatchObject({ value: awc[1], range: [awc[0], awc[2]] });
+    const square = d.farmSquares.find((f) => f.id === squareAt(d, ...CENTRE))!.properties;
+    expect([data.land.slope!.value, data.land.height!.value]).toEqual([round(square.slope_deg, 1), round(square.elev_m, 0)]);
+    for (const scenario of CLIMATE_SCENARIOS) {
+      const later = projected(v, scenario);
+      expect(data.by2050[scenario].frostWinter!.value).toBe(round(later.frost_days_winter![1], 1));
+      expect(data.by2050[scenario].rainSeason!.value).toBe(round(later.rain_season![1], 0));
+    }
+    expect(data.seasons.years).toEqual(d.cells_weather.meta.seasons);
+    expect(data.seasons.series.rainSeason!.values).toEqual(v.weather!.rain_season_by_season.map((n) => round(n, 0)));
+    expect(data.seasons.series.soilWaterSpring!.values.slice(0, 15)).toEqual(Array(15).fill(null)); // SMAP from season 2016
+    const facts = [
+      ...Object.values(data.greenness), ...Object.values(data.weather), ...Object.values(data.water),
+      ...Object.values(data.soil), ...Object.values(data.land), ...CLIMATE_SCENARIOS.flatMap((s) => Object.values(data.by2050[s])),
+    ];
+    expect(facts.length).toBe(38);
+    for (const fact of [...facts, ...Object.values(data.seasons.series)]) expect(fact.scale, fact.label).toBe("area");
+    // Only the demo field has its neighbours' comparison, the station check and the trial's soil.
+    expect(data.seasons.series.peakVsNearby).toBeUndefined();
+    expect(data.groundCheck).toBeUndefined();
+    expect(data.trialSoil).toBeUndefined();
+  });
+
+  it("leaves out MODIS water use where the squares have none, rather than showing 0", () => {
+    // One of the 135 farmland squares with no 500 m pixel that is mostly rain-fed arable (HANDOVER section 7).
+    const cells = d.cells_water.cells as Record<string, { aet_season: (number | null)[] | null }>;
+    const square = d.farmSquares.find((f) => {
+      const aet = cells[String(f.id)]?.aet_season;
+      return aet === null || (Array.isArray(aet) && aet[1] === null);
+    })!;
+    expect(square).toBeDefined();
+    const data = build(box([square.properties.lon, square.properties.lat])).bundle!.fieldData!;
+    expect(data.water.cropWaterUse).toBeUndefined();
+    expect(data.seasons.series.cropWaterUse).toBeUndefined();
+    expect(data.water.soilWaterSpring).toBeDefined();
   });
 });
