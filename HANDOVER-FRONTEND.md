@@ -13,7 +13,7 @@ A farmer goes through six steps. Each step is one screen and one route.
 | Step | Route | Screen file | What it shows |
 |---|---|---|---|
 | 1 | `/` | `src/screens/FindField.tsx` | Map, town search, "My location", tap or draw a field, or find it by parcel number |
-| 2 | `/questions` | `src/screens/Questions.tsx` | Last crop, limits, pick two priorities |
+| 2 | `/questions` | `src/screens/Questions.tsx` | Last crop, limits, priorities tapped in order (at least two) |
 | 3 | `/options` | `src/screens/Options.tsx` | What the satellites see, the recommendation, ranked rotations |
 | 4 | `/why/:optionId` | `src/screens/Why.tsx` | One rotation: income sum, evidence, what we don't know, what to check locally |
 | 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days now and by 2050, the drier-year slider |
@@ -41,7 +41,7 @@ Everything the farmer chose is in the link, after the `#`. There is no local sto
 | `o` | A drawn outline: `lon,lat;lon,lat;...` |
 | `c`, `cn` | Last crop (a crop id or `other`), and its typed name when `other` |
 | `l` | Limits: no irrigation, cereal machinery only, no buyer, broomrape history |
-| `p` | The two priorities: income, water, soil, forage |
+| `p` | The priorities in the farmer's order, most important first (two to four of income, water, soil, forage) |
 | `s` | Scenario for the slider: normal, drier, much-drier |
 | `v`, `g` | View (standard or simple) and language (en or it) |
 | `m` | The farmer's own figures: `p.<crop>` price, `c.<crop>` direct costs, `y.<crop>` yield, `l1.<crop>` and `l2.<crop>` the extra durum after that crop (first and second harvest), `s.<id>` support amount, `on.<id>` support switch. Up to 80 figures. |
@@ -115,7 +115,7 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 ## 5. From data to a recommendation
 
 1. **Diagnosis** (`src/ranking/diagnose.ts`): a small decision tree reads the findings and names what the field's main problem is.
-2. **Ranking** (`src/ranking/rank.ts`): limits remove or flag rotations, the two priorities count equally, and ties break in a fixed order. A legume is not suggested straight after itself.
+2. **Ranking** (`src/ranking/rank.ts`): limits remove or flag rotations, the priorities count by their place in the farmer's order (4, 3, 2, 1; `RANK_WEIGHTS`), one left out only breaks ties, and remaining ties break in a fixed order. A legume is not suggested straight after itself.
 3. **Reasons** (`src/ranking/reasons.ts`): the plain lines under the recommendation, each tied to a priority.
 4. **Money** (`src/money/money.ts`): income is the mean over three harvests of yield × price − direct costs + the payments that apply. The farmer's own figures from Settings replace ours, and anything they changed is tagged "Yours". Confidence is the weakest figure the income is built from, leaving out payments every rotation gets alike.
 

@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
-import type { FieldBundle, Limit, Priority } from "../data/types";
+import type { FieldBundle, Limit } from "../data/types";
 import { CROPS, LAST_CROP_NAME_MAX, LIMITS, PRIORITIES } from "../data/types";
 import { useT } from "../i18n";
 import { economicsCrops } from "../money/money";
@@ -8,7 +8,7 @@ import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
 import { CropName } from "../components/Crops";
 import { CheckIcon } from "../components/Icons";
-import { PRIORITY_ICON } from "../components/Reasons";
+import { MIN_RANKED, PRIORITY_ICON, RankMark, togglePriority } from "../components/Reasons";
 import { PriorityHelp, priorityLine } from "../components/Term";
 import { BackButton, Button, BottomBar, SectionTitle } from "../components/ui";
 
@@ -19,6 +19,8 @@ function Choice({
   children,
   role = "checkbox",
   title,
+  label,
+  place,
 }: {
   on: boolean;
   disabled?: boolean;
@@ -26,12 +28,18 @@ function Choice({
   children: ReactNode;
   role?: "checkbox" | "radio";
   title?: string;
+  /** The accessible name, where the visible content also carries a number. */
+  label?: string;
+  /** Where this choice stands in an order (1 is first); shown in place of the tick. */
+  place?: number;
 }) {
   return (
     <button
       type="button"
       role={role}
       aria-checked={on}
+      aria-label={label}
+      data-rank={place}
       title={title}
       disabled={disabled}
       onClick={onClick}
@@ -40,7 +48,7 @@ function Choice({
       } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       {children}
-      {on ? <CheckIcon className="w-5 h-5 ml-auto flex-none" /> : null}
+      {place ? <RankMark place={place} className="ml-auto" /> : on ? <CheckIcon className="w-5 h-5 ml-auto flex-none" /> : null}
     </button>
   );
 }
@@ -55,13 +63,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
     setState({ limits: toggleLimit(state.limits, limit) });
   }
 
-  function togglePriority(p: Priority) {
-    const has = state.priorities.includes(p);
-    if (has) setState({ priorities: state.priorities.filter((x) => x !== p) });
-    else if (state.priorities.length < 2) setState({ priorities: [...state.priorities, p] });
-  }
-
-  const full = state.priorities.length >= 2;
+  const enough = state.priorities.length >= MIN_RANKED;
   const crops = bundle.economics ? economicsCrops(bundle.economics) : CROPS;
   const nameId = useId();
   // The typed name stays local while typing (the link keeps it trimmed, which would eat a space as it is typed).
@@ -126,16 +128,24 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       <div className="px-4 pt-2 pb-1 phone-land:pt-4">
         <PriorityHelp>
           <h2 className="text-small font-bold uppercase tracking-wider text-ink-soft">
-            {t("q.priorities")} · {state.priorities.length}/2
+            {t("q.priorities")}
           </h2>
         </PriorityHelp>
+        <p className="text-small text-ink-soft" data-testid="rank-hint">{t("q.prioritiesHint")}</p>
       </div>
       <div className="grid grid-cols-2 gap-2 px-4 pb-4">
         {PRIORITIES.map((p) => {
-          const on = state.priorities.includes(p);
+          const place = state.priorities.indexOf(p) + 1;
           const Icon = PRIORITY_ICON[p];
           return (
-            <Choice key={p} on={on} disabled={!on && full} onClick={() => togglePriority(p)} title={t(priorityLine(p))}>
+            <Choice
+              key={p}
+              on={place > 0}
+              place={place || undefined}
+              label={t(`priority.${p}`)}
+              onClick={() => setState({ priorities: togglePriority(state.priorities, p) })}
+              title={t(priorityLine(p))}
+            >
               <Icon className="w-6 h-6 flex-none" />
               {t(`priority.${p}`)}
             </Choice>
@@ -147,7 +157,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
 
       <BottomBar>
         <BackButton to={to("/")} />
-        <Button className="flex-1" disabled={!full} onClick={() => go("/options")}>
+        <Button className="flex-1" disabled={!enough} onClick={() => go("/options")}>
           {t("common.next")}
         </Button>
       </BottomBar>

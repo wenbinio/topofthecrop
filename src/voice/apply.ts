@@ -1,7 +1,7 @@
 // What a list of voice commands does to the app state and route. Pure, so the voice and the taps share one rule set.
 import type { AppState, FieldBundle } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
-import { togglePriority } from "../components/Reasons";
+import { MIN_RANKED, togglePriority } from "../components/Reasons";
 import { rankOptions } from "../ranking/rank";
 import { SETTINGS_PATH } from "../screens/settings/path";
 import { setLimit } from "../state/toggles";
@@ -60,10 +60,10 @@ export function routeKey(route: string): string {
   return "step.1";
 }
 
-/** Where the screen's own Next button goes; null where there is none. Questions needs two priorities, as its button does. */
+/** Where the screen's own Next button goes; null where there is none. Questions needs two priorities in order, as its button does. */
 function nextOf(route: string, state: AppState): string | { blocked: string } | null {
   if (route === "/") return state.fieldId === DEMO_FIELD_ID ? "/questions" : { blocked: "settings.noField" };
-  if (route.startsWith("/questions")) return state.priorities.length >= 2 ? "/options" : { blocked: "voice.pick2" };
+  if (route.startsWith("/questions")) return state.priorities.length >= MIN_RANKED ? "/options" : { blocked: "voice.pick2" };
   if (route.startsWith("/options") || route.startsWith("/why")) return "/year";
   if (route.startsWith("/year")) return "/adviser";
   return null;
@@ -82,7 +82,7 @@ function backOf(route: string, state: AppState): string | null {
 
 /**
  * Folds the commands, in order, into one state patch and at most one route (the last one asked for).
- * Priorities follow the chips' rule (a third lets go of the first); limits keep the list order the Questions screen keeps.
+ * Priorities follow the chips' rule (each one named joins the end of the order); limits keep the list order the Questions screen keeps.
  */
 export function applyCommands(state: AppState, commands: VoiceCommand[], route: string, bundle: FieldBundle | null): Applied {
   let next: AppState = { ...state };

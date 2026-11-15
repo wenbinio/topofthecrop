@@ -172,8 +172,10 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
               {t("q.limits")}: <b>{state.limits.length ? state.limits.map((l) => t(`limit.${l}`)).join(", ") : t("print.none")}</b>
             </li>
             <li>
-              {t("q.priorities")}:{" "}
-              <b>{state.priorities.length ? state.priorities.map((p) => t(`priority.${p}`)).join(", ") : t("print.none")}</b>
+              {t("options.priorities")}:{" "}
+              <b data-testid="print-priorities">
+                {state.priorities.length ? state.priorities.map((p, i) => `${i + 1}. ${t(`priority.${p}`)}`).join(", ") : t("print.none")}
+              </b>
             </li>
             <li>
               {t("year.slider")}: <b>{t(`scenario.${state.scenario}`)}</b>

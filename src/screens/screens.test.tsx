@@ -98,13 +98,29 @@ describe("Options", () => {
     expect(screen.getByTestId("tag-best").closest("[data-testid=option-row]")).toHaveAttribute("data-option-id", "faba-durum-faba");
   });
 
-  it("a third priority chip replaces the one chosen first and re-ranks at once", async () => {
+  it("the chips show each priority's place, and a third joins the end of the order", async () => {
     renderAt("/options?f=genzano-demo&p=soil,income");
     await screen.findByTestId("recommendation");
+    expect(screen.getByRole("checkbox", { name: "Soil and nitrogen" })).toHaveAttribute("data-rank", "1");
+    expect(screen.getByRole("checkbox", { name: "Income" })).toHaveAttribute("data-rank", "2");
+    expect(screen.getByRole("checkbox", { name: "Forage" })).not.toHaveAttribute("data-rank");
     fireEvent.click(screen.getByRole("checkbox", { name: "Forage" }));
+    await waitFor(() => expect(lastPath).toContain("p=soil%2Cincome%2Cforage"));
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "3");
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveTextContent("3");
+    expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant faba bean next");
+    const three = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
+    expect(three.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income", "forage"]);
+  });
+
+  it("tapping a chip in the order takes it out, the rest move up, and the options re-rank at once", async () => {
+    renderAt("/options?f=genzano-demo&p=soil,income,forage");
+    await screen.findByTestId("recommendation");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Soil and nitrogen" }));
     await waitFor(() => expect(lastPath).toContain("p=income%2Cforage"));
     expect(screen.getByRole("checkbox", { name: "Soil and nitrogen" })).toHaveAttribute("aria-checked", "false");
-    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("checkbox", { name: "Income" })).toHaveAttribute("data-rank", "1");
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "2");
     expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant vetch-oat next");
     expect(screen.getByTestId("tag-best").closest("[data-testid=option-row]")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
     const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
@@ -258,17 +274,35 @@ describe("Back buttons", () => {
 });
 
 describe("Questions", () => {
-  it("Next needs two priorities, and a third is blocked until one is released", async () => {
+  it("priorities are tapped in order, each showing its place, and Next needs two", async () => {
     renderAt("/questions?f=genzano-demo");
     const next = await screen.findByRole("button", { name: "Next" });
     expect(next).toBeDisabled();
+    expect(screen.getByTestId("rank-hint")).toHaveTextContent("Rank at least 2");
     fireEvent.click(screen.getByRole("checkbox", { name: "Income" }));
+    await waitFor(() => expect(screen.getByRole("checkbox", { name: "Income" })).toHaveAttribute("data-rank", "1"));
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
     fireEvent.click(screen.getByRole("checkbox", { name: "Soil and nitrogen" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Next" })).toBeEnabled());
-    expect(screen.getByRole("checkbox", { name: "Water" })).toBeDisabled();
+    expect(screen.getByRole("checkbox", { name: "Soil and nitrogen" })).toHaveTextContent("2");
+    expect(screen.getByRole("checkbox", { name: "Water" })).toBeEnabled();
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
     await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
     expect(lastPath).toContain("p=income%2Csoil");
+  });
+
+  it("all four can be ranked, and taking one out moves the later ones up", async () => {
+    renderAt("/questions?f=genzano-demo&p=income,soil");
+    await screen.findByRole("button", { name: "Next" });
+    fireEvent.click(screen.getByRole("checkbox", { name: "Water" }));
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Forage" }));
+    await waitFor(() => expect(lastPath).toContain("p=income%2Csoil%2Cwater%2Cforage"));
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "4");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Income" }));
+    await waitFor(() => expect(lastPath).toContain("p=soil%2Cwater%2Cforage"));
+    expect(screen.getByRole("checkbox", { name: "Income" })).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByRole("checkbox", { name: "Soil and nitrogen" })).toHaveAttribute("data-rank", "1");
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "3");
   });
 });
 

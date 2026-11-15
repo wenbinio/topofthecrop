@@ -53,11 +53,11 @@ describe("screenSummary", () => {
   });
 
   it("Questions: what is chosen and what is still to pick", () => {
-    expect(screenSummary("/questions", bundle, state("en", []))).toBe("Last crop: Durum. Pick 2: Income, Water, Soil and nitrogen, Forage.");
+    expect(screenSummary("/questions", bundle, state("en", []))).toBe("Last crop: Durum. Tap what matters most first: Income, Water, Soil and nitrogen, Forage.");
     expect(screenSummary("/questions", bundle, state("it", ["water"]))).toBe(
-      "Ultima coltura: Grano duro. Le tue priorità: Acqua. Scegline 2: Reddito, Suolo e azoto, Foraggio.",
+      "Ultima coltura: Grano duro. Le tue priorità: 1 Acqua. Tocca prima ciò che conta di più: Reddito, Suolo e azoto, Foraggio.",
     );
-    expect(screenSummary("/questions", bundle, state("en"))).toBe("Last crop: Durum. Your priorities: Income, Water.");
+    expect(screenSummary("/questions", bundle, state("en"))).toBe("Last crop: Durum. Your priorities: 1 Income, 2 Water.");
   });
 
   it("elsewhere, the screen's heading", () => {

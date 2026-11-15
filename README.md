@@ -24,7 +24,7 @@ Six steps, each one screen on a phone.
 | Step | What the farmer sees | How it stays simple |
 |---|---|---|
 | 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn anywhere else gets live NASA weather history for its area. |
-| 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); pick 2 of 4 priorities (income, water, soil, forage). | Big buttons. Last crop is pre-filled from the EU crop map. |
+| 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); put the priorities (income, water, soil, forage) in order by tapping them, most important first: at least 2, up to all 4. | Big buttons. Last crop is pre-filled from the EU crop map. |
 | 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029): continuous durum plus three alternatives. The top one says "Best fit for you". | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
 | 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | Every number shows its source, its range, and whether it describes "your field" or "your area". Terms such as NDVI open a one-line explanation. |
 | 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. | One headline number: hot days at flowering, now and by 2050. |
@@ -153,7 +153,7 @@ This table is a first draft for the team to correct. The findings it produces ar
 
 A dealbreaker stays a dealbreaker: no score can outvote it. The current rotation is never removed, so there is always a baseline to compare against.
 
-**4. The options that remain are ordered by the farmer's two priorities.** Each option has a score from 0 to 1 for income, water, soil and forage. The two chosen priorities are averaged with equal weight; the other two only break ties. This is the only place an index is used, and only to put a short list in order.
+**4. The options that remain are ordered by the farmer's priorities, in the farmer's order.** Each option has a score from 0 to 1 for income, water, soil and forage. The farmer ranks at least two of the four; the first counts 4, the second 3, the third 2, the fourth 1, and the scores are averaged with those weights. A priority left out has no weight and only breaks ties. The weights are our own judgement (`docs/scoring.md`). This is the only place an index is used, and only to put a short list in order.
 
 **5. The slider re-runs the ordering** with the water and heat inputs for a drier, hotter year.
 
