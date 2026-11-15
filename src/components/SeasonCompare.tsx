@@ -3,6 +3,7 @@
 // An arrow marks a value outside the usual range (10th to 90th percentile, docs/scoring.md). For the demo field it
 // also names the seasons the field was much less green than nearby fields (`stressSeasons` in
 // src/data/field-rules.js). Every row keeps its dataset, resolution and scale. Written with AI assistance (Claude, Anthropic).
+import { Fragment } from "react";
 import type { Fact, FieldBundle, Lang, Series } from "../data/types";
 import { stressSeasons } from "../data/field-rules.js";
 import { useLang, useT } from "../i18n";
@@ -56,49 +57,54 @@ export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
             <th scope="col" className="px-3">
               <span className="sr-only">{t("years.title")}</span>
             </th>
-            <th scope="col" className="text-right px-2 font-bold text-ink-soft">{t("years.usual")}</th>
+            <th scope="col" className="text-right px-1.5 last:pr-3 font-bold text-ink-soft">{t("years.usual")}</th>
             {shown.map((year) => (
-              <th key={year} scope="col" className="text-right px-2 font-bold">{year}</th>
+              <th key={year} scope="col" className="text-right px-1.5 last:pr-3 font-bold">{year}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map(({ key, usual, series: s }) => (
-            <tr key={key} className="border-t border-line align-top">
-              <th scope="row" className="text-left font-normal px-3 py-1.5">
-                <span className="block">{t(key)}</span>
-                <span className="flex flex-wrap items-center gap-x-1.5">
-                  <ScaleBadge scale={s.scale} iconOnly />
-                  <span className="tc-dataset font-mono text-small uppercase tracking-wide text-ink-soft">
-                    {s.source.dataset} · {s.source.resolution}
-                  </span>
-                </span>
-              </th>
-              <td className="text-right px-2 py-1.5 whitespace-nowrap text-ink-soft">
-                {figure(Number(usual.value), usual.unit, lang)}
-                {usual.asOf ? <span className="block text-small">{usual.asOf.replace("-", "–")}</span> : null}
-              </td>
-              {shown.map((year) => {
-                const value = s.values[years.indexOf(year)];
-                if (value === null || value === undefined) {
+            // Two rows per figure, so the numbers keep their width on a phone: the figures, then the dataset under them.
+            <Fragment key={key}>
+              <tr className="border-t border-line align-top">
+                <th scope="row" className="text-left font-normal pl-3 pr-1 pt-1.5">{t(key)}</th>
+                <td className="text-right px-1.5 pt-1.5 whitespace-nowrap text-ink-soft">
+                  {figure(Number(usual.value), usual.unit, lang)}
+                  {usual.asOf ? <span className="block text-small">{usual.asOf.replace("-", "–")}</span> : null}
+                </td>
+                {shown.map((year) => {
+                  const value = s.values[years.indexOf(year)];
+                  if (value === null || value === undefined) {
+                    return (
+                      <td key={year} className="text-right px-1.5 last:pr-3 pt-1.5 text-small text-ink-soft">{t("common.noData")}</td>
+                    );
+                  }
+                  const dir = outsideUsual(value, usual);
                   return (
-                    <td key={year} className="text-right px-2 py-1.5 text-small text-ink-soft">{t("common.noData")}</td>
+                    <td key={year} className="text-right px-1.5 last:pr-3 pt-1.5 whitespace-nowrap font-bold" data-testid={`compare-${key}-${year}`}>
+                      {figure(value, s.unit, lang)}
+                      {dir ? (
+                        <span title={t(`years.${dir}`)}>
+                          <span aria-hidden="true"> {dir === "lower" ? "↓" : "↑"}</span>
+                          <span className="sr-only"> ({t(`years.${dir}`)})</span>
+                        </span>
+                      ) : null}
+                    </td>
                   );
-                }
-                const dir = outsideUsual(value, usual);
-                return (
-                  <td key={year} className="text-right px-2 py-1.5 whitespace-nowrap font-bold" data-testid={`compare-${key}-${year}`}>
-                    {figure(value, s.unit, lang)}
-                    {dir ? (
-                      <span title={t(`years.${dir}`)}>
-                        <span aria-hidden="true"> {dir === "lower" ? "↓" : "↑"}</span>
-                        <span className="sr-only"> ({t(`years.${dir}`)})</span>
-                      </span>
-                    ) : null}
-                  </td>
-                );
-              })}
-            </tr>
+                })}
+              </tr>
+              <tr>
+                <td colSpan={2 + shown.length} className="px-3 pt-0.5 pb-1.5">
+                  <span className="flex flex-wrap items-center gap-x-1.5">
+                    <ScaleBadge scale={s.scale} iconOnly />
+                    <span className="tc-dataset font-mono text-small uppercase tracking-wide text-ink-soft">
+                      {s.source.dataset} · {s.source.resolution}
+                    </span>
+                  </span>
+                </td>
+              </tr>
+            </Fragment>
           ))}
         </tbody>
       </table>
