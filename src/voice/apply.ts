@@ -161,7 +161,7 @@ export function describeDone(done: Done[], t: (key: string, vars?: Record<string
       const names = [t(d.key)];
       while (i + 1 < done.length && done[i + 1].kind === d.kind) names.push(t((done[++i] as { key: string }).key));
       parts.push(t(d.kind === "on" ? "voice.on" : "voice.off", { what: names.join(", ") }));
-    } else if (d.kind === "crop") parts.push(`${t("q.lastCrop")}: ${t(`crop.${d.crop}`)}`);
+    } else if (d.kind === "crop") parts.push(`${t("q.lastCrop")}: ${d.crop === "none" ? t("q.nonePlain") : t(`crop.${d.crop}`)}`);
     else parts.push(t(d.key));
   }
   return parts.join(", ");

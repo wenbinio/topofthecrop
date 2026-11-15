@@ -22,6 +22,8 @@ const STOP: VoiceCommand = { kind: "stop" };
 const CASES: [Lang, string, VoiceCommand[]][] = [
   // English
   ["en", "Next", [NEXT]],
+  ["en", "it was left fallow", [{ kind: "lastCrop", crop: "none" }]],
+  ["it", "era a maggese", [{ kind: "lastCrop", crop: "none" }]],
   ["en", "go back", [BACK]],
   ["en", "Income and water, next.", [on("income"), on("water"), NEXT]],
   ["en", "income and water next", [on("income"), on("water"), NEXT]],

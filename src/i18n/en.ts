@@ -789,6 +789,8 @@ export const en = {
   "soil.reset": "Use the soil map again",
   "soil.yours": "You set this; the soil map says {map}.",
   "soil.phYours": "pH {ph}, from your soil test",
+  "q.none": "Nothing, left fallow",
+  "q.nonePlain": "Nothing (fallow)",
 } as const;
 
 export type DictKey = keyof typeof en;

@@ -106,16 +106,35 @@ describe("more options", () => {
 });
 
 describe("last crop", () => {
-  it("offers every crop in the bundle and Other", async () => {
+  it("offers every crop in the bundle, Nothing (left fallow) and Other", async () => {
     serve(shipped);
     renderAt("/questions?f=genzano-demo");
     const group = await screen.findByTestId("last-crop");
     const radios = within(group).getAllByRole("radio");
-    expect(radios).toHaveLength(10);
+    expect(radios).toHaveLength(11);
+    expect(radios.at(-2)).toHaveTextContent("Nothing");
     expect(radios.at(-1)).toHaveTextContent("Other…");
     expect(within(group).getByRole("radio", { name: "Coriander" })).toBeInTheDocument();
     // The last-crop question shows each crop's botanical plate above its name.
     expect(within(group).getAllByTestId("crop-plate").map((p) => p.getAttribute("data-crop"))).toHaveLength(9);
+  });
+
+  it("Nothing, left fallow, goes into the link, leaves no rotation out, and shows on the printout", async () => {
+    serve(shipped);
+    renderAt("/questions?f=genzano-demo");
+    const group = await screen.findByTestId("last-crop");
+    fireEvent.click(within(group).getByTestId("last-crop-none"));
+    await waitFor(() => expect(param("c")).toBe("none"));
+    expect(within(group).getByTestId("last-crop-none").closest("[role=radio]")).toHaveAttribute("aria-checked", "true");
+    cleanup();
+    serve(shipped);
+    renderAt("/options?f=genzano-demo&p=income,water&c=none");
+    await screen.findByTestId("rec-headline");
+    expect(screen.queryByTestId("left-out")).toBeNull();
+    cleanup();
+    serve(shipped);
+    renderAt("/print?f=genzano-demo&p=income,water&c=none");
+    expect(await screen.findByText(/Nothing/)).toBeInTheDocument();
   });
 
   it("Other opens a name box; the name goes into the link and onto the printout", async () => {

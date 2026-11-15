@@ -39,8 +39,11 @@ export const LIMITS: readonly Limit[] = ["no-irrigation", "cereal-machinery", "n
 export const CROPS: readonly CropId[] = ["durum", "chickpea", "faba", "vetch-oat", "lentil", "pea", "barley", "rapeseed", "coriander"];
 /** Legumes: grown twice running they build up disease, so an option that starts with the last crop is left out. */
 export const LEGUMES: readonly CropId[] = ["chickpea", "faba", "lentil", "pea", "vetch-oat"];
-/** The farmer's answer to "Last crop": a crop id, or "other" with its name typed in `lastCropName`. */
-export type LastCrop = CropId | "other";
+/**
+ * The farmer's answer to "Last crop": a crop id, "other" with its name typed in `lastCropName`, or "none" when the
+ * field grew nothing (left fallow). Only a legume as the last crop changes the ranking, so "none" leaves nothing out.
+ */
+export type LastCrop = CropId | "other" | "none";
 /** Longest typed name for an "other" last crop, in characters, after trimming. */
 export const LAST_CROP_NAME_MAX = 30;
 

@@ -7,7 +7,7 @@ export type VoiceCommand =
   | { kind: "next" }
   | { kind: "back" }
   | { kind: "go"; step: Step }
-  | { kind: "lastCrop"; crop: CropId }
+  | { kind: "lastCrop"; crop: CropId | "none" }
   | { kind: "limit"; limit: Limit; on: boolean }
   | { kind: "priority"; priority: Priority; on: boolean }
   | { kind: "view"; view: View }
@@ -60,7 +60,9 @@ const RULES: Rule[] = [
   { lang: "en", re: "print|print it|printout", cmd: { kind: "go", step: "print" } },
   { lang: "it", re: "stampa|stampare|stampala", cmd: { kind: "go", step: "print" } },
 
-  // last crop (only the crops the bundle offers count; see parseCommand)
+  // last crop (only the crops the bundle offers count; see parseCommand). Nothing, left fallow, always counts.
+  { lang: "en", re: "(it was )?(left )?fallow|no crop( last year)?|nothing last year", cmd: { kind: "lastCrop", crop: "none" } },
+  { lang: "it", re: "(a )?maggese|nessuna coltura|incolto", cmd: { kind: "lastCrop", crop: "none" } },
   { lang: "any", re: "durum( wheat)?|hard wheat|wheat|grano( duro)?|gran duro|grano duto|frumento( duro)?|ringrano", cmd: { kind: "lastCrop", crop: "durum" } },
   { lang: "any", re: "chick ?peas?|chickpeace|ceci|cece|cieci|ciceri|cicero", cmd: { kind: "lastCrop", crop: "chickpea" } },
   { lang: "any", re: "faba( beans?)?|fava( beans?)?|broad beans?|favin[oi]|fave|favette?", cmd: { kind: "lastCrop", crop: "faba" } },
@@ -233,7 +235,7 @@ export function parseCommand(transcript: string, lang: Lang, context: CommandCon
     }
     mode = "on";
     once = false;
-    if (rule.cmd.kind === "lastCrop" && !context.crops.includes(rule.cmd.crop)) continue;
+    if (rule.cmd.kind === "lastCrop" && rule.cmd.crop !== "none" && !context.crops.includes(rule.cmd.crop)) continue;
     out.push({ cmd: { ...rule.cmd }, onlyOff: false });
   }
   // "irrigation" alone means nothing unless it is being taken off.

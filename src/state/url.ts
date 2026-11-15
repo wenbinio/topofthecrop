@@ -4,7 +4,7 @@ import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LAST_CROP_NAME_MAX, 
 
 /**
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
- * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities (in the farmer's order, most important first), i strip intercrops shown (1), v view, g language, m money,
+ * Parameter names: f field id, o outline, c last crop (a crop id, "other", or "none" for a field left fallow), cn its typed name (only with c=other), l limits, p priorities (in the farmer's order, most important first), i strip intercrops shown (1), v view, g language, m money,
  * (`s`, the stop of the old dry-year slider, is ignored: old links open as a usual year.)
  * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded),
  * sw the farmer's own kind of ground (heavy, medium, light), sph their soil-test pH (3 to 10, one decimal).
@@ -44,7 +44,7 @@ export function decodeState(query: string): AppState {
   const priorities = (params.get('p') ?? '').split(',');
   const fieldId = params.get('f') === DEMO_FIELD_ID ? DEMO_FIELD_ID : null;
   const c = params.get('c');
-  const lastCrop: LastCrop = c === 'other' ? 'other' : CROPS.find(crop => crop === c) ?? DEFAULT_STATE.lastCrop;
+  const lastCrop: LastCrop = c === 'other' || c === 'none' ? c : CROPS.find(crop => crop === c) ?? DEFAULT_STATE.lastCrop;
   return {
     fieldId,
     outline: fieldId ? null : parseOutline(params.get('o') ?? ''),
