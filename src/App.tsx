@@ -1,6 +1,7 @@
 import { Suspense, lazy, useLayoutEffect } from "react";
 import type { ReactNode } from "react";
 import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { KeepFiguresOnBack } from "./components/KeepFiguresOnBack";
 import { DEMO_FIELD_ID } from "./data/types";
 import { isUsableRing } from "./geo/geometry";
 import { LangContext, useT } from "./i18n";
@@ -88,6 +89,7 @@ function Shell() {
           isPrint ? "min-h-dvh max-w-[52rem] print:max-w-none" : "h-dvh max-w-[30rem] phone-land:max-w-none"
         }`}
       >
+        <KeepFiguresOnBack />
         <TopBar steps={isPrint || isSettings || inPlan ? null : <StepBar pathname={pathname} />} />
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
           <Suspense fallback={<ScreenLoading />}>

@@ -29,7 +29,8 @@ function Body({ bundle }: { bundle: FieldBundle }) {
 /**
  * Prices, costs and support: the farmer's own figures behind the income, in fold-out sections.
  * Every change applies at once and travels in the link. "Save changes" takes the farmer back to where they were
- * with the new figures, and puts them in the plan kept on this phone.
+ * with the new figures, and puts them in the plan kept on this phone. Back (this screen's, the top bar's or the
+ * phone's) does the same.
  */
 export default function Settings() {
   const t = useT();
@@ -51,9 +52,14 @@ export default function Settings() {
 
   const hasField = state.fieldId === DEMO_FIELD_ID || !!state.outline;
   const back = { pathname: from ?? fallback, search: location.search };
+  // Save and Back both keep the figures. When the farmer came here from a screen of this visit they go back a step,
+  // so the history holds no copy of that screen with the old figures: KeepFiguresOnBack (App) carries the new ones
+  // into it. Opened straight from a link, there is no step to go back to, so they replace this screen instead.
   const save = () => {
     keepFigures(state);
-    navigate(back, { replace: true });
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (from && idx > 0) navigate(-1);
+    else navigate(back, { replace: true });
   };
 
   let body: ReactNode;
@@ -70,6 +76,10 @@ export default function Settings() {
       <Link
         to={back}
         replace
+        onClick={(event) => {
+          event.preventDefault();
+          save();
+        }}
         className="self-start inline-flex items-center gap-1 min-h-11 px-3 font-bold text-body"
       >
         <BackIcon className="w-5 h-5" />
