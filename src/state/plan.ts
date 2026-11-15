@@ -3,7 +3,7 @@
 // server, so it cannot alert a closed phone: the comparison runs when the farmer opens "Your field today".
 import type { AppState } from "../data/types";
 import { DEFAULT_STATE } from "../data/types";
-import { encodeState } from "./url";
+import { decodeState, encodeState } from "./url";
 
 export type SavedPlan = {
   /** The link's query, to reopen the plan as the farmer left it (language and view included). */
@@ -57,6 +57,23 @@ export function writePlan(plan: SavedPlan): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * "Save changes" on Settings: carries the farmer's prices, costs and payments into the plan kept on this phone,
+ * so "Your field today" and "My plans" reopen with them. Only when the kept plan is this same field and these same
+ * answers; the best fit, the data fingerprint and the date stay as they were, because figures do not change the
+ * ranking. True when a kept plan was updated.
+ */
+export function keepFigures(state: AppState): boolean {
+  const saved = readPlan();
+  if (!saved) return false;
+  const answers = (s: AppState) => planKey({ ...s, money: {}, extras: [] });
+  if (answers(decodeState(saved.query)) !== answers(state)) return false;
+  const key = planKey(state);
+  // The list of past plans holds one entry per plan: drop the one with the old figures.
+  if (key !== saved.key) removePlanRecord(saved.key);
+  return writePlan({ ...saved, query: encodeState(state), key });
 }
 
 export function forgetPlan(): void {

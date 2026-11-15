@@ -361,6 +361,7 @@ export const it: Dict = {
   "settings.errNumber": "Scrivi un numero",
   "settings.errRange": "Da {min} a {max}",
   "settings.reset": "Ripristina valori iniziali",
+  "settings.save": "Salva modifiche",
   "settings.adviser": "Verifica gli aiuti al tuo CAA. L'app non può sapere se ne hai diritto.",
   "settings.noField": "Prima scegli il campo.",
   "settings.nothing": "Qui non ci sono prezzi o aiuti da cambiare.",

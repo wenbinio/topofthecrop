@@ -374,6 +374,7 @@ export const en = {
   "settings.errNumber": "Enter a number",
   "settings.errRange": "{min} to {max}",
   "settings.reset": "Reset figures",
+  "settings.save": "Save changes",
   "settings.adviser": "Check payments with your CAA office. The app cannot tell if you qualify.",
   "settings.noField": "Pick a field first.",
   "settings.nothing": "No prices or payments to edit.",
