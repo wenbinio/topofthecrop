@@ -160,8 +160,11 @@ describe("Your field today", () => {
     expect(within(message).getByRole("link", { name: "See why" })).toHaveAttribute("href", expect.stringContaining(`/why/${CHICKPEA}?`));
     expect(readPlan()?.bestId).toBe("vetch-oat-durum-durum");
     fireEvent.click(screen.getByRole("button", { name: "Got it" }));
-    expect(readPlan()).toMatchObject({ bestId: CHICKPEA, savedAt: dayStamp(new Date()) });
+    // Once acknowledged, the new advice is what is kept, and stays kept through any later save.
+    await waitFor(() => expect(readPlan()).toMatchObject({ bestId: CHICKPEA, savedAt: dayStamp(new Date()) }));
     expect(screen.queryByTestId("plan-was")).toBeNull();
+    fireEvent.click(screen.getAllByRole("checkbox")[0]);
+    expect(readPlan()).toMatchObject({ bestId: CHICKPEA });
   });
 
   it("a changed answer is the farmer's own change, not new data: it starts a new plan", async () => {
