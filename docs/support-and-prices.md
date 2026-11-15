@@ -29,11 +29,11 @@ Each needs a contract or a multi-year commitment, or its eligibility is disputed
 | Coupled oilseeds (rapeseed, sunflower) | 111.10 €/ha in rapeseed years (range 90.90 to 111.10) | Plan rate 101.00, floor 90.90, ceiling 111.10. Paid 98.16 (2024) and 111.10 (2025). Needs a contract with a processor, seed company or feed mill, and certified seed. | Checked in the AGEA circulars and the plan text. The research compilation's 64.30 was wrong. |
 | Eco-scheme 4 with a vetch-oat year | 40 €/ha | Opus: qualifies like the other rotations. Hydrogen: a one-year vetch-oat mix followed by durum is excluded (cites a ministry FAQ). | Disputed. |
 | Coupled support for a legume forage mix | 44 €/ha in the vetch-oat year | Only if the legume is predominant and stays until flowering starts. | Both agree on the condition. |
-| Durum wheat fund | 100 €/ha in durum years | 100 €/ha ceiling for 2026 (200 was paid in 2024 and 2025). Needs a three-year supply contract with a cooperative, consortium, producer organisation or a processor (mill, pasta maker) and certified seed; cut pro rata; up to 50 ha; at most 50,000 € over three years. Source: MASAF fund (DM 677535), via Informatore Agrario, 3 March 2026. | Both agree. Opus read the AGEA instructions. |
-| Food-sovereignty fund for legumes | 200 €/ha in chickpea and faba years | Up to 250 €/ha, cut pro rata; only on legume area above the farm's three-year average, under a three-year contract. | Not checked against the decree. Search excerpts of the 2025–26 decree (DM 22 December 2025 n. 688617) give 250 €/ha, a 50 ha cap across all crops, and do not mention a contract. |
-| No-till sowing (SRA03, Basilicata) | 300 €/ha | 300 €/ha, five-year commitment. The 2026 call closed on 30 June 2026. | Both agree; neither could open the region's own site. |
-| Integrated production (SRA01, Basilicata) | 171 €/ha | 171 €/ha arable (114 forage), five-year commitment. Not with organic on the same field. | Both agree. |
-| Organic farming (SRA29, Basilicata) | 258 €/ha | Sources conflict: between 163 and 362 €/ha depending on crop and on conversion or maintenance. Last call closed May 2025. | Disputed. |
+| Durum wheat fund | 100 €/ha in durum years (range 0 to 200) | Cap 100 €/ha for 2026 under DM 585284 of 30 October 2025 (not to be confused with DM 585296). The cap was raised to 200 for 2024 (DM 27 December 2024); for 2025 a further 10 M€ (MASAF, 5 November 2025) was reported as a 200 cap, but what was actually paid is not known. Needs a three-year supply contract with a cooperative, consortium, producer organisation or a processor (mill, pasta maker) and certified seed; cut pro rata; up to 50 ha; at most 50,000 € over three years. | Owner's audit against the Gazzetta Ufficiale and MASAF, 15 November 2026. |
+| Food-sovereignty fund for legumes | 250 €/ha in chickpea, faba, lentil and pea years (range 137 to 250) | Cap 250 €/ha; the 2025 rate after cuts was 137. Only on legume hectares above the farm's three-year average, up to 50 ha across the arable crops covered. A supply contract is required (AGEA instructions 83/2026, p. 6); a cooperative member's yearly pledge must link to the underlying contract. The 2026 rate is not yet known. | Owner's audit, 15 November 2026. |
+| No-till sowing (SRA03, Basilicata) | 300 €/ha | 300 €/ha a year, five-year commitment. The 2026 call (Determination 100 of 13 February 2026) was extended to 30 June 2026 (Determination 423 of 19 May 2026). Not on the same area as SRA01 or SRA29. | Owner's audit against the CSR Basilicata 2026 call page. |
+| Integrated production (SRA01, Basilicata) | 171 €/ha | 171 €/ha arable, 114 forage, five-year commitment. Not on the same area as organic or no-till. | Owner's audit. |
+| Organic farming (SRA29, Basilicata) | 258 €/ha (range 208 to 291) | Keeping organic: 258 €/ha arable, 208 legumes. Converting: 291 arable, 233 legumes. Five-year commitment. Last call closed May 2025. | Owner's audit. |
 
 ## What is disputed about Eco-scheme 4
 
@@ -67,7 +67,17 @@ Both researchers found that durum after durum breaches the CAP crop-rotation con
 
 A Claude agent read AGEA's balance-payment circulars for 2024 (n. 89138, 25 Nov 2024) and 2025 (n. 94143, 21 Nov 2025, https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf), AGEA's Eco-scheme 4 instructions 30/2025, and the plan text on FAOLEX. The figures above marked "checked" come from those. The app's coupled payments, redistributive payment and Eco-scheme 4 now cite circular 94143, which holds the amounts paid.
 - **Eco-scheme 4 rules (instructions 30/2025):** a rotation of at least two years, a depleting crop (durum) alternating with an improving one (pea, faba, lentil, chickpea, vetch). Chemical weedkillers and other plant protection products are banned on the legume and forage crop only; a renewal crop must be grown by integrated or organic rules; durum is not limited. AGEA's own example pays coriander then durum in both years. Residue incorporation was not found in those instructions; it stays in the app's wording from the earlier research.
-- **Not checked** (the sites could not be read): the durum wheat fund (search excerpts tie it to a decree of 30 October 2025; whether that is DM 677535 is unconfirmed), the legume fund, the Basilicata payments (SRA01, SRA03, SRA29), basic income support, and the CREA seed list. The European Commission page for Italy's plan loads.
+- **Not checked by the agent** (the sites could not be read): the durum wheat fund, the legume fund, the Basilicata payments, basic income support and the CREA seed list. The owner's own audit (next section) covers all of these except basic income support. The European Commission page for Italy's plan loads.
+
+## The owner's audit (15 November 2026)
+
+The owner checked the rest against the Gazzetta Ufficiale, MASAF, AGEA, CSR Basilicata and the papers. The rows above marked "owner's audit" come from it. Also from it:
+- **Durum fund decree:** DM 585284 of 30 October 2025. The "DM 677535" in the research compilation is not confirmed.
+- **Areas with Natural Constraints (SRB01):** 120 €/ha for eligible non-livestock mountain farms, with area-based reductions. Genzano di Lucania does not qualify (municipality classification), so 0 €/ha there; not in the app.
+- **2023 figures:** coupled durum 98.18 and Eco-scheme 4 64.33 are confirmed. Eco-scheme 4 for 2023 went through three stages: 49.67 first worked out, 52.12 after the May 2024 reserve adjustment, 64.33 after the October 2024 one. The app uses 2025 amounts; 2023 ones are history, not 2026 rates.
+- **CREA list:** it lists species that can be certified, not varieties.
+- **Papers:** Denora et al. 2025 ran at the La Generale cooperative, Genzano di Lucania, on 12 ha (Section 2.1), with contribution margins of 280.6 and 47.5 €/ha. Garofalo et al. 2009's 12% is a modelled average (2,684 against 2,377 kg/ha is about 12.9%). Lago-Olveira et al. 2023's +16% is indirectly supported; the +10% still needs Table S3.
+- **Keep apart:** the statutory cap, the final campaign rate and the amount actually paid. For durum and legumes the same €/ha can mean different things in different years.
 - **Not used anywhere:** the Lebanon study on wheat and faba bean in the research compilation (too far from southern Italy).
 
 ## From the research compilation (15 November 2026)
@@ -83,7 +93,7 @@ The owner's `research-compilation/research-compilation.md` changed these figures
 Not put in the app:
 - Eco-scheme 2 (grass cover in tree crops, about 120 €/ha) and Eco-scheme 3 (landscape olive groves, about 220 €/ha): no tree crops in the rotations.
 - Eco-scheme 5 (pollinators, about 250 €/ha arable, 500 tree crops): needs land sown to nectar plants, which no rotation is.
-- Areas with Natural Constraints: 10 to 20% higher grant scoring. A scoring advantage for some grants, not a per-hectare payment. https://agriculture.ec.europa.eu/media/news/cap-support-crucial-maintain-farming-areas-natural-constraints-shows-latest-study-2023-07-19_en
+- Areas with Natural Constraints: 10 to 20% higher grant scoring, per the compilation. Genzano di Lucania does not qualify for the mountain SRB01 payment (owner's audit). https://agriculture.ec.europa.eu/media/news/cap-support-crucial-maintain-farming-areas-natural-constraints-shows-latest-study-2023-07-19_en
 - The application process: the farm dossier (fascicolo aziendale) kept on SIAN, applications often filed through a CAA office, and Area Monitoring System checks with Copernicus satellites. https://interoperable-europe.ec.europa.eu/collection/egovernment/document/italian-informative-agricultural-system-agea-sian , https://www.confagricoltura.it/eng/network-confagricoltura/farmer-s-confederation-system/agricultural-assistance-centre%E2%80%93-caa , https://consulenzaagricola.it/circolari/politica-agricola-comune-e-nazionale/20261-circolare-agea-su-area-monitoring-system-ams
 
 ## What may change

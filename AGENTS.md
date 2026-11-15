@@ -112,14 +112,16 @@ Payments the farmer adds travel in `x`. A typed figure counts as "fair" confiden
 ## Support payments from the research compilation
 
 From `research-compilation/research-compilation.md`. The app's payments are in `scripts/make-placeholder-bundle.mjs`; each cites its own page, shown behind "Source" on Settings.
-- **Region:** Basilicata is a Less Developed region. The compilation says much of the Alto Bradano is an Area with Natural Constraints (ANC), which scores 10–20% higher in grant calls (not checked; not counted in the income).
+- **Region:** Basilicata is a Less Developed region. The compilation says much of the Alto Bradano has natural constraints, but Genzano di Lucania does not qualify for the mountain payment SRB01 (120 €/ha elsewhere), so 0 there.
 - **Coupled support (CAP plan PD 06), €/ha:** durum 93.50 planned (min 84.15, max 102.86; 96.88 in 2027), Centre-South incl. Basilicata, certified seed; grain legumes 40.04 (29.00–44.04), chickpea, lentil, pea, faba, lupin, beans, not soybean; oilseeds (rapeseed, sunflower) 101.00 (90.90–111.10), only under a contract with a processor, seed company or feed mill, with certified seed (the compilation's 64.30 is wrong). The app uses what AGEA paid for 2025 (circular 94143): durum 102.86, legumes 44.04, oilseeds 111.10, redistributive 89.37.
 - **Eco-scheme 4:** about 110 €/ha planned (paid 49.48 in 2024, 60.36 in 2025) for arable rotations with legumes or forage, with no chemical weedkillers or pesticides on the legume or forage crop (other crops in the rotation are not limited). Eco-schemes 2, 3 (tree crops) and 5 (pollinators, 250–500 €/ha) do not fit our rotations.
-- **Durum wheat fund (DM 677535):** up to 100 €/ha, 50 ha and €50,000 over three years; needs a three-year supply contract with a cooperative, consortium, producer organisation or processor, and certified seed; cut pro rata.
+- **Durum wheat fund (DM 585284 of 30 October 2025; "DM 677535" in the compilation is unconfirmed):** up to 100 €/ha for 2026 (200 for 2024; 200 reported for 2025), 50 ha and €50,000 over three years; needs a three-year supply contract with a cooperative, consortium, producer organisation or processor, and certified seed; cut pro rata.
 - **How farmers claim:** the farm dossier (*fascicolo aziendale*) on SIAN, usually through a CAA office; AGEA checks crops with Sentinel satellites (Area Monitoring System).
 - **Not used:** the compilation's Lebanon study on wheat and faba bean (too far from southern Italy).
-- **Not checked against the official documents:** the durum and legume funds, the Basilicata payments. See `docs/support-and-prices.md`, "Checked against AGEA's documents".
-- **Rotation economics:** wheat after chickpea yields 16% and 10% more (Lago-Olveira et al. 2023, Puglia); durum–vetch intercrop margin 280.6 €/ha against 47.5 for durum alone (Denora et al. 2025, two seasons); more pulses cut nitrogen costs but raise disease and pesticide costs if sown too often.
+- **Legume fund:** up to 250 €/ha (137 after cuts in 2025), only on legume hectares above the 3-year average, up to 50 ha, supply contract required.
+- **Basilicata (five-year commitments):** no-till SRA03 300 €/ha (2026 call closed 30 June 2026); integrated SRA01 171 arable, 114 forage; organic SRA29 258 arable, 208 legumes (291 and 233 converting). No-till cannot share a field with SRA01 or SRA29.
+- **Checked:** AGEA's 2024–25 circulars (coupled, redistributive, Eco-scheme 4) and the owner's audit (funds, Basilicata, papers). See `docs/support-and-prices.md`. Keep the cap, the campaign rate and the amount paid apart.
+- **Rotation economics:** wheat after chickpea yields 16% and 10% more (Lago-Olveira et al. 2023, Puglia); durum–vetch intercrop margin 280.6 €/ha against 47.5 for durum alone (Denora et al. 2025, two seasons at La Generale, Genzano di Lucania); more pulses cut nitrogen costs but raise disease and pesticide costs if sown too often.
 
 ## Live services the app calls
 
@@ -147,7 +149,7 @@ A web page cannot read the phone's own weather app or call the cadastre directly
 
 Say so if you rely on any of these.
 - The app on a real phone beyond one screenshot of the Why screen in Android Chrome: touch drawing, edge-finding, the Settings inputs, rotation, voice with a real microphone.
-- The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures. The yield lift: Garofalo et al. 2009's 12% after faba bean matches the paper's abstract (checked 15 November 2026); the 16% and 10% after chickpea come from Lago-Olveira et al. 2023's Table S3 as copied into the team's research compilation, not checked against the paper.
+- The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures. The yield lift: Garofalo et al. 2009's 12% after faba bean matches the paper's abstract (checked 15 November 2026); the 16% and 10% after chickpea come from Lago-Olveira et al. 2023's Table S3 as copied into the team's research compilation; the owner's audit found the 16% indirectly supported, the 10% still unchecked.
 - Each rotation's risk rating, the priority score rules and the weights for the farmer's order of priorities (4, 3, 2, 1), which are our judgement.
 - Whether NASA POWER's impossible rain months reach beyond the demo field. The data team's notebook 03 found POWER's October 2025, February 2026 and March 2026 more than three times what CHIRPS, IMERG and ERA5-Land measured there (592 mm for autumn 2025, about five times the usual). The app leaves those months out of its live POWER rain everywhere (`POWER_BAD_RAIN_MONTHS` in `src/weather/weather.ts`) and says so under the figures.
 - The forecast against another forecast, and AGEA's service under load.
