@@ -1,23 +1,25 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import type { Economics, Fact, FieldBundle, Option } from "../data/types";
-import { sequencesOf } from "../data/types";
+import type { Economics, Fact, FieldBundle, Option, Scenario } from "../data/types";
+import { SCENARIOS, sequencesOf } from "../data/types";
 import { optionMoney, yieldLift } from "../money/money";
-import { buildPath } from "../ranking/diagnose";
 import { rankOptions } from "../ranking/rank";
 import { reasonsFor } from "../ranking/reasons";
 import { ReasonList } from "../components/Reasons";
 import { useLang, useT } from "../i18n";
 import { useAppState, useTo } from "../state/useAppState";
-import { CropName, CropSequence, OptionName, Slotted } from "../components/Crops";
+import { CropName, CropSequence, OptionName, Slotted, optionWords } from "../components/Crops";
 import { PlaceholderNote, ScaleBadge, SourceButton, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm, RichText } from "../components/Term";
-import { BottomBar, LinkButton } from "../components/ui";
 import { Fold } from "../components/Fold";
 import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { unknownsFor } from "../data/caveats";
 import { AreaNote } from "../components/BundleProvider";
+import { Findings } from "../components/Findings";
+import { SoilCard } from "../components/SoilCard";
+import { soilSummary } from "../data/soil";
+import { StripMap } from "../components/StripMap";
 
 /** Two facts that are the same figure: same number, unit, scale, period, range and dataset (labels may differ). */
 function sameFigure(a: Fact, b: Fact): boolean {
@@ -227,17 +229,24 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
   // A shared link can open an option the farmer's limits have ruled out; say so before anything else.
   const ruledOutBy = removed.find((r) => r.option.id === option.id)?.by ?? [];
   const finding = bundle.findings.find((f) => f.addressedBy.includes(option.id)) ?? bundle.findings[0];
-  const path = finding ? buildPath(finding, state.limits, state.priorities) : [];
   const facts = option.facts;
-  // The income benefit repeats the income figure; with economics that figure is worked out
-  // from the farmer's prices, so show the worked-out one rather than the bundle's stale copy.
-  const benefits = option.why.benefits.map((f) =>
-    bundle.economics && f.label === "benefit.income" ? { ...facts.income, label: f.label } : f,
-  );
+  // The best rotation in a usual, a dry and the driest year (the Field year screen has the weather behind them).
+  const bestIn = (scenario: Scenario) =>
+    rankOptions({
+      options: bundle.options,
+      limits: state.limits,
+      priorities: state.priorities,
+      scenario,
+      lastCrop: state.lastCrop,
+      intercrops: state.intercrops,
+    }).ranked[0];
+  const years = SCENARIOS.map((scenario) => ({ scenario, best: bestIn(scenario) }));
+  const holds = years[0].best && years.every((y) => y.best?.option.id === years[0].best?.option.id) ? years[0].best : undefined;
+  const soil = soilSummary(bundle);
   // The finding's own figure heads the evidence; the shared evidence list holds the same figure again (hot days or
   // bare months), so the repeat is left out.
   const evidence = finding ? option.why.evidence.filter((f) => !sameFigure(f, finding.fact)) : option.why.evidence;
-  const allFacts = [...Object.values(facts), ...evidence, ...benefits, ...(finding ? [finding.fact] : [])];
+  const allFacts = [...Object.values(facts), ...evidence, ...(finding ? [finding.fact] : [])];
 
   return (
     <div className="flex flex-col flex-1">
@@ -282,22 +291,35 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
             testId="why-reasons"
           />
         </div>
-        <ol className="flex flex-col gap-1 my-2" data-testid="why-path">
-          {path.map((key, i) => (
-            <li key={i} className="flex gap-2 text-body">
-              <span className="flex-none w-6 h-6 mt-0.5 rounded-full border-2 border-line-strong text-small font-bold flex items-center justify-center">
-                {i + 1}
-              </span>
-              <span>
-                <RichText text={t(key)} />
-              </span>
-            </li>
-          ))}
-        </ol>
         <p className="text-body py-2">
           <RichText text={t(option.why.suggested)} />
         </p>
       </Section>
+
+      {/* An intercrop drawn on the farmer's own field: where each crop goes this year, and the swap next year. */}
+      {option.strips ? <StripMap option={option} bundle={bundle} /> : null}
+
+      {/* Whether the answer survives a dry year: the one weather question that changes a decision. */}
+      <section className="mx-4 mt-4 p-3 bg-surface border border-line rounded-box" data-testid="why-years">
+        <h2 className="text-big">{t("why.dryHead")}</h2>
+        <ul className="mt-2 grid grid-cols-3 gap-2 text-center">
+          {years.map(({ scenario, best }) => (
+            <li key={scenario} className="px-1 py-2 rounded-box bg-sunk" data-testid={`why-year-${scenario}`} data-option-id={best?.option.id}>
+              <span className="block text-small text-ink-soft">{t(`year.kind.${scenario}`)}</span>
+              <span className="block text-small font-bold break-words">{best ? optionWords(best.option, t) : t("common.noData")}</span>
+            </li>
+          ))}
+        </ul>
+        {holds ? (
+          <p className="mt-2 text-body" data-testid="why-years-holds">
+            <Slotted text={t("year.holds")} slots={{ option: <OptionName option={holds.option} /> }} />
+          </p>
+        ) : null}
+        <Link to={to("/year")} data-testid="why-year-link" className="mt-1 min-h-11 inline-flex items-center gap-1 font-bold text-body underline underline-offset-4">
+          {t("why.dryMore")}
+          <ChevronIcon className="w-4 h-4" />
+        </Link>
+      </section>
 
       <p className="px-4 pt-4 pb-2 text-small font-bold uppercase tracking-wider text-ink-soft">{t("why.moreHead")}</p>
       <div className="border-t border-line" />
@@ -332,13 +354,14 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
-      <Section fold title={t("why.h.benefits")}>
-        <ul>
-          {benefits.map((f, i) => (
-            <FactRow key={i} fact={f} perYear={f.label === "benefit.income"} />
-          ))}
-        </ul>
-      </Section>
+      <Fold testId="fold-seen" title={t("options.seen")}>
+        <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
+      </Fold>
+      {soil ? (
+        <Fold testId="fold-soil" title={t("soil.title")} summary={t(`soil.weight.${soil.weight}`)}>
+          <SoilCard bundle={bundle} view={state.view} bare />
+        </Fold>
+      ) : null}
 
       <Section fold title={t("why.h.unknowns")}>
         <ul className="list-disc pl-5 py-1 text-body">
@@ -350,27 +373,12 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
-      <Section fold title={t("why.h.check")}>
-        <ul className="list-disc pl-5 py-1 text-body">
-          {option.why.checkLocally.map((k) => (
-            <li key={k} className="py-0.5">
-              {t(k)}
-            </li>
-          ))}
-        </ul>
-      </Section>
 
       <div className="px-4 py-3">
         <PlaceholderNote facts={allFacts} />
       </div>
       </div>
       </div>
-
-      <BottomBar>
-        <LinkButton to={to("/year")} className="flex-1">
-          {t("options.next")}
-        </LinkButton>
-      </BottomBar>
     </div>
   );
 }

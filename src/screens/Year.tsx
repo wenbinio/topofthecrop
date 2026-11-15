@@ -10,13 +10,8 @@ import { FactButton, PlaceholderNote } from "../components/FactParts";
 import { ChevronIcon, DropIcon, HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
 import { HotDaysTerm } from "../components/Term";
-import { BackButton, BottomBar, LinkButton } from "../components/ui";
 import { AreaNote } from "../components/BundleProvider";
-import { openRing } from "../components/FieldShape";
-import { ForecastNext } from "../components/ForecastNext";
-import { SeasonNow } from "../components/SeasonNow";
 import { SeasonCompare } from "../components/SeasonCompare";
-import { centroid } from "../geo/geometry";
 
 const RISK_ORDER: Risk[] = ["dry", "frost", "heat", "rain"];
 
@@ -104,13 +99,12 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
           <HeatIcon className="w-5 h-5 flex-none" />
           <HotDaysTerm high={bundle.year.flowerHigh}>{t("year.hotHead")}</HotDaysTerm>
         </p>
-        {/* The farmer's own field from space, one clear picture a month (src/screens/Timelapse.tsx). */}
         <Link
-          to={to("/timelapse")}
-          data-testid="timelapse-link"
+          to={to(`/why/${bests[0].best?.option.id ?? ""}`)}
+          data-testid="year-back"
           className="mt-1 inline-flex items-center gap-1 min-h-11 font-bold text-body underline underline-offset-4"
         >
-          {t("timelapse.title")}
+          {t("year.back")}
           <ChevronIcon className="w-4 h-4" />
         </Link>
       </div>
@@ -128,9 +122,6 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       </div>
       </div>
       <div className="flex flex-col min-w-0">
-
-      <SeasonNow centre={centroid(openRing(bundle.field.outline.coordinates))} />
-      <ForecastNext centre={centroid(openRing(bundle.field.outline.coordinates))} />
 
       <div className="px-4 pt-2">
         <h2 className="text-small font-bold mb-1">{t("year.stripHead")}</h2>
@@ -151,13 +142,6 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       </div>
       </div>
       </div>
-
-      <BottomBar>
-        <BackButton to={to("/options")} />
-        <LinkButton to={to("/adviser")} className="flex-1">
-          {t("year.next")}
-        </LinkButton>
-      </BottomBar>
     </div>
   );
 }

@@ -44,6 +44,22 @@ function cropIconsIn(el: HTMLElement): string[] {
     .map((icon) => icon.parentElement?.getAttribute("data-crop") ?? "");
 }
 
+/** The strip maps for the plan itself: not the one in the "where would an intercrop go" fold. */
+const planStripMaps = () => screen.queryAllByTestId("strip-map").filter((el) => !el.closest("[data-testid=fold-intercrop]"));
+
+/** A plain in-memory store: the test runner's own localStorage is not a full one. */
+function memoryStorage(): Storage {
+  const items = new Map<string, string>();
+  return {
+    get length() { return items.size; },
+    clear: () => items.clear(),
+    getItem: (key: string) => items.get(key) ?? null,
+    key: (index: number) => [...items.keys()][index] ?? null,
+    removeItem: (key: string) => void items.delete(key),
+    setItem: (key: string, value: string) => void items.set(key, String(value)),
+  };
+}
+
 beforeEach(() => serve(fixture));
 afterEach(() => {
   cleanup();
@@ -51,15 +67,19 @@ afterEach(() => {
 });
 
 describe("more options", () => {
-  it("shows the best four, then a row that opens and closes the rest", async () => {
+  it("shows the next four after the advice, then a row that opens and closes the rest", async () => {
     serve(shipped);
     renderAt("/options?f=genzano-demo&p=income,soil");
+    // Nine options: the best is the advice above, so the list holds the other eight, four at first.
     expect(await screen.findAllByTestId("option-row")).toHaveLength(4);
+    expect(within(screen.getByTestId("fold-options")).getByTestId("fold-toggle")).toHaveTextContent("Other choices (8)");
+    const bestId = screen.getByTestId("recommendation").getAttribute("data-option-id");
     const more = screen.getByTestId("more-options");
-    expect(more).toHaveTextContent("More options (5)");
+    expect(more).toHaveTextContent("More options (4)");
     expect(more).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(more);
-    expect(screen.getAllByTestId("option-row")).toHaveLength(9);
+    expect(screen.getAllByTestId("option-row")).toHaveLength(8);
+    expect(rowIds()).not.toContain(bestId);
     expect(screen.getByTestId("more-options")).toHaveTextContent("Fewer options");
     fireEvent.click(screen.getByTestId("more-options"));
     expect(screen.getAllByTestId("option-row")).toHaveLength(4);
@@ -77,8 +97,11 @@ describe("more options", () => {
     await screen.findAllByTestId("option-row");
     expect(screen.getByTestId("ruled-out")).toHaveTextContent("1 ruled out: Cereal machinery only");
     fireEvent.click(screen.getByTestId("more-options"));
-    expect(rowIds()).toHaveLength(8);
+    // Nine options, one ruled out, one the advice: seven others.
+    expect(rowIds()).toHaveLength(7);
     expect(rowIds()).not.toContain("vetch-oat-durum-durum");
+    expect(screen.getByTestId("recommendation")).not.toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
+    expect(within(screen.getByTestId("fold-options")).getByTestId("fold-toggle")).toHaveTextContent("Other choices (7)");
   });
 });
 
@@ -132,8 +155,9 @@ describe("last crop", () => {
 });
 
 describe("explanations", () => {
-  it("the ? beside Your priorities opens one line per priority", async () => {
-    renderAt("/options?f=genzano-demo&p=income,water");
+  it("the ? beside the priorities on Questions opens one line per priority", async () => {
+    // With the priorities in order, Questions opens on the priorities question.
+    renderAt("/questions?f=genzano-demo&p=income,water");
     const help = await screen.findByRole("button", { name: "What the priorities mean" });
     expect(help).toHaveAttribute("title", expect.stringContaining("hay cut"));
     expect(screen.queryByTestId("priority-lines")).toBeNull();
@@ -203,32 +227,50 @@ describe("crop icons beside crop names", () => {
   });
 });
 
+/** The fixture with every figure behind the income good, except faba bean's own when `fabaLow`. */
+function allGood(fabaLow: boolean) {
+  const good = structuredClone(fixture);
+  for (const [crop, figures] of Object.entries(good.economics.crops)) {
+    const level = fabaLow && crop === "faba" ? "low" : "good";
+    for (const fact of [figures.yield, figures.price, figures.costs]) fact.confidence = level;
+  }
+  for (const item of good.economics.support) item.amount.confidence = "good";
+  return good;
+}
+
 describe("income confidence", () => {
-  it("each row labels its confidence as the income figure's, explained on tap", async () => {
+  it("when the other choices are all as sure, one line says so and the rows do not repeat it", async () => {
     renderAt("/options?f=genzano-demo&p=income,water");
     await screen.findAllByTestId("option-row");
-    const marks = screen.getAllByTestId("income-confidence");
-    expect(marks).toHaveLength(4);
-    expect(marks[0]).toHaveTextContent("Confidence in income: low");
-    const button = within(marks[0]).getByRole("button");
-    expect(button).toHaveAttribute("title", expect.stringContaining("weakest figure"));
-    fireEvent.click(button);
-    expect(within(marks[0]).getByRole("note")).toHaveTextContent("weakest figure behind the income");
+    expect(screen.getByTestId("others-sure")).toHaveTextContent("How sure we are about income: low, for all of these.");
+    expect(screen.queryAllByTestId("income-confidence")).toHaveLength(0);
+    expect(screen.getByTestId("how-sure")).toHaveAttribute("data-confidence", "low");
+    expect(screen.getByTestId("how-sure")).toHaveTextContent("How sure we are: low.");
   });
 
-  it("with every figure behind the income good, the row says good", async () => {
-    const good = structuredClone(fixture);
-    for (const figures of Object.values(good.economics.crops)) {
-      for (const fact of [figures.yield, figures.price, figures.costs]) fact.confidence = "good";
-    }
-    for (const item of good.economics.support) item.amount.confidence = "good";
-    serve(good);
+  it("when they differ, each row labels its confidence as the income figure's, explained on tap", async () => {
+    serve(allGood(true));
     renderAt("/options?f=genzano-demo&p=income,water");
     await screen.findAllByTestId("option-row");
-    for (const mark of screen.getAllByTestId("income-confidence")) {
-      expect(mark).toHaveAttribute("data-confidence", "good");
-      expect(mark).toHaveTextContent("Confidence in income: good");
-    }
+    expect(screen.queryByTestId("others-sure")).toBeNull();
+    expect(screen.getAllByTestId("income-confidence")).toHaveLength(3);
+    const row = (id: string) => screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === id)!;
+    const mark = within(row("faba-durum-faba")).getByTestId("income-confidence");
+    expect(mark).toHaveTextContent("Confidence in income: low");
+    expect(within(row("durum-durum-durum")).getByTestId("income-confidence")).toHaveTextContent("Confidence in income: good");
+    const button = within(mark).getByRole("button");
+    expect(button).toHaveAttribute("title", expect.stringContaining("weakest figure"));
+    fireEvent.click(button);
+    expect(within(mark).getByRole("note")).toHaveTextContent("weakest figure behind the income");
+  });
+
+  it("with every figure behind the income good, the plan and the other choices say good", async () => {
+    serve(allGood(false));
+    renderAt("/options?f=genzano-demo&p=income,water");
+    await screen.findAllByTestId("option-row");
+    expect(screen.getByTestId("how-sure")).toHaveAttribute("data-confidence", "good");
+    expect(screen.getByTestId("how-sure")).toHaveTextContent("How sure we are: good.");
+    expect(screen.getByTestId("others-sure")).toHaveTextContent("How sure we are about income: good, for all of these.");
   });
 });
 
@@ -244,14 +286,19 @@ describe("strip intercrops", () => {
     fireEvent.click(screen.getByTestId("more-options"));
     expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual([]);
 
+    expect(planStripMaps()).toHaveLength(0);
+
     fireEvent.click(toggle);
     await waitFor(() => expect(param("i")).toBe("1"));
     expect(screen.getByTestId("intercrops-toggle")).toHaveAttribute("aria-checked", "true");
     expect(screen.getByTestId("intercrops-toggle")).toHaveTextContent("Intercropping");
-    expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual(["strips-chickpea-durum", "strips-faba-durum"]);
+    // The chickpea strips are now the advice, drawn on the field, so only the faba bean strips are other choices.
+    expect(screen.getByTestId("recommendation")).toHaveAttribute("data-option-id", "strips-chickpea-durum");
     expect(screen.getByTestId("rec-headline")).toHaveTextContent("Sow chickpea and durum in strips next");
-    const row = screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === "strips-chickpea-durum")!;
-    expect(within(row).getByTestId("strips-name")).toHaveTextContent("Chickpea and durum in strips");
+    expect(planStripMaps()).toHaveLength(1);
+    expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual(["strips-faba-durum"]);
+    const row = screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === "strips-faba-durum")!;
+    expect(within(row).getByTestId("strips-name")).toHaveTextContent("Faba bean and durum in strips");
     expect(within(row).getAllByTestId("strip-year")).toHaveLength(3);
 
     fireEvent.click(screen.getByTestId("intercrops-toggle"));
@@ -266,8 +313,16 @@ describe("strip intercrops", () => {
     expect(screen.getAllByTestId("money-beside")).toHaveLength(3);
     expect(screen.getByTestId("money-strips")).toHaveTextContent("each amount is the average of the two");
     expect(screen.getByTestId("money-strips")).toHaveTextContent("No gain or loss from growing them side by side is counted");
-    expect(screen.getByText("Which strip width suits your drill and the combine header?")).toBeInTheDocument();
     expect(screen.getByText("Any gain or loss from growing the two crops side by side is not counted")).toBeInTheDocument();
+    expect(screen.getByTestId("strip-map")).toBeInTheDocument();
+  });
+
+  it("the strips' own checks are on the field's to-do list", async () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    serve(shipped);
+    renderAt("/today?f=genzano-demo&p=income,water&i=1");
+    const todo = await screen.findByTestId("today-todo");
+    expect(within(todo).getByText("Which strip width suits your drill and the combine header?")).toBeInTheDocument();
   });
 
   it("is left out after the same legume, with the line saying why", async () => {

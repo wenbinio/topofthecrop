@@ -15,10 +15,10 @@ import { useAppState, useTo } from "../state/useAppState";
 import { CropSequence, OptionName, Slotted } from "../components/Crops";
 import { openRing } from "../components/FieldShape";
 import { ForecastNext } from "../components/ForecastNext";
-import { CheckIcon, RiskIcon, WarnIcon } from "../components/Icons";
+import { CheckIcon, ChevronIcon, RiskIcon, WarnIcon } from "../components/Icons";
 import { SeasonNow, shortDate } from "../components/SeasonNow";
 import { COVER_CLASS } from "../components/YearStrip";
-import { BackButton, BottomBar, Button, Headline, LinkButton, SectionTitle } from "../components/ui";
+import { Button, Headline, SectionTitle } from "../components/ui";
 import { centroid } from "../geo/geometry";
 import { ownChecks } from "./check-share";
 
@@ -180,6 +180,15 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
       <p className="px-4 pt-4 text-small text-ink-soft">{t("today.live")}</p>
       <SeasonNow centre={centre} />
       <ForecastNext centre={centre} />
+      {/* The farmer's own field from space, one clear picture a month (src/screens/Timelapse.tsx). */}
+      <Link
+        to={to("/timelapse")}
+        data-testid="timelapse-link"
+        className="mx-4 mt-3 inline-flex items-center gap-1 min-h-11 font-bold text-body underline underline-offset-4"
+      >
+        {t("timelapse.title")}
+        <ChevronIcon className="w-4 h-4" />
+      </Link>
 
       <div className="px-4 py-4 flex flex-col items-start gap-2">
         <p className="text-small text-ink-soft" data-testid="today-phone">
@@ -199,13 +208,6 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
           </button>
         )}
       </div>
-
-      <BottomBar>
-        <BackButton to={to("/adviser")} />
-        <LinkButton to={to("/options")} className="flex-1">
-          {t("why.back")}
-        </LinkButton>
-      </BottomBar>
     </div>
   );
 }
