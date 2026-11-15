@@ -70,7 +70,7 @@ Scripts that rebuild shipped data (each says in its header how to run it):
 **Hackathon rules**
 - Outside (non-NASA) material must be free and open. Before adding a dataset, map layer, font or library, read its licence on the owner's own page, not in a search summary, and record it in the README. An AI researcher's claim about a licence or an endpoint is a lead to test, not a fact: one of ours was wrong about a service, and we were wrong about another.
 - Do not use NASA logos or branding. Naming NASA datasets in citations is fine.
-- AI use must be acknowledged. A file written with AI help says so in its header, and the README's "Use of AI" section lists the tools.
+- AI use must be acknowledged. A file written with AI help says so in its header, and the README's "Use of AI" section lists the tools. The app's own short version, with the credit lines the data licences ask for, is `src/components/DataCredits.tsx`: keep it in step with that section and `DATA_SOURCES.md`.
 - No account, key or server. The app must work as plain files on any static host.
 - The team's code is under MIT (`LICENSE`). Data, map tiles, parcels and live services keep their own licences.
 

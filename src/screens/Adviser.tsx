@@ -11,6 +11,7 @@ import { CropName, CropSequence, optionCrop } from "../components/Crops";
 import { ChatIcon, LinkIcon, PrintIcon } from "../components/Icons";
 import { BackButton, BottomBar, Button, Headline, LinkButton, SectionTitle } from "../components/ui";
 import { WHO, ownChecks } from "./check-share";
+import { DataCredits } from "../components/DataCredits";
 
 async function copyText(text: string): Promise<boolean> {
   try {
@@ -100,6 +101,7 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
         </Button>
         <p className="text-small text-ink-soft break-all font-mono">{link}</p>
       </div>
+      <DataCredits />
       <BottomBar>
         <BackButton to={to("/year")} />
       </BottomBar>

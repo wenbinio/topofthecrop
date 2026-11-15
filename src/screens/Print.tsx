@@ -10,6 +10,7 @@ import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitTex
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
 import { unknownsFor } from "../data/caveats";
+import { CreditLines } from "../components/DataCredits";
 
 function Block({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
@@ -298,6 +299,10 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
             ))}
             {anyEdited ? <li>{t("money.yoursLong")}</li> : null}
           </ul>
+        </Block>
+
+        <Block title={t("credits.title")}>
+          <CreditLines />
         </Block>
 
         <div className="mt-3">
