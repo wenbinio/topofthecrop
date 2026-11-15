@@ -4341,6 +4341,7 @@
           "check.stripWidth",
           "check.stripClaim",
           "check.stripSpray",
+          "check.stripReturn",
           "check.buyer",
           "check.seed",
           "check.adviser"
@@ -4629,6 +4630,7 @@
           "check.stripWidth",
           "check.stripClaim",
           "check.stripSpray",
+          "check.stripReturn",
           "check.buyer",
           "check.seed",
           "check.adviser"

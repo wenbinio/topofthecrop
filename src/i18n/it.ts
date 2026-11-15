@@ -472,6 +472,7 @@ export const it: Dict = {
   "check.stripWidth": "Quale larghezza delle strisce va bene per la tua seminatrice e la barra della mietitrebbia?",
   "check.stripClaim": "Chiedi al tuo CAA se ogni striscia si può dichiarare come appezzamento a sé, così restano gli aiuti per grano duro e leguminosa",
   "check.stripSpray": "Riesci a trattare le strisce di grano senza deriva sulle strisce di leguminosa?",
+  "check.stripReturn": "La leguminosa torna sulla stessa striscia un anno sì e uno no. È troppo spesso per le malattie, qui da te?",
 
   "fact.income": "Reddito annuo (margine lordo)",
   "fact.water": "Bisogno d'acqua",

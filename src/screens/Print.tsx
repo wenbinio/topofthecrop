@@ -219,7 +219,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                       {r.option.sequence.map((c, i) => (
                         <span key={i} className="inline-flex items-center gap-0.5">
                           <CropIcon crop={c} className="w-4 h-4" />
-                          {r.option.strips ? <CropIcon crop={r.option.strips[i]} className="w-4 h-4" /> : null}
+                          {r.option.strips && r.option.strips[i] !== c ? <CropIcon crop={r.option.strips[i]} className="w-4 h-4" /> : null}
                           {r.option.firstHarvestYear + i}
                         </span>
                       ))}

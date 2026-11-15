@@ -181,7 +181,9 @@ function sideBySide(strips: YearMoney[]): YearMoney {
   for (const year of strips) for (const item of year.support) support.set(item.id, (support.get(item.id) ?? 0) + item.amount * share);
   const lifted = strips.find(year => year.lift > 0);
   return {
-    crop: strips[0].crop, beside: strips[1].crop, sales: mean(year => year.sales), lift: lifted?.lift ?? 0,
+    // The same crop on both halves is one crop on the whole field that year: nothing stands beside it.
+    crop: strips[0].crop, ...(strips[1].crop !== strips[0].crop ? { beside: strips[1].crop } : {}),
+    sales: mean(year => year.sales), lift: lifted?.lift ?? 0,
     ...(lifted?.after ? { after: lifted.after } : {}), costs: mean(year => year.costs),
     support: [...support].map(([id, amount]) => ({ id, amount })), margin: mean(year => year.margin),
   };

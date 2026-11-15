@@ -255,6 +255,20 @@ A strip intercrop is two sequences grown side by side, each on half the field, s
 - **Strip intercrops are ranked only when the farmer switches them on** (the switch under the list on the Options screen; `i=1` in the link). Few farms in Italy grow strips, so they must not become the first advice unasked. That is our judgement.
 - **Eco-scheme 4 on strips** is an optional payment, off by default, because nobody on the team has confirmed with a CAA office that strips declared as separate parcels qualify.
 
+- **Intercropping in some years only.** A year in which both sequences have the same crop is an ordinary year with one crop on the whole field. So a rotation can be, for example, strips in years 1 and 3 and durum alone in year 2. The model, the screens and the tests handle this; no such rotation is shipped, for the reason below.
+
+**Is combining rotation and intercropping better?** Worked out with the app's own sums on 15 November 2026 (chickpea and durum, demo field figures):
+
+| Pattern | Income €/ha a year | Note |
+|---|---|---|
+| Chickpea, durum, durum (no strips) | 729 | Includes Eco-scheme 4 |
+| Strips every year, swapped | 692 | No durum after durum anywhere |
+| Strips in years 1 and 3, durum alone in year 2 | 651 | Half the field has durum after durum in year 2 |
+| Strips in year 2 only | 604 | |
+| Strips in years 1 and 3, faba bean alone in year 2 | 553 | Best soil score of all, but a legume follows a legume on every strip |
+
+With strips, intercropping every year beats intercropping in some years, because every skipped year puts durum after durum on part of the field. This cannot show whether a true mixture in some years would be better: the stand-in counts no gain from mixing, so by construction it can never beat the best plain rotation of the same crops. Answering that needs a mixture with measured figures (the Genzano trial).
+
 Background and sources: `docs/crops-research.md`, "Intercropping".
 
 ## More durum after a legume

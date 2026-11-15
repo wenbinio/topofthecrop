@@ -116,3 +116,23 @@ describe("the bundle and the link", () => {
     expect(decodeState("i=yes").intercrops).toBe(false);
   });
 });
+
+describe("intercropping in some years only", () => {
+  // Strips in years 1 and 3, durum alone on the whole field in year 2.
+  const some = made("strips-some-years", ["chickpea", "durum", "durum"], ["durum", "durum", "chickpea"]);
+
+  it("a year with the same crop on both halves is an ordinary year", () => {
+    const years = optionMoney(some, economics, {}).years;
+    expect(years.map((y) => [y.crop, y.beside])).toEqual([["chickpea", "durum"], ["durum", undefined], ["durum", "chickpea"]]);
+    // Year 2 is durum everywhere: full coupled durum support, and its costs are durum's own.
+    const coupled = Number(economics.support.find((item) => item.id === "coupled-durum")!.amount.value);
+    expect(years[1].support.find((item) => item.id === "coupled-durum")?.amount).toBeCloseTo(coupled, 6);
+    expect(years[1].costs).toBeCloseTo(Number(economics.crops.durum!.costs.value), 6);
+  });
+
+  it("is still the average of its two halves", () => {
+    const a = optionMoney(made("a", ["chickpea", "durum", "durum"]), economics, {}).years;
+    const b = optionMoney(made("b", ["durum", "durum", "chickpea"]), economics, {}).years;
+    optionMoney(some, economics, {}).years.forEach((year, i) => expect(year.margin).toBeCloseTo((a[i].margin + b[i].margin) / 2, 6));
+  });
+});

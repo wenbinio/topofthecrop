@@ -319,7 +319,7 @@ const option = (id, sequence, checkLocally, strips) => {
       benefits: [nitrogenFact('benefit.nitrogen'), incomeFact('benefit.income')],
       unknowns: [...(strips ? ['unknown.stripsGain', 'unknown.stripsRare'] : []), 'unknown.prices', 'unknown.soilDepth', 'unknown.fieldHistory'],
       checkLocally: checkLocally ?? (isCurrent ? ['check.rotationRule', 'check.adviser']
-        : strips ? ['check.stripWidth', 'check.stripClaim', 'check.stripSpray', 'check.buyer', 'check.seed', 'check.adviser']
+        : strips ? ['check.stripWidth', 'check.stripClaim', 'check.stripSpray', 'check.stripReturn', 'check.buyer', 'check.seed', 'check.adviser']
         : ['check.buyer', 'check.seed', 'check.adviser']),
     },
   };

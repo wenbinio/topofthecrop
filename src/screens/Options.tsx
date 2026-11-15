@@ -10,7 +10,7 @@ import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../componen
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
-import { CropName, Slotted, stripPair } from "../components/Crops";
+import { CropName, Slotted, stripsNext } from "../components/Crops";
 import { PriorityHelp } from "../components/Term";
 import { OptionRow } from "../components/OptionRow";
 import { YearStrip } from "../components/YearStrip";
@@ -29,7 +29,7 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   const [state] = useAppState();
   if (!best) return null;
   const option = best.option;
-  const pair = stripPair(option);
+  const pair = stripsNext(option);
   const headline = option.isCurrent ? (
     <StayHeadline />
   ) : pair ? (

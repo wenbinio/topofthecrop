@@ -67,6 +67,8 @@ export type Option = {
    * Strip intercropping: a second sequence grown beside the first. Each takes half the field, in strips wide enough
    * for the drill and the combine, and the two swap places every year. Each strip is an ordinary sole crop, so every
    * figure of the option is the average of the two sequences; no gain from growing them side by side is counted.
+   * A year in which both sequences have the same crop is an ordinary year with one crop on the whole field, so a
+   * rotation can intercrop in some years and not in others.
    */
   strips?: [CropId, CropId, CropId];
   firstHarvestYear: number; // 2027 for the demo field

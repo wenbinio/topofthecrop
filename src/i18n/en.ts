@@ -488,6 +488,7 @@ export const en = {
   "check.stripWidth": "Which strip width suits your drill and the combine header?",
   "check.stripClaim": "Ask your CAA office whether each strip can be declared as its own parcel, so the durum and legume payments still apply",
   "check.stripSpray": "Can you spray the durum strips without drift onto the legume strips?",
+  "check.stripReturn": "The legume comes back to the same strip every second year. Is that too often for disease here?",
 
   "fact.income": "Yearly income (gross margin)",
   "fact.water": "Water need",

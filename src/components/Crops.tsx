@@ -80,12 +80,12 @@ export function CropSequence({ option, size = "md" }: { option: Option; size?: "
   const beside = option.strips;
   const icon = size === "lg" ? "w-9 h-9" : "w-[1.375rem] h-[1.375rem]";
   const half = size === "lg" ? "w-7 h-7" : "w-[1.125rem] h-[1.125rem]";
-  const names = (crop: CropId, i: number) => (beside ? `${t(`crop.${crop}`)} + ${t(`crop.${beside[i]}`)}` : t(`crop.${crop}`));
+  const names = (crop: CropId, i: number) => (beside && beside[i] !== crop ? `${t(`crop.${crop}`)} + ${t(`crop.${beside[i]}`)}` : t(`crop.${crop}`));
   return (
     <ol className="flex gap-1.5" aria-label={option.sequence.map(names).join(", ")}>
       {option.sequence.map((crop, i) => (
         <li key={i} className={`flex flex-col items-center ${beside ? (size === "lg" ? "w-16" : "w-11") : "w-10"}`}>
-          {beside ? (
+          {beside && beside[i] !== crop ? (
             <span className="flex items-center gap-0.5" data-testid="strip-year">
               <CropIcon crop={crop} className={half} title={t(`crop.${crop}`)} />
               <CropIcon crop={beside[i]} className={half} title={t(`crop.${beside[i]}`)} />
@@ -105,9 +105,20 @@ export function optionCrop(option: Option): CropId {
   return option.sequence.find((c) => c !== "durum") ?? "durum";
 }
 
-/** The two crops of a strip intercrop, as sown in the first year (the break crop first); null for an ordinary rotation. */
+/**
+ * The two crops of a strip intercrop, as sown in its first intercropped year (the first sequence's crop first);
+ * null for an ordinary rotation.
+ */
 export function stripPair(option: Option): [CropId, CropId] | null {
-  return option.strips ? [option.sequence[0], option.strips[0]] : null;
+  const beside = option.strips;
+  if (!beside) return null;
+  const year = option.sequence.findIndex((crop, i) => crop !== beside[i]);
+  return year < 0 ? null : [option.sequence[year], beside[year]];
+}
+
+/** The two crops to sow in strips for the very next harvest; null when that year is one crop on the whole field. */
+export function stripsNext(option: Option): [CropId, CropId] | null {
+  return option.strips && option.strips[0] !== option.sequence[0] ? [option.sequence[0], option.strips[0]] : null;
 }
 
 /** An option's name in plain words, for labels and read-aloud: its break crop, or "Chickpea and durum in strips". */

@@ -65,7 +65,7 @@ export function optionsSummary(bundle: FieldBundle, state: AppState): string {
   const option = best.option;
   const headline = option.isCurrent
     ? translate(lang, "options.stay", { crop: cropWord("durum", lang, true) })
-    : option.strips
+    : option.strips && option.strips[0] !== option.sequence[0]
       ? translate(lang, "options.plantStrips", { a: cropWord(option.sequence[0], lang, true), b: cropWord(option.strips[0], lang, true) })
       : translate(lang, "options.plant", { crop: cropWord(option.sequence[0], lang, true) });
   return [sentence(headline), ...reasonsLines(option, bundle, state), sentence(translate(lang, "options.adviser"))].join(" ");
