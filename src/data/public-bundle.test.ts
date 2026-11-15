@@ -127,3 +127,46 @@ describe("the demo field's other figures (bundle.fieldData) are data/field.json'
     for (const fact of [...own, ...area]) expect(fact.placeholder).toBe(false);
   });
 });
+
+describe("the demo field's signals and slider stops come from its own data", () => {
+  const bundle = validateBundle(structuredClone(shipped));
+  // The data file as the notebooks wrote it, read untyped.
+  const source: any = JSON.parse(readFileSync(join(process.cwd(), "data", "field.json"), "utf8"));
+  /** Linear-interpolation percentile, worked out here independently of src/data/field-rules.js. */
+  const pct = (list: number[], q: number) => {
+    const v = [...list].sort((a, b) => a - b), pos = q * (v.length - 1), lo = Math.floor(pos);
+    return v[lo] + (pos - lo) * (v[Math.min(lo + 1, v.length - 1)] - v[lo]);
+  };
+  /** The last five seasons' median against the 2001-2020 seasons' 25th and 75th percentiles. */
+  const signal = (rows: { season: number }[], key: string) => {
+    const value = (r: { season: number }) => (r as Record<string, unknown>)[key] as number | null;
+    const normal = rows.filter((r) => r.season <= 2020 && value(r) !== null).map(value) as number[];
+    const recent = (rows.filter((r) => r.season > 2020 && value(r) !== null).map(value) as number[]).slice(-5);
+    const now = pct(recent, 0.5);
+    return now < pct(normal, 0.25) ? "falling" : now > pct(normal, 0.75) ? "rising" : "normal";
+  };
+
+  it("every finding carries the signals worked out from field.json's seasons", () => {
+    const expected = {
+      greenness: signal(source.greenness.seasons, "peak"),
+      temperature: signal(source.weather.seasons, "hot_days_flower"),
+      waterUse: signal(source.water.seasons, "water_use_modis"),
+    };
+    expect(expected).toEqual({ greenness: "falling", temperature: "rising", waterUse: "normal" }); // data of 14 November 2026
+    for (const finding of bundle.findings) expect(finding.signals, finding.title).toEqual(expected);
+  });
+
+  it("the slider's rain: typical, 1-in-10 dry and the driest season since 2001, each by 2050 too", () => {
+    const rain = bundle.year.rainSeason!;
+    const seasons = source.weather.seasons.map((r: { rain_season: number }) => r.rain_season).filter(Number.isFinite);
+    expect(rain.normal.now.value).toBe(source.weather.typical.rain_season[1]);
+    expect(rain.normal.by2050.value).toBe(source.future.projected.ssp245.rainse[1]);
+    expect(rain.drier.now.value).toBe(source.weather.typical.rain_season[0]);
+    expect(rain["much-drier"].now.value).toBe(Math.min(...seasons));
+    const change = source.future.change.ssp585.rainse[1];
+    expect(rain.drier.by2050.value).toBe(Math.round(source.weather.typical.rain_season[0] * (1 + change / 100)));
+    expect(rain["much-drier"].by2050.value).toBe(Math.round(Math.min(...seasons) * (1 + change / 100)));
+    // The hot days at the same stops: 1-in-10 hot and the hottest season, so each stop is drier and hotter.
+    expect(bundle.year.hotDays.drier.now.value).toBe(source.weather.typical.hot_days_flower[2]);
+  });
+});

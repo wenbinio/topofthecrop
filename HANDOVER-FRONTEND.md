@@ -109,6 +109,8 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 | Pre-filled last crop | `durum22` (share of durum on the 2022 crop map) | `grid.geojson` |
 | Basin outline on the map | the whole file | `area.geojson` |
 | Source names and resolutions | `meta.sources` | `field.json` |
+| Why: the signal steps (less green, more hot days, less water used) | `peak_by_season`, `hot_days_flower_by_season`, `aet_by_season`: the last five seasons against 2001–2020 (`measuredSignals` in `field-rules.js`) | greenness, weather, water |
+| Year: what each slider stop means, and its Oct–May rain now and by 2050 | `rain_season` and `rain_season_by_season` (typical, 1-in-10 dry, driest since 2001), `ssp245.rainse`, `ssp585.rainse` (`rainStops`) | weather, future |
 
 ### 4f. The rest of the data: in the bundle, not yet on a screen
 
@@ -132,7 +134,7 @@ The demo field's greenness, soil and slope are badged "your field" (250 m or fin
 
 ## 5. From data to a recommendation
 
-1. **Diagnosis** (`src/ranking/diagnose.ts`): a small decision tree reads the findings and names what the field's main problem is.
+1. **Diagnosis** (`src/ranking/diagnose.ts`): a small decision tree reads the field's three measured signals (greenness, hot days at flowering and water use, each over the last five seasons against 2001–2020) and names what the field's main problem is. A signal with no record to compare says so, and the diagnosis is then "not enough data".
 2. **Ranking** (`src/ranking/rank.ts`): limits remove or flag rotations, the priorities count by their place in the farmer's order (4, 3, 2, 1; `RANK_WEIGHTS`), one left out only breaks ties, and remaining ties break in a fixed order. A legume is not suggested straight after itself.
 3. **Reasons** (`src/ranking/reasons.ts`): the plain lines under the recommendation, each tied to a priority.
 4. **Money** (`src/money/money.ts`): income is the mean over three harvests of yield × price − direct costs + the payments that apply. The farmer's own figures from Settings replace ours, and anything they changed is tagged "Yours". Confidence is the weakest figure the income is built from, leaving out payments every rotation gets alike.

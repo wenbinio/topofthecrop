@@ -5,8 +5,8 @@
 // which applies the same rules to a field the farmer draws (src/data/fieldFromBasin.ts).
 import { readFileSync } from "node:fs";
 import {
-  FINDINGS, fieldData as makeFieldData, finding, flowerHigh as makeFlowerHigh, groundCheckFrom, hotDayStops, makeSources, one, real,
-  risksByScenario as makeRisks, trialSoilFrom, yearMonths,
+  FINDINGS, fieldData as makeFieldData, finding, flowerHigh as makeFlowerHigh, groundCheckFrom, hotDayStops, makeSources,
+  measuredSignals, one, rainStops, real, risksByScenario as makeRisks, trialSoilFrom, yearMonths,
 } from "../src/data/field-rules.js";
 
 const data = JSON.parse(readFileSync(new URL("../data/field.json", import.meta.url), "utf8"));
@@ -15,6 +15,7 @@ export const sources = makeSources(data.meta.sources);
 
 const baseline = data.greenness.baseline; // "2001-2020"
 const g = data.greenness, w = data.weather, f = data.future, wt = data.water;
+const future = f.periods.future; // "2041-2060"
 
 // --- the field -------------------------------------------------------------------------------
 const field = {
@@ -25,46 +26,6 @@ const field = {
   outline: data.field.outline,
 };
 const lastCrop = { crop: "durum", source: sources.cropmap }; // EU crop map 2022: 95% of the field is durum
-
-// --- what the satellites see -----------------------------------------------------------------
-// MODIS greenness is 250 m, about the size of this 6.5 ha field, so it is badged "your field" and its
-// resolution is shown beside it. Weather and rain come from grids of 6 km or more: "your area".
-const findings = [
-  finding("bare", real(g.typical.bare_months, "months", "field", sources.modis, "fair", FINDINGS.bare.factLabel, baseline)),
-  finding("heat", real(w.typical.hot_days_flower, "days", "area", sources.era5, "fair", FINDINGS.heat.factLabel, baseline)),
-  finding("dry", real(w.typical.rain_autumn, "mm", "area", sources.rain, "fair", FINDINGS.dry.factLabel, baseline)),
-];
-
-// --- the field's year ------------------------------------------------------------------------
-const months = yearMonths({
-  ndviMonth: g.calendar.month_ndvi,
-  thresholds: g.thresholds,
-  rainMonth: w.calendar.rain_month,
-  frostMonth: w.calendar.frost_month,
-  hot30Month: w.calendar.hot30_month,
-});
-
-const future = f.periods.future; // "2041-2060"
-const hotDays = hotDayStops({
-  hot: w.typical.hot_days_flower,
-  hottest: Math.max(...w.seasons.map((s) => s.hot_days_flower).filter(Number.isFinite)),
-  projected245: f.projected.ssp245.hot,
-  change585: f.change.ssp585.hot,
-  scale: "area", sources, baseline, future,
-});
-
-const flowerHigh = makeFlowerHigh({ now: f.now.tmaxfl, by2050: f.projected.ssp245.tmaxfl, scale: "area", sources, baseline, future });
-
-const risksByScenario = makeRisks(months);
-
-// --- evidence shown under "Why?" for every option ---------------------------------------------
-const evidence = [
-  real(g.typical.bare_months, "months", "field", sources.modis, "fair", "evidence.bareMonths", baseline),
-  real(w.typical.hot_days_flower, "days", "area", sources.era5, "fair", "evidence.hotDays", baseline),
-  real(w.typical.rain_season, "mm", "area", sources.rain, "fair", "evidence.rainSeason", baseline),
-  real(wt.typical.durum_need, "mm", "area", sources.water, "fair", "evidence.durumNeed", baseline),
-  one(data.soil.values.clay, "%", data.soil.range_90pc.clay, "field", sources.soil, "fair", "evidence.clay", "SoilGrids 2.0"),
-];
 
 // --- the rest of the field's figures, for the evidence screens (bundle.fieldData) -------------
 // Keyed as FIELD_DATA_RULES in src/data/field-rules.js, which holds each figure's unit, dataset and scale.
@@ -116,4 +77,54 @@ const fieldData = makeFieldData({
   trialSoil: trialSoilFrom(data.soil.trial_reported, sources),
 });
 
-export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays, flowerHigh }, evidence, fieldData };
+// --- what the satellites see -----------------------------------------------------------------
+// MODIS greenness is 250 m, about the size of this 6.5 ha field, so it is badged "your field" and its
+// resolution is shown beside it. Weather and rain come from grids of 6 km or more: "your area".
+// The signals behind the diagnosis on the Why screen: the last five seasons against 2001-2020, from the season series.
+const signals = measuredSignals(fieldData.seasons);
+const findings = [
+  finding("bare", real(g.typical.bare_months, "months", "field", sources.modis, "fair", FINDINGS.bare.factLabel, baseline), signals),
+  finding("heat", real(w.typical.hot_days_flower, "days", "area", sources.era5, "fair", FINDINGS.heat.factLabel, baseline), signals),
+  finding("dry", real(w.typical.rain_autumn, "mm", "area", sources.rain, "fair", FINDINGS.dry.factLabel, baseline), signals),
+];
+
+// --- the field's year ------------------------------------------------------------------------
+const months = yearMonths({
+  ndviMonth: g.calendar.month_ndvi,
+  thresholds: g.thresholds,
+  rainMonth: w.calendar.rain_month,
+  frostMonth: w.calendar.frost_month,
+  hot30Month: w.calendar.hot30_month,
+});
+
+const hotDays = hotDayStops({
+  hot: w.typical.hot_days_flower,
+  hottest: Math.max(...w.seasons.map((s) => s.hot_days_flower).filter(Number.isFinite)),
+  projected245: f.projected.ssp245.hot,
+  change585: f.change.ssp585.hot,
+  scale: "area", sources, baseline, future,
+});
+
+const flowerHigh = makeFlowerHigh({ now: f.now.tmaxfl, by2050: f.projected.ssp245.tmaxfl, scale: "area", sources, baseline, future });
+
+// Oct-May rain at each slider stop, the same way as the hot days: typical, 1-in-10 dry, the driest season since 2001.
+const rainSeason = rainStops({
+  rain: w.typical.rain_season,
+  driest: Math.min(...w.seasons.map((s) => s.rain_season).filter(Number.isFinite)),
+  projected245: f.projected.ssp245.rainse,
+  change585: f.change.ssp585.rainse,
+  scale: "area", sources, baseline, future,
+});
+
+const risksByScenario = makeRisks(months);
+
+// --- evidence shown under "Why?" for every option ---------------------------------------------
+const evidence = [
+  real(g.typical.bare_months, "months", "field", sources.modis, "fair", "evidence.bareMonths", baseline),
+  real(w.typical.hot_days_flower, "days", "area", sources.era5, "fair", "evidence.hotDays", baseline),
+  real(w.typical.rain_season, "mm", "area", sources.rain, "fair", "evidence.rainSeason", baseline),
+  real(wt.typical.durum_need, "mm", "area", sources.water, "fair", "evidence.durumNeed", baseline),
+  one(data.soil.values.clay, "%", data.soil.range_90pc.clay, "field", sources.soil, "fair", "evidence.clay", "SoilGrids 2.0"),
+];
+
+export const realField = { field, lastCrop, findings, year: { months, risksByScenario, hotDays, flowerHigh, rainSeason }, evidence, fieldData };

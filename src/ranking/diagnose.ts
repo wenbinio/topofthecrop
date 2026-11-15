@@ -1,4 +1,4 @@
-import type { Confidence, Finding, Limit, Priority, Signals } from "../data/types";
+import type { Confidence, Finding, Limit, Priority, Signal, Signals } from "../data/types";
 import { LIMITS } from "../data/types";
 
 /** One row of the README signal-agreement table. `key` is a dictionary key suffix. */
@@ -32,6 +32,9 @@ export function diagnose(signals: Signals): Diagnosis {
   return rows[Number(signals.greenness === 'falling') * 4 + Number(signals.temperature === 'rising') * 2 + Number(signals.waterUse === 'falling')];
 }
 
+/** The direction of each signal that the diagnosis counts: less green, more heat, less water used. */
+const SIGNAL_WARNINGS: [keyof Signals, Signal][] = [['greenness', 'falling'], ['temperature', 'rising'], ['waterUse', 'falling']];
+
 /**
  * The route that led to the options, as plain steps for the "Why?" screen:
  * signals, then diagnosis, then each chosen limit, then the chosen priorities.
@@ -42,9 +45,11 @@ export function buildPath(finding: Finding, limits: Limit[], priorities: Priorit
     // README pre-check: bare soil after harvest gives the same signals as a failing crop. Say what it is.
     path.push('path.expectedBare');
   } else {
-    if (finding.signals.greenness === 'falling') path.push('path.signal.greenness.falling');
-    if (finding.signals.temperature === 'rising') path.push('path.signal.temperature.rising');
-    if (finding.signals.waterUse === 'falling') path.push('path.signal.waterUse.falling');
+    // Each signal in a fixed order: the direction that counts as a warning, or that there is no record to compare.
+    for (const [key, warning] of SIGNAL_WARNINGS) {
+      if (finding.signals[key] === warning) path.push(`path.signal.${key}.${warning}`);
+      else if (finding.signals[key] === 'no-data') path.push(`path.signal.${key}.noData`);
+    }
     if (!path.length) path.push('path.signal.allNormal');
     path.push(`diagnosis.${diagnose(finding.signals).key}`);
   }
