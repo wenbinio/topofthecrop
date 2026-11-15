@@ -6,12 +6,21 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import shipped from "../../public/data/genzano-demo.json";
 import type { FieldBundle, Option } from "../data/types";
+import { en } from "../i18n/en";
+import { it as it_ } from "../i18n/it";
+import { fetchFieldZones } from "../satellite/zones";
 import { STRIP_METRES, StripMap, backdropScene, layoutPieces, moistFirst, pairFit, piecesIn } from "./StripMap";
 
 /** The soil card and the map read the plan from the link, so they render inside a router. */
 const render = (ui: ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
 
 type Pt = [number, number];
+
+// "From space" asks the satellite service for the field's zones; the tests answer for it.
+vi.mock("../satellite/zones", async (original) => ({
+  ...(await original<typeof import("../satellite/zones")>()),
+  fetchFieldZones: vi.fn(() => Promise.reject(new Error("offline in tests"))),
+}));
 
 afterEach(() => {
   cleanup();
@@ -130,6 +139,30 @@ describe("StripMap", () => {
     expect(map.querySelectorAll("svg g polygon")).toHaveLength(2);
     expect(strips).toBeGreaterThan(5);
     expect(legend()).toEqual(["chickpea", "durum"]);
+  });
+
+  // The licence of Copernicus DEM GLO-30 asks for its own notice, word for word, wherever adapted heights are shown.
+  const DEM_NOTICE =
+    '"produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved"';
+
+  it("gives the Copernicus DEM notice word for word in both languages", () => {
+    expect(en["strips.demNotice"]).toBe(DEM_NOTICE);
+    expect(it_["strips.demNotice"]).toBe(DEM_NOTICE);
+    expect(en["credits.dem"]).toContain(DEM_NOTICE);
+    expect(it_["credits.dem"]).toContain(DEM_NOTICE);
+  });
+
+  it("shows the DEM notice under the map once the zones use high and low ground, and not on strips", async () => {
+    vi.mocked(fetchFieldZones).mockResolvedValueOnce({
+      win: { z: 17, x0: 0, y0: 0, cols: 1, rows: 1, centre: [LON0, LAT0], points: [] },
+      cells: [],
+      dates: ["2025-04-10"],
+      signals: ["green", "ground"],
+    } as unknown as Awaited<ReturnType<typeof fetchFieldZones>>);
+    render(<StripMap option={option} bundle={shipped as unknown as FieldBundle} />);
+    expect(screen.queryByTestId("dem-notice")).toBeNull();
+    fireEvent.click(screen.getByTestId("layout-space"));
+    expect(await screen.findByTestId("dem-notice")).toHaveTextContent(DEM_NOTICE);
   });
 
   it("draws nothing for a rotation that is not an intercrop", () => {

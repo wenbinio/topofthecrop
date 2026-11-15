@@ -354,6 +354,12 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
       <p className="mt-2 text-small text-ink-soft" data-testid="strip-note">
         {t(layout === "space" ? "strips.spaceNote" : "strips.note")}
       </p>
+      {/* The heights come from Copernicus DEM GLO-30, adapted into high and low ground: its licence asks for this notice. */}
+      {layout === "space" && space?.signals.includes("ground") ? (
+        <p className="mt-1 text-small text-ink-soft" data-testid="dem-notice">
+          {t("strips.demNotice")}
+        </p>
+      ) : null}
     </section>
   );
 }
