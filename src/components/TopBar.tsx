@@ -175,7 +175,7 @@ export function TopBar({ steps = null }: { steps?: ReactNode }) {
         <span className="max-[380px]:hidden flex-none">
           <Mark />
         </span>
-        <span className="min-w-0 font-display font-semibold text-big leading-tight truncate">{t("app.name")}</span>
+        <span className="min-w-0 font-display font-semibold text-big max-[340px]:text-[0.875rem] leading-tight truncate">{t("app.name")}</span>
       </span>
       <div className="flex items-center gap-1 flex-none pr-2 phone-land:pr-0 phone-land:order-3">
         <div role="radiogroup" aria-label={t("lang.label")} className="flex border-2 border-line-strong rounded-full overflow-hidden">

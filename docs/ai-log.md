@@ -111,7 +111,7 @@ How AI tools were used during the competition (14–15 November 2026): what we a
 
 - **A final check of every document**
   - **We:** asked AI to flag anything false, risky, unneeded or missing in the repo before the deadline, and chose what to fix
-  - **AI:** checked every document and fixed what we chose: removed four figures copied from papers (none was CC BY) and pointed to the papers instead, added the missing Copernicus DEM credit, brought the screen names up to date after the redesign, pointed the SRA03 payment to the region's own documents, and removed files we no longer needed (day-one plans, mockups and screenshots, and an unchecked comparison of durum with a faba bean rotation)
+  - **AI:** checked every document and fixed what we chose: removed four figures copied from papers (none was CC BY) and pointed to the papers instead, added the missing Copernicus DEM credit, brought the screen names up to date after the redesign, rewrote the screen-by-screen checklist for the new screens, pointed the SRA03 payment to the region's own documents, and removed files we no longer needed (day-one plans, mockups and screenshots, and an unchecked comparison of durum with a faba bean rotation)
 - **AI statement, submission text and this log**
   - **We:** asked for the NASA data list, the references, the AI statement and this log, and reviewed them
   - **AI:** drafted them from our chat records and the repository's history, and kept them up to date as the app changed (new payment sources, the new flow); added the AI note to the app and the printout, and to the header of every file it helped write; kept our chat records and data notes up to date
