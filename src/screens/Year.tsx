@@ -141,7 +141,8 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
         </div>
       </div>
 
-      <div className="pt-3">
+      {/* min-w-0: lets the card shrink to a narrow phone, so its table scrolls inside it instead of widening the page. */}
+      <div className="pt-3 min-w-0">
         <SeasonCompare bundle={bundle} />
       </div>
 
