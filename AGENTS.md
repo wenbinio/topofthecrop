@@ -112,11 +112,13 @@ Payments the farmer adds travel in `x`. A typed figure counts as "fair" confiden
 ## Support payments from the research compilation
 
 From `research-compilation/research-compilation.md`. The app's payments are in `scripts/make-placeholder-bundle.mjs`; each cites its own page, shown behind "Source" on Settings.
-- **Region:** Basilicata is a Less Developed region. Much of the Alto Bradano is an Area with Natural Constraints (ANC), which scores 10–20% higher in grant calls; not counted in the income.
-- **Coupled support (CAP plan PD 06), €/ha:** durum 93.50 planned (min 84.15, max 102.86; 96.88 in 2027), Centre-South incl. Basilicata, certified seed; grain legumes 40.04 (29.00–44.04), chickpea, lentil, pea, faba, lupin, beans, not soybean; oilseeds (rapeseed, sunflower) 64.30, only under a supply-chain contract with certified seed. AGEA paid durum and legumes at the ceiling in 2024–25, which is what the app uses.
-- **Eco-scheme 4:** about 110 €/ha planned (paid about 58–72) for arable rotations with legumes or forage, with no chemical weedkillers or pesticides on the legume or forage crop (other crops in the rotation are not limited). Eco-schemes 2, 3 (tree crops) and 5 (pollinators, 250–500 €/ha) do not fit our rotations.
+- **Region:** Basilicata is a Less Developed region. The compilation says much of the Alto Bradano is an Area with Natural Constraints (ANC), which scores 10–20% higher in grant calls (not checked; not counted in the income).
+- **Coupled support (CAP plan PD 06), €/ha:** durum 93.50 planned (min 84.15, max 102.86; 96.88 in 2027), Centre-South incl. Basilicata, certified seed; grain legumes 40.04 (29.00–44.04), chickpea, lentil, pea, faba, lupin, beans, not soybean; oilseeds (rapeseed, sunflower) 101.00 (90.90–111.10), only under a contract with a processor, seed company or feed mill, with certified seed (the compilation's 64.30 is wrong). The app uses what AGEA paid for 2025 (circular 94143): durum 102.86, legumes 44.04, oilseeds 111.10, redistributive 89.37.
+- **Eco-scheme 4:** about 110 €/ha planned (paid 49.48 in 2024, 60.36 in 2025) for arable rotations with legumes or forage, with no chemical weedkillers or pesticides on the legume or forage crop (other crops in the rotation are not limited). Eco-schemes 2, 3 (tree crops) and 5 (pollinators, 250–500 €/ha) do not fit our rotations.
 - **Durum wheat fund (DM 677535):** up to 100 €/ha, 50 ha and €50,000 over three years; needs a three-year supply contract with a cooperative, consortium, producer organisation or processor, and certified seed; cut pro rata.
 - **How farmers claim:** the farm dossier (*fascicolo aziendale*) on SIAN, usually through a CAA office; AGEA checks crops with Sentinel satellites (Area Monitoring System).
+- **Not used:** the compilation's Lebanon study on wheat and faba bean (too far from southern Italy).
+- **Not checked against the official documents:** the durum and legume funds, the Basilicata payments. See `docs/support-and-prices.md`, "Checked against AGEA's documents".
 - **Rotation economics:** wheat after chickpea yields 16% and 10% more (Lago-Olveira et al. 2023, Puglia); durum–vetch intercrop margin 280.6 €/ha against 47.5 for durum alone (Denora et al. 2025, two seasons); more pulses cut nitrogen costs but raise disease and pesticide costs if sown too often.
 
 ## Live services the app calls
