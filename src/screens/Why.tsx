@@ -113,6 +113,14 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
           </tr>
         </tbody>
       </table>
+      {/* what the three columns hold, in plain words */}
+      <ul className="mt-2 text-small text-ink-soft" data-testid="money-key">
+        {(["sales", "costs", "support"] as const).map((column) => (
+          <li key={column}>
+            <span className="font-bold text-ink">{t(`money.${column}`)}:</span> {t(`money.${column}Means`)}
+          </li>
+        ))}
+      </ul>
       <Link
         to={to(SETTINGS_PATH)}
         state={settingsFrom(pathname, null)}

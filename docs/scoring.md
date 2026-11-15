@@ -127,3 +127,15 @@ Shown on the Year screen and on Area weather, for the field's centre, live from 
 - **Last proper rain** is the latest day with 5 mm or more.
 - If NASA POWER does not answer within 8 seconds, the block says the rain is unavailable and offers to try again. The rest of the screen is unaffected.
 - This is a record of what has fallen, not a forecast.
+
+## The next seven days
+
+Shown under "This season so far", for the field's centre, from MET Norway's open forecast (Locationforecast 2.0). The code is `src/weather/forecast.ts`; the thresholds are our own judgement.
+
+- **Seven days:** what is left of today and the six days after, by the phone's own calendar.
+- **Rain** is added up from the forecast's six-hour blocks, taking blocks that do not overlap. Each day's cell shows its total in mm; 5 mm or more is in bold.
+- **"Little or no rain"** is shown when the seven days total under 1 mm.
+- **Coldest night** is the lowest forecast air temperature. At 1 °C or below the block adds "Frost possible", because the forecast is for air at 2 m and the ground is colder.
+- A forecast is a best guess, most of all for rain a week ahead, so its figures carry low confidence and the block says to check again before sowing.
+- If MET Norway does not answer within 8 seconds, the block says the forecast is unavailable and offers to try again.
+- The link under it opens MET Norway's public forecast page (yr.no) for the same place. A web page cannot read the phone's own weather app.

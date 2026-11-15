@@ -8,6 +8,7 @@ import { fetchPower, summarise } from "../weather/weather";
 import { useDemoBundle } from "../components/BundleProvider";
 import { DatasetLabel, ScaleBadge, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { FieldShape } from "../components/FieldShape";
+import { ForecastNext } from "../components/ForecastNext";
 import { SeasonNow } from "../components/SeasonNow";
 import { DropIcon, FrostIcon, HeatIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm } from "../components/Term";
@@ -123,6 +124,7 @@ export default function AreaWeather() {
             <WeatherRow fact={load.data.lateFrostDays} Icon={FrostIcon} />
           </ul>
           <SeasonNow centre={centroid(outline)} />
+          <ForecastNext centre={centroid(outline)} />
           <div className="px-4 py-4 flex flex-col gap-3">
             <p className="text-body">{t("area.demoOnly")}</p>
             <Button onClick={toDemo}>{t("area.demo")}</Button>

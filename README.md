@@ -99,6 +99,7 @@ Resolutions above are from general knowledge and must be checked against each pr
 | Map picture, zoomed in, Bradano basin: our own tiles in `public/tiles/s2/`, cut by `scripts/build-basemap.py` from four Sentinel-2 L2A scenes of 30 May 2026 (contains modified Copernicus Sentinel data 2026), 10 m | Finding and drawing a field in the basin |
 | Aerial photos on top, where they exist: AGEA orthophotos, flights 2022 to 2024, loaded live from AGEA's tile service. CC BY 4.0 (AGEA legal notes: "messe a disposizione per il riutilizzo alle condizioni della licenza Creative Commons BY 4.0"). About 1.8 m in Basilicata, finer in Puglia. | Seeing tracks, trees and field corners |
 | Cadastral parcels of Genzano di Lucania: Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS). CC BY 4.0, stated in the service's own capabilities document. Downloaded ahead of time into `public/parcels/`. | Finding a field by its sheet and parcel numbers |
+| Weather forecast: MET Norway, Locationforecast 2.0, loaded live. CC BY 4.0 and NLOD 2.0 (MET Norway's licence page); its terms allow calls straight from a web page. Credit shown: "Data from MET Norway". | Rain and the coldest night over the next seven days |
 
 ### Rules for honest numbers
 

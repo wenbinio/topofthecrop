@@ -11,6 +11,7 @@ import { HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, LinkButton } from "../components/ui";
 import { AreaNote } from "../components/BundleProvider";
 import { openRing } from "../components/FieldShape";
+import { ForecastNext } from "../components/ForecastNext";
 import { SeasonNow } from "../components/SeasonNow";
 import { centroid } from "../geo/geometry";
 
@@ -97,6 +98,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       <div className="flex flex-col min-w-0">
 
       <SeasonNow centre={centroid(openRing(bundle.field.outline.coordinates))} />
+      <ForecastNext centre={centroid(openRing(bundle.field.outline.coordinates))} />
 
       <div className="px-4 pt-2">
         <h2 className="sr-only">{t("year.title")}</h2>
