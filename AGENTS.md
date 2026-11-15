@@ -83,7 +83,9 @@ Scripts that rebuild shipped data (each says in its header how to run it):
 **Code**
 - TypeScript is strict: no unused locals or parameters, `import type` for types, no enums or parameter properties.
 - All of the farmer's choices live in the link (the hash query). Do not add local storage or a store. Add a parameter in `src/state/url.ts` and document it. Whether a Settings section is folded open is not a choice and stays in component state.
-- All MapLibre code stays in `src/components/Map.tsx`.
+- All MapLibre code stays in `src/components/MapView.tsx`, loaded on demand through the thin wrapper `src/components/Map.tsx`. Screens and tests import the wrapper.
+- Keep the first download small: a screen or library that most visits do not need is loaded on demand (`React.lazy`), as the map, Settings, the printout and Area weather are.
+- A screen that grows past a few hundred lines is split into a folder of parts beside a short entry file, as `src/screens/settings/` and `src/screens/find-field/` are.
 - Rules that turn data into field facts live once, in `src/data/field-rules.js`, shared by the demo-field script and the drawn-field builder. Change a rule there, never in one caller.
 - Money sums live once, in `src/money/money.ts`. `scripts/make-placeholder-bundle.mjs` repeats the same sum on purpose so the shipped file matches; keep the two in step (the yield lift is in both).
 - Tests use the frozen fixture `src/test-fixtures/money-bundle.json`. Only `src/data/public-bundle.test.ts` reads the shipped bundle.
