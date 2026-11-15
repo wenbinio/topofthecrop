@@ -181,10 +181,25 @@ describe("Your field today", () => {
 });
 
 describe("coming back", () => {
-  it("the last step leads to the field's day", async () => {
+  it("the plan's Keep this plan leads to the field's day", async () => {
+    renderAt(`/options?${QUERY}`);
+    const keep = await screen.findByRole("link", { name: "Keep this plan" });
+    expect(keep).toHaveAttribute("href", `/today?${QUERY}`);
+    fireEvent.click(keep);
+    expect(await screen.findByTestId("plan-change")).toHaveAttribute("data-change", "first");
+  });
+
+  it("the My field tab leads to the field's day from sharing too", async () => {
     renderAt(`/adviser?${QUERY}`);
-    const link = await screen.findByRole("link", { name: "My field today" });
-    expect(link).toHaveAttribute("href", expect.stringContaining("/today?f=genzano-demo"));
+    const tab = await screen.findByTestId("tab-field");
+    expect(tab).toHaveTextContent("My field");
+    expect(tab).toHaveAttribute("href", `/today?${QUERY}`);
+  });
+
+  it("links to the field from space", async () => {
+    renderAt(`/today?${QUERY}`);
+    expect(await screen.findByTestId("timelapse-link")).toHaveAttribute("href", `/timelapse?${QUERY}`);
+    expect(screen.getByTestId("tab-field")).toHaveAttribute("aria-current", "page");
   });
 
   it("the first screen offers the way back when a plan is kept, and can start afresh", async () => {

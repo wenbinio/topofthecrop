@@ -34,12 +34,12 @@ describe("screenSummary", () => {
     );
   });
 
-  it("Why: the option, its reasons and what to check locally", () => {
+  it("Why: the option and its reasons (the checks are read on the field's page)", () => {
     expect(screenSummary("/why/chickpea-durum-durum", bundle, state("en"))).toBe(
-      "Chickpea. About 158 euro per hectare a year more than durum on durum. Needs little water. Check locally: Is there a local buyer for pulses or forage. Where to buy seed, and which variety does best in the valley. Go over the plan with someone who knows your land.",
+      "Chickpea. About 158 euro per hectare a year more than durum on durum. Needs little water.",
     );
     expect(screenSummary("/why/chickpea-durum-durum", bundle, state("it"))).toBe(
-      "Cece. Circa più 158 euro per ettaro all'anno rispetto al ringrano. Vuole poca acqua. Verifica sul posto: C'è qualcuno in zona che compra legumi o foraggio. Dove comprare il seme e quale varietà va meglio qui in valle. Guarda il piano insieme a chi conosce la tua terra.",
+      "Cece. Circa più 158 euro per ettaro all'anno rispetto al ringrano. Vuole poca acqua.",
     );
     expect(screenSummary("/why/nothing", bundle, state("en"))).toBe("That option is not in your list.");
   });
@@ -63,9 +63,9 @@ describe("screenSummary", () => {
     expect(screenSummary("/questions", bundle, state("en"))).toBe("Last crop: Durum. Your priorities: 1 Income, 2 Water.");
   });
 
-  it("Check and share: what to check alone for the best fit, then who can look at it", () => {
+  it("Share your plan: its lead, then who can look at it", () => {
     expect(screenSummary("/adviser", bundle, state("en"))).toBe(
-      "Check before you sow. Check these yourself: Is there a local buyer for pulses or forage. Where to buy seed, and which variety does best in the valley. " +
+      "Share your plan. Show it to someone who knows your land before you sow. " +
         "No adviser? Ask one of these: Cooperative or seed dealer; CAA office, where you file your payment claim; " +
         "Your region's farm advisory service; A neighbour who grows it; An agronomist, if you have one.",
     );

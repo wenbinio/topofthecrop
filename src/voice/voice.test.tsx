@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Mock } from "vitest";
@@ -121,7 +121,7 @@ describe("microphone", () => {
     await waitFor(() => expect(lastPath.split("?")[0]).toBe("/options"));
     expect(lastPath).toContain("p=income%2Cwater");
     expect(await screen.findByTestId("recommendation")).toBeInTheDocument();
-    expect(screen.getByTestId("voice-line")).toHaveTextContent("“income and water, next” → Income, Water on, Options");
+    expect(screen.getByTestId("voice-line")).toHaveTextContent("“income and water, next” → Income, Water on, Your plan");
     expect(screen.getByTestId("mic")).toHaveAttribute("aria-pressed", "false");
   });
 
@@ -140,7 +140,11 @@ describe("microphone", () => {
     await screen.findByTestId("recommendation");
     tapMic().say("forage");
     await waitFor(() => expect(lastPath).toContain("p=soil%2Cincome%2Cforage"));
-    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "3");
+    // The plan's reasons follow the new order at once; the chips themselves are on Questions.
+    const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
+    expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income", "forage"]);
+    fireEvent.click(screen.getByTestId("change-answers"));
+    expect(await screen.findByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "3");
   });
 
   it("priorities said in a row are ranked in the order said", async () => {
@@ -183,9 +187,14 @@ describe("microphone", () => {
     expect(screen.getByTestId("app-name")).not.toHaveClass("max-[28rem]:sr-only");
   });
 
-  it("with the microphone, the app name gives way at 360 px", async () => {
+  it("the microphone waits in the More menu, and the app name stays", async () => {
     renderAt("/");
-    expect(screen.getByTestId("app-name")).toHaveClass("max-[28rem]:sr-only");
+    const menu = screen.getByTestId("more-menu");
+    expect(within(menu).getByTestId("mic")).toBeInTheDocument();
+    expect(menu).not.toBeVisible();
+    fireEvent.click(screen.getByTestId("more"));
+    expect(within(menu).getByTestId("mic")).toBeVisible();
+    expect(screen.getByTestId("app-name")).not.toHaveClass("max-[28rem]:sr-only");
   });
 
   it("“what should I plant” on Options reads the recommendation", async () => {
@@ -214,8 +223,8 @@ describe("read aloud", () => {
     expect(screen.getByTestId("read-aloud")).toHaveAttribute("aria-pressed", "true");
 
     const cancelled = synth.cancel.mock.calls.length;
-    fireEvent.click(screen.getByRole("link", { name: "Field year" }));
-    await waitFor(() => expect(lastPath.split("?")[0]).toBe("/year"));
+    fireEvent.click(screen.getByRole("link", { name: "Why this plan?" }));
+    await waitFor(() => expect(lastPath.split("?")[0]).toBe("/why/chickpea-durum-durum"));
     expect(synth.cancel.mock.calls.length).toBeGreaterThan(cancelled);
   });
 });

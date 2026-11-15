@@ -30,7 +30,18 @@ function Metric({ fact, label, Icon, showScale }: { fact: Fact; label: string; I
 }
 
 /** One ranked rotation: crop icons with years, income per year, water, nitrogen, risk, tags. */
-export function OptionRow({ item, view, sharedScale = false }: { item: RankedOption; view: View; sharedScale?: boolean }) {
+export function OptionRow({
+  item,
+  view,
+  sharedScale = false,
+  hideConfidence = false,
+}: {
+  item: RankedOption;
+  view: View;
+  sharedScale?: boolean;
+  /** Every row is as sure as the next, and the list says so once above. */
+  hideConfidence?: boolean;
+}) {
   const t = useT();
   const lang = useLang();
   const to = useTo();
@@ -79,7 +90,7 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
             )}
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <IncomeConfidence confidence={income.confidence} />
+            {hideConfidence ? null : <IncomeConfidence confidence={income.confidence} />}
             {income.edited ? <YoursTag /> : null}
             {sharedScale ? null : <ScaleBadge scale={income.scale} />}
             {option.supportTag ? (

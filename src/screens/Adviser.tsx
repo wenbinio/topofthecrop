@@ -7,10 +7,10 @@ import type { FieldBundle } from "../data/types";
 import { useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
-import { CropSequence, OptionName } from "../components/Crops";
 import { ChatIcon, LinkIcon, PrintIcon } from "../components/Icons";
-import { BackButton, BottomBar, Button, Headline, LinkButton, SectionTitle } from "../components/ui";
-import { WHO, ownChecks } from "./check-share";
+import { Button, Headline, LinkButton, SectionTitle } from "../components/ui";
+import { WHO } from "./check-share";
+import { CropSequence, OptionName } from "../components/Crops";
 import { CreditsLink } from "../components/DataCredits";
 
 async function copyText(text: string): Promise<boolean> {
@@ -42,29 +42,15 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   }).ranked[0];
-  const checks = best ? ownChecks(best.option.why.checkLocally) : [];
 
   return (
     <div className="flex flex-col flex-1 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
-      <Headline>{t("adviser.title")}</Headline>
-
-      {best && checks.length ? (
-        <section data-testid="own-checks" data-option-id={best.option.id}>
-          <SectionTitle>{t("adviser.self")}</SectionTitle>
-          <div className="px-4">
-            <div className="flex items-center justify-between gap-3">
-              <OptionName option={best.option} className="text-big font-bold" />
-              <CropSequence option={best.option} />
-            </div>
-            <ul className="list-disc pl-5 pt-1 text-body">
-              {checks.map((key) => (
-                <li key={key} data-testid="own-check" className="py-0.5">
-                  {t(key)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+      <Headline sub={t("adviser.lead")}>{t("adviser.title")}</Headline>
+      {best ? (
+        <div className="mx-4 mb-2 p-3 flex items-center justify-between gap-3 bg-surface border border-line rounded-box" data-testid="share-plan-summary" data-option-id={best.option.id}>
+          <OptionName option={best.option} className="text-big font-bold" />
+          <CropSequence option={best.option} />
+        </div>
       ) : null}
 
       <section data-testid="who-can-check">
@@ -99,15 +85,8 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
           <LinkIcon className="w-6 h-6" />
           {copied ? t("adviser.copied") : t("adviser.copy")}
         </Button>
-        <p className="text-small text-ink-soft break-all font-mono">{link}</p>
       </div>
       <CreditsLink />
-      <BottomBar>
-        <BackButton to={to("/year")} />
-        <LinkButton to={to("/today")} className="flex-1">
-          {t("today.open")}
-        </LinkButton>
-      </BottomBar>
     </div>
   );
 }

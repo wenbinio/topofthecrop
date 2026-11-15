@@ -4,6 +4,8 @@ import "@fontsource/atkinson-hyperlegible-next/400.css";
 import "@fontsource/atkinson-hyperlegible-next/700.css";
 import "@fontsource/atkinson-hyperlegible-next/800.css";
 import "@fontsource/ibm-plex-mono/500.css";
+// Headings: Fraunces, a warm serif that suits the botanical plates.
+import "@fontsource/fraunces/600.css";
 import "./index.css";
 import App from "./App";
 
