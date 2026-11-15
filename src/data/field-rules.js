@@ -441,3 +441,22 @@ export function stressSeasons(seasons) {
   if (!Array.isArray(values)) return [];
   return values.flatMap((z, i) => (isNum(z) && z <= STRESS_RULES.z ? [{ season: seasons.years[i], z }] : []));
 }
+
+/**
+ * The comparison behind seasonSignal, laid out for a chart: the usual middle half of the normal seasons (`low` to
+ * `high`), the recent seasons and their middle (`now`). Null when seasonSignal would say "no-data".
+ */
+export function seasonBand(years, values) {
+  if (!Array.isArray(years) || !Array.isArray(values) || values.length !== years.length) return null;
+  const [from, to] = SIGNAL_RULES.normal;
+  const normal = values.filter((v, i) => isNum(v) && years[i] >= from && years[i] <= to).sort((a, b) => a - b);
+  const recentAt = values.flatMap((v, i) => (isNum(v) && years[i] > to ? [i] : [])).slice(-SIGNAL_RULES.recent);
+  if (normal.length < SIGNAL_RULES.minNormal || recentAt.length < SIGNAL_RULES.minRecent) return null;
+  const recent = recentAt.map((i) => values[i]).sort((a, b) => a - b);
+  return {
+    low: quantile(normal, SIGNAL_RULES.low),
+    high: quantile(normal, SIGNAL_RULES.high),
+    recent: recentAt.map((i) => years[i]),
+    now: quantile(recent, 0.5),
+  };
+}

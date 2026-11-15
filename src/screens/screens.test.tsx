@@ -429,6 +429,17 @@ describe("2024 and 2026 compared with a usual season (Year)", () => {
     expect(await screen.findByTestId("stress-line")).toHaveTextContent("Much less green than nearby fields in 2023. Check locally");
   });
 
+  it("the printout ends with the season-by-season graphs, before the credits", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withSeasons())));
+    renderAt("/print?f=genzano-demo&p=income,water");
+    const trends = await screen.findByTestId("print-trends");
+    // greenness, water used and rain: this test data has no hot-days series, so that graph is left out
+    expect(within(trends).getAllByTestId("trend-chart")).toHaveLength(3);
+    expect(screen.getByText("How the seasons went")).toBeInTheDocument();
+    const credits = screen.getByTestId("credit-lines");
+    expect(trends.compareDocumentPosition(credits) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("without field data there is no card", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
     await screen.findByTestId("def-normal");

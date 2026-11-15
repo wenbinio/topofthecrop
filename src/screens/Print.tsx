@@ -13,6 +13,7 @@ import { Button } from "../components/ui";
 import { unknownsFor } from "../data/caveats";
 import { soilSummary } from "../data/soil";
 import { CreditLines } from "../components/DataCredits";
+import { TrendChart } from "../components/TrendChart";
 
 function Block({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
@@ -356,6 +357,8 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           </ul>
         </Block>
 
+        <Trends bundle={bundle} />
+
         <Block title={t("credits.title")}>
           <CreditLines />
         </Block>
@@ -370,3 +373,33 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
     </div>
   );
 }
+
+/**
+ * The season-by-season graphs at the end of the printout: the trends behind the Why steps (greenness, hot days,
+ * water used) and the rain behind the Year screen's usual, dry and driest years. Left out when the bundle has no
+ * season series.
+ */
+function Trends({ bundle }: { bundle: FieldBundle }) {
+  const t = useT();
+  const seasons = bundle.fieldData?.seasons;
+  if (!seasons) return null;
+  const charts: [string, keyof typeof seasons.series, number][] = [
+    ["years.green", "peakGreenness", 2],
+    ["evidence.hotDays", "hotDays", 0],
+    ["years.water", "cropWaterUse", 0],
+    ["years.rain", "rainSeason", 0],
+  ];
+  const shown = charts.filter(([, key]) => seasons.series[key]);
+  if (!shown.length) return null;
+  return (
+    <Block title={t("trends.title")}>
+      <div className="grid grid-cols-1 min-[30rem]:grid-cols-2 print:grid-cols-2 gap-x-4 gap-y-3" data-testid="print-trends">
+        {shown.map(([label, key, digits]) => (
+          <TrendChart key={key} title={t(label)} years={seasons.years} series={seasons.series[key]!} digits={digits} />
+        ))}
+      </div>
+      <p className="mt-1 text-small text-ink-soft">{t("trends.caption")}</p>
+    </Block>
+  );
+}
+
