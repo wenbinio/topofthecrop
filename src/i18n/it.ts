@@ -333,7 +333,7 @@ export const it: Dict = {
   "credits.forecast": "Previsioni: MET Norway, CC BY 4.0. I dati della mappa sono indicati sulla mappa.",
   "credits.timelapse": "Il tuo campo dallo spazio: foto Sentinel-2, contiene dati Copernicus Sentinel modificati, tramite Microsoft Planetary Computer.",
   "credits.trial": "Campo di prova: il terreno della prova su grano duro e veccia di Denora et al. (2025).",
-  "credits.ai": "Uso dell'IA: l'idea e il progetto dell'app sono del gruppo. Il codice dell'app e i notebook per i dati sono stati scritti con l'aiuto dell'IA, soprattutto Claude (Anthropic), con revisioni di OpenAI Codex e Google Gemini. Il gruppo ha lanciato i notebook su Google Earth Engine e controllato i risultati. I numeri su campo e meteo arrivano dai dataset qui sopra, non dall'IA; i dati provvisori non sono verificati.",
+  "credits.ai": "Uso dell'IA: l'idea e il progetto dell'app sono del gruppo. Il codice dell'app e i notebook per i dati sono stati scritti con l'aiuto dell'IA, soprattutto Claude (Anthropic), con revisioni di OpenAI Codex e Google Gemini. Il gruppo ha lanciato i notebook su Google Earth Engine e controllato i risultati. I numeri su campo e meteo arrivano dai dataset qui sopra, non dall'IA; i dati provvisori non sono verificati. Le immagini delle colture sono state fatte con l'IA (ChatGPT) e ognuna porta il marchio «AI».",
   "credits.all": "Tutti i dataset, le licenze e le citazioni: github.com/wenbinio/topofthecrop, DATA_SOURCES.md",
   "timelapse.title": "Il tuo campo dallo spazio",
   "timelapse.sub": "Una foto satellitare limpida al mese, ultimi tre anni",
