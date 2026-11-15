@@ -242,6 +242,65 @@ describe("what each slider stop means", () => {
   });
 });
 
+describe("2024 and 2026 against a usual season (Year)", () => {
+  const source = { dataset: "NASA SMAP L4 soil moisture", resolution: "9 km", url: "" };
+  const fact = (value: number, unit: string, range: [number, number], asOf: string) =>
+    ({ value, unit, range, asOf, scale: "area", confidence: "fair", placeholder: false, label: "data.x", source });
+  const series = (values: (number | null)[], unit: string) =>
+    ({ values, unit, scale: "area", confidence: "fair", placeholder: false, label: "data.x", source });
+  /** The fixture with field data for seasons 2023-2026: a dry 2024, a wet 2026, no SMAP figure for 2026. */
+  function withSeasons(peakVsNearby?: (number | null)[]) {
+    const b = structuredClone(fixture) as Record<string, any>;
+    b.year.rainSeason = Object.fromEntries(["normal", "drier", "much-drier"].map((k) =>
+      [k, { now: fact(542, "mm", [418, 631], "2001-2020"), by2050: fact(520, "mm", [477, 558], "2041-2060") }]));
+    b.fieldData = {
+      greenness: { peakGreenness: fact(0.71, "NDVI", [0.59, 0.76], "2001-2020") },
+      weather: {}, soil: {}, land: {},
+      water: { soilWaterSpring: fact(30.1, "%", [27.4, 32], "2016-2025"), cropWaterUse: fact(319, "mm", [277, 346], "2001-2020") },
+      by2050: { ssp245: {}, ssp585: {} },
+      seasons: {
+        years: [2023, 2024, 2025, 2026],
+        series: {
+          rainSeason: series([656, 413, 468, 651], "mm"),
+          soilWaterSpring: series([31.2, 27.3, 30.1, null], "%"),
+          peakGreenness: series([0.68, 0.6, 0.75, 0.72], "NDVI"),
+          cropWaterUse: series([360, 258, 322, 326], "mm"),
+          ...(peakVsNearby ? { peakVsNearby: series(peakVsNearby, "z") } : {}),
+        },
+      },
+    };
+    return b;
+  }
+
+  it("shows each season's figure, an arrow only outside the usual range, and no data where there is none", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withSeasons())));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    const card = await screen.findByTestId("season-compare");
+    expect(within(card).getByRole("columnheader", { name: "2024" })).toBeInTheDocument();
+    expect(screen.getByTestId("compare-years.rain-2024")).toHaveTextContent("413 mm ↓");
+    expect(screen.getByTestId("compare-years.rain-2026")).toHaveTextContent("651 mm ↑");
+    expect(screen.getByTestId("compare-years.green-2024")).toHaveTextContent(/^0\.60$/); // inside 0.59-0.76: no arrow
+    expect(screen.getByTestId("compare-years.water-2024")).toHaveTextContent("258 mm ↓");
+    expect(screen.queryByTestId("compare-years.soil-2026")).toBeNull();
+    expect(within(card).getByText("no data")).toBeInTheDocument();
+    expect(card).toHaveTextContent("2016–2025"); // SMAP's usual period, beside its usual figure
+    expect(screen.getByTestId("rain-2026-note")).toHaveTextContent("NASA GPM data stop in September 2025");
+    expect(screen.queryByTestId("stress-line")).toBeNull();
+  });
+
+  it("names the seasons much less green than nearby fields, ending in check locally", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withSeasons([-1.69, -0.65, -0.74, 0.06]))));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("stress-line")).toHaveTextContent("Much less green than nearby fields in 2023: check locally");
+  });
+
+  it("without field data there is no card", async () => {
+    renderAt("/year?f=genzano-demo&p=income,water");
+    await screen.findByTestId("scenario-def");
+    expect(screen.queryByTestId("season-compare")).toBeNull();
+  });
+});
+
 describe("what counts as a hot day", () => {
   it("tapping the Year headline opens the 30 °C definition, also given on hover", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");

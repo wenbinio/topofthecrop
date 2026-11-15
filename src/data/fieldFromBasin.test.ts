@@ -82,6 +82,13 @@ describe("a drawn field in the basin", () => {
     }
     expect(b.findings.map((f) => f.fact)).toHaveLength(3);
     for (const f of b.findings) expect(f.fact.range).toHaveLength(2);
+    // NASA SMAP soil water in spring and NASA MODIS crop water use close the evidence, as in fieldData.
+    expect(b.options[0].why.evidence.slice(-2).map((f) => [f.label, f.value])).toEqual([
+      ["evidence.soilWaterSpring", b.fieldData!.water.soilWaterSpring!.value],
+      ["evidence.cropWaterUse", b.fieldData!.water.cropWaterUse!.value],
+    ]);
+    // The comparison with nearby fields is the demo field's alone, so a drawn field never gets a stress flag.
+    expect(b.fieldData!.seasons.series.peakVsNearby).toBeUndefined();
     expect(b.year.months).toHaveLength(12);
     expect(b.year.months.every((m) => m.cover !== "none")).toBe(true);
     expect(b.options.map((o) => o.id)).toEqual(demo.options.map((o) => o.id));

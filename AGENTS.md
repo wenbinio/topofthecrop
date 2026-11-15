@@ -138,7 +138,7 @@ Say so if you rely on any of these.
 ## State on 15 November 2026
 
 - Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
-- Also live: the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
+- Also live: the Year screen's card comparing 2024 and 2026 with a usual season (with the demo field's seasons much less green than nearby fields), two more evidence lines on Why (NASA SMAP soil water, NASA MODIS crop water use), the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
 - Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
 - Step 6 is "Check and share", for farmers with or without an adviser. It names kinds of people to ask (cooperative, CAA office, regional advisory service, neighbour, agronomist), never a named office or a phone number. Nobody has confirmed with a farmer or a CAA that these are the right places to send each question.
 - Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.
