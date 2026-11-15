@@ -1,14 +1,14 @@
 # Field Shift: data handover for the app
 
-Sat 14 Nov 2026, 18:30 UK. From Edison (data lane) to the frontend. Written with AI assistance (Claude, Anthropic) and checked against the final data files.
+Sat 14 Nov 2026, 18:30 UK. From Edison (data lane) to the frontend. Written with AI assistance (Claude, Anthropic) and checked against the final data files. Updated Sun 15 Nov, 10:15 UK: paths and app details brought in line with the repo.
 
-Put this file at the top of the repo. If you use Claude, ask it to read this file before it touches the app's data code. With Claude Code, add the line `Read HANDOVER.md before working on data or the screens.` to the repo's `CLAUDE.md`.
+This file sits at the top of the repo, and `AGENTS.md` tells any person or AI agent to read it before working on the data. `HANDOVER-FRONTEND.md` covers the app's side: how each key reaches a screen.
 
 ## 0. Briefing for an AI assistant
 
-- **Project.** Field Shift (NASA Space Apps Challenge 2026) helps family durum-wheat farmers in the Bradano basin (Basilicata, southern Italy) compare crop rotations under a changing climate. It's a static web app on GitHub Pages: no backend, no login, Italian first with an English switch, built for tablets. The five screens, in build order: rotation comparison, the field's year, find your field, evidence and method, printout for an adviser.
-- **The data is finished.** Everything the app needs is in `data/`, made by the Colab notebooks in `notebooks/` and checked. **Never edit files in `data/` by hand.** If a value looks wrong, ask Edison to rerun the notebook that made it.
-- **Use `fieldshift-data.js`** (tested against these files) to load the data and read values for a tap or a drawn outline. Sections 3–5 explain what it returns.
+- **Project.** Field Shift (NASA Space Apps Challenge 2026) helps family durum-wheat farmers in the Bradano basin (Basilicata, southern Italy) compare crop rotations under a changing climate. The app, Top of the Crop, is a static web app on GitHub Pages for phones: no backend, no login, in English and Italian, in six steps (`AGENTS.md`).
+- **The data is finished.** Everything the app needs is in `data/`, made by the Colab notebooks in `ColabNotebooks/` and checked. **Never edit files in `data/` by hand.** If a value looks wrong, ask Edison to rerun the notebook that made it.
+- **`src/data/fieldshift-data.js`** (tested against these files) loads the data and reads the values for a tap or a drawn outline; the app builds a drawn field's figures with it. Sections 3–5 explain what it returns.
 - **Ground rules for the screens:**
   - Show every number as a range (low, typical, high) with its source.
   - Show `null` as "no data", never 0.
@@ -20,19 +20,14 @@ Put this file at the top of the repo. If you use Claude, ask it to read this fil
   - Don't use NASA logos or branding; naming NASA datasets in citations is fine.
   - Credit the data sources (section 10).
   - Never add Basilicata weather-station records to the repo: their terms are non-commercial and checking-only.
-- **Next tasks, in order:**
-  1. Wire `loadData` and `outlineValues` into "Find your field".
-  2. Build the farming-year strip and risk bands.
-  3. Build the rotation scorer with `crops.json`.
-  4. Build the evidence panel.
-  5. Build the printout and share link.
+- **Where it stands (15 Nov):** drawn fields read the 1 km files; every figure here is in the app's bundle (`fieldData`, `HANDOVER-FRONTEND.md` section 4f); the Why screen's signals and the slider's rain are worked out from the data. **Next:** show the rest on the screens.
 
 ## 1. What's in the repo
 
 ```
 DATA_SOURCES.md      every dataset: what it's used for, resolution, licence, citation; ground check; AI note
 data/                the app's data (9 files, 4.6 MB)
-notebooks/           the six Colab notebooks that make the data (01 to 06)
+ColabNotebooks/      the six Colab notebooks that make the data (01 to 06)
 ```
 
 | File in `data/` | Size | Made by | What it holds |
@@ -54,9 +49,9 @@ All files come from the final runs on 14 Nov (02 at 15:59, 03 at 16:04, 04 at 16
 ## 2. Getting the data into the app
 
 - **Fetch with relative paths:** `fetch("data/cells_weather.json")`. GitHub Pages serves the site under `/repo-name/`, so a path starting with `/` breaks. If the app's page sits in a subfolder, use `"../data/"`.
-- **Use a web server, also when developing.** Browsers won't load JSON from a page opened by double-clicking (`file://`). Use VS Code's Live Server, `npx serve`, or `python -m http.server` in the repo folder. Turn on GitHub Pages under the repo's Settings → Pages (deploy from the main branch, root folder).
+- **In this app** `npm run dev` serves the files in `data/` at `data/basin/` (a small plugin in `vite.config.ts`) and `npm run build` copies them there, so they exist once in git; `.github/workflows/pages.yml` publishes the site. A plain page would need a web server too: browsers won't load JSON from a page opened by double-clicking (`file://`).
 - **Load everything once at start.** It's 4.6 MB, and the biggest files are greenness (1.7 MB) and the grid (1.2 MB). The service worker can cache `data/` for offline use.
-- **`fieldshift-data.js`** does the loading and lookups. Put it with the app's code, and install turf.js 7 (`npm install @turf/turf`). In a plain HTML page without a bundler, add an import map instead:
+- **`src/data/fieldshift-data.js`** does the loading and lookups. It needs turf.js 7, which the app installs (`@turf/turf`). In a plain HTML page without a bundler, add an import map instead:
 
 ```html
 <script type="importmap">{"imports": {"@turf/turf": "https://esm.sh/@turf/turf@7"}}</script>
@@ -201,6 +196,8 @@ Use `field.json` for the demo field and the cells files for any other field.
 
 ## 5. How the app uses the data, screen by screen
 
+Written before the app was built, as guidance. For how the app actually uses each key, see `HANDOVER-FRONTEND.md` sections 4e and 4f.
+
 **Find your field**
 1. Draw the basin (`area.geojson`) and, optionally, the farmland squares (`grid.geojson` where `farm` is true) over a base map.
 2. When the farmer draws an outline, call `outlineValues(d, polygon)`. It finds the farmland squares under it and averages their values by overlap area. When they tap instead, or use their location, call `squareAt` and then `squareValues`.
@@ -272,7 +269,7 @@ The other demo-field values:
 
 ## 7. Caveats to show on the evidence screen
 
-1. **Traced fields are 1 km estimates.** Only the demo field has values from inside its own outline.
+1. **Traced fields are 1 km estimates.** Only the demo field has greenness from inside its own outline (MODIS, with HLS and Sentinel-2 as checks) and soil at its centre. Its weather, water and future values come from the same 6–28 km grids as any other field.
 2. **ERA5-Land runs cool at the demo field.** It reads 1.2–2.5 °C below the trial's station and 1.3–1.7 °C below NASA POWER. Hot days are probably undercounted, now and in the future, and frost nights overcounted.
 3. **Rain against the trial's station** differs by 1–31%, depending on which months are counted (the paper doesn't say). Both show the 2024 drought; the station's drop is sharper (−53% against −38%).
 4. **Season 2026 rain uses two of the three sources:** IMERG in Earth Engine ends in September 2025.
@@ -293,15 +290,7 @@ The other demo-field values:
 ## 8. Not in the data, and still to do
 
 - **Not computed:** extreme rain, the GRACE water trend and ECOSTRESS. Leave them out of the screens, or label them as future work.
-- **`crops.json` (frontend team)** needs, per crop:
-  - Sowing, flowering and harvest months. Flowering months are still missing.
-  - Kc by stage.
-  - Heat, frost and water limits.
-  - Income range.
-  - Nitrogen and forage values.
-  - Rotation rules, such as chickpea at most one year in three.
-
-  The scorer depends on it.
+- **Crop figures** live in `docs/crops-research.md` and `scripts/make-placeholder-bundle.mjs` (there is no `crops.json`). Flowering months and Kc by stage per crop are still missing, so heat and frost in each crop's own months, and each crop's water need from ET₀, can't be worked out yet.
 - **30 m greenness for any traced field:** a team decision is pending. Today only the demo field has 30 m and 10 m data.
 - **No station temperature correction:** the Basilicata records couldn't be downloaded, so caveat 2 stands.
 - **Weather indicators have no `source` key** in their `meta`; `sourcesFor` fills it in.
@@ -312,6 +301,7 @@ Only the notebooks change the data:
 1. Edison reruns the notebook concerned in Colab, then 06.
 2. 06 downloads `field_shift_for_repo.zip`.
 3. Its `data/` files replace the old ones, and `DATA_SOURCES.md` goes at the top of the repo.
+4. `node scripts/make-placeholder-bundle.mjs` rebuilds the demo field's bundle (`public/data/genzano-demo.json`) from the new `field.json`. Drawn fields read `data/` directly.
 
 Keys stay the same, so the app needs no changes. If keys ever change, this file is updated too.
 

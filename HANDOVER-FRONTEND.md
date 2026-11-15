@@ -62,7 +62,7 @@ NASA POWER (live) ────── drawn, outside ──── AreaWeather scr
 
 ### 4a. The demo field
 
-1. The data team's `data/field.json` holds the figures measured inside the demo field's own outline.
+1. The data team's `data/field.json` holds the demo field's figures: its greenness from inside its own outline, its soil at its centre, and its weather, water and future values from the grids over it (6–28 km).
 2. `scripts/real-field.mjs` reads it and builds the field parts: outline, last crop, the three findings, the twelve months, the risk icons, the hot-day stops and the evidence lines.
 3. `scripts/make-placeholder-bundle.mjs` adds the nine rotations and the money figures (from `docs/crops-research.md` and `docs/support-and-prices.md`) and writes `public/data/genzano-demo.json`.
 4. The app fetches that one file. `src/data/validate.ts` checks its shape on load and refuses a broken one.
