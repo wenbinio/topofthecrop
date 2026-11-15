@@ -2,8 +2,6 @@
 
 Researched on 14 November 2026 for rain-fed clay hills around Genzano di Lucania (about 350 m, clay loam, roughly 550 mm of rain from October to May). Two researchers worked independently from the same brief: a Claude Opus agent, which marked every figure as verified in a source it opened, taken from a search excerpt, or recalled; and a Gemini Hydrogen agent, whose links were search redirects, so its figures count as a second opinion. Nobody on the team has checked these against the sources. **Treat every figure as a starting point for the farmer and adviser to correct.**
 
-A third account, supplied by the project owner on 15 November 2026, compares continuous durum with a faba bean–wheat rotation and disagrees with the app on durum's costs and on which of the two earns more: `docs/durum-vs-faba-rotation-margins.md`. The app's figures have not been changed to match it.
-
 The app's figures are the "In the app" columns. Where the two researchers differ, the app takes a value between them and the range covers both.
 
 ## In the app
@@ -45,7 +43,7 @@ Checked on 15 November 2026. Direct costs here mean seed, fertiliser, crop prote
 |---|---|---|---|
 | Durum | 675 (600–900) | ISMEA, *Monitoraggio dei costi medi di produzione: raccolto frumento 2025*, the Puglia, Sicily and Basilicata cluster, as reported by AgroNotizie on 31 December 2025: fertiliser 185.8, crop protection 75.4, seed 141.5, energy and water 101.8, contractors 170, in all 674.5 €/ha. Labour adds 197.5 and general and fixed costs 298.4, for 1,170.3 €/ha in all at 3.68 t/ha | The figure is ISMEA's direct costs. It was 685, from an earlier reading of the same survey |
 | Chickpea | 600 (480–800) | Lago-Olveira et al. (2023), Puglia, Tables S1 and S2 as copied in `research-compilation/`: chickpea inputs about 457 €/ha (DAP 306, seed 67, herbicides 84) and field operations 219, about 676 in all, against about 780 for wheat, so chickpea costs about 87% of wheat's. Applied to ISMEA's 675 for durum, that is about 590. A 2023 agronomic report for a site near Matera gives 800 €/ha (from RICA Puglia 2017) | Raised from 540, which was below both. The range runs from the researchers' lowest figure (480) to the Matera report (800) |
-| Faba bean, lentil, pea, barley, rapeseed, coriander, vetch–oat hay | Unchanged | No published cost budget for southern Italy was found. The search covered ISMEA, CREA's farm accounts (RICA), Basilicata's rural development payment calculations and the farming press. The owner's comparison (`docs/durum-vs-faba-rotation-margins.md`) puts faba bean at 540–645 €/ha, from grower forums | Still from these notes, confidence low |
+| Faba bean, lentil, pea, barley, rapeseed, coriander, vetch–oat hay | Unchanged | No published cost budget for southern Italy was found. The search covered ISMEA, CREA's farm accounts (RICA), Basilicata's rural development payment calculations and the farming press. | Still from these notes, confidence low |
 
 **Nitrogen left for the next crop (kg N/ha)**
 

@@ -75,7 +75,6 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
 - Also consulted, not used for the app's figures:
   - Performance of wheat-based cropping systems and economic risk of low relative productivity assessment in a sub-dry Mediterranean environment. European Journal of Agronomy. https://doi.org/10.1016/j.eja.2019.125968
   - Pulse-included diverse crop rotations improved the systems economic profitability: evidenced in two 4-year cycles of rotation experiments. Agronomy for Sustainable Development (2022). https://doi.org/10.1007/s13593-022-00831-2
-  - The team's comparison of continuous durum with a faba bean rotation, with its own references. https://github.com/wenbinio/topofthecrop/blob/main/docs/durum-vs-faba-rotation-margins.md
   - Bathurst, J.C. et al. (2003). Decision support system for desertification mitigation in the Agri basin, southern Italy. Physics and Chemistry of the Earth 28, 579-587. https://doi.org/10.1016/S1474-7065(03)00104-9
 
 ## Software and tools
