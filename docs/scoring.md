@@ -197,6 +197,15 @@ keep a year only when at least 90% of that window's calendar days are present.
 Do not fill gaps or scale up totals. At least three usable years are required
 for every measure; otherwise the weather summary is unavailable.
 
+NASA POWER's rain for October 2025, February 2026 and March 2026 is left out too
+(`POWER_BAD_RAIN_MONTHS` in `src/weather/weather.ts`). The data team's notebook 03
+found it more than three times what CHIRPS, NASA GPM IMERG and ERA5-Land measured
+at the demo field (592 mm for autumn 2025, five times the usual). It was checked
+there only, but is left out everywhere: a year the app does not count is safer
+than one counted from an impossible figure. Without October, 2025 has under 90%
+of its autumn days, so it is not counted for autumn rain. A line under the
+figures names the months left out.
+
 Show the mean of the latest ten usable years, or all usable years if fewer
 than ten remain. Round hot and frost means to one decimal and rain to whole
 millimetres. The range is the smallest and largest annual total in those same
@@ -214,6 +223,7 @@ Shown on the Year screen and on Area weather, for the field's centre, live from 
 - **The season** starts on 1 September. Rain is added up from that day to the latest day NASA POWER has, which is usually two to four days ago. The block shows both dates.
 - **Usual by now** is the middle value of the same days in the ten seasons before. Its range is the 10th to 90th percentile of those seasons, as in the data team's files, so one freak season does not stretch it.
 - **A season is left out** of the comparison when more than one day in ten is missing. With fewer than three seasons left, no comparison is shown.
+- **NASA POWER's impossible months** (October 2025, February 2026 and March 2026; see area weather above) count as missing days. From October on, that leaves the 2025–26 season out of the comparison, and a line names the month.
 - **The verdict:** under three quarters of the usual rain is "Drier than usual", over one and a quarter is "Wetter than usual", otherwise "About usual".
 - **Last proper rain** is the latest day with 5 mm or more.
 - If NASA POWER does not answer within 8 seconds, the block says the rain is unavailable and offers to try again. The rest of the screen is unaffected.

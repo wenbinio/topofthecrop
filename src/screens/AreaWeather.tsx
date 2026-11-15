@@ -13,6 +13,7 @@ import { SeasonNow } from "../components/SeasonNow";
 import { DropIcon, FrostIcon, HeatIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, Button, Headline } from "../components/ui";
+import { LeftOutNote } from "../components/LeftOutNote";
 
 type Load = { status: "loading" } | { status: "error" } | { status: "ready"; data: AreaWeatherData };
 
@@ -123,6 +124,7 @@ export default function AreaWeather() {
             <WeatherRow fact={load.data.autumnRain} Icon={DropIcon} />
             <WeatherRow fact={load.data.lateFrostDays} Icon={FrostIcon} />
           </ul>
+          <LeftOutNote months={load.data.rainLeftOut} className="px-4 pt-2" />
           <SeasonNow centre={centroid(outline)} />
           <ForecastNext centre={centroid(outline)} />
           <div className="px-4 py-4 flex flex-col gap-3">

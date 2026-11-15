@@ -95,6 +95,27 @@ describe("summariseSeason", () => {
   });
 });
 
+describe("NASA POWER's impossible months (POWER_BAD_RAIN_MONTHS)", () => {
+  it("leaves out an earlier season holding October 2025, and names the month", () => {
+    // Every earlier season has 1 mm a day; October 2025 has an impossible 20 mm a day.
+    const rain = series([...PAST, 2026], 76, (year, i) => (year === 2025 && i >= 30 && i < 61 ? 20 : 1));
+    const s = summariseSeason(rain, TODAY);
+    expect(s.rainLeftOut).toEqual(["202510"]);
+    expect(s.usual.value).toBe(76); // the nine other seasons only
+    expect(s.usual.range).toEqual([76, 76]);
+  });
+
+  it("names nothing while the days compared stop before October", () => {
+    const rain = series([...PAST, 2026], 10, () => 1);
+    expect(summariseSeason(rain, new Date(Date.UTC(2026, 8, 10))).rainLeftOut).toEqual([]);
+  });
+
+  it("does not name a month NASA had no rain figure for", () => {
+    const rain = series([...PAST, 2026], 76, (year, i) => (year === 2025 && i >= 30 && i < 61 ? -999 : 1));
+    expect(summariseSeason(rain, TODAY).rainLeftOut).toEqual([]);
+  });
+});
+
 describe("fetchSeasonRain", () => {
   it("asks NASA POWER for rain from ten Septembers ago to today, at two decimals", async () => {
     const fetchImpl = vi.fn(async (_url: string) => ({ ok: true, status: 200, json: async () => ({ properties: { parameter: { PRECTOTCORR: { "20260901": 1 } } } }) }));

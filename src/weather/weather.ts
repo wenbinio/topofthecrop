@@ -5,6 +5,28 @@ export const POWER_FIRST_YEAR = 2001;
 export const POWER_LAST_YEAR = 2025;
 export const POWER_TIMEOUT_MS = 8000;
 
+/**
+ * NASA POWER rain months the data team's notebook 03 found impossible at the demo field: more than three times what
+ * CHIRPS, NASA GPM IMERG and ERA5-Land measured (POWER gives 592 mm for autumn 2025 there, five times the usual).
+ * They were checked at the demo field only, but are left out everywhere: a season the app does not count is safer
+ * than one counted from an impossible figure. Each is YYYYMM; docs/scoring.md says the same.
+ */
+export const POWER_BAD_RAIN_MONTHS: readonly string[] = ["202510", "202602", "202603"];
+
+/**
+ * One day's rain from a POWER series (day "YYYYMMDD"): undefined when POWER has none (absent or -999) or the day falls
+ * in POWER_BAD_RAIN_MONTHS. A month left out that way is added to `leftOut`, so the screen can name it.
+ */
+export function rainOn(rain: Record<string, number>, day: string, leftOut: Set<string>): number | undefined {
+  const value = rain[day];
+  if (typeof value !== "number" || !Number.isFinite(value) || value === -999) return undefined;
+  if (POWER_BAD_RAIN_MONTHS.includes(day.slice(0, 6))) {
+    leftOut.add(day.slice(0, 6));
+    return undefined;
+  }
+  return value;
+}
+
 /** Thresholds are placeholders for the team to correct; they are also written in docs/scoring.md. */
 export const WEATHER_RULES = {
   hotDayAtLeastC: 30, // a hot day reaches 30 °C or more, as in the team's field.json
@@ -61,16 +83,19 @@ function dailySeries(value: unknown): Record<string, number> {
 
 /** Pure counting: turns daily series into the three "your area" facts. */
 export function summarise(daily: DailyWeather): AreaWeather {
-  return {
-    years: [POWER_FIRST_YEAR, POWER_LAST_YEAR],
+  const leftOut = new Set<string>();
+  const facts = {
+    years: [POWER_FIRST_YEAR, POWER_LAST_YEAR] as [number, number],
     hotDaysAtFlowering: measure(daily.tmax, WEATHER_RULES.flowering, value => Number(value >= WEATHER_RULES.hotDayAtLeastC), 'days', 'weather.hotDays'),
-    autumnRain: measure(daily.rain, WEATHER_RULES.autumn, value => value, 'mm', 'weather.autumnRain'),
+    autumnRain: measure(daily.rain, WEATHER_RULES.autumn, value => value, 'mm', 'weather.autumnRain', leftOut),
     lateFrostDays: measure(daily.tmin, WEATHER_RULES.lateFrost, value => Number(value < WEATHER_RULES.frostBelowC), 'days', 'weather.lateFrost'),
   };
+  return { ...facts, rainLeftOut: [...leftOut].sort() };
 }
 
+/** `leftOut` is given for rain only: then days in POWER_BAD_RAIN_MONTHS count as missing and their months are noted. */
 function measure(series: Record<string, number>, window: { from: string; to: string },
-  contribution: (value: number) => number, unit: string, label: string): Fact {
+  contribution: (value: number) => number, unit: string, label: string, leftOut?: Set<string>): Fact {
   const totals: number[] = [];
   for (let year = POWER_FIRST_YEAR; year <= POWER_LAST_YEAR; year++) {
     const start = Date.UTC(year, Number(window.from.slice(0, 2)) - 1, Number(window.from.slice(2)));
@@ -79,8 +104,8 @@ function measure(series: Record<string, number>, window: { from: string; to: str
     for (let time = start; time <= end; time += 86400000) {
       days++;
       const key = new Date(time).toISOString().slice(0, 10).replaceAll('-', '');
-      const value = series[key];
-      if (!Number.isFinite(value) || value === -999) continue;
+      const value: number | undefined = leftOut ? rainOn(series, key, leftOut) : series[key];
+      if (value === undefined || !Number.isFinite(value) || value === -999) continue;
       present++;
       total += contribution(value);
     }

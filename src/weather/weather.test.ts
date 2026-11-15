@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import type { DailyWeather } from '../data/types';
-import { fetchPower, summarise } from './weather';
+import { POWER_BAD_RAIN_MONTHS, fetchPower, summarise } from './weather';
 
 function series(first = 2001): DailyWeather {
   const daily: DailyWeather = { tmax: {}, tmin: {}, rain: {} };
@@ -51,6 +51,17 @@ it('skips an entirely missing 2025 and uses 2015 through 2024', () => {
   expect(result.hotDaysAtFlowering).toMatchObject({ value: 0.1, range: [0, 1] });
   expect(result.lateFrostDays).toMatchObject({ value: 0.1, range: [0, 1] });
   expect(result.autumnRain).toMatchObject({ value: 92, range: [91, 101] });
+});
+it("leaves out NASA POWER's impossible October 2025 from autumn rain, and names it", () => {
+  const daily = series();
+  for (let day = 1; day <= 31; day++) daily.rain[`202510${String(day).padStart(2, '0')}`] = 20;
+  const result = summarise(daily);
+  expect(POWER_BAD_RAIN_MONTHS).toEqual(['202510', '202602', '202603']);
+  expect(result.rainLeftOut).toEqual(['202510']);
+  // 2025 is not counted (two thirds of its autumn left), so the ten years are 2015-2024 at 1 mm a day.
+  expect(result.autumnRain).toMatchObject({ value: 91, range: [91, 91] });
+  // Temperatures are untouched: only rain months are left out.
+  expect(result.hotDaysAtFlowering).toMatchObject({ value: 0, range: [0, 0] });
 });
 it('requires at least three usable years for every measure', () => {
   expect(() => summarise(series(2024))).toThrow('weather: not enough data');

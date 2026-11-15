@@ -133,7 +133,7 @@ Say so if you rely on any of these.
 - The app on a real phone beyond one screenshot of the Why screen in Android Chrome: touch drawing, edge-finding, the Settings inputs, rotation, voice with a real microphone.
 - The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures. The yield lift comes from the team's research compilation; nobody opened the papers.
 - Each rotation's risk rating, the priority score rules and the weights for the farmer's order of priorities (4, 3, 2, 1), which are our judgement.
-- NASA POWER's 592 mm for autumn 2025 at the demo field, about five times the usual. The data team's notebook 03 found POWER's October 2025, February 2026 and March 2026 impossible (more than three times what CHIRPS, IMERG and ERA5-Land measured) and left them out of its checks; the app's live POWER counts still include them.
+- Whether NASA POWER's impossible rain months reach beyond the demo field. The data team's notebook 03 found POWER's October 2025, February 2026 and March 2026 more than three times what CHIRPS, IMERG and ERA5-Land measured there (592 mm for autumn 2025, about five times the usual). The app leaves those months out of its live POWER rain everywhere (`POWER_BAD_RAIN_MONTHS` in `src/weather/weather.ts`) and says so under the figures.
 - The forecast against another forecast, and AGEA's service under load.
 
 ## State on 15 November 2026

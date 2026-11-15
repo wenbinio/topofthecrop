@@ -7,6 +7,7 @@ import { useLang, useT } from "../i18n";
 import type { SeasonWeather, Standing } from "../weather/season";
 import { fetchSeasonRain, summariseSeason } from "../weather/season";
 import { DatasetLabel, ScaleBadge, formatNumber, rangeText } from "./FactParts";
+import { LeftOutNote } from "./LeftOutNote";
 import { DropIcon, DryIcon, RainIcon } from "./Icons";
 import { SectionTitle } from "./ui";
 
@@ -103,6 +104,7 @@ function Ready({ data }: { data: SeasonWeather }) {
           <DatasetLabel fact={data.rain} always />
         </a>
       </p>
+      <LeftOutNote months={data.rainLeftOut} className="px-3 pb-2" />
     </div>
   );
 }
