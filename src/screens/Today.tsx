@@ -12,13 +12,15 @@ import { encodeState } from "../state/url";
 import type { PlanChange, SavedPlan } from "../state/plan";
 import { dayStamp, forgetPlan, monthIndex, planChange, planKey, readPlan, writePlan } from "../state/plan";
 import { useAppState, useTo } from "../state/useAppState";
-import { CropSequence, OptionName, Slotted } from "../components/Crops";
+import { CropSequence, OptionName, Slotted, optionWords } from "../components/Crops";
 import { openRing } from "../components/FieldShape";
 import { ForecastNext } from "../components/ForecastNext";
 import { CheckIcon, ChevronIcon, RiskIcon, WarnIcon } from "../components/Icons";
 import { SeasonNow, shortDate } from "../components/SeasonNow";
 import { COVER_CLASS } from "../components/YearStrip";
-import { Button, Headline, SectionTitle } from "../components/ui";
+import { CropPlate } from "../components/CropPlate";
+import { formatNumber } from "../components/FactParts";
+import { Button } from "../components/ui";
 import { centroid } from "../geo/geometry";
 import { ownChecks } from "./check-share";
 
@@ -87,13 +89,23 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
 
   return (
     <div className="flex flex-col flex-1 phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
-      <Headline sub={`${bundle.field.name} · ${shortDate(today, lang)}`}>{t("today.title")}</Headline>
+      {/* As in the storyboard: the crop on the field, the month, and where. */}
+      <header className="px-4 pt-4 pb-2 flex items-center gap-3">
+        {best ? <CropPlate crop={best.option.isCurrent ? "durum" : best.option.sequence[0]} className="w-14 h-14" /> : null}
+        <div className="min-w-0">
+          <h1 className="text-head">{t("today.titleMonth", { month: monthName, inMonth: `${/^[aeiou]/i.test(monthName) ? "ad" : "a"} ${monthName}` })}</h1>
+          <p className="text-small text-ink-soft" data-testid="today-sub">
+            {best ? `${optionWords(best.option, t)} · ` : ""}
+            {bundle.field.name} · {formatNumber(bundle.field.areaHa, lang)} ha · {shortDate(today, lang)}
+          </p>
+        </div>
+      </header>
 
       <div
         data-testid="plan-change"
         data-change={change}
         role={change === "advice" ? "alert" : "status"}
-        className={`mx-4 p-3 bg-surface border-l-4 ${change === "advice" ? "border-warn" : "border-best"}`}
+        className={`mx-4 p-3 rounded-box ${change === "advice" ? "bg-note border-2 border-warn" : "bg-ok"}`}
       >
         <p className="flex items-start gap-2 text-body font-bold">
           {change === "advice" ? <WarnIcon className="w-6 h-6 flex-none text-warn" /> : <CheckIcon className="w-6 h-6 flex-none" />}
@@ -136,18 +148,16 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
       </div>
 
       {checks.length ? (
-        <section data-testid="today-todo">
-          <SectionTitle>
-            <span className="flex items-center justify-between">
-              {t("today.todo")}
-              <span className="normal-case tracking-normal" data-testid="todo-count">
-                {t("today.done", { n: ticked.length, total: checks.length })}
-              </span>
+        <section data-testid="today-todo" className="mx-4 mt-3 p-3 bg-surface border border-line rounded-box">
+          <h2 className="flex items-baseline justify-between gap-2 text-big">
+            {t("today.todo")}
+            <span className="text-small font-bold text-ink-soft" data-testid="todo-count">
+              {t("today.done", { n: ticked.length, total: checks.length })}
             </span>
-          </SectionTitle>
-          <ul className="px-4 flex flex-col">
+          </h2>
+          <ul className="mt-1 flex flex-col">
             {checks.map((check) => (
-              <li key={check} className="border-t border-line">
+              <li key={check} className="border-t border-line first:border-t-0">
                 <label className="tc-tap flex items-center gap-3 py-2 text-body">
                   <input
                     type="checkbox"
@@ -163,9 +173,9 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
         </section>
       ) : null}
 
-      <section data-testid="today-month">
-        <SectionTitle>{t("today.month", { month: monthName })}</SectionTitle>
-        <ul className="px-4 flex flex-col gap-2 text-body">
+      <section data-testid="today-month" className="mx-4 mt-3 p-3 bg-surface border border-line rounded-box">
+        <h2 className="text-big">{t("today.month", { month: monthName })}</h2>
+        <ul className="mt-2 flex flex-col gap-2 text-body">
           <li className="flex items-start gap-3">
             <span className={`inline-block w-6 h-6 flex-none border border-line-strong ${COVER_CLASS[month.cover]}`} aria-hidden="true" />
             <span>

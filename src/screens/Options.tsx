@@ -9,12 +9,13 @@ import { useAppState, useTo } from "../state/useAppState";
 import { PlaceholderNote, ScaleBadge, formatNumber } from "../components/FactParts";
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Fold } from "../components/Fold";
+import { HarvestCards } from "../components/HarvestCards";
 import { Findings } from "../components/Findings";
 import { SoilCard } from "../components/SoilCard";
 import { soilSummary } from "../data/soil";
 import { CropPlate } from "../components/CropPlate";
 import { ChevronIcon, WarnIcon } from "../components/Icons";
-import { CropName, CropSequence, Slotted, stripPair, stripsNext } from "../components/Crops";
+import { CropName, Slotted, stripPair, stripsNext } from "../components/Crops";
 import { OptionRow } from "../components/OptionRow";
 import { LinkButton } from "../components/ui";
 import { ReasonList } from "../components/Reasons";
@@ -39,9 +40,9 @@ function Recommendation({ best, current, economics }: { best: RankedOption | und
   const headline = option.isCurrent ? (
     <StayHeadline />
   ) : pair ? (
-    <Slotted text={t("options.plantStrips")} slots={{ a: <CropName crop={pair[0]} lower />, b: <CropName crop={pair[1]} lower /> }} />
+    <Slotted text={t("options.plantStrips")} slots={{ a: <CropWord crop={pair[0]} />, b: <CropWord crop={pair[1]} /> }} />
   ) : (
-    <Slotted text={t("options.plant")} slots={{ crop: <CropName crop={option.sequence[0]} lower /> }} />
+    <Slotted text={t("options.plant")} slots={{ crop: <CropWord crop={option.sequence[0]} /> }} />
   );
   const sowNext = option.isCurrent ? "durum" : option.sequence[0];
   const sure = option.facts.income.confidence;
@@ -53,17 +54,14 @@ function Recommendation({ best, current, economics }: { best: RankedOption | und
       <div className="flex items-center gap-3">
         <CropPlate crop={sowNext} big className="w-24 h-24" />
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-small font-bold uppercase tracking-wider text-wheat-ink">{t("options.kicker")}</p>
-            <ReadButton />
-          </div>
+          <p className="text-small font-bold uppercase tracking-wider text-wheat-ink">{t("options.kicker")}</p>
           <h1 className="text-head" data-testid="rec-headline">
             {headline}
           </h1>
         </div>
       </div>
-      <div className="mt-3" data-testid="rec-harvests">
-        <CropSequence option={option} size="lg" />
+      <div className="mt-4" data-testid="rec-harvests">
+        <HarvestCards option={option} />
       </div>
       {/* The warnings the farmer's own limits add to the advice (the same marks as on the other choices' rows). */}
       {best.flags.length ? (
@@ -77,7 +75,7 @@ function Recommendation({ best, current, economics }: { best: RankedOption | und
         </p>
       ) : null}
       <div className="mt-3">
-        <ReasonList reasons={reasonsFor(option, current, state.priorities)} option={option} testId="rec-reasons" />
+        <ReasonList reasons={reasonsFor(option, current, state.priorities)} option={option} testId="rec-reasons" badges />
       </div>
       {/* One honest line on how sure the app is, right beside the claim, instead of a badge on every row. */}
       <p className="mt-3 px-3 py-2 rounded-box bg-note text-body" data-testid="how-sure" data-confidence={sure}>
@@ -87,10 +85,17 @@ function Recommendation({ best, current, economics }: { best: RankedOption | und
   );
 }
 
-/** "Keep durum: fits best", with durum's icon. */
+/** A crop's name inside the headline, in lower case and without its icon: the plate beside the headline is the picture. */
+function CropWord({ crop }: { crop: CropId }) {
+  const t = useT();
+  const lang = useLang();
+  return <span data-crop={crop}>{t(`crop.${crop}`).toLocaleLowerCase(lang)}</span>;
+}
+
+/** "Keep durum: fits best". */
 function StayHeadline() {
   const t = useT();
-  return <Slotted text={t("options.stay")} slots={{ crop: <CropName crop="durum" lower /> }} />;
+  return <Slotted text={t("options.stay")} slots={{ crop: <CropWord crop="durum" /> }} />;
 }
 
 /** How many other choices show before "More options". */
@@ -121,6 +126,8 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
   const [state, setState] = useAppState();
   const current = bundle.options.find((o) => o.isCurrent);
   const [more, setMore] = useState(false);
+  // The "Other choices" button opens the list below and scrolls to it.
+  const [showOthers, setShowOthers] = useState(0);
   const { ranked, removed, repeats, intercrops: waiting } = rankOptions({
     options: bundle.options,
     limits: state.limits,
@@ -141,7 +148,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
   // When every other choice is as sure (or unsure) as the next, it is said once above the list, not on every row.
   const sures = new Set(others.map((r) => r.option.facts.income.confidence));
   const sharedSure = sures.size === 1 ? [...sures][0] : null;
-  const soil = soilSummary(bundle);
+  const soil = soilSummary(bundle, { weight: state.soilWeight, ph: state.soilPh });
   // Where an intercrop would go on this field: the strip option that pairs the advised crop, else the first one.
   const sowNext = best ? best.option.sequence[0] : undefined;
   const intercrop = best?.option.strips
@@ -153,12 +160,15 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       {/* Held sideways: the plan on the left, the other choices on the right. */}
       <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
       <div className="flex flex-col min-w-0">
-      <p className="px-4 pt-3 flex items-center gap-2 text-small font-bold text-ink-soft" data-testid="field-line">
-        <FieldShape ring={openRing(bundle.field.outline.coordinates)} className="w-6 h-6 flex-none" />
-        <span>
-          {bundle.field.name} · {formatNumber(bundle.field.areaHa, lang)} ha
-        </span>
-      </p>
+      <div className="px-4 pt-2 flex items-center gap-2">
+        <p className="flex-1 min-w-0 flex items-center justify-center gap-2 text-small font-bold text-ink-soft" data-testid="field-line">
+          <FieldShape ring={openRing(bundle.field.outline.coordinates)} className="w-5 h-5 flex-none" />
+          <span className="truncate">
+            {bundle.field.name} · {formatNumber(bundle.field.areaHa, lang)} ha
+          </span>
+        </p>
+        <ReadButton />
+      </div>
       <AreaNote bundle={bundle} />
       {bundle.field.basin && bundle.field.basin.farmlandShare < FARMLAND_NOTE_BELOW ? (
         <p className="px-4 pt-1 flex items-start gap-2 text-small font-bold" data-testid="farmland-note">
@@ -169,22 +179,30 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       <Recommendation best={best} current={current} economics={bundle.economics} />
       {best?.option.strips ? <StripMap option={best.option} bundle={bundle} /> : null}
 
-      {/* What to do with the plan: keep it, share it, or ask why. */}
+      {/* What to do with the plan, as in the storyboard: ask why or look at the other choices, then keep it. */}
       <div className="px-4 pt-2 pb-3 flex flex-col gap-2" data-testid="plan-actions">
-        <LinkButton to={to("/today")} testId="keep-plan" className="min-h-14 text-big">
-          {t("options.keep")}
-        </LinkButton>
         <div className="grid grid-cols-2 gap-2">
           {best ? (
             <LinkButton to={to(`/why/${best.option.id}`)} look="secondary" testId="branch-why" className="min-h-12">
               {t("options.why")}
             </LinkButton>
           ) : null}
-          <LinkButton to={to("/adviser")} look="secondary" testId="share-plan" className="min-h-12">
-            {t("options.share")}
-          </LinkButton>
+          <button
+            type="button"
+            data-testid="others-button"
+            onClick={() => setShowOthers((n) => n + 1)}
+            className="tc-tap min-h-12 inline-flex items-center justify-center gap-2 px-3 rounded-box font-bold text-body bg-surface text-ink border-2 border-line-strong"
+          >
+            {t("options.others", { n: others.length })}
+          </button>
         </div>
-        <p className="self-center flex flex-wrap items-baseline justify-center gap-x-2 text-body">
+        <LinkButton to={to("/today")} testId="keep-plan" className="min-h-14 text-big">
+          {t("options.keep")}
+        </LinkButton>
+        <p className="self-center flex flex-wrap items-baseline justify-center gap-x-3 text-body">
+          <Link to={to("/adviser")} data-testid="share-plan" className="min-h-11 inline-flex items-center underline underline-offset-4">
+            {t("options.share")}
+          </Link>
           <span className="text-ink-soft" data-testid="priority-summary">
             {t("options.priorities")}: {state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ") || t("common.noData")}
           </span>
@@ -233,6 +251,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
       ) : null}
       <Fold
         testId="fold-options"
+        openSignal={showOthers}
         title={t("options.others", { n: others.length })}
         summary={sharedScale ? <ScaleBadge scale={sharedScale} /> : null}
       >

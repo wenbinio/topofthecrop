@@ -200,7 +200,9 @@ describe("crop icons beside crop names", () => {
     renderAt("/options?f=genzano-demo&p=soil,income");
     const headline = await screen.findByTestId("rec-headline");
     expect(headline).toHaveTextContent("Plant faba bean next");
-    expect(cropIconsIn(headline)).toEqual(["faba"]);
+    // The headline names the crop in words; its plate stands beside it, so there is no icon inside the sentence.
+    expect(cropIconsIn(headline)).toEqual([]);
+    expect(within(headline).getByText("faba bean")).toHaveAttribute("data-crop", "faba");
     const row = screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === "chickpea-durum-durum")!;
     expect(cropIconsIn(row)).toEqual(["chickpea"]);
     cleanup();
@@ -219,9 +221,9 @@ describe("crop icons beside crop names", () => {
   });
 
   it("the icon is hidden from screen readers so the name is read once", async () => {
-    renderAt("/options?f=genzano-demo&p=soil,income");
-    const headline = await screen.findByTestId("rec-headline");
-    const icon = within(headline).getByTestId("crop-icon");
+    renderAt("/why/faba-durum-faba?f=genzano-demo&p=soil,income");
+    const heading = await screen.findByRole("heading", { level: 1 });
+    const icon = within(heading).getByTestId("crop-icon");
     expect(icon).toHaveAttribute("aria-hidden", "true");
     expect(icon.querySelector("title")).toBeNull();
   });

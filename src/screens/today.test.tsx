@@ -95,7 +95,8 @@ describe("Your field today", () => {
     const message = await screen.findByTestId("plan-change");
     expect(message).toHaveAttribute("data-change", "first");
     expect(message).toHaveTextContent("This plan is now kept on this phone.");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Your field today");
+    const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(new Date());
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(`Your field in ${month}`);
     await waitFor(() => expect(readPlan()).toMatchObject({ key: KEY, bestId: CHICKPEA, field: fixture.field.name, savedAt: dayStamp(new Date()) }));
     expect(screen.getByTestId("today-phone")).toHaveTextContent("The app cannot alert you while it is closed");
     // Outside the six steps, like Settings.

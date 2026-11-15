@@ -134,7 +134,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
   });
   const best = ranked[0];
   const link = shareLink("/options", state);
-  const soil = soilSummary(bundle);
+  const soil = soilSummary(bundle, { weight: state.soilWeight, ph: state.soilPh });
   // The best fit in each kind of year (usual, dry, driest), as on Field year.
   const kinds = SCENARIOS.map((scenario) => ({
     scenario,
@@ -203,8 +203,12 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
             ))}
             {soil ? (
               <li className="py-0.5" data-testid="print-soil">
-                <b>{t("soil.print")}</b>: {t(`soil.weight.${soil.weight}`)} ({t(`soil.texture.${soil.texture}`)})
-                {soil.band && soil.ph ? `; ${t(`soil.ph.${soil.band}`)}, pH ${valueText(soil.ph, t, lang)}` : ""}
+                <b>{t("soil.print")}</b>: {t(`soil.weight.${soil.weight}`)} ({soil.own.weight ? t("money.yours") : t(`soil.texture.${soil.texture}`)})
+                {soil.band && soil.own.ph && soil.ownPh !== undefined
+                  ? `; ${t(`soil.ph.${soil.band}`)}, ${t("soil.phYours", { ph: String(soil.ownPh) })}`
+                  : soil.band && soil.ph
+                    ? `; ${t(`soil.ph.${soil.band}`)}, pH ${valueText(soil.ph, t, lang)}`
+                    : ""}
                 {soil.measuredPh ? ` (${t("soil.measured")} ${valueText(soil.measuredPh, t, lang)})` : ""} · {sourceText(soil.figures[0].source.dataset, lang)}{" "}
                 {sourceText(soil.figures[0].source.resolution, lang)}. {t("soil.estimate")} {t("soil.notRanked")}
               </li>

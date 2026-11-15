@@ -6,7 +6,8 @@ import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LAST_CROP_NAME_MAX, 
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
  * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities (in the farmer's order, most important first), i strip intercrops shown (1), v view, g language, m money,
  * (`s`, the stop of the old dry-year slider, is ignored: old links open as a usual year.)
- * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded).
+ * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded),
+ * sw the farmer's own kind of ground (heavy, medium, light), sph their soil-test pH (3 to 10, one decimal).
  */
 export function encodeState(state: AppState): string {
   const params = new URLSearchParams();
@@ -28,6 +29,8 @@ export function encodeState(state: AppState): string {
   const extras = state.extras.slice(0, MAX_EXTRAS).map(extra =>
     `${encodeName(extra.name)}~${extra.amount}~${extra.crops.join(',')}`).join('|');
   if (extras) params.set('x', extras);
+  if (state.soilWeight) params.set('sw', state.soilWeight);
+  if (state.soilPh !== null && validPh(state.soilPh)) params.set('sph', String(Math.round(state.soilPh * 10) / 10));
   return params.toString();
 }
 
@@ -55,7 +58,20 @@ export function decodeState(query: string): AppState {
     lang: params.get('g') === 'it' ? 'it' : DEFAULT_STATE.lang,
     money: parseMoney(params.get('m') ?? ''),
     extras: parseExtras(params.get('x') ?? ''),
+    soilWeight: (['heavy', 'medium', 'light'] as const).find(w => w === params.get('sw')) ?? null,
+    soilPh: phFrom(params.get('sph')),
   };
+}
+
+/** A soil pH a farmer could have measured. */
+export function validPh(ph: number): boolean {
+  return Number.isFinite(ph) && ph >= 3 && ph <= 10;
+}
+
+function phFrom(raw: string | null): number | null {
+  if (raw === null || raw.trim() === '') return null;
+  const ph = Number(raw);
+  return validPh(ph) ? Math.round(ph * 10) / 10 : null;
 }
 
 /** The typed name of an "other" last crop: trimmed, at most LAST_CROP_NAME_MAX characters; "" for any other last crop. */

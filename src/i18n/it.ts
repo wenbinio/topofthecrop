@@ -765,4 +765,15 @@ export const it: Dict = {
   "options.weak.costs": "i costi ({crop})",
   "options.weak.lift": "il grano duro in più dopo {crop}",
   "options.sureWhy.lowParts": "Dati non ancora verificati con una fonte locale: {parts}. Prima di seminare, confrontati con un tecnico.",
+  // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
+  "options.harvestYear": "Raccolto {year}",
+  "today.titleMonth": "Il tuo campo {inMonth}",
+  // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
+  "soil.edit": "Cambia",
+  "soil.editHead": "Com'è il tuo terreno?",
+  "soil.phLabel": "pH da un'analisi del terreno, se ce l'hai",
+  "soil.done": "Fatto",
+  "soil.reset": "Usa di nuovo la mappa dei suoli",
+  "soil.yours": "L'hai scelto tu; la mappa dei suoli dice {map}.",
+  "soil.phYours": "pH {ph}, dalla tua analisi",
 };

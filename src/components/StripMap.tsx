@@ -6,6 +6,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { CropId, FieldBundle, Option } from "../data/types";
 import { soilSummary } from "../data/soil";
+import type { OwnSoil } from "../data/soil";
+import { useAppState } from "../state/useAppState";
 import { useLang, useT } from "../i18n";
 import { formatNumber } from "./FactParts";
 import { CropPlate } from "./CropPlate";
@@ -99,11 +101,11 @@ export function moistFirst(pair: [CropId, CropId]): [CropId, CropId] {
 }
 
 /** Why this pair suits this field, from its own figures: soil, heat at flowering, rain. Keys and values for the lines. */
-export function pairFit(bundle: FieldBundle, pair: [CropId, CropId]): { key: string; vars: Record<string, string | number> }[] {
+export function pairFit(bundle: FieldBundle, pair: [CropId, CropId], own: OwnSoil = { weight: null, ph: null }): { key: string; vars: Record<string, string | number> }[] {
   const legume = pair.find((c) => c !== "durum" && c !== "barley") ?? pair[0];
   const kind = legume === "chickpea" ? "chickpea" : legume === "faba" ? "faba" : "other";
   const lines: { key: string; vars: Record<string, string | number> }[] = [];
-  const soil = soilSummary(bundle);
+  const soil = soilSummary(bundle, own);
   if (soil) lines.push({ key: `strips.fit.soil.${soil.weight}.${kind}`, vars: { crop: legume } });
   const hot = bundle.year.hotDays.normal.now.value;
   const hotDry = bundle.year.hotDays.drier.now.value;
@@ -169,6 +171,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const t = useT();
   const lang = useLang();
   const outline = bundle.field.outline;
+  const [appState] = useAppState();
   const clipId = useId();
   // Every layout is drawn in the satellite tiles' own frame, so it can sit over the picture of the field.
   const win = useMemo(() => tileWindow(outline), [outline]);
@@ -232,7 +235,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const space = layout === "space" && zones.status === "ready" ? zones.data : null;
   const sides = space ? splitByVigour(space.cells) : [];
   const agree = space ? Math.round(agreement(space.cells, sides) * 100) : 0;
-  const fit = pairFit(bundle, pair);
+  const fit = pairFit(bundle, pair, { weight: appState.soilWeight, ph: appState.soilPh });
   const pts = (poly: Pt[]) => poly.map((p) => p.join(",")).join(" ");
   // See-through over the picture, so the field shows under the colours; nearly solid when there is no picture.
   const alpha = backdrop ? 0.28 : 0.9;

@@ -233,6 +233,9 @@ export type AppState = {
   lang: Lang;
   money: Money; // the farmer's own prices and support, where they differ from the bundle's
   extras: ExtraSupport[]; // payments the farmer added that the bundle does not know, at most MAX_EXTRAS
+  /** The farmer's own soil, where they corrected the soil map: their kind of ground, and a pH from a soil test. */
+  soilWeight: "heavy" | "medium" | "light" | null;
+  soilPh: number | null;
 };
 
 /** A payment the farmer added in Settings. Always on; paid in the years the field grows one of `crops` (empty: every year). */
@@ -298,4 +301,6 @@ export const DEFAULT_STATE: AppState = {
   lang: "en",
   money: {},
   extras: [],
+  soilWeight: null,
+  soilPh: null,
 };
