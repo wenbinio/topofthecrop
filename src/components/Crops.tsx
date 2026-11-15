@@ -4,6 +4,7 @@ import type { CropId, Option } from "../data/types";
 import { CROPS } from "../data/types";
 import { useLang, useT } from "../i18n";
 import { CropIcon } from "./Icons";
+import { CropPlate } from "./CropPlate";
 
 /**
  * A crop's name with its icon right before it. Use this wherever a crop is named, never a bare `t("crop.x")`.
@@ -78,20 +79,20 @@ export function PaidIn({ crops }: { crops: CropId[] }) {
 export function CropSequence({ option, size = "md" }: { option: Option; size?: "md" | "lg" }) {
   const t = useT();
   const beside = option.strips;
-  const icon = size === "lg" ? "w-9 h-9" : "w-[1.375rem] h-[1.375rem]";
-  const half = size === "lg" ? "w-7 h-7" : "w-[1.125rem] h-[1.125rem]";
+  const icon = size === "lg" ? "w-16 h-16" : "w-11 h-11";
+  const half = size === "lg" ? "w-11 h-11" : "w-8 h-8";
   const names = (crop: CropId, i: number) => (beside && beside[i] !== crop ? `${t(`crop.${crop}`)} + ${t(`crop.${beside[i]}`)}` : t(`crop.${crop}`));
   return (
     <ol className="flex gap-1.5" aria-label={option.sequence.map(names).join(", ")}>
       {option.sequence.map((crop, i) => (
-        <li key={i} className={`flex flex-col items-center ${beside ? (size === "lg" ? "w-16" : "w-11") : "w-10"}`}>
+        <li key={i} className={`flex flex-col items-center ${beside ? (size === "lg" ? "w-[5.75rem]" : "w-[4.25rem]") : size === "lg" ? "w-16" : "w-11"}`}>
           {beside && beside[i] !== crop ? (
             <span className="flex items-center gap-0.5" data-testid="strip-year">
-              <CropIcon crop={crop} className={half} title={t(`crop.${crop}`)} />
-              <CropIcon crop={beside[i]} className={half} title={t(`crop.${beside[i]}`)} />
+              <CropPlate crop={crop} className={half} title={t(`crop.${crop}`)} />
+              <CropPlate crop={beside[i]} className={half} title={t(`crop.${beside[i]}`)} />
             </span>
           ) : (
-            <CropIcon crop={crop} className={icon} title={t(`crop.${crop}`)} />
+            <CropPlate crop={crop} className={icon} big={size === "lg"} title={t(`crop.${crop}`)} />
           )}
           <span className="text-small font-bold text-ink-soft">{option.firstHarvestYear + i}</span>
         </li>

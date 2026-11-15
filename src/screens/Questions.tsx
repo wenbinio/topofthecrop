@@ -6,7 +6,7 @@ import { useT } from "../i18n";
 import { economicsCrops } from "../money/money";
 import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
-import { CropName } from "../components/Crops";
+import { CropPlate } from "../components/CropPlate";
 import { BackIcon, CheckIcon } from "../components/Icons";
 import { MIN_RANKED, PRIORITY_ICON, RankMark, togglePriority } from "../components/Reasons";
 import { PriorityHelp, priorityLine } from "../components/Term";
@@ -96,7 +96,10 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       <div role="radiogroup" aria-label={t("q.lastCrop")} className="grid grid-cols-2 gap-2 px-4" data-testid="last-crop">
         {crops.map((crop) => (
           <Choice key={crop} role="radio" on={state.lastCrop === crop} onClick={() => setState({ lastCrop: crop, lastCropName: "" })}>
-            <CropName crop={crop} iconClassName="w-6 h-6" wrap />
+            <span className="flex flex-col items-center gap-1 text-center" data-crop={crop}>
+              <CropPlate crop={crop} className="w-20 h-20" />
+              {t(`crop.${crop}`)}
+            </span>
           </Choice>
         ))}
         <Choice role="radio" on={state.lastCrop === "other"} onClick={() => setState({ lastCrop: "other", lastCropName: name })}>

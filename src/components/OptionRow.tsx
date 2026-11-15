@@ -61,7 +61,7 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
               <span className="text-small font-bold"> {unitText(income.unit, t)}{t("unit.perYear")}</span>
             </span>
           </div>
-          <div className="flex items-end justify-between gap-2">
+          <div className="flex flex-wrap items-end justify-between gap-2">
             <CropSequence option={option} size={simple ? "lg" : "md"} />
             {simple ? (
               <span className="inline-flex items-center gap-1 pb-1 font-bold text-body" title={t("fact.risk")}>
