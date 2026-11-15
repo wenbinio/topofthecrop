@@ -189,7 +189,7 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 ## 9. What is weak or unfinished
 
 - **Never tried on a real phone.** Touch drawing, edge-finding, Settings inputs, rotation and voice have only been checked in a desktop browser or by tests.
-- **Crop figures are unverified.** Costs and nitrogen for every crop except durum are recalled, not sourced. See `docs/crops-research.md`.
+- **Some crop figures are unverified.** Direct costs for every crop except durum and chickpea are recalled, not sourced; nitrogen figures sit inside published ranges but were not measured here. See `docs/crops-research.md`, "Costs and nitrogen: the sources".
 - **Two things are still our judgement:** each rotation's risk rating and the priority score rules. Both are marked as placeholders.
 - **The yield lift covers two crops only.** Durum counts 16% then 10% more grain after chickpea and 12% more after faba bean (`durumAfter` in the bundle, `yieldLift` in `src/money/money.ts`). Lentil, pea and vetch get none because no figure was found, which tilts the comparison. The figures come from the team's research compilation; nobody opened the papers.
 - **The Standard Options screen is long**, well over the 40-word target in the README.

@@ -235,7 +235,9 @@ describe("income confidence", () => {
 describe("strip intercrops", () => {
   it("stay out of the list until asked for, then rank with the rest and can be the advice", async () => {
     serve(shipped);
-    renderAt("/options?f=genzano-demo&p=income,water");
+    // Water first: the strips need less water than chickpea alone, so they can come out on top. (With income first
+    // they no longer do: chickpea's sourced costs, 15 November 2026, hit the strips every year.)
+    renderAt("/options?f=genzano-demo&p=water,income");
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
     const toggle = screen.getByTestId("intercrops-toggle");
     expect(toggle).toHaveAttribute("aria-checked", "false");

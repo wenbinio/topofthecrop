@@ -26,12 +26,12 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 ## 3. Options (Income first, Water second)
 
 - [ ] *What we see*: bare after harvest **2 months**, hot flowering **4 days**, autumn rain **156 mm**.
-- [ ] Order: **Chickpea 729 €/ha/yr** (Best fit), Lentil 597, Coriander 548, Rapeseed 621.
+- [ ] Order: **Chickpea 715 €/ha/yr** (Best fit), Lentil 603, Coriander 555, Rapeseed 628.
 
 ## 4. Why (tap Chickpea)
 
 - [ ] The screen opens with *Why this option*, six steps: less green than usual; more hot flowering days; falling off with heat; across the area; picked income; picked water.
-- [ ] *Over three harvests*: per year **729**; durum 2028 shows "+16% grain after chickpea", 2029 "+10%". *What the columns mean* opens on a tap.
+- [ ] *Over three harvests*: per year **715**; durum 2028 shows "+16% grain after chickpea", 2029 "+10%". *What the columns mean* opens on a tap.
 - [ ] *What the data shows*, each line once, each with a *Source* to tap: hot flowering days **4** (range 0–8), bare months **2** (1–6), Oct–May rain **542 mm** (418–631), water durum needs **509 mm** (487–544), topsoil clay **37%**, soil water in spring **30.1%** (27.4–32), water crops used **319 mm** (277–346).
 
 ## 5. Year

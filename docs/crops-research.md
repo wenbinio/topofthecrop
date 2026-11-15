@@ -10,8 +10,8 @@ The app's figures are the "In the app" columns. Where the two researchers differ
 
 | Crop (id) | Yield t/ha | Price €/t | Direct costs €/ha | N left for next crop kg/ha | Water need | Cereal machinery | Buyer | Broomrape host | Confidence |
 |---|---|---|---|---|---|---|---|---|---|
-| Durum wheat (`durum`) | 3.0 (2.0–4.0) | 290 (255–337) | 685 (600–900) | 0 | medium | yes | yes | no | fair |
-| Chickpea (`chickpea`) | 1.4 (0.8–2.2) | 700 (500–950) | 540 (480–750) | 20 (15–40) | low | yes | limited | partly | low |
+| Durum wheat (`durum`) | 3.0 (2.0–4.0) | 290 (255–337) | 675 (600–900) | 0 | medium | yes | yes | no | fair |
+| Chickpea (`chickpea`) | 1.4 (0.8–2.2) | 700 (500–950) | 600 (480–800) | 20 (15–40) | low | yes | limited | partly | low |
 | Faba bean (`faba`) | 2.0 (1.2–3.0) | 255 (240–275) | 500 (450–650) | 35 (30–60) | medium | yes | yes | yes | low |
 | Vetch-oat hay (`vetch-oat`) | 4.5 (2.5–7.0) | 120 (80–150) | 485 (350–600) | 20 (10–40) | low | no (mower, rake, baler) | limited | partly | low |
 | Lentil (`lentil`) | 1.0 (0.5–1.8) | 780 (700–1000) | 510 (450–700) | 20 (15–35) | low | yes, with a low cut | yes | yes | low |
@@ -28,10 +28,45 @@ Each figure opens its source from a tap in the app.
 
 - **Durum yield:** the trial at the demo field, Denora et al. (2025), https://doi.org/10.1016/j.ijagro.2025.100045.
 - **Prices**, from the exchange lists someone opened: durum from the national durum list and the Foggia exchange; chickpea, faba bean and barley from the Foggia and Bari lists; lentil from Bari; field pea from Bologna; vetch–oat hay from northern hay quotes.
-- **Every other crop figure** cites these notes as "Our crop research notes, 14 Nov 2026", linked to the table above. That covers yields other than durum, every direct cost, nitrogen left, water need, machinery, buyer, broomrape status, and the rapeseed and coriander prices.
+- **Direct costs:** durum from ISMEA's 2025 survey of southern durum; chickpea worked out from Lago-Olveira et al. (2023) and that survey. The other crops have no published southern budget yet and cite these notes. See "Costs and nitrogen: the sources" below.
+- **Nitrogen left for the next crop:** each legume cites the studies its figure sits within; a crop that is not a legume cites the comparison showing it leaves no extra nitrogen. See below.
+- **Every other crop figure** cites these notes as "Our crop research notes, 14 Nov 2026", linked to the table above. That covers yields other than durum, the remaining direct costs, water need, machinery, buyer, broomrape status, and the rapeseed and coriander prices.
 - **Each rotation:** its income is worked out from these figures and the payments (`docs/scoring.md`, "How the income figure is worked out"). Its nitrogen and water come from its first crop here. Its risk is our own rule (`docs/scoring.md`, "Each rotation's risk").
 
 The full list of sources, with links, is in `DATA_SOURCES.md`, "Crop, price and support figures".
+
+## Costs and nitrogen: the sources
+
+Checked on 15 November 2026. Direct costs here mean seed, fertiliser, crop protection, fuel and contractors: no labour, land or overheads.
+
+**Direct costs (€/ha)**
+
+| Crop | In the app | Source | How it fits |
+|---|---|---|---|
+| Durum | 675 (600–900) | ISMEA, *Monitoraggio dei costi medi di produzione: raccolto frumento 2025*, the Puglia, Sicily and Basilicata cluster, as reported by AgroNotizie on 31 December 2025: fertiliser 185.8, crop protection 75.4, seed 141.5, energy and water 101.8, contractors 170, in all 674.5 €/ha. Labour adds 197.5 and general and fixed costs 298.4, for 1,170.3 €/ha in all at 3.68 t/ha | The figure is ISMEA's direct costs. It was 685, from an earlier reading of the same survey |
+| Chickpea | 600 (480–800) | Lago-Olveira et al. (2023), Puglia, Tables S1 and S2 as copied in `research-compilation/`: chickpea inputs about 457 €/ha (DAP 306, seed 67, herbicides 84) and field operations 219, about 676 in all, against about 780 for wheat, so chickpea costs about 87% of wheat's. Applied to ISMEA's 675 for durum, that is about 590. A 2023 agronomic report for a site near Matera gives 800 €/ha (from RICA Puglia 2017) | Raised from 540, which was below both. The range runs from the researchers' lowest figure (480) to the Matera report (800) |
+| Faba bean, lentil, pea, barley, rapeseed, coriander, vetch–oat hay | Unchanged | No published cost budget for southern Italy was found. The search covered ISMEA, CREA's farm accounts (RICA), Basilicata's rural development payment calculations and the farming press. The owner's comparison (`docs/durum-vs-faba-rotation-margins.md`) puts faba bean at 540–645 €/ha, from grower forums | Still from these notes, confidence low |
+
+**Nitrogen left for the next crop (kg N/ha)**
+
+| Crop | In the app | Sources | How it fits |
+|---|---|---|---|
+| Faba bean | 35 (30–60) | Tedone, Alhajj Ali and De Mastro (2023), *Agronomy* 13(1), 105: faba bean before durum near Bari, 2012–14. The nitrogen balance was +40.4 on average (45.7 under no tillage), and the authors cite a saving of 30 kg of fertiliser N | Inside 30–46 |
+| Chickpea | 20 (15–40) | Giambalvo et al. (2004), *Options Méditerranéennes* A60, Sicily, 1999–2001: crop residues returned 46.2 kg N/ha after chickpea against 27.0 after wheat (19 more). Preissel et al. (2015): fertiliser N after grain legumes can be cut by 23–31 | Inside |
+| Field pea | 25 (20–40) | Preissel et al. (2015): 23–31. In Sicily, Giambalvo et al. (2004) found only 9 more than after wheat (36.3 against 27.0), and a 2024 dryland study in north-east Spain found pea's net balance close to neutral | Inside the review's range; Mediterranean trials point lower |
+| Lentil | 20 (15–35) | GRDC (2018), 16 dryland trials in eastern Australia: soil mineral N after legumes (field pea, chickpea, lupin, faba bean, lentil, vetch) was 35 ± 20 kg N/ha higher than after wheat, barley or canola | Inside 15–55, at the low end. No lentil trial in Italy was found |
+| Vetch–oat hay | 20 (10–40) | GRDC (2018) as above, vetch included. Cut for hay, most of the crop's nitrogen leaves the field | Inside. No hay-specific figure was found |
+| Durum, barley, rapeseed, coriander | None | GRDC (2018) measures the legumes against wheat, barley and canola, which add no extra nitrogen | Matches. Straw dug in can even tie up nitrogen for a while; the app does not count that |
+
+Sources:
+- [ISMEA's 2025 durum cost survey, southern cluster (AgroNotizie)](https://agronotizie.imagelinenetwork.com/agricoltura-economia-politica/2025/12/31/frumento-duro-produzione-piu-competitiva-al-centro-che-al-sud/88636)
+- [Lago-Olveira et al. 2023, Science of the Total Environment 896, 165124](https://doi.org/10.1016/j.scitotenv.2023.165124)
+- [Agronomic report for an agrivoltaic project at Matera and Santeramo in Colle, March 2023 (Ministry of Environment)](https://va.mite.gov.it/File/Documento/817030)
+- [Tedone et al. 2023, Agronomy 13(1), 105](https://doi.org/10.3390/agronomy13010105)
+- [Giambalvo et al. 2004, Options Méditerranéennes A60](https://om.ciheam.org/article.php?IDPDF=4600059)
+- [Preissel et al. 2015, Field Crops Research 175, 64–79](https://doi.org/10.1016/j.fcr.2015.01.012)
+- [Grain legumes and wheat in north-east Spain, Field Crops Research 2024](https://doi.org/10.1016/j.fcr.2024.109307)
+- [GRDC 2018, rules of thumb for soil N after pulses](https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability)
 
 ## What each researcher found
 
@@ -56,9 +91,9 @@ The full list of sources, with links, is in `DATA_SOURCES.md`, "Crop, price and 
 - Eco-scheme 4's official list of renewal crops includes sunflower, rapeseed, coriander, pea and chickpea; herbicides and other plant protection products are banned on the legume or forage crop.
 
 **Not verified**
-- **Costs for every crop except durum** are recalled or derived from total-cost tables. Neither researcher found a Basilicata or Puglia cost table by crop.
-- **Durum direct costs:** Hydrogen gave an ISMEA split for the South (fertiliser about 188, seed 143, crop protection 78, energy 103, contractors 170 €/ha), which is what the app uses; Opus found only totals of 900 to 1,200 €/ha, which include more than direct costs.
-- **Nitrogen left for the next crop** is recalled by both and they differ by up to a factor of two.
+- **Costs for every crop except durum and chickpea** are recalled or derived from total-cost tables. Neither researcher, nor the check on 15 November, found a Basilicata or Puglia cost table by crop.
+- **Durum and chickpea direct costs** are now sourced (see "Costs and nitrogen: the sources"): durum from ISMEA's 2025 survey, chickpea worked out from Lago-Olveira et al. (2023).
+- **Nitrogen left for the next crop** was recalled by both researchers, who differed by up to a factor of two. Each legume's figure now sits inside the range of published studies (see below), but none was measured at this field.
 - **Yields other than durum** are recalled; no provincial statistics were found.
 - **Hay prices:** no southern quote exists; both used northern exchanges.
 - Water need, broomrape status and sowing months are the researchers' agronomic judgement.
