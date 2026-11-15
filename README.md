@@ -108,6 +108,7 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 | Aerial photos on top, where they exist: AGEA orthophotos, flights 2022 to 2024, loaded live from AGEA's tile service. CC BY 4.0 (AGEA legal notes: "messe a disposizione per il riutilizzo alle condizioni della licenza Creative Commons BY 4.0"). About 1.8 m in Basilicata, finer in Puglia. | Seeing tracks, trees and field corners |
 | Cadastral parcels of Genzano di Lucania: Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS). CC BY 4.0, stated in the service's own capabilities document. Downloaded ahead of time into `public/parcels/`. | Finding a field by its sheet and parcel numbers |
 | Weather forecast: MET Norway, Locationforecast 2.0, loaded live. CC BY 4.0 and NLOD 2.0 (MET Norway's licence page); its terms allow calls straight from a web page. Credit shown: "Data from MET Norway". | Rain and the coldest night over the next seven days |
+| Field timelapse (not linked yet, `#/timelapse`): Sentinel-2 L2A from Microsoft Planetary Computer, loaded live. Its STAC API finds the scenes and its data API draws map tiles of them; neither needs an account or key. Copernicus Sentinel data are free, full and open (Sentinel Data Legal Notice); the Planetary Computer's Supplemental Terms of Use for Previews say previews are not meant for production use, though that is not prohibited. Credit shown: "Contains modified Copernicus Sentinel data [years]". | One clear picture a month of the farmer's own field, last three years |
 
 ### Rules for honest numbers
 

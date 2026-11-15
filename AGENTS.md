@@ -116,6 +116,7 @@ Payments the farmer adds travel in `x`. A typed figure counts as "fair" confiden
 | AGEA orthophotos (WMTS) | Aerial photos on the map | CC BY 4.0 | Use the WMTS tile path; `exportImage` returns a blank checkerboard |
 | EOX Sentinel-2 cloudless 2016, NASA GIBS Blue Marble | Map layers | CC BY 4.0, public domain | |
 | Photon | Town search | Open | |
+| Microsoft Planetary Computer (STAC API, data API) | Field timelapse, `#/timelapse`, not linked yet | Copernicus Sentinel data: free, full and open, with the notice "Contains modified Copernicus Sentinel data [years]"; Planetary Computer previews: no account, not meant for production but not prohibited | Sentinel-2 at 10 m; tiles are JPEG with a PNG fallback |
 
 A web page cannot read the phone's own weather app or call the cadastre directly; parcels are downloaded ahead of time.
 
