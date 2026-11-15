@@ -181,7 +181,7 @@ describe("crop icons beside crop names", () => {
     cleanup();
 
     renderAt("/year?f=genzano-demo&p=income,water");
-    expect(cropIconsIn(await screen.findByTestId("year-best"))).toEqual(["chickpea"]);
+    expect(cropIconsIn(await screen.findByTestId("year-best-normal"))).toEqual(["chickpea"]);
     cleanup();
 
     renderAt("/settings?f=genzano-demo&p=income,water");

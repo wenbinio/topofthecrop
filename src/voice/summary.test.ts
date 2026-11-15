@@ -44,11 +44,14 @@ describe("screenSummary", () => {
     expect(screenSummary("/why/nothing", bundle, state("en"))).toBe("Option not in your list.");
   });
 
-  it("Year: hot days now and by 2050 at the chosen stop, and the best fit", () => {
-    expect(screenSummary("/year", bundle, state("en"))).toBe("Hot flowering days, normal: 9 days now, 17 days by 2050. Best fit then: Chickpea.");
-    expect(screenSummary("/year", bundle, state("it"))).toBe("Caldo in fioritura, normale: 9 giorni oggi, 17 giorni al 2050. Più adatta allora: Cece.");
-    expect(screenSummary("/year", bundle, state("en", ["income", "water"], { scenario: "much-drier" }))).toMatch(
-      /^Hot flowering days, much drier: 16 days now, 27 days by 2050\./,
+  it("Year: a usual, a dry and the driest year, each with its hot days now and by 2050 and its best fit", () => {
+    expect(screenSummary("/year", bundle, state("en"))).toBe(
+      "Usual year. Hot flowering days: 9 days now, 17 days by 2050. Best fit then: Chickpea. " +
+        "Dry year. Hot flowering days: 12 days now, 21 days by 2050. Best fit then: Chickpea. " +
+        "Driest year. Hot flowering days: 16 days now, 27 days by 2050. Best fit then: Vetch-oat.",
+    );
+    expect(screenSummary("/year", bundle, state("it"))).toMatch(
+      /^Annata normale\. Caldo in fioritura: 9 giorni oggi, 17 giorni al 2050\. Più adatta allora: Cece\. Annata secca\. .* L'annata più secca\. Caldo in fioritura: 16 giorni oggi, 27 giorni al 2050\./,
     );
   });
 

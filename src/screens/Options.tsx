@@ -91,7 +91,6 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
-    scenario: state.scenario,
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   });

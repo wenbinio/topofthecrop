@@ -1,5 +1,5 @@
 // Spoken words to app commands. Pure: no speech, no React. Whole words only, and nothing it does not know.
-import type { CropId, Lang, Limit, Priority, Scenario, View } from "../data/types";
+import type { CropId, Lang, Limit, Priority, View } from "../data/types";
 
 export type Step = "field" | "questions" | "options" | "why" | "year" | "adviser" | "settings" | "print";
 
@@ -10,7 +10,6 @@ export type VoiceCommand =
   | { kind: "lastCrop"; crop: CropId }
   | { kind: "limit"; limit: Limit; on: boolean }
   | { kind: "priority"; priority: Priority; on: boolean }
-  | { kind: "scenario"; scenario: Scenario }
   | { kind: "view"; view: View }
   | { kind: "lang"; lang: Lang }
   | { kind: "read" }
@@ -119,22 +118,6 @@ const RULES: Rule[] = [
   { lang: "it", re: "suolo( e azoto)?|terreno( e azoto)?|azoto|fertilita", toggle: { kind: "priority", priority: "soil" } },
   { lang: "en", re: "forage|fodder|hay", toggle: { kind: "priority", priority: "forage" } },
   { lang: "it", re: "foragg(io|i)|fieno", toggle: { kind: "priority", priority: "forage" } },
-
-  // scenario
-  { lang: "en", re: "(a )?normal( year)?", cmd: { kind: "scenario", scenario: "normal" } },
-  { lang: "it", re: "(annata |anno )?normale", cmd: { kind: "scenario", scenario: "normal" } },
-  { lang: "en", re: "(a )?(drier|dryer|more dry)( year)?|(a )?dry year", cmd: { kind: "scenario", scenario: "drier" } },
-  { lang: "it", re: "(annata |anno )?piu (secc[ao]|asciutt[ao])", cmd: { kind: "scenario", scenario: "drier" } },
-  {
-    lang: "en",
-    re: "(a )?(much|very|far) (drier|dryer)( year)?|(a )?very dry( year)?|drought",
-    cmd: { kind: "scenario", scenario: "much-drier" },
-  },
-  {
-    lang: "it",
-    re: "(annata |anno )?molto (piu )?(secc[ao]|asciutt[ao])|siccita",
-    cmd: { kind: "scenario", scenario: "much-drier" },
-  },
 
   // view and language
   { lang: "en", re: "simple( view)?|big (text|letters|writing)|bigger (text|letters)", cmd: { kind: "view", view: "simple" } },

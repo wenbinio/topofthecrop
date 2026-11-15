@@ -28,7 +28,7 @@ Six steps, each one screen on a phone.
 | 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); put the priorities (income, water, soil, forage) in order by tapping them, most important first: at least 2, up to all 4. | Big buttons. Last crop is pre-filled from the EU crop map. |
 | 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029). The top one is marked "Best fit", and its income is compared with durum after durum, what the farmer grows now. A switch under the list adds strip intercrops (two crops side by side, half the field each, swapped every year) to the ranking. | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
 | 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | It opens with why the rotation is suggested. Every number shows its range and whether it describes "your field" or "your area"; a tap on "Source" opens its dataset, date and confidence in a bubble. Terms such as NDVI open a one-line explanation. |
-| 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. Below: this season's rain so far and the next seven days (live), and 2024 and 2026 against a usual season. | Two headline figures: hot days at flowering and October–May rain, now and by 2050. |
+| 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). Above it, three kinds of year side by side from the weather record (usual, dry, driest), each with the rotation that fits it best; the farmer chooses nothing. Below: this season's rain so far and the next seven days (live), and 2024 and 2026 against a usual season. | For each kind of year: hot days at flowering and October–May rain, now and by 2050. |
 | 6. Check and share | What the farmer can check alone for the best-fit rotation; who can look at the plan if there is no adviser (cooperative or seed dealer, the CAA office, the region's farm advisory service, a neighbour, an agronomist); a one-page printout and a WhatsApp link. | The link reopens the same field and answers. No names or phone numbers: we could not keep them right. |
 
 The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named in step 6. It never tells the farmer what to do, and every option lists what must be checked locally.
@@ -48,7 +48,7 @@ Top of the Crop does the step before that. It reads what satellites show on one 
 | For each: why suggested, evidence, benefits, information gaps, risks needing local review | Step 4, using the same five headings |
 | Bare-field periods and seasons of vulnerability | Step 5 strip and step 3 findings |
 | Explaining terms, satellite versus ground measurements, uncertainty | Step 4 explanations, scale badges, ranges and confidence words |
-| Scenario sliders | Step 5 |
+| Dry-year scenarios | Step 5 |
 | Farmer inputs for priorities and constraints | Step 2 |
 | Support, not replace, local expertise | Step 6 and "check locally" on every option |
 
@@ -163,7 +163,7 @@ A dealbreaker stays a dealbreaker: no score can outvote it. The current rotation
 
 **4. The options that remain are ordered by the farmer's priorities, in the farmer's order.** Each option has a score from 0 to 1 for income, water, soil and forage. The farmer ranks at least two of the four; the first counts 4, the second 3, the third 2, the fourth 1, and the scores are averaged with those weights. A priority left out has no weight and only breaks ties. The weights are our own judgement (`docs/scoring.md`). This is the only place an index is used, and only to put a short list in order.
 
-**5. The slider re-runs the ordering** for a drier, hotter year. Each stop is defined from the data: normal is a typical season (2001–2020), drier a 1-in-10 dry and hot season, much drier the driest and hottest seasons since 2001, each also shown by 2050. The Year screen says so under the slider and shows the stop's October–May rain beside its hot days (`docs/scoring.md`, "The slider").
+**5. The ordering is re-run for a dry year and for the driest year**, and the Year screen shows all three results at once. Each kind of year is defined from the data: usual is a typical season (2001–2020), dry a 1-in-10 dry and hot season, driest the driest and hottest seasons since 2001, each also shown by 2050. The farmer does not pick one: every other screen ranks for a usual year (`docs/scoring.md`, "Usual, dry and driest years").
 
 **6. The farmer sees the path, never the score.** The "Why?" screen shows the route taken as plain steps, for example "greenness falling and water use dropping → water stress → no irrigation → you chose income and soil". Score numbers are not shown anywhere in the app.
 
@@ -207,7 +207,7 @@ type Fact = {
 A field's bundle wraps those facts in a fixed outline. The builder may add fields but not rename these:
 
 ```ts
-type Scenario = "normal" | "drier" | "much-drier";     // the three slider stops
+type Scenario = "normal" | "drier" | "much-drier";     // the three kinds of year on the Year screen
 type Priority = "income" | "water" | "soil" | "forage";
 type Limit = "no-irrigation" | "cereal-machinery" | "no-buyer" | "broomrape";
 type Signal = "rising" | "falling" | "normal" | "no-data";
@@ -225,10 +225,10 @@ type FieldBundle = {
   }[];
   year: {                                                             // October first
     months: { cover: "green" | "part" | "bare"; risks: ("dry" | "frost" | "heat" | "rain")[] }[];
-    risksByScenario?: Partial<Record<Scenario, ("dry" | "frost" | "heat" | "rain")[][]>>;  // risk icons per month for a slider stop
+    risksByScenario?: Partial<Record<Scenario, ("dry" | "frost" | "heat" | "rain")[][]>>;  // risk icons per month in a dry or the driest year (in the bundle, not shown since the slider went)
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
     flowerHigh?: { now: Fact; by2050: Fact };  // usual daytime high, 15 April to 15 June, °C; shown with the "hot day" definition
-    rainSeason?: Record<Scenario, { now: Fact; by2050: Fact }>;  // October–May rain at each slider stop
+    rainSeason?: Record<Scenario, { now: Fact; by2050: Fact }>;  // October–May rain in each kind of year
   };
   options: {
     id: string;                        // "chickpea-durum-durum"
@@ -289,7 +289,7 @@ type AreaWeather = {
   - durum → durum → durum (what the farmer does now)
 - **Three years, fixed.** Every option has exactly three crops. The card shows them as three icons with the year under each, not as a sentence. Longer or shorter rotations are out of scope for this version.
 - **The year strip in step 5** still shows the field's year as observed under the current rotation. A separate strip for each option is out of scope.
-- **The slider** has three stops: normal, drier and hotter, much drier and hotter. It changes the ranking, the hot-days and rain figures and the risk icons. All three are precomputed in the bundle; the browser does no climate maths.
+- **Three kinds of year** are shown at once on the Year screen: usual, dry (1 in 10) and the driest since 2001, each with its hot days, rain and best fit. There used to be a slider; it read as if the farmer were setting the weather, so it went. All three are precomputed in the bundle; the browser does no climate maths.
 - **Simple view** is the same components with a `view` flag. It swaps the design tokens, hides dataset labels until tapped, and shows the findings and options as weather-style rows under one big headline. No separate screens.
 - **Sharing link.** Hash routing (`/#/options?...`), so it works on any static host. The demo field travels as its id. A drawn field travels as its outline, simplified to at most 12 points at 5 decimal places. The farmer's own figures from Settings travel in `m`, only where they differ from ours: `p.<crop>` a crop's price (€/t), `c.<crop>` a crop's direct costs (€/ha), `y.<crop>` its yield (t/ha), `l1.<crop>` and `l2.<crop>` the extra durum after it (%), `s.<support id>` a support amount (€/ha) and `on.<support id>` 1 or 0 for a payment switched on or off. Payments the farmer added travel in `x`. Nothing is stored on a server.
 - **Print page** is a route in the same app that reads the same link.

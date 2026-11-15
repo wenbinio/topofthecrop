@@ -36,8 +36,8 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 
 ## 5. Year
 
-- [ ] **Normal:** hot days **4 → 5.4** by 2050; rain **542 → 520 mm**; "A usual season (2001–2020)."
-- [ ] Slide to **Drier:** **8 → 10** days, **418 → 393 mm**. **Much drier:** **13 → 15** days, **390 → 367 mm**.
+- [ ] Three cards, no slider. **Usual year:** hot days **4** now, **5.4** by 2050; rain **542** and **520 mm**; "A usual season (2001–2020)."
+- [ ] **Dry year:** **8** and **10** days, **418** and **393 mm**. **Driest year:** **13** and **15** days, **390** and **367 mm**. Each card ends with its best fit.
 - [ ] *This season so far* (live): rain since 1 September, usual by now, a verdict, the last day with 5 mm or more, and "Not counted: NASA POWER rain for October 2025…".
 - [ ] *Next 7 days* (live): rain for each day and the coldest night.
 - [ ] *2024 and 2026 against a usual season*: 2024 **413 mm ↓, 27.3% ↓, 0.60, 258 mm ↓**; 2026 **651 mm ↑, 32.8% ↑, 0.72, 326 mm**; then "Much less green than nearby fields in 2018 and 2023…". Nothing cut off on a phone.

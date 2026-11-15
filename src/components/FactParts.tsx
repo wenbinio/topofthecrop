@@ -172,7 +172,7 @@ export function SourceButton({ fact, align = "start" }: { fact: Fact; align?: "s
 }
 
 /** One fact, tappable: the value and whether it is the field or the area; a tap opens its source bubble. */
-export function FactButton({ fact, label, big = false, suffix }: { fact: Fact; label: string; big?: boolean; suffix?: string }) {
+export function FactButton({ fact, label, big = false, suffix, align = "start" }: { fact: Fact; label: string; big?: boolean; suffix?: string; align?: "start" | "end" }) {
   const t = useT();
   const lang = useLang();
   const { open, setOpen, ref } = useBubble();
@@ -203,7 +203,7 @@ export function FactButton({ fact, label, big = false, suffix }: { fact: Fact; l
           {fact.edited ? <YoursTag /> : null}
         </span>
       </button>
-      {open ? <SourcePanel fact={fact} id={id} /> : null}
+      {open ? <SourcePanel fact={fact} id={id} align={align} /> : null}
     </span>
   );
 }

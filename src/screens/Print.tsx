@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
 import type { Economics, Fact, FieldBundle } from "../data/types";
+import { SCENARIOS } from "../data/types";
 import { cropFigures, economicsCrops, resolveMoney } from "../money/money";
 import { useLang, useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
@@ -124,12 +125,18 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
-    scenario: state.scenario,
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   });
   const best = ranked[0];
   const link = shareLink("/options", state);
+  // The best fit in each kind of year (usual, dry, driest), as on Field year.
+  const kinds = SCENARIOS.map((scenario) => ({
+    scenario,
+    hot: bundle.year.hotDays[scenario],
+    rain: bundle.year.rainSeason?.[scenario],
+    best: rankOptions({ options: bundle.options, limits: state.limits, priorities: state.priorities, scenario, lastCrop: state.lastCrop, intercrops: state.intercrops }).ranked[0],
+  }));
 
   const facts: Fact[] = [
     ...bundle.findings.map((f) => f.fact),
@@ -179,9 +186,6 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                 {state.priorities.length ? state.priorities.map((p, i) => `${i + 1}. ${t(`priority.${p}`)}`).join(", ") : t("print.none")}
               </b>
             </li>
-            <li>
-              {t("year.slider")}: <b>{t(`scenario.${state.scenario}`)}</b>
-            </li>
           </ul>
         </Block>
 
@@ -193,6 +197,42 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
               </li>
             ))}
           </ul>
+        </Block>
+
+        <Block title={t("year.kindsHead")}>
+          <table className="w-full border-collapse" data-testid="print-years">
+            <thead>
+              <tr className="text-left border-b border-line">
+                <th className="py-1 pr-2" />
+                {bundle.year.rainSeason ? <th className="py-1 pr-2">{t("year.rainHead")}</th> : null}
+                <th className="py-1 pr-2">{t("year.hotHead")}</th>
+                <th className="py-1">{t("year.best")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {kinds.map((k) => (
+                <tr key={k.scenario} className="align-top border-b border-line">
+                  <th scope="row" className="py-1 pr-2 text-left">
+                    {t(`year.kind.${k.scenario}`)}
+                    <span className="block font-normal">{t(`year.def.${k.scenario}`)}</span>
+                  </th>
+                  {bundle.year.rainSeason ? (
+                    <td className="py-1 pr-2">
+                      {k.rain ? (
+                        <>
+                          <FactText fact={k.rain.now} /> {t("year.now")}; <FactText fact={k.rain.by2050} /> {t("year.by2050")}
+                        </>
+                      ) : null}
+                    </td>
+                  ) : null}
+                  <td className="py-1 pr-2">
+                    <FactText fact={k.hot.now} /> {t("year.now")}; <FactText fact={k.hot.by2050} /> {t("year.by2050")}
+                  </td>
+                  <td className="py-1">{k.best ? <OptionName option={k.best.option} /> : null}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Block>
 
         <Block title={t("print.options")}>

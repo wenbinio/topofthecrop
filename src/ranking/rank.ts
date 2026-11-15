@@ -5,7 +5,8 @@ export type RankInput = {
   options: Option[];
   limits: Limit[];
   priorities: Priority[]; // the farmer's order, most important first; zero to four
-  scenario: Scenario;
+  /** The kind of year to rank for. Left out: a usual year, which is what every screen but Field year ranks for. */
+  scenario?: Scenario;
   /** The crop just harvested. A legume grown twice running builds up disease, so an option starting with it is left out. */
   lastCrop?: LastCrop;
   /** Rank strip intercrops with the rest. Without it they are set aside in `intercrops`, for the farmer to ask for. */
@@ -40,7 +41,7 @@ export const RANK_WEIGHTS: readonly number[] = [4, 3, 2, 1];
  * The score never leaves this module.
  */
 export function rankOptions(input: RankInput): RankResult {
-  const { options, limits, priorities, scenario, lastCrop } = input;
+  const { options, limits, priorities, scenario = "normal", lastCrop } = input;
   const repeatCrop = LEGUMES.find(crop => crop === lastCrop);
   const ordered = priorities.slice(0, RANK_WEIGHTS.length);
   const others = ordered.length ? PRIORITIES.filter(priority => !ordered.includes(priority)) : [];

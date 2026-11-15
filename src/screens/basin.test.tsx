@@ -132,7 +132,7 @@ describe("a drawn field", () => {
     cleanup();
 
     renderAt(`/year?${o}`);
-    expect(await screen.findByTestId("hot-days", {}, { timeout: 10000 })).toBeInTheDocument();
+    expect(await screen.findByTestId("hot-normal", {}, { timeout: 10000 })).toBeInTheDocument();
     expect(screen.getByTestId("area-note")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("link", { name: "Back" }));
     await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));

@@ -1,6 +1,6 @@
 // What "read aloud" says on each screen: built from what the screen shows, through the dictionaries. Pure.
-import type { AppState, FieldBundle, Lang, Option } from "../data/types";
-import { PRIORITIES } from "../data/types";
+import type { AppState, Fact, FieldBundle, Lang, Option } from "../data/types";
+import { PRIORITIES, SCENARIOS } from "../data/types";
 import { MIN_RANKED } from "../components/Reasons";
 import { translate } from "../i18n";
 import { formatNumber, unitText, valueText } from "../components/FactParts";
@@ -46,7 +46,6 @@ function ranking(bundle: FieldBundle, state: AppState) {
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
-    scenario: state.scenario,
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   });
@@ -86,17 +85,24 @@ export function whySummary(bundle: FieldBundle, state: AppState, optionId: strin
     .join(" ");
 }
 
-/** Year: hot flowering days now and by 2050 at the chosen stop, and the best fit then. */
+/** Year: for a usual, a dry and the driest year, the rain and hot flowering days now and by 2050, and the best fit then. */
 export function yearSummary(bundle: FieldBundle, state: AppState): string {
   const lang = state.lang;
   const t = (key: string, vars?: Record<string, string | number>) => translate(lang, key, vars);
-  const hot = bundle.year.hotDays[state.scenario];
-  const days = (f: typeof hot.now) => `${valueText(f, t, lang)} ${unitText(f.unit, t)}`.trim();
-  const best = ranking(bundle, state).ranked[0];
-  const lines = [
-    sentence(`${t("year.hotHead")}, ${t(`scenario.${state.scenario}`).toLocaleLowerCase(lang)}: ${days(hot.now)} ${t("year.now")}, ${days(hot.by2050)} ${t("year.by2050")}`),
-  ];
-  if (best) lines.push(sentence(`${t("year.best")}: ${optionWords(best.option, (key, vars) => translate(lang, key, vars))}`));
+  const amount = (f: Fact) => `${valueText(f, t, lang)} ${unitText(f.unit, t)}`.trim();
+  const pair = (head: string, f: { now: Fact; by2050: Fact }) =>
+    sentence(`${head}: ${amount(f.now)} ${t("year.now")}, ${amount(f.by2050)} ${t("year.by2050")}`);
+  const lines: string[] = [];
+  for (const scenario of SCENARIOS) {
+    const rain = bundle.year.rainSeason?.[scenario];
+    const best = rankOptions({
+      options: bundle.options, limits: state.limits, priorities: state.priorities, scenario, lastCrop: state.lastCrop, intercrops: state.intercrops,
+    }).ranked[0];
+    lines.push(sentence(t(`year.kind.${scenario}`)));
+    if (rain) lines.push(pair(t("year.rainHead"), rain));
+    lines.push(pair(t("year.hotHead"), bundle.year.hotDays[scenario]));
+    if (best) lines.push(sentence(`${t("year.best")}: ${optionWords(best.option, (key, vars) => translate(lang, key, vars))}`));
+  }
   return lines.join(" ");
 }
 

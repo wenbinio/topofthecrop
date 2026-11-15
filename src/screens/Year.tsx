@@ -1,11 +1,12 @@
-import type { FieldBundle, Risk } from "../data/types";
+import type { FieldBundle, Risk, Scenario } from "../data/types";
 import { SCENARIOS } from "../data/types";
 import { useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
+import type { RankedOption } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
-import { CropSequence, OptionName } from "../components/Crops";
+import { CropSequence, OptionName, Slotted } from "../components/Crops";
 import { FactButton, PlaceholderNote } from "../components/FactParts";
-import { HeatIcon } from "../components/Icons";
+import { DropIcon, HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
 import { HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, LinkButton } from "../components/ui";
@@ -18,102 +19,103 @@ import { centroid } from "../geo/geometry";
 
 const RISK_ORDER: Risk[] = ["dry", "frost", "heat", "rain"];
 
-export default function Year({ bundle }: { bundle: FieldBundle }) {
+/**
+ * One kind of year from the weather record (usual, dry, driest): its Oct-May rain and hot flowering days, now and by
+ * 2050, and the rotation that fits it best. The farmer chooses nothing: all three are shown.
+ */
+function YearKind({ bundle, scenario, best }: { bundle: FieldBundle; scenario: Scenario; best: RankedOption | undefined }) {
   const t = useT();
-  const to = useTo();
-  const [state, setState] = useAppState();
-  const hot = bundle.year.hotDays[state.scenario];
-  const rain = bundle.year.rainSeason?.[state.scenario];
-  const { ranked } = rankOptions({
-    options: bundle.options,
-    limits: state.limits,
-    priorities: state.priorities,
-    scenario: state.scenario,
-    lastCrop: state.lastCrop,
-    intercrops: state.intercrops,
-  });
-  const best = ranked[0];
-  const index = SCENARIOS.indexOf(state.scenario);
-  // The slider changes the risk icons too, when the bundle carries them for that stop.
-  const scenarioRisks = bundle.year.risksByScenario?.[state.scenario];
-  const months = scenarioRisks
-    ? bundle.year.months.map((m, i) => ({ ...m, risks: scenarioRisks[i] ?? m.risks }))
-    : bundle.year.months;
-  const risks = RISK_ORDER.filter((r) => months.some((m) => m.risks.includes(r)));
-
+  const hot = bundle.year.hotDays[scenario];
+  const rain = bundle.year.rainSeason?.[scenario];
   return (
-    <div className="flex flex-col flex-1">
-      {/* Held sideways: the hot days, slider and best fit on the left, the year strip on the right. */}
-      <AreaNote bundle={bundle} />
-      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
-      <div className="flex flex-col min-w-0">
-      <div className="px-4 pt-4">
-        <h1 className="text-big flex items-center gap-2">
-          <HeatIcon className="w-6 h-6 flex-none" />
-          <HotDaysTerm high={bundle.year.flowerHigh}>{t("year.hotHead")}</HotDaysTerm>
-        </h1>
-        <div className="flex items-start gap-6 mt-1" data-testid="hot-days">
-          <div>
-            <FactButton fact={hot.now} label={t("year.hotNow")} big />
-            <p className="text-small font-bold text-ink-soft">{t("year.now")}</p>
-          </div>
-          <div>
-            <FactButton fact={hot.by2050} label={t("year.hot2050")} big />
-            <p className="text-small font-bold text-ink-soft">{t("year.by2050")}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 pt-5">
-        <label htmlFor="scenario" className="block font-bold text-body">
-          {t("year.slider")}
-        </label>
-        <input
-          id="scenario"
-          type="range"
-          min={0}
-          max={SCENARIOS.length - 1}
-          step={1}
-          value={index}
-          aria-valuetext={t(`scenario.${state.scenario}`)}
-          onChange={(e) => setState({ scenario: SCENARIOS[Number(e.target.value)] ?? "normal" })}
-          className="w-full h-11"
-        />
-        <div className="grid grid-cols-3 text-small font-bold" aria-hidden="true">
-          {SCENARIOS.map((s, i) => (
-            <span key={s} className={`${i === 0 ? "text-left" : i === 1 ? "text-center" : "text-right"} ${s === state.scenario ? "text-ink" : "text-ink-soft"}`}>
-              {t(`scenario.${s}`)}
-            </span>
-          ))}
-        </div>
-        {/* What the stop means, and its Oct-May rain now and by 2050 (src/data/field-rules.js rainStops). */}
-        <p className="text-small text-ink-soft mt-1" data-testid="scenario-def">{t(`year.def.${state.scenario}`)}</p>
+    <section
+      data-testid={`year-${scenario}`}
+      className={`mx-4 mt-3 p-3 bg-surface border-l-4 ${scenario === "normal" ? "border-best" : "border-line-strong"}`}
+    >
+      <h2 className="text-big font-bold">{t(`year.kind.${scenario}`)}</h2>
+      <p className="text-small text-ink-soft" data-testid={`def-${scenario}`}>{t(`year.def.${scenario}`)}</p>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-4 items-center mt-2">
+        <span />
+        <span className="text-small font-bold text-ink-soft">{t("year.now")}</span>
+        <span className="text-small font-bold text-ink-soft">{t("year.by2050")}</span>
         {rain ? (
-          <div className="mt-2" data-testid="rain-stop">
-            <p className="text-small font-bold">{t("year.rainHead")}</p>
-            <div className="flex items-start gap-6">
-              <div>
-                <FactButton fact={rain.now} label={t("year.rainNow")} />
-                <p className="text-small font-bold text-ink-soft">{t("year.now")}</p>
-              </div>
-              <div>
-                <FactButton fact={rain.by2050} label={t("year.rain2050")} />
-                <p className="text-small font-bold text-ink-soft">{t("year.by2050")}</p>
-              </div>
-            </div>
+          <div className="contents" data-testid={`rain-${scenario}`}>
+            <span className="flex items-center gap-1.5 text-small font-bold">
+              <DropIcon className="w-5 h-5 flex-none" />
+              {t("year.rainHead")}
+            </span>
+            <FactButton fact={rain.now} label={t("year.rainNow")} align="end" />
+            <FactButton fact={rain.by2050} label={t("year.rain2050")} align="end" />
           </div>
         ) : null}
+        <div className="contents" data-testid={`hot-${scenario}`}>
+          <span className="flex items-center gap-1.5 text-small font-bold">
+            <HeatIcon className="w-5 h-5 flex-none" />
+            {t("year.hotHead")}
+          </span>
+          <FactButton fact={hot.now} label={t("year.hotNow")} align="end" />
+          <FactButton fact={hot.by2050} label={t("year.hot2050")} align="end" />
+        </div>
       </div>
-
       {best ? (
-        <div className="mx-4 mt-4 p-3 bg-surface border-l-4 border-best" data-testid="year-best" data-option-id={best.option.id}>
+        <div className="mt-2 pt-2 border-t border-line" data-testid={`year-best-${scenario}`} data-option-id={best.option.id}>
           <p className="text-small font-bold uppercase tracking-wider text-ink-soft">{t("year.best")}</p>
           <div className="flex items-center justify-between gap-3 mt-1">
-            <OptionName option={best.option} className="text-big font-bold" />
+            <OptionName option={best.option} className="text-body font-bold" />
             <CropSequence option={best.option} />
           </div>
         </div>
       ) : null}
+    </section>
+  );
+}
+
+export default function Year({ bundle }: { bundle: FieldBundle }) {
+  const t = useT();
+  const to = useTo();
+  const [state] = useAppState();
+  const bestIn = (scenario: Scenario) =>
+    rankOptions({
+      options: bundle.options,
+      limits: state.limits,
+      priorities: state.priorities,
+      scenario,
+      lastCrop: state.lastCrop,
+      intercrops: state.intercrops,
+    }).ranked[0];
+  const bests = SCENARIOS.map((scenario) => ({ scenario, best: bestIn(scenario) }));
+  /** The same rotation first in a usual, a dry and the driest year: the answer holds whatever the weather. */
+  const holds = bests[0].best && bests.every((b) => b.best?.option.id === bests[0].best?.option.id) ? bests[0].best : undefined;
+  // The month strip shows a usual year.
+  const months = bundle.year.months;
+  const risks = RISK_ORDER.filter((r) => months.some((m) => m.risks.includes(r)));
+
+  return (
+    <div className="flex flex-col flex-1">
+      {/* Held sideways: the three kinds of year on the left, the year strip on the right. */}
+      <AreaNote bundle={bundle} />
+      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
+      <div className="flex flex-col min-w-0">
+      <div className="px-4 pt-4">
+        <h1 className="text-big">{t("year.kindsHead")}</h1>
+        <p className="text-small text-ink-soft mt-1">{t("year.kindsLead")}</p>
+        <p className="flex items-center gap-1.5 text-small mt-1">
+          <HeatIcon className="w-5 h-5 flex-none" />
+          <HotDaysTerm high={bundle.year.flowerHigh}>{t("year.hotHead")}</HotDaysTerm>
+        </p>
+      </div>
+
+      {holds ? (
+        <p className="mx-4 mt-3 font-bold" data-testid="year-holds">
+          <Slotted text={t("year.holds")} slots={{ option: <OptionName option={holds.option} /> }} />
+        </p>
+      ) : null}
+
+      <div data-testid="year-kinds">
+        {bests.map(({ scenario, best }) => (
+          <YearKind key={scenario} bundle={bundle} scenario={scenario} best={best} />
+        ))}
+      </div>
       </div>
       <div className="flex flex-col min-w-0">
 
@@ -121,7 +123,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       <ForecastNext centre={centroid(openRing(bundle.field.outline.coordinates))} />
 
       <div className="px-4 pt-2">
-        <h2 className="sr-only">{t("year.title")}</h2>
+        <h2 className="text-small font-bold mb-1">{t("year.stripHead")}</h2>
         <YearStrip months={months} />
         <div className="mt-2 flex flex-col gap-1">
           <CoverLegend none={months.some((m) => m.cover === "none")} />
@@ -134,7 +136,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <div className="px-4 py-3">
-        <PlaceholderNote facts={[hot.now, hot.by2050]} />
+        <PlaceholderNote facts={SCENARIOS.flatMap((s) => [bundle.year.hotDays[s].now, bundle.year.hotDays[s].by2050])} />
       </div>
       </div>
       </div>

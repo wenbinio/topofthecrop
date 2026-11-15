@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
@@ -195,32 +195,68 @@ describe("AreaWeather", () => {
 });
 
 describe("Year", () => {
-  it("moving the slider to the last stop makes vetch-oat the best fit", async () => {
+  it("shows a usual, a dry and the driest year at once, each with its best fit, and no slider to choose with", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
-    const best = await screen.findByTestId("year-best");
-    expect(best).toHaveAttribute("data-option-id", "chickpea-durum-durum");
-    const slider = screen.getByRole("slider");
-    act(() => {
-      fireEvent.change(slider, { target: { value: "2" } });
-    });
-    await waitFor(() => expect(screen.getByTestId("year-best")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum"));
-    expect(lastPath).toContain("s=much-drier");
+    expect(await screen.findByTestId("year-best-normal")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    expect(screen.getByTestId("year-best-much-drier")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
+    expect(screen.getByTestId("year-best-drier")).toBeInTheDocument();
+    expect(screen.queryByRole("slider")).toBeNull();
+    // The best fit differs between the kinds of year here, so no line claims it holds in all three.
+    expect(screen.queryByTestId("year-holds")).toBeNull();
+    expect(Array.from(screen.getByTestId("year-kinds").children).map((card) => card.getAttribute("data-testid"))).toEqual([
+      "year-normal", "year-drier", "year-much-drier",
+    ]);
+  });
+
+  it("says so in one line when the same rotation fits best in all three", async () => {
+    // A bundle in which a dry year changes no score: the usual year's best fit holds in all three.
+    const steady = structuredClone(fixture);
+    for (const option of steady.options) Object.assign(option.scores, { drier: option.scores.normal, "much-drier": option.scores.normal });
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(steady)));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("year-holds")).toHaveTextContent("Chickpea fits best in all three.");
+    expect(screen.getByTestId("year-best-much-drier")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+  });
+
+  it("an old link's slider stop changes nothing: the usual year is still ranked for a usual year", async () => {
+    renderAt("/year?f=genzano-demo&p=income,water&s=much-drier");
+    expect(await screen.findByTestId("year-best-normal")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    fireEvent.click(screen.getByRole("link", { name: "Back" }));
+    await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+    expect(lastPath).not.toContain("s=");
   });
 });
 
-describe("what each slider stop means", () => {
-  it("a line under the slider says what the stop is, and changes with it", async () => {
+describe("the printout lists the three kinds of year", () => {
+  it("each with its hot days now and by 2050 and its best fit", async () => {
+    renderAt("/print?f=genzano-demo&p=income,water");
+    const rows = within(await screen.findByTestId("print-years")).getAllByRole("row").slice(1);
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveTextContent("Usual year");
+    expect(rows[0]).toHaveTextContent("Chickpea");
+    expect(rows[2]).toHaveTextContent("Driest year");
+    expect(rows[2]).toHaveTextContent("16");
+    expect(rows[2]).toHaveTextContent("27");
+    expect(rows[2]).toHaveTextContent("Vetch-oat");
+  });
+});
+
+describe("what each kind of year means", () => {
+  it("a line under each name says what it is, and each has its own hot days", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
-    expect(await screen.findByTestId("scenario-def")).toHaveTextContent("A usual season (2001–2020).");
-    act(() => {
-      fireEvent.change(screen.getByRole("slider"), { target: { value: "1" } });
-    });
-    await waitFor(() => expect(screen.getByTestId("scenario-def")).toHaveTextContent("As dry and as hot as 1 season in 10."));
-    // The frozen fixture has no rain per stop, so no rain line shows.
-    expect(screen.queryByTestId("rain-stop")).toBeNull();
+    expect(await screen.findByTestId("def-normal")).toHaveTextContent("A usual season (2001–2020).");
+    expect(screen.getByTestId("def-drier")).toHaveTextContent("As dry and as hot as 1 season in 10.");
+    expect(screen.getByTestId("def-much-drier")).toHaveTextContent("The driest and the hottest seasons since 2001.");
+    expect(screen.getByTestId("year-normal")).toHaveTextContent("Usual year");
+    expect(screen.getByTestId("hot-normal")).toHaveTextContent("9");
+    expect(screen.getByTestId("hot-normal")).toHaveTextContent("17");
+    expect(screen.getByTestId("hot-much-drier")).toHaveTextContent("16");
+    expect(screen.getByTestId("hot-much-drier")).toHaveTextContent("27");
+    // The frozen fixture has no rain per kind of year, so no rain line shows.
+    expect(screen.queryByTestId("rain-normal")).toBeNull();
   });
 
-  it("with rain per stop in the bundle, it shows the stop's Oct-May rain now and by 2050", async () => {
+  it("with rain in the bundle, each kind of year shows its Oct-May rain now and by 2050", async () => {
     const withRain = structuredClone(fixture);
     const fact = (value: number) => ({
       value, unit: "mm", scale: "area", confidence: "fair", placeholder: false,
@@ -234,11 +270,12 @@ describe("what each slider stop means", () => {
       },
     });
     vi.stubGlobal("fetch", vi.fn(async () => okJson(withRain)));
-    renderAt("/year?f=genzano-demo&p=income,water&s=much-drier");
-    const line = await screen.findByTestId("rain-stop");
-    expect(screen.getByTestId("scenario-def")).toHaveTextContent("The driest and the hottest seasons since 2001.");
+    renderAt("/year?f=genzano-demo&p=income,water");
+    const line = await screen.findByTestId("rain-much-drier");
     expect(line).toHaveTextContent("390");
     expect(line).toHaveTextContent("367");
+    expect(screen.getByTestId("rain-normal")).toHaveTextContent("542");
+    expect(screen.getByTestId("rain-drier")).toHaveTextContent("393");
   });
 });
 
@@ -341,7 +378,7 @@ describe("2024 and 2026 against a usual season (Year)", () => {
 
   it("without field data there is no card", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
-    await screen.findByTestId("scenario-def");
+    await screen.findByTestId("def-normal");
     expect(screen.queryByTestId("season-compare")).toBeNull();
   });
 });
