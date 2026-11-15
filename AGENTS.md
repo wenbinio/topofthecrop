@@ -101,7 +101,7 @@ Everything behind the income figure, on the Settings screen, which is split into
 | More durum after a legume, first and second harvest | `l1.<crop>`, `l2.<crop>` | 0–100% |
 | Support payment amount, and on or off | `s.<id>`, `on.<id>` | 0–2,000 €/ha |
 
-Payments the farmer adds travel in `x`. A typed figure counts as "fair" confidence and tags the income "Yours". To make a new figure editable: add it to `resolveMoney`, `setMoney` and `MONEY_LIMITS` in `src/money/money.ts`, allow its key prefix in `src/state/url.ts`, add a row to a section in `src/screens/Settings.tsx`, and list it on the printout when changed (`src/screens/Print.tsx`).
+Payments the farmer adds travel in `x`. A typed figure counts as "fair" confidence and tags the income "Yours". To make a new figure editable: add it to `resolveMoney`, `setMoney` and `MONEY_LIMITS` in `src/money/money.ts`, allow its key prefix in `src/state/url.ts`, add a row to a section in `src/screens/settings/Editor.tsx`, and list it on the printout when changed (`src/screens/Print.tsx`).
 
 ## Live services the app calls
 

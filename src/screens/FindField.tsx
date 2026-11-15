@@ -1,114 +1,34 @@
+// Step 1: find your field. This file holds the screen's state and wires the parts in ./find-field/ (the town search,
+// the parcel-number form, the drawing sheet and the mode type). Written with AI assistance (Claude, Anthropic).
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LngLat } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
 import { MAX_CORNERS, TRACE_CORNERS, round5 } from "../geo/edit";
-import { areaHa, centroid, isUsableRing, pointInRing, simplifyRing } from "../geo/geometry";
+import { centroid, isUsableRing, pointInRing, simplifyRing } from "../geo/geometry";
 import { useLang, useT } from "../i18n";
 import { useAppState, useGo } from "../state/useAppState";
 import { useDemoBundle } from "../components/BundleProvider";
 import { loadBasinOutline } from "../data/basin";
-import { PARCEL_COMMUNES, PARCEL_CREDIT, findParcel } from "../data/parcels";
+import { PARCEL_COMMUNES, findParcel } from "../data/parcels";
 import type { FeatureCollection } from "geojson";
 import { formatNumber } from "../components/FactParts";
 import { openRing } from "../components/FieldShape";
-import { FieldScaleIcon, LocateIcon, PencilIcon, SearchIcon, WarnIcon } from "../components/Icons";
+import { FieldScaleIcon, LocateIcon, PencilIcon, WarnIcon } from "../components/Icons";
 import Map from "../components/Map";
 import type { EdgeRequest, MapTarget } from "../components/Map";
 import { Button } from "../components/ui";
+import { DrawSheet } from "./find-field/DrawSheet";
+import { startDrawing, startParcel } from "./find-field/mode";
+import type { Mode } from "./find-field/mode";
+import { ParcelForm } from "./find-field/ParcelForm";
+import { TownResults, TownSearchBox, usePlaceSearch } from "./find-field/TownSearch";
+import type { Place } from "./find-field/TownSearch";
 
 /** Where the map opens before the bundle arrives: the Genzano demo field. */
 const DEMO_CENTRE: LngLat = [16.0928, 40.8234];
 const OPEN_ZOOM = 15.5;
-
-type Mode =
-  | { k: "idle" }
-  | { k: "demo" }
-  /** Looking for the field's edges in the photo around a tap, before drawing. */
-  | { k: "finding" }
-  /** Typing the sheet and parcel numbers from the farm file. `state` says how the last search went. */
-  | { k: "parcel"; sheet: string; parcel: string; state: "typing" | "searching" | "noSheet" | "noParcel" | "failed" }
-  /**
-   * Drawing the field: tap corners, pull dots, trace with one finger, or let the app find the edges.
-   * `past` holds earlier shapes for Undo. `seeking`: the next tap is a point inside the field, not a corner.
-   * `finding`: waiting for the edges found in the photo. `note` is a one-line message after something did not work.
-   */
-  | {
-      k: "drawing";
-      ring: LngLat[];
-      past: LngLat[][];
-      tracing: boolean;
-      seeking: boolean;
-      finding: boolean;
-      note: Note;
-    };
-type Note = "tooSmall" | "max" | "noEdges" | null;
-
-const startDrawing = (ring: LngLat[] = [], past: LngLat[][] = [], note: Note = null): Mode => ({
-  k: "drawing",
-  ring,
-  past,
-  tracing: false,
-  seeking: false,
-  finding: false,
-  note,
-});
-
-const NOTE_KEY = { max: "find.maxCorners", tooSmall: "find.tooSmall", noEdges: "find.noEdges" } as const;
-const startParcel = (): Mode => ({ k: "parcel", sheet: "", parcel: "", state: "typing" });
-const PARCEL_NOTE = { noSheet: "parcel.noSheet", noParcel: "parcel.noParcel", failed: "parcel.failed" } as const;
 /** Close enough to see the whole parcel on the aerial photo. */
 const PARCEL_ZOOM = 16;
-
-type Place = { name: string; detail: string; at: LngLat };
-
-function usePlaceSearch(query: string) {
-  const [places, setPlaces] = useState<Place[] | null>(null);
-  const [failed, setFailed] = useState(false);
-  /** The query the current `places` answer, so Enter never flies to results for older text. */
-  const [answered, setAnswered] = useState("");
-  useEffect(() => {
-    const q = query.trim();
-    if (q.length < 3) {
-      setPlaces(null);
-      setFailed(false);
-      return;
-    }
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => {
-      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`, { signal: ctrl.signal })
-        .then((r) => {
-          if (!r.ok) throw new Error(String(r.status));
-          return r.json();
-        })
-        .then((json: { features?: { geometry?: { coordinates?: number[] }; properties?: Record<string, string> }[] }) => {
-          const list: Place[] = (json.features ?? [])
-            .filter((f) => Array.isArray(f.geometry?.coordinates))
-            .map((f) => {
-              const p = f.properties ?? {};
-              const c = f.geometry!.coordinates!;
-              return {
-                name: p.name ?? "",
-                detail: [p.city, p.state, p.country].filter((x) => x && x !== p.name).join(", "),
-                at: [c[0], c[1]] as LngLat,
-              };
-            });
-          setPlaces(list);
-          setAnswered(q);
-          setFailed(false);
-        })
-        .catch((e: unknown) => {
-          if ((e as { name?: string }).name === "AbortError") return;
-          setPlaces(null);
-          setFailed(true);
-        });
-    }, 350);
-    return () => {
-      clearTimeout(timer);
-      ctrl.abort();
-    };
-  }, [query]);
-  return { places, failed, fresh: answered === query.trim() };
-}
 
 export default function FindField() {
   const t = useT();
@@ -158,6 +78,11 @@ export default function FindField() {
   function flyTo(at: LngLat, zoom: number) {
     targetKey.current += 1;
     setTarget({ centre: at, zoom, key: targetKey.current });
+  }
+
+  function pickPlace(place: Place) {
+    flyTo(place.at, 14);
+    setSearchOpen(false);
   }
 
   /** Replace the shape being drawn, remembering the one before it for Undo. */
@@ -216,6 +141,11 @@ export default function FindField() {
       setMode({ ...mode, tracing: false, seeking: false, finding: true, note: null });
       requestEdges(centroid(mode.ring));
     } else setMode({ ...mode, tracing: false, seeking: !mode.seeking, note: null });
+  }
+
+  function toggleTrace() {
+    if (mode.k !== "drawing") return;
+    setMode({ ...mode, tracing: !mode.tracing, seeking: false, note: null });
   }
 
   function cancel() {
@@ -281,7 +211,6 @@ export default function FindField() {
   const drawing = mode.k === "drawing";
   const tracing = mode.k === "drawing" && mode.tracing;
   const drawn = mode.k === "drawing" ? mode.ring : null;
-  const drawnOk = drawn !== null && isUsableRing(drawn);
 
   return (
     // Upright, the sheet sits over the bottom of the map. Held sideways (phone-land), the map takes the left
@@ -311,51 +240,16 @@ export default function FindField() {
         {/* search and location, floating on the map; out of the way only while a finger is tracing */}
         {tracing ? null : (
           <div className="absolute left-3 right-3 top-3 z-20 flex flex-col gap-2">
-            <form
-              role="search"
-              className="flex items-center gap-2 px-3 h-12 bg-surface rounded-box shadow-float"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (fresh && places?.[0]) {
-                  flyTo(places[0].at, 14);
-                  setSearchOpen(false);
-                }
+            <TownSearchBox
+              query={query}
+              onQuery={(next) => {
+                setQuery(next);
+                setSearchOpen(true);
               }}
-            >
-              <SearchIcon className="w-5 h-5 flex-none text-ink-soft" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setSearchOpen(true);
-                }}
-                placeholder={t("find.search")}
-                aria-label={t("find.search")}
-                className="flex-1 min-w-0 h-full bg-transparent outline-none text-body font-bold placeholder:text-ink-soft"
-              />
-            </form>
-            {searchOpen && (places || failed) ? (
-              <ul className="bg-surface rounded-box shadow-float overflow-hidden phone-land:max-h-48 phone-land:overflow-y-auto">
-                {failed ? <li className="px-3 py-3 text-body">{t("find.searchError")}</li> : null}
-                {places && places.length === 0 ? <li className="px-3 py-3 text-body">{t("find.searchNone")}</li> : null}
-                {places?.map((p, i) => (
-                  <li key={i} className="border-t border-line first:border-t-0">
-                    <button
-                      type="button"
-                      className="w-full min-h-12 px-3 py-2 text-left"
-                      onClick={() => {
-                        flyTo(p.at, 14);
-                        setSearchOpen(false);
-                      }}
-                    >
-                      <span className="block font-bold text-body">{p.name}</span>
-                      {p.detail ? <span className="block text-small text-ink-soft">{p.detail}</span> : null}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+              firstPlace={fresh && places?.[0] ? places[0] : null}
+              onPick={pickPlace}
+            />
+            {searchOpen && (places || failed) ? <TownResults places={places} failed={failed} onPick={pickPlace} /> : null}
             <div className="flex items-start justify-between gap-2">
               <span className="px-2 py-1 bg-map-chip text-on-map-chip text-small font-bold rounded-sm">{t("find.basemap")}</span>
               <button
@@ -428,51 +322,7 @@ export default function FindField() {
           </div>
         ) : null}
 
-        {mode.k === "parcel" ? (
-          <form
-            data-testid="parcel-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              searchParcel();
-            }}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-bold text-big">{t("parcel.title")}</p>
-                <p className="text-small font-bold text-ink-soft">{t("parcel.commune", { name: PARCEL_COMMUNES[0].name })}</p>
-              </div>
-              <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={cancel}>
-                {t("find.cancel")}
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {(["sheet", "parcel"] as const).map((field) => (
-                <label key={field} className="block text-small font-bold">
-                  {t(`parcel.${field}`)}
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    value={mode[field]}
-                    onChange={(e) => setMode({ ...mode, [field]: e.target.value, state: "typing" })}
-                    className="mt-1 w-full h-12 px-3 bg-surface border-2 border-line-strong rounded-box text-big font-bold"
-                  />
-                </label>
-              ))}
-            </div>
-            {mode.state === "noSheet" || mode.state === "noParcel" || mode.state === "failed" ? (
-              <p role="alert" className="mt-2 flex items-center gap-2 text-body font-bold" data-testid="parcel-note">
-                <WarnIcon className="w-5 h-5 flex-none text-warn" />
-                {t(PARCEL_NOTE[mode.state])}
-              </p>
-            ) : null}
-            <Button type="submit" className="w-full mt-3" disabled={mode.state === "searching" || !mode.sheet.trim() || !mode.parcel.trim()}>
-              {t(mode.state === "searching" ? "parcel.searching" : "parcel.find")}
-            </Button>
-            <p className="mt-2 text-small text-ink-soft">{t("parcel.note")}</p>
-            <p className="text-small text-ink-soft">{PARCEL_CREDIT}</p>
-          </form>
-        ) : null}
+        {mode.k === "parcel" ? <ParcelForm mode={mode} onChange={setMode} onSearch={searchParcel} onCancel={cancel} /> : null}
 
         {mode.k === "finding" ? (
           <div className="flex items-center justify-between gap-3">
@@ -486,69 +336,16 @@ export default function FindField() {
         ) : null}
 
         {mode.k === "drawing" ? (
-          <div data-testid="draw-sheet">
-            <div className="flex items-start justify-between gap-3">
-              <p className="font-bold text-big" data-testid="draw-hint">
-                {mode.finding
-                  ? t("find.finding")
-                  : mode.seeking
-                    ? t("find.tapInside")
-                    : mode.tracing
-                      ? t("find.drawHelp")
-                      : mode.ring.length === 0
-                        ? t("find.tapCorners")
-                        : mode.ring.length < 3
-                          ? t("find.keepTapping")
-                          : drawnOk
-                            ? t("find.pull", { n: formatNumber(Math.round(areaHa(mode.ring) * 10) / 10, lang) })
-                            : t("find.tooSmallPull")}
-              </p>
-              <button type="button" className="flex-none min-h-11 px-2 underline font-bold text-body" onClick={cancel}>
-                {t("find.cancel")}
-              </button>
-            </div>
-            {mode.note ? (
-              <p role="alert" className="mt-1 font-bold text-body text-warn">
-                {t(NOTE_KEY[mode.note])}
-              </p>
-            ) : null}
-            {/* Two rows of two, so each label fits at 360 px wide. */}
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <Button
-                look="secondary"
-                className="px-2"
-                aria-pressed={mode.seeking}
-                disabled={mode.finding}
-                onClick={findEdges}
-              >
-                <FieldScaleIcon className="w-5 h-5" />
-                {t("find.findEdges")}
-              </Button>
-              <Button
-                look="secondary"
-                className="px-2"
-                aria-pressed={mode.tracing}
-                disabled={mode.finding}
-                onClick={() => setMode({ ...mode, tracing: !mode.tracing, seeking: false, note: null })}
-              >
-                <PencilIcon className="w-5 h-5" />
-                {t("find.trace")}
-              </Button>
-              <Button look="secondary" className="px-2" disabled={mode.past.length === 0 || mode.finding} onClick={undo}>
-                {t("find.undo")}
-              </Button>
-              <Button
-                className="px-2"
-                disabled={!drawnOk || mode.finding}
-                // Inside the basin's farmland the full steps follow; outside, the bundle gate sends it on to live weather.
-                onClick={() => go("/questions", { fieldId: null, outline: mode.ring })}
-              >
-                {t("find.done")}
-              </Button>
-            </div>
-          </div>
+          <DrawSheet
+            mode={mode}
+            onFindEdges={findEdges}
+            onTrace={toggleTrace}
+            onUndo={undo}
+            // Inside the basin's farmland the full steps follow; outside, the bundle gate sends it on to live weather.
+            onDone={() => go("/questions", { fieldId: null, outline: mode.ring })}
+            onCancel={cancel}
+          />
         ) : null}
-
       </section>
     </div>
   );

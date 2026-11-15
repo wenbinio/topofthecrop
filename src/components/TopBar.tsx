@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { Lang, View } from "../data/types";
 import { useT } from "../i18n";
-import { SETTINGS_PATH, settingsFrom } from "../screens/Settings";
+import { SETTINGS_PATH, settingsFrom } from "../screens/settings/path";
 import { useAppState, useTo } from "../state/useAppState";
 import { MicButton, VoiceLine, useVoice } from "../voice/Voice";
 import { BigTextIcon, GearIcon, TilesIcon } from "./Icons";
