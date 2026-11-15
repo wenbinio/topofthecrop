@@ -94,4 +94,4 @@ What AI tools did:
 - Google Gemini reviewed the code and edited the app's wording in English and Italian.
 - The data values come from the cited datasets, not from AI. The exception is a few published values from the trial at the demo field, typed in from the paper and labelled as such.
 - The app itself contains no AI model. Its options come from a written decision tree and ranking rules. Voice commands use the phone's built-in speech recognition and a written list of phrases.
-- No AI-generated images or video are used without a visible watermark.
+- No AI-generated images or video are used without a visible watermark. The nine crop pictures were drawn with ChatGPT image generation; each carries a visible "AI" badge.
