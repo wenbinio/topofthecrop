@@ -4,16 +4,20 @@
 import type { FeatureCollection, Polygon } from "geojson";
 import type { FieldBundle, LngLat } from "./types";
 import type { BasinData, OutlineValues } from "./fieldshift-data.js";
+import { stamped } from "./fresh";
 import { BUNDLE_TIMEOUT_MS } from "./validate";
 
 export const BASIN_PATH = "data/basin/";
 
-/** Fetches one JSON file, giving up after BUNDLE_TIMEOUT_MS as loadBundle does, so the screen can offer a retry. */
+/**
+ * Fetches one of the site's own JSON files, giving up after BUNDLE_TIMEOUT_MS as loadBundle does, so the screen can
+ * offer a retry. The address carries the data's fingerprint (fresh.ts), so a newly published app never reads old data.
+ */
 export async function getJson(url: string): Promise<unknown> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), BUNDLE_TIMEOUT_MS);
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    const response = await fetch(stamped(url), { signal: controller.signal });
     if (!response.ok) throw new Error(`basin: ${url} (${response.status})`);
     return await response.json();
   } finally {

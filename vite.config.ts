@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
@@ -33,9 +34,38 @@ function basinData(): Plugin {
   }
 }
 
+/**
+ * A short fingerprint of every data file the site ships: the demo field, the basin's files and the parcels.
+ * The app adds it to each data file's address (src/data/fresh.ts). The host's cache keeps a file for ten minutes
+ * after a new version is published; with the fingerprint, changed data has a new address the cache has never seen,
+ * and unchanged data keeps its address.
+ */
+function dataStamp(): string {
+  const hash = createHash('sha256')
+  const add = (dir: string, keep: (name: string) => boolean) => {
+    const files = readdirSync(dir, { withFileTypes: true, recursive: true })
+      .filter((entry) => entry.isFile() && keep(entry.name))
+      .map((entry) => `${entry.parentPath.replace(/\\/g, '/')}/${entry.name}`)
+      // Sorted, so the same files give the same fingerprint on any machine.
+      .sort()
+    for (const file of files) {
+      hash.update(file.slice(dir.replace(/\\/g, '/').length))
+      // Line endings differ between checkouts (Windows, the publishing machine); the fingerprint must not.
+      hash.update(readFileSync(file, 'utf8').replace(/\r\n/g, '\n'))
+    }
+  }
+  const json = (name: string) => /\.(json|geojson)$/.test(name)
+  add(DATA_DIR, json)
+  add(fileURLToPath(new URL('./public/data/', import.meta.url)), json)
+  add(fileURLToPath(new URL('./public/parcels/', import.meta.url)), json)
+  return hash.digest('hex').slice(0, 10)
+}
+
 // base "./" so the built site works from any folder on any static host.
-export default defineConfig({
+export default defineConfig(({ command, mode }) => ({
   base: './',
+  // Only a real build is stamped: while developing and in tests the files are read fresh anyway.
+  define: { __DATA_STAMP__: JSON.stringify(command === 'build' && mode !== 'test' ? dataStamp() : '') },
   plugins: [react(), tailwindcss(), basinData()],
   test: {
     environment: 'jsdom',
@@ -46,4 +76,4 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     exclude: ['.claude/**', 'node_modules/**', 'dist/**'],
   },
-})
+}))

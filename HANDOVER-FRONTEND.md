@@ -174,6 +174,7 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 - The map is mocked in tests. Check map changes by hand in a browser.
 - Every push to `main` runs `.github/workflows/pages.yml`: typecheck, test, build, publish.
 - After switching branches, restart `npm run dev`; it can serve stale files.
+- GitHub Pages keeps every file in its cache for ten minutes. The app's code files have a new name in each build, but the data files do not, so for ten minutes after publishing new code could read old data. To prevent that, the build fingerprints all shipped data (`dataStamp()` in `vite.config.ts`) and the app adds the fingerprint to each data file's address (`stamped()` in `src/data/fresh.ts`). When checking a publish, look at the data request in the browser's network list: it ends `?v=` and ten characters.
 
 ## 9. What is weak or unfinished
 
