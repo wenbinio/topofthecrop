@@ -15,13 +15,14 @@ it("the data file the app ships passes the contract check", () => {
   expect(() => validateBundle(structuredClone(shipped))).not.toThrow();
 });
 
-it("ships the nine rotations over the nine crops, one of them current", () => {
+it("ships the nine rotations and two strip intercrops over the nine crops, one of them current", () => {
   const bundle = validateBundle(structuredClone(shipped));
   expect(bundle.options.length).toBeGreaterThanOrEqual(OPTION_COUNT[0]);
   expect(bundle.options.length).toBeLessThanOrEqual(OPTION_COUNT[1]);
   expect(bundle.options.map((o) => o.id)).toEqual([
     "chickpea-durum-durum", "faba-durum-faba", "vetch-oat-durum-durum", "durum-durum-durum", "lentil-durum-durum",
     "pea-durum-durum", "barley-durum-durum", "rapeseed-durum-durum", "coriander-durum-durum",
+    "strips-chickpea-durum", "strips-faba-durum",
   ]);
   expect(bundle.options.filter((o) => o.isCurrent).map((o) => o.id)).toEqual(["durum-durum-durum"]);
   expect(Object.keys(bundle.economics!.crops).sort()).toEqual([...CROPS].sort());

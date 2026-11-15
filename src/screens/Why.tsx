@@ -1,6 +1,7 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import type { Economics, Fact, FieldBundle, Option } from "../data/types";
+import { sequencesOf } from "../data/types";
 import { optionMoney, yieldLift } from "../money/money";
 import { buildPath } from "../ranking/diagnose";
 import { rankOptions } from "../ranking/rank";
@@ -8,7 +9,7 @@ import { reasonsFor } from "../ranking/reasons";
 import { ReasonList } from "../components/Reasons";
 import { useLang, useT } from "../i18n";
 import { useAppState, useTo } from "../state/useAppState";
-import { CropName, CropSequence, Slotted, optionCrop } from "../components/Crops";
+import { CropName, CropSequence, OptionName, Slotted } from "../components/Crops";
 import { ConfidenceWord, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm, RichText, Term } from "../components/Term";
@@ -87,10 +88,10 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
   // The studies behind any extra durum grain after a legume, each named once.
   const liftSources = [
     ...new Map(
-      option.sequence.flatMap((_, i) => {
-        const lifted = yieldLift(option.sequence, i, economics);
+      sequencesOf(option).flatMap((sequence) => sequence.flatMap((_, i) => {
+        const lifted = yieldLift(sequence, i, economics);
         return lifted ? [[lifted.fact.source.dataset, lifted.fact.source] as const] : [];
-      }),
+      })),
     ).values(),
   ];
   return (
@@ -114,6 +115,11 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
             <tr key={i} className="border-b border-line">
               <td className="py-1 pr-1">
                 <CropName crop={y.crop} iconClassName="w-4 h-4" wrap />
+                {y.beside ? (
+                  <span className="block" data-testid="money-beside">
+                    + <CropName crop={y.beside} iconClassName="w-4 h-4" wrap />
+                  </span>
+                ) : null}
                 <span className="block text-ink-soft">{option.firstHarvestYear + i}</span>
                 {y.lift > 0 && y.after ? (
                   <span className="block text-ink-soft" data-testid="money-lift">
@@ -142,6 +148,11 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
             <span className="font-bold text-ink">{t(`money.${column}`)}:</span> {t(`money.${column}Means`)}
           </li>
         ))}
+        {option.strips ? (
+          <li data-testid="money-strips">
+            <span className="font-bold text-ink">{t("money.stripsWord")}:</span> {t("money.stripsMeans")}
+          </li>
+        ) : null}
         {liftSources.length ? (
           <li data-testid="money-lift-source">
             <span className="font-bold text-ink">{t("money.liftWord")}:</span> {t("money.liftMeans")}{" "}
@@ -212,6 +223,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
     priorities: state.priorities,
     scenario: state.scenario,
     lastCrop: state.lastCrop,
+    intercrops: state.intercrops,
   });
   const repeated = repeats.some((o) => o.id === option.id);
   const item = ranked.find((r) => r.option.id === option.id);
@@ -236,7 +248,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
       <div className="px-4 pb-2 flex items-end justify-between gap-3">
         <div>
           <h1 className="text-head">
-            <CropName crop={optionCrop(option)} />
+            <OptionName option={option} />
           </h1>
           <p className="flex flex-wrap gap-2 mt-1">
             {item?.best ? (

@@ -3,7 +3,7 @@ import type { View } from "../data/types";
 import { useLang, useT } from "../i18n";
 import type { RankedOption } from "../ranking/rank";
 import { useTo } from "../state/useAppState";
-import { CropName, CropSequence, optionCrop } from "./Crops";
+import { CropSequence, OptionName, optionWords } from "./Crops";
 import { IncomeConfidence } from "./Term";
 import { LevelMeter, ScaleBadge, YoursTag, isLevel, unitText, valueText } from "./FactParts";
 import { ChevronIcon, DropIcon, NitrogenIcon, RiskShieldIcon, SupportIcon, WarnIcon } from "./Icons";
@@ -40,11 +40,11 @@ export function OptionRow({ item, view, sharedScale = false }: { item: RankedOpt
 
   return (
     <li data-testid="option-row" data-option-id={option.id} className={best ? "bg-surface border-l-4 border-best" : "bg-surface border-l-4 border-surface"}>
-      <Link to={to(`/why/${option.id}`)} className="flex items-stretch gap-2 px-3 py-3 border-b border-line" aria-label={`${t(`crop.${optionCrop(option)}`)}. ${t("options.openWhy")}`}>
+      <Link to={to(`/why/${option.id}`)} className="flex items-stretch gap-2 px-3 py-3 border-b border-line" aria-label={`${optionWords(option, t)}. ${t("options.openWhy")}`}>
         <div className="flex-1 min-w-0 flex flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
-              <CropName crop={optionCrop(option)} className={`font-bold ${simple ? "text-big" : "text-body"}`} />
+              <OptionName option={option} className={`font-bold ${simple ? "text-big" : "text-body"}`} />
               {best ? (
                 <span data-testid="tag-best" className="px-1.5 bg-best text-on-best text-small font-bold rounded-sm">
                   {t("options.best")}

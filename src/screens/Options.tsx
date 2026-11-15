@@ -10,7 +10,7 @@ import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber } from "../componen
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
-import { CropName, Slotted } from "../components/Crops";
+import { CropName, Slotted, stripPair } from "../components/Crops";
 import { PriorityHelp } from "../components/Term";
 import { OptionRow } from "../components/OptionRow";
 import { YearStrip } from "../components/YearStrip";
@@ -29,8 +29,11 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   const [state] = useAppState();
   if (!best) return null;
   const option = best.option;
+  const pair = stripPair(option);
   const headline = option.isCurrent ? (
     <StayHeadline />
+  ) : pair ? (
+    <Slotted text={t("options.plantStrips")} slots={{ a: <CropName crop={pair[0]} lower />, b: <CropName crop={pair[1]} lower /> }} />
   ) : (
     <Slotted text={t("options.plant")} slots={{ crop: <CropName crop={option.sequence[0]} lower /> }} />
   );
@@ -84,12 +87,13 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
   const [state, setState] = useAppState();
   const current = bundle.options.find((o) => o.isCurrent);
   const [more, setMore] = useState(false);
-  const { ranked, removed, repeats } = rankOptions({
+  const { ranked, removed, repeats, intercrops: waiting } = rankOptions({
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
     scenario: state.scenario,
     lastCrop: state.lastCrop,
+    intercrops: state.intercrops,
   });
   const hidden = Math.max(0, ranked.length - SHOWN_OPTIONS);
   const shown = more ? ranked : ranked.slice(0, SHOWN_OPTIONS);
@@ -167,6 +171,32 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
             >
               <span className="flex-1">{more ? t("options.fewer") : t("options.more", { n: hidden })}</span>
               <ChevronIcon className={`w-5 h-5 flex-none text-ink-soft ${more ? "-rotate-90" : "rotate-90"}`} />
+            </button>
+          </li>
+        ) : null}
+        {/* Strip intercrops stay out of the ranking until asked for: nobody here has tried them. */}
+        {waiting.length || state.intercrops ? (
+          <li>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={state.intercrops}
+              data-testid="intercrops-toggle"
+              onClick={() => setState({ intercrops: !state.intercrops })}
+              className="tc-tap w-full flex items-center gap-2 px-4 py-2 bg-surface border-b border-line text-left"
+            >
+              <span className="flex-1">
+                <span className="block font-bold text-body">
+                  {state.intercrops ? t("options.intercropsOn") : t("options.intercropsOff", { n: waiting.length })}
+                </span>
+                <span className="block text-small text-ink-soft">{t("options.intercropsMeans")}</span>
+              </span>
+              <span
+                aria-hidden="true"
+                className={`flex-none w-11 h-6 rounded-full border-2 border-line-strong flex items-center px-0.5 ${state.intercrops ? "bg-primary justify-end" : "bg-surface justify-start"}`}
+              >
+                <span className={`w-4 h-4 rounded-full ${state.intercrops ? "bg-surface" : "bg-line-strong"}`} />
+              </span>
             </button>
           </li>
         ) : null}

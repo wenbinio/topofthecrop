@@ -1,7 +1,7 @@
 // The sums behind the income figure: crop sales minus direct costs plus public support,
 // using the bundle's figures unless the farmer changed them in Settings.
 import type { Confidence, CropEconomics, CropId, Economics, ExtraSupport, Fact, FieldBundle, Money, Option, SupportItem } from "../data/types";
-import { CROPS, SCENARIOS } from "../data/types";
+import { CROPS, SCENARIOS, sequencesOf } from "../data/types";
 
 /** Bounds for anything the farmer types, so a slip of the finger cannot produce nonsense. */
 export const MONEY_LIMITS = { price: [0, 5000], costs: [0, 5000], yield: [0, 20], lift: [0, 100], support: [0, 2000] } as const;
@@ -19,9 +19,13 @@ export type ResolvedMoney = {
   edited: boolean; // true if anything differs from the bundle
 };
 
-/** One year of one rotation on one hectare. */
+/**
+ * One year of one rotation on one hectare. For a strip intercrop (two crops side by side, half the field each)
+ * every amount is the average of the two halves, and `beside` names the second crop.
+ */
 export type YearMoney = {
   crop: CropId;
+  beside?: CropId;
   sales: number; // yield × price, with `lift` already counted
   /** Percent more grain because of the crop grown before (0 for none), and that crop. Only durum gets one. */
   lift: number;
@@ -148,8 +152,8 @@ function extraApplies(extra: ExtraSupport, crop: CropId): boolean {
  */
 export function optionMoney(option: Option, economics: Economics, money: Money, extras: ExtraSupport[] = []): OptionMoney {
   const resolved = resolveMoney(economics, money);
-  const years = option.sequence.map((crop, index) => {
-    const lifted = yieldLift(option.sequence, index, economics, money);
+  const grown = sequencesOf(option).map(sequence => sequence.map((crop, index): YearMoney => {
+    const lifted = yieldLift(sequence, index, economics, money);
     const lift = lifted ? lifted.percent : 0;
     const sales = yieldOf(resolved, economics, crop).value * (1 + lift / 100) * priceOf(resolved, economics, crop).value;
     const costs = costsOf(resolved, economics, crop).value;
@@ -160,8 +164,27 @@ export function optionMoney(option: Option, economics: Economics, money: Money, 
     });
     return { crop, sales, lift, ...(lifted ? { after: lifted.after } : {}), costs, support,
       margin: sales - costs + support.reduce((sum, item) => sum + item.amount, 0) };
-  }) as OptionMoney['years'];
+  }));
+  const years = grown[0].map((year, index) => (grown.length === 1 ? year : sideBySide(grown.map(strip => strip[index])))) as OptionMoney['years'];
   return { years, perYear: Math.round(years.reduce((sum, year) => sum + year.margin, 0) / years.length) };
+}
+
+/**
+ * One year of a strip intercrop from the year of each strip: every strip is an equal share of the field, so sales,
+ * costs and each payment are averaged. A payment only one strip gets (coupled durum support) counts for its share.
+ * The lift is the one the durum strip has after its legume; it is already inside that strip's sales.
+ */
+function sideBySide(strips: YearMoney[]): YearMoney {
+  const share = 1 / strips.length;
+  const mean = (pick: (year: YearMoney) => number) => strips.reduce((sum, year) => sum + pick(year), 0) * share;
+  const support = new Map<string, number>();
+  for (const year of strips) for (const item of year.support) support.set(item.id, (support.get(item.id) ?? 0) + item.amount * share);
+  const lifted = strips.find(year => year.lift > 0);
+  return {
+    crop: strips[0].crop, beside: strips[1].crop, sales: mean(year => year.sales), lift: lifted?.lift ?? 0,
+    ...(lifted?.after ? { after: lifted.after } : {}), costs: mean(year => year.costs),
+    support: [...support].map(([id, amount]) => ({ id, amount })), margin: mean(year => year.margin),
+  };
 }
 
 const CONFIDENCE_RANK: Record<Confidence, number> = { good: 3, fair: 2, low: 1 };
@@ -181,12 +204,12 @@ export function weakestConfidence(list: Confidence[]): Confidence {
 export function incomeConfidence(option: Option, economics: Economics, money: Money, extras: ExtraSupport[] = []): Confidence {
   const resolved = resolveMoney(economics, money);
   const list: Confidence[] = [];
-  option.sequence.forEach((crop, index) => {
+  sequencesOf(option).forEach(sequence => sequence.forEach((crop, index) => {
     const figures = cropFigures(economics, crop);
     list.push(yieldOf(resolved, economics, crop).edited ? "fair" : figures.yield.confidence,
       costsOf(resolved, economics, crop).edited ? "fair" : figures.costs.confidence,
       priceOf(resolved, economics, crop).edited ? "fair" : figures.price.confidence);
-    const lifted = yieldLift(option.sequence, index, economics, money);
+    const lifted = yieldLift(sequence, index, economics, money);
     if (lifted) list.push(lifted.edited ? "fair" : lifted.fact.confidence);
     resolved.support.forEach((item, i) => {
       const spec = economics.support[i];
@@ -198,18 +221,18 @@ export function incomeConfidence(option: Option, economics: Economics, money: Mo
     });
     // Likewise an added payment for every year is the same for every rotation; one for chosen crops is not.
     if (extras.some(extra => extra.crops.length > 0 && extraApplies(extra, crop))) list.push("fair");
-  });
+  }));
   return weakestConfidence(list);
 }
 
 /** The income fact to show for an option: €/ha per year from `optionMoney`, its confidence from `incomeConfidence`. */
 export function incomeFact(option: Option, economics: Economics, money: Money, extras: ExtraSupport[] = []): Fact {
   const resolved = resolveMoney(economics, money);
-  const edited = option.sequence.some((crop, index) => priceOf(resolved, economics, crop).edited || costsOf(resolved, economics, crop).edited
-    || yieldOf(resolved, economics, crop).edited || yieldLift(option.sequence, index, economics, money)?.edited === true
+  const edited = sequencesOf(option).some(sequence => sequence.some((crop, index) => priceOf(resolved, economics, crop).edited || costsOf(resolved, economics, crop).edited
+    || yieldOf(resolved, economics, crop).edited || yieldLift(sequence, index, economics, money)?.edited === true
     || resolved.support.some((item, i) =>
     item.edited && (item.on || item.defaultOn) && applies(economics.support[i], option, crop))
-    || extras.some(extra => extra.amount !== 0 && extraApplies(extra, crop)));
+    || extras.some(extra => extra.amount !== 0 && extraApplies(extra, crop))));
   const result: Fact = { ...option.facts.income, value: optionMoney(option, economics, money, extras).perYear,
     unit: '€/ha', scale: 'area', label: 'fact.income', confidence: incomeConfidence(option, economics, money, extras) };
   delete result.edited;
@@ -217,7 +240,7 @@ export function incomeFact(option: Option, economics: Economics, money: Money, e
     result.edited = true;
     delete result.range;
     result.source = { dataset: 'Your own figures', resolution: 'this farm', url: '' };
-    result.placeholder = option.sequence.some(crop => cropFigures(economics, crop).yield.placeholder || cropFigures(economics, crop).costs.placeholder);
+    result.placeholder = sequencesOf(option).flat().some(crop => cropFigures(economics, crop).yield.placeholder || cropFigures(economics, crop).costs.placeholder);
   }
   return result;
 }

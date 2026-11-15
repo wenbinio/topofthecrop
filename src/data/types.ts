@@ -63,6 +63,12 @@ export type Option = {
   id: string; // "chickpea-durum-durum"
   isCurrent: boolean;
   sequence: [CropId, CropId, CropId]; // the next three harvests, in order
+  /**
+   * Strip intercropping: a second sequence grown beside the first. Each takes half the field, in strips wide enough
+   * for the drill and the combine, and the two swap places every year. Each strip is an ordinary sole crop, so every
+   * figure of the option is the average of the two sequences; no gain from growing them side by side is counted.
+   */
+  strips?: [CropId, CropId, CropId];
   firstHarvestYear: number; // 2027 for the demo field
   /** Each fact covers the whole sequence; income is the average gross margin per year. */
   facts: { income: Fact; water: Fact; nitrogen: Fact; risk: Fact };
@@ -78,6 +84,11 @@ export type Option = {
     checkLocally: string[]; // dictionary keys
   };
 };
+
+/** The sequences an option grows: one, or two side by side when it is a strip intercrop. */
+export function sequencesOf(option: Pick<Option, "sequence" | "strips">): CropId[][] {
+  return option.strips ? [option.sequence, option.strips] : [option.sequence];
+}
 
 export type FieldBundle = {
   field: {
@@ -212,6 +223,11 @@ export type AppState = {
   limits: Limit[];
   priorities: Priority[]; // zero to four, most important first
   scenario: Scenario;
+  /**
+   * Whether strip intercrops are ranked with the other rotations. Off until the farmer asks on the Options screen:
+   * they are a stand-in nobody here has tried, so they must not become the first advice unasked.
+   */
+  intercrops: boolean;
   view: View;
   lang: Lang;
   money: Money; // the farmer's own prices and support, where they differ from the bundle's
@@ -277,6 +293,7 @@ export const DEFAULT_STATE: AppState = {
   limits: [],
   priorities: [],
   scenario: "normal",
+  intercrops: false,
   view: "standard",
   lang: "en",
   money: {},

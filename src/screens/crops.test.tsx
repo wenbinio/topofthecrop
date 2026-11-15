@@ -230,3 +230,52 @@ describe("income confidence", () => {
     }
   });
 });
+
+describe("strip intercrops", () => {
+  it("stay out of the list until asked for, then rank with the rest and can be the advice", async () => {
+    serve(shipped);
+    renderAt("/options?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
+    const toggle = screen.getByTestId("intercrops-toggle");
+    expect(toggle).toHaveAttribute("aria-checked", "false");
+    expect(toggle).toHaveTextContent("Also show strip intercrops (2)");
+    expect(toggle).toHaveTextContent("Counted as if each were grown alone");
+    fireEvent.click(screen.getByTestId("more-options"));
+    expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual([]);
+
+    fireEvent.click(toggle);
+    await waitFor(() => expect(param("i")).toBe("1"));
+    expect(screen.getByTestId("intercrops-toggle")).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByTestId("intercrops-toggle")).toHaveTextContent("Showing strip intercrops");
+    expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual(["strips-chickpea-durum", "strips-faba-durum"]);
+    expect(screen.getByTestId("rec-headline")).toHaveTextContent("Sow chickpea and durum in strips next");
+    const row = screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === "strips-chickpea-durum")!;
+    expect(within(row).getByTestId("strips-name")).toHaveTextContent("Chickpea and durum in strips");
+    expect(within(row).getAllByTestId("strip-year")).toHaveLength(3);
+
+    fireEvent.click(screen.getByTestId("intercrops-toggle"));
+    await waitFor(() => expect(param("i")).toBeNull());
+    expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
+  });
+
+  it("the Why screen shows both crops each year and says how the figures were made", async () => {
+    serve(shipped);
+    renderAt("/why/strips-chickpea-durum?f=genzano-demo&p=income,water&i=1");
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Chickpea and durum in strips");
+    expect(screen.getAllByTestId("money-beside")).toHaveLength(3);
+    expect(screen.getByTestId("money-strips")).toHaveTextContent("each amount is the average of the two");
+    expect(screen.getByTestId("money-strips")).toHaveTextContent("No gain or loss from growing them side by side is counted");
+    expect(screen.getByText("Which strip width suits your drill and the combine header?")).toBeInTheDocument();
+    expect(screen.getByText("Any gain or loss from growing the two crops side by side is not counted")).toBeInTheDocument();
+  });
+
+  it("is left out after the same legume, with the line saying why", async () => {
+    serve(shipped);
+    renderAt("/options?f=genzano-demo&p=income,water&i=1&c=chickpea");
+    await screen.findByTestId("rec-headline");
+    fireEvent.click(screen.getByTestId("more-options"));
+    expect(rowIds()).not.toContain("strips-chickpea-durum");
+    expect(rowIds()).toContain("strips-faba-durum");
+    expect(screen.getByTestId("left-out")).toHaveTextContent("Chickpea was left out: you just grew it");
+  });
+});

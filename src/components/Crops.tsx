@@ -71,15 +71,28 @@ export function PaidIn({ crops }: { crops: CropId[] }) {
   return <Slotted text={t("settings.paidCrops")} slots={{ crops: <>{list}</> }} />;
 }
 
-/** Three crop icons with the harvest year under each. */
+/**
+ * Three crop icons with the harvest year under each. A strip intercrop shows both of a year's crops, side by side
+ * as they stand in the field.
+ */
 export function CropSequence({ option, size = "md" }: { option: Option; size?: "md" | "lg" }) {
   const t = useT();
+  const beside = option.strips;
   const icon = size === "lg" ? "w-9 h-9" : "w-[1.375rem] h-[1.375rem]";
+  const half = size === "lg" ? "w-7 h-7" : "w-[1.125rem] h-[1.125rem]";
+  const names = (crop: CropId, i: number) => (beside ? `${t(`crop.${crop}`)} + ${t(`crop.${beside[i]}`)}` : t(`crop.${crop}`));
   return (
-    <ol className="flex gap-1.5" aria-label={option.sequence.map((c) => t(`crop.${c}`)).join(", ")}>
+    <ol className="flex gap-1.5" aria-label={option.sequence.map(names).join(", ")}>
       {option.sequence.map((crop, i) => (
-        <li key={i} className="flex flex-col items-center w-10">
-          <CropIcon crop={crop} className={icon} title={t(`crop.${crop}`)} />
+        <li key={i} className={`flex flex-col items-center ${beside ? (size === "lg" ? "w-16" : "w-11") : "w-10"}`}>
+          {beside ? (
+            <span className="flex items-center gap-0.5" data-testid="strip-year">
+              <CropIcon crop={crop} className={half} title={t(`crop.${crop}`)} />
+              <CropIcon crop={beside[i]} className={half} title={t(`crop.${beside[i]}`)} />
+            </span>
+          ) : (
+            <CropIcon crop={crop} className={icon} title={t(`crop.${crop}`)} />
+          )}
           <span className="text-small font-bold text-ink-soft">{option.firstHarvestYear + i}</span>
         </li>
       ))}
@@ -90,4 +103,27 @@ export function CropSequence({ option, size = "md" }: { option: Option; size?: "
 /** The name an option is known by: its break crop, or durum for the current rotation. */
 export function optionCrop(option: Option): CropId {
   return option.sequence.find((c) => c !== "durum") ?? "durum";
+}
+
+/** The two crops of a strip intercrop, as sown in the first year (the break crop first); null for an ordinary rotation. */
+export function stripPair(option: Option): [CropId, CropId] | null {
+  return option.strips ? [option.sequence[0], option.strips[0]] : null;
+}
+
+/** An option's name in plain words, for labels and read-aloud: its break crop, or "Chickpea and durum in strips". */
+export function optionWords(option: Option, t: (key: string, vars?: Record<string, string | number>) => string): string {
+  const pair = stripPair(option);
+  return pair ? t("option.strips", { a: t(`crop.${pair[0]}`), b: t(`crop.${pair[1]}`).toLowerCase() }) : t(`crop.${optionCrop(option)}`);
+}
+
+/** An option's name with its crop icons: the break crop, or both crops of a strip intercrop. Use it wherever a rotation is named. */
+export function OptionName({ option, className = "" }: { option: Option; className?: string }) {
+  const t = useT();
+  const pair = stripPair(option);
+  if (!pair) return <CropName crop={optionCrop(option)} className={className} />;
+  return (
+    <span className={className} data-testid="strips-name">
+      <Slotted text={t("option.strips")} slots={{ a: <CropName crop={pair[0]} />, b: <CropName crop={pair[1]} lower /> }} />
+    </span>
+  );
 }

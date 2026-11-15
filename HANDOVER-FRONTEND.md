@@ -43,6 +43,7 @@ Everything the farmer chose is in the link, after the `#`. There is no local sto
 | `l` | Limits: no irrigation, cereal machinery only, no buyer, broomrape history |
 | `p` | The priorities in the farmer's order, most important first (two to four of income, water, soil, forage) |
 | `s` | Scenario for the slider: normal, drier, much-drier |
+| `i` | `1` when strip intercrops are ranked with the other rotations (the switch on the Options screen) |
 | `v`, `g` | View (standard or simple) and language (en or it) |
 | `m` | The farmer's own figures: `p.<crop>` price, `c.<crop>` direct costs, `y.<crop>` yield, `l1.<crop>` and `l2.<crop>` the extra durum after that crop (first and second harvest), `s.<id>` support amount, `on.<id>` support switch. Up to 80 figures. |
 | `x` | Payments the farmer added |

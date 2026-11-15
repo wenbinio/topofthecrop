@@ -32,6 +32,7 @@ export function whyPath(state: AppState, bundle: FieldBundle | null, route: stri
     priorities: state.priorities,
     scenario: state.scenario,
     lastCrop: state.lastCrop,
+    intercrops: state.intercrops,
   });
   return ranked[0] ? `/why/${ranked[0].option.id}` : "/options";
 }
