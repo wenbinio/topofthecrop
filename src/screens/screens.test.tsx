@@ -584,8 +584,8 @@ describe("what counts as a hot day", () => {
     expect(line).toHaveTextContent("22.9 °C now, and 24.5 °C by 2050");
   });
 
-  it("the Hot flowering finding under What we see on Why opens the same line", async () => {
-    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+  it("the Hot flowering finding under What we see on the plan opens the same line", async () => {
+    renderAt("/options?f=genzano-demo&p=income,water");
     const seen = await screen.findByTestId("fold-seen");
     fireEvent.click(within(seen).getByTestId("fold-toggle"));
     fireEvent.click(within(seen).getByRole("button", { name: "Hot flowering" }));
@@ -682,7 +682,7 @@ describe("Back buttons", () => {
 });
 
 describe("Options as a decision tree", () => {
-  it("shows the one advice, then one row to open: nothing else is in reach until asked for", async () => {
+  it("shows the one advice and the priorities, then rows to open: nothing else is in reach until asked for", async () => {
     renderAt("/options?f=genzano-demo&p=income,water");
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
     expect(within(screen.getByTestId("plan-actions")).getByTestId("branch-why")).toHaveAttribute("href", expect.stringContaining("/why/chickpea-durum-durum?"));
@@ -693,10 +693,10 @@ describe("Options as a decision tree", () => {
     expect(within(fold).getByTestId("fold-toggle")).toHaveTextContent("Other choices (3)");
     // The ruled-out line, the left-out lines and intercropping wait inside the same fold.
     expect(within(fold).getByTestId("option-list")).toBeInTheDocument();
-    // Priorities, findings, soil and money moved off the plan screen.
-    for (const id of ["fold-priorities", "priority-summary", "fold-seen", "fold-soil", "money-row"]) {
-      expect(screen.queryByTestId(id)).toBeNull();
-    }
+    // The priorities are a line beside "Change my answers"; what we see is a row of its own; the money lives on Why.
+    expect(screen.getByTestId("priority-summary")).toHaveTextContent("Your priorities: 1 Income, 2 Water");
+    expect(screen.getByTestId("fold-seen")).toHaveAttribute("data-open", "false");
+    for (const id of ["fold-priorities", "money-row"]) expect(screen.queryByTestId(id)).toBeNull();
     expect(screen.queryByText("Tap to look closer")).toBeNull();
   });
 
@@ -724,7 +724,7 @@ describe("Options as a decision tree", () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     expect(await screen.findByRole("heading", { name: "Why this option" })).toBeInTheDocument();
     const toggles = screen.getAllByTestId("fold-toggle");
-    expect(toggles.map((toggle) => toggle.textContent)).toEqual(["Over three harvests", "What the data shows", "What we see", "What we don't know"]);
+    expect(toggles.map((toggle) => toggle.textContent)).toEqual(["Over three harvests", "What the data shows", "What we don't know"]);
     for (const toggle of toggles) expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 });
@@ -807,12 +807,15 @@ describe("Questions", () => {
 });
 
 describe("Why", () => {
-  it("shows its headings in order, with no path, benefits or local checks", async () => {
+  it("shows its headings in order, what the data found, and no benefits or local checks", async () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     const headings = await screen.findAllByRole("heading", { level: 2 });
     const names = headings.map((h) => h.textContent);
-    expect(names).toEqual(["Why this option", "If the year turns dry", "Over three harvests", "What the data shows", "What we see", "What we don't know"]);
-    expect(screen.queryByTestId("why-path")).toBeNull();
+    expect(names).toEqual(["Why this option", "If the year turns dry", "Over three harvests", "What the data shows", "What we don't know"]);
+    // What the satellite and weather data found, without the farmer's own priorities read back as findings.
+    const found = screen.getByTestId("why-path");
+    expect(within(found).getAllByRole("listitem").length).toBeGreaterThan(0);
+    expect(found).not.toHaveTextContent(/Picked/);
     expect(screen.queryByText("Benefits")).toBeNull();
     expect(screen.queryByText("Check locally")).toBeNull();
   });
@@ -852,8 +855,8 @@ describe("Why", () => {
     expect(screen.getByTestId("why-year-much-drier")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
   });
 
-  it("keeps What we see folded, with the findings inside", async () => {
-    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+  it("keeps What we see folded on the plan, with the findings inside", async () => {
+    renderAt("/options?f=genzano-demo&p=income,water");
     const seen = await screen.findByTestId("fold-seen");
     expect(seen).toHaveAttribute("data-open", "false");
     expect(within(seen).getByTestId("fold-toggle")).toHaveTextContent("What we see");
@@ -1035,4 +1038,39 @@ describe("word counts", () => {
       });
     }
   }
+});
+
+describe("help on the limits, and the back arrow", () => {
+  it("each limit has a small ? that says what it means and what it does", async () => {
+    renderAt("/questions?f=genzano-demo");
+    await screen.findByTestId("question-1");
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    const help = screen.getByTestId("limit-help-cereal-machinery");
+    expect(help).toHaveAccessibleName('What "Cereal machinery only" means');
+    expect(help).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(help);
+    expect(help).toHaveAttribute("aria-expanded", "true");
+    const tip = document.getElementById(help.getAttribute("aria-describedby")!)!;
+    expect(tip).toHaveTextContent("mower, rake and baler");
+    for (const id of ["no-irrigation", "no-buyer", "broomrape"]) expect(screen.getByTestId(`limit-help-${id}`)).toBeInTheDocument();
+  });
+
+  it("the back arrow shows on every screen but the map, and goes up a level on a link opened straight on a screen", async () => {
+    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+    fireEvent.click(await screen.findByTestId("top-back"));
+    await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+    expect(lastPath).toContain("p=income");
+    cleanup();
+    renderAt("/?f=genzano-demo");
+    await screen.findByTestId("top-bar");
+    expect(screen.queryByTestId("top-back")).toBeNull();
+  });
+
+  it("My field links to the usual, dry and driest years", async () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    renderAt("/today?f=genzano-demo&p=income,water");
+    const link = await screen.findByTestId("today-year-link");
+    expect(link).toHaveTextContent("Usual, dry and driest years");
+    expect(link).toHaveAttribute("href", expect.stringContaining("/year?"));
+  });
 });

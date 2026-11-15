@@ -8,6 +8,9 @@ import { useAppState, useTo } from "../state/useAppState";
 import { PlaceholderNote, ScaleBadge, formatNumber } from "../components/FactParts";
 import { FieldShape, openRing } from "../components/FieldShape";
 import { Fold } from "../components/Fold";
+import { Findings } from "../components/Findings";
+import { SoilCard } from "../components/SoilCard";
+import { soilSummary } from "../data/soil";
 import { CropPlate } from "../components/CropPlate";
 import { ChevronIcon, WarnIcon } from "../components/Icons";
 import { CropName, CropSequence, Slotted, stripPair, stripsNext } from "../components/Crops";
@@ -133,6 +136,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
   // When every other choice is as sure (or unsure) as the next, it is said once above the list, not on every row.
   const sures = new Set(others.map((r) => r.option.facts.income.confidence));
   const sharedSure = sures.size === 1 ? [...sures][0] : null;
+  const soil = soilSummary(bundle);
   // Where an intercrop would go on this field: the strip option that pairs the advised crop, else the first one.
   const sowNext = best ? best.option.sequence[0] : undefined;
   const intercrop = best?.option.strips
@@ -175,13 +179,26 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
             {t("options.share")}
           </LinkButton>
         </div>
-        <Link to={to("/questions")} data-testid="change-answers" className="self-center min-h-11 flex items-center text-body underline underline-offset-4">
-          {t("options.change")}
-        </Link>
+        <p className="self-center flex flex-wrap items-baseline justify-center gap-x-2 text-body">
+          <span className="text-ink-soft" data-testid="priority-summary">
+            {t("options.priorities")}: {state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ") || t("common.noData")}
+          </span>
+          <Link to={to("/questions")} data-testid="change-answers" className="min-h-11 inline-flex items-center underline underline-offset-4">
+            {t("options.change")}
+          </Link>
+        </p>
       </div>
       </div>
 
       <div className="flex flex-col min-w-0 border-t border-line">
+      <Fold testId="fold-seen" title={t("options.seen")}>
+        <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
+      </Fold>
+      {soil ? (
+        <Fold testId="fold-soil" title={t("soil.title")} summary={t(`soil.weight.${soil.weight}`)}>
+          <SoilCard bundle={bundle} view={state.view} bare />
+        </Fold>
+      ) : null}
       {intercrop ? (
         <Fold testId="fold-intercrop" title={t("strips.where")}>
           <StripMap option={intercrop} bundle={bundle} />

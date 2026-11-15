@@ -758,6 +758,14 @@ export const en = {
   "strips.fit.rain.chickpea": "{mm} mm of rain from October to May ({dry} mm in a dry year): enough for chickpea, which needs little water.",
   "strips.fit.rain.faba": "{mm} mm of rain from October to May ({dry} mm in a dry year): faba bean needs about as much as durum.",
   "strips.fit.rain.other": "{mm} mm of rain from October to May ({dry} mm in a dry year).",
+  "why.found": "What the data found",
+  "today.weather": "Usual, dry and driest years",
+  "limit.no-irrigation.def": "You have no water to irrigate. Every rotation in the app already relies on rain alone, so this changes nothing yet.",
+  "limit.cereal-machinery.def": "You only have machines for wheat and barley. Forage that needs a mower, rake and baler is ruled out; crops that need a low-cut header (chickpea, lentil) or side knives (rapeseed) get a warning.",
+  "limit.no-buyer.def": "Nobody nearby buys pulses or other new crops. Crops that usually sell to only a few buyers, or on contract, get a warning.",
+  "limit.broomrape.def": "Broomrape, the parasitic weed that attacks faba bean, pea and lentil, has been in this field. The crops it attacks get a warning.",
+  "q.limitHelp": "What \"{limit}\" means",
+  "common.backTop": "Back",
 } as const;
 
 export type DictKey = keyof typeof en;

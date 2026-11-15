@@ -97,12 +97,10 @@ describe("a drawn field", () => {
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent(/^Plant .+ next$|Keep durum/);
     expect(screen.getByTestId("area-note")).toHaveTextContent("For the 1 km area around your field");
     expect(screen.queryByTestId("farmland-note")).toBeNull();
-    // What we see is on the Why page now.
-    fireEvent.click(screen.getByTestId("branch-why"));
+    // What we see sits on the plan screen, folded.
     const seen = await screen.findByTestId("fold-seen");
     expect(within(seen).getAllByRole("listitem", { hidden: true })).toHaveLength(3);
-    // Back to the plan, Change my answers, then the step bar's Field step goes back to Find field, keeping the outline.
-    fireEvent.click(screen.getByRole("link", { name: "Back to the plan" }));
+    // Change my answers, then the step bar's Field step goes back to Find field, keeping the outline.
     fireEvent.click(await screen.findByTestId("change-answers"));
     fireEvent.click(await screen.findByRole("link", { name: "1. Field" }));
     await waitFor(() => expect(lastPath.startsWith("/?")).toBe(true));
@@ -145,9 +143,13 @@ describe("a drawn field", () => {
     expect(lastPath).toContain("o=");
     cleanup();
 
-    renderAt(`/why/chickpea-durum-durum?${o}`);
+    renderAt(`/options?${o}`);
     const findings = await screen.findByTestId("fold-seen", {}, { timeout: 10000 });
     expect(within(findings).getAllByRole("listitem", { hidden: true }).length).toBeGreaterThan(0);
+    cleanup();
+
+    renderAt(`/why/chickpea-durum-durum?${o}`);
+    await screen.findByTestId("why-years", {}, { timeout: 10000 });
     const unknowns = screen.getByRole("heading", { name: "What we don't know" });
     const list = unknowns.parentElement!;
     expect(list).toHaveTextContent("estimates for a 1 km area");

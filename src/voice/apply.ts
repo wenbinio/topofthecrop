@@ -64,7 +64,8 @@ export function routeKey(route: string): string {
 function nextOf(route: string, state: AppState): string | { blocked: string } | null {
   if (route === "/") return state.fieldId === DEMO_FIELD_ID ? "/questions" : { blocked: "settings.noField" };
   if (route.startsWith("/questions")) return state.priorities.length >= MIN_RANKED ? "/options" : { blocked: "voice.pick2" };
-  if (route.startsWith("/options") || route.startsWith("/why")) return "/year";
+  if (route.startsWith("/options")) return "/today";
+  if (route.startsWith("/why")) return "/year";
   if (route.startsWith("/year")) return "/adviser";
   return null;
 }
@@ -74,7 +75,7 @@ function backOf(route: string, state: AppState): string | null {
   if (route.startsWith("/questions") || route.startsWith("/area")) return "/";
   if (route.startsWith("/options")) return "/questions";
   if (route.startsWith("/why") || route.startsWith("/year")) return "/options";
-  if (route.startsWith("/adviser")) return "/year";
+  if (route.startsWith("/adviser")) return "/options";
   if (route.startsWith("/print")) return "/adviser";
   if (route === SETTINGS_PATH) return state.fieldId === DEMO_FIELD_ID ? "/options" : state.outline ? "/area" : "/";
   return null;

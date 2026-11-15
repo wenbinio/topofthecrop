@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { Economics, Fact, FieldBundle, Option, Scenario } from "../data/types";
 import { SCENARIOS, sequencesOf } from "../data/types";
 import { optionMoney, yieldLift } from "../money/money";
+import { buildPath } from "../ranking/diagnose";
 import { rankOptions } from "../ranking/rank";
 import { reasonsFor } from "../ranking/reasons";
 import { ReasonList } from "../components/Reasons";
@@ -16,9 +17,6 @@ import { Fold } from "../components/Fold";
 import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { unknownsFor } from "../data/caveats";
 import { AreaNote } from "../components/BundleProvider";
-import { Findings } from "../components/Findings";
-import { SoilCard } from "../components/SoilCard";
-import { soilSummary } from "../data/soil";
 import { StripMap } from "../components/StripMap";
 
 /** Two facts that are the same figure: same number, unit, scale, period, range and dataset (labels may differ). */
@@ -242,7 +240,9 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
     }).ranked[0];
   const years = SCENARIOS.map((scenario) => ({ scenario, best: bestIn(scenario) }));
   const holds = years[0].best && years.every((y) => y.best?.option.id === years[0].best?.option.id) ? years[0].best : undefined;
-  const soil = soilSummary(bundle);
+  // What the satellite and weather data found on this field, step by step (the farmer's own priorities are not
+  // repeated back to them as findings).
+  const found = finding ? buildPath(finding, state.limits, state.priorities).filter((k) => !k.startsWith("path.priority.")) : [];
   // The finding's own figure heads the evidence; the shared evidence list holds the same figure again (hot days or
   // bare months), so the repeat is left out.
   const evidence = finding ? option.why.evidence.filter((f) => !sameFigure(f, finding.fact)) : option.why.evidence;
@@ -291,6 +291,21 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
             testId="why-reasons"
           />
         </div>
+        {found.length ? (
+          <div className="my-2" data-testid="why-path">
+            <h3 className="text-small font-bold uppercase tracking-wider text-ink-soft">{t("why.found")}</h3>
+            <ul className="mt-1 flex flex-col gap-1">
+              {found.map((key) => (
+                <li key={key} className="flex gap-2 text-body">
+                  <FindingIcon titleKey={finding?.title ?? ""} className="w-5 h-5 flex-none mt-0.5" />
+                  <span>
+                    <RichText text={t(key)} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
         <p className="text-body py-2">
           <RichText text={t(option.why.suggested)} />
         </p>
@@ -354,14 +369,6 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
         </ul>
       </Section>
 
-      <Fold testId="fold-seen" title={t("options.seen")}>
-        <Findings findings={bundle.findings} view={state.view} flowerHigh={bundle.year.flowerHigh} />
-      </Fold>
-      {soil ? (
-        <Fold testId="fold-soil" title={t("soil.title")} summary={t(`soil.weight.${soil.weight}`)}>
-          <SoilCard bundle={bundle} view={state.view} bare />
-        </Fold>
-      ) : null}
 
       <Section fold title={t("why.h.unknowns")}>
         <ul className="list-disc pl-5 py-1 text-body">

@@ -740,4 +740,13 @@ export const it: Dict = {
   "strips.fit.rain.chickpea": "{mm} mm di pioggia da ottobre a maggio ({dry} mm in annata secca): bastano per il cece, che vuole poca acqua.",
   "strips.fit.rain.faba": "{mm} mm di pioggia da ottobre a maggio ({dry} mm in annata secca): il favino vuole circa la stessa acqua del grano duro.",
   "strips.fit.rain.other": "{mm} mm di pioggia da ottobre a maggio ({dry} mm in annata secca).",
+  // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
+  "why.found": "Cosa hanno trovato i dati",
+  "today.weather": "Annata normale, secca e la più secca",
+  "limit.no-irrigation.def": "Non hai acqua per irrigare. Tutte le rotazioni nell'app si basano già solo sulla pioggia, quindi per ora non cambia nulla.",
+  "limit.cereal-machinery.def": "Hai solo le macchine per grano duro e orzo. Il foraggio che richiede falciatrice, ranghinatore e imballatrice viene escluso; le colture che vogliono barra bassa (cece, lenticchia) o lame laterali (colza) hanno un avviso.",
+  "limit.no-buyer.def": "Nessuno in zona compra legumi o altre colture nuove. Le colture che di solito si vendono a pochi acquirenti, o su contratto, hanno un avviso.",
+  "limit.broomrape.def": "L'orobanche, la pianta parassita che attacca favino, pisello e lenticchia, è già comparsa in questo campo. Le colture che attacca hanno un avviso.",
+  "q.limitHelp": "Cosa vuol dire «{limit}»",
+  "common.backTop": "Indietro",
 };

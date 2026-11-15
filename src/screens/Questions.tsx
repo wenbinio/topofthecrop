@@ -7,6 +7,7 @@ import { economicsCrops } from "../money/money";
 import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
 import { CropPlate } from "../components/CropPlate";
+import { HelpTip } from "../components/HelpTip";
 import { BackIcon, CheckIcon } from "../components/Icons";
 import { MIN_RANKED, PRIORITY_ICON, RankMark, togglePriority } from "../components/Reasons";
 import { PriorityHelp, priorityLine } from "../components/Term";
@@ -140,9 +141,15 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       </div>
       <div className="grid grid-cols-1 gap-2 px-4">
         {LIMITS.map((limit) => (
-          <Choice key={limit} on={state.limits.includes(limit)} onClick={() => onLimit(limit)}>
-            {t(`limit.${limit}`)}
-          </Choice>
+          <div key={limit} className="flex items-start gap-1">
+            <div className="flex-1 min-w-0">
+              <Choice on={state.limits.includes(limit)} onClick={() => onLimit(limit)}>
+                {t(`limit.${limit}`)}
+              </Choice>
+            </div>
+            {/* What the choice means and what it does to the advice: on hover, or a tap on a phone. */}
+            <HelpTip label={t("q.limitHelp", { limit: t(`limit.${limit}`) })} text={t(`limit.${limit}.def`)} testId={`limit-help-${limit}`} />
+          </div>
         ))}
       </div>
       </div>

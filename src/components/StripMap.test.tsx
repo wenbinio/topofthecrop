@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { afterEach, describe, expect, it } from "vitest";
 import shipped from "../../public/data/genzano-demo.json";
 import type { FieldBundle, Option } from "../data/types";
-import { STRIP_METRES, StripMap, layoutPieces, moistFirst, pairFit } from "./StripMap";
+import { STRIP_METRES, StripMap, backdropScene, layoutPieces, moistFirst, pairFit, piecesIn } from "./StripMap";
 
 type Pt = [number, number];
 
@@ -114,9 +114,9 @@ describe("StripMap", () => {
     fireEvent.click(screen.getByTestId("layout-halves"));
     expect(map).toHaveAttribute("data-layout", "halves");
     expect(screen.getByTestId("layout-halves")).toHaveAttribute("aria-checked", "true");
-    // Two halves plus the outline drawn over them.
-    expect(map.querySelectorAll("svg polygon")).toHaveLength(3);
-    expect(strips).toBeGreaterThan(3);
+    // Two halves; the outline (clip path, light edge and dark line) is drawn apart from them.
+    expect(map.querySelectorAll("svg g polygon")).toHaveLength(2);
+    expect(strips).toBeGreaterThan(5);
     expect(legend()).toEqual(["chickpea", "durum"]);
   });
 
@@ -142,5 +142,24 @@ describe("where each crop goes, and why this pair", () => {
     const heat = lines.find((l) => l.key === "strips.fit.heat.chickpea")!;
     expect(typeof heat.vars.n).toBe("number");
     expect(typeof heat.vars.dry).toBe("number");
+  });
+});
+
+describe("the picture under the map", () => {
+  it("uses the newest almost cloudless picture", () => {
+    const pick = backdropScene([
+      { id: "old", datetime: "2025-06-01T10:00:00Z", cloud: 1 },
+      { id: "cloudy", datetime: "2026-10-01T10:00:00Z", cloud: 30 },
+      { id: "new", datetime: "2026-09-20T10:00:00Z", cloud: 2 },
+    ]);
+    expect(pick?.id).toBe("new");
+    expect(backdropScene([{ id: "c", datetime: "2026-01-01T00:00:00Z", cloud: 50 }])).toBeNull();
+  });
+
+  it("cuts strips in tile pixels the same way as in metres", () => {
+    const square: [number, number][] = [[0, 0], [100, 0], [100, 50], [0, 50], [0, 0]];
+    const pieces = piecesIn(square, "strips", 10);
+    expect(pieces).toHaveLength(5);
+    expect(piecesIn(square, "halves", 10)).toHaveLength(2);
   });
 });

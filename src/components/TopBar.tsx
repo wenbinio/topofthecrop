@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import type { Lang } from "../data/types";
 import { useT } from "../i18n";
 import { SETTINGS_PATH, settingsFrom } from "../screens/settings/path";
 import { useAppState, useTo } from "../state/useAppState";
 import { MicButton, VoiceLine, useVoice } from "../voice/Voice";
-import { BigTextIcon, GearIcon } from "./Icons";
+import { BackIcon, BigTextIcon, GearIcon } from "./Icons";
 
 /** The app's mark: a wheat ear in a field parcel, drawn in the theme's colour. */
 function Mark() {
@@ -120,6 +120,42 @@ function MoreMenu() {
   );
 }
 
+/** Where Back goes when there is no earlier screen in this visit (a shared link opened straight on a screen). */
+export function parentOf(pathname: string): string {
+  if (pathname.startsWith("/questions") || pathname.startsWith("/area")) return "/";
+  if (pathname.startsWith("/why")) return "/options";
+  if (pathname.startsWith("/year")) return "/options";
+  if (pathname.startsWith("/timelapse")) return "/today";
+  if (pathname.startsWith("/print")) return "/adviser";
+  if (pathname === "/") return "/";
+  return "/options";
+}
+
+/** A back arrow on every screen but the first: the previous screen of this visit, or the screen above this one. */
+function BackArrow() {
+  const t = useT();
+  const to = useTo();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  if (pathname === "/") return null;
+  const back = () => {
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (idx > 0) navigate(-1);
+    else navigate(to(parentOf(pathname)));
+  };
+  return (
+    <button
+      type="button"
+      onClick={back}
+      data-testid="top-back"
+      className="tc-tap w-11 h-11 flex-none flex items-center justify-center rounded-full text-ink"
+    >
+      <BackIcon className="w-6 h-6" />
+      <span className="sr-only">{t("common.backTop")}</span>
+    </button>
+  );
+}
+
 /**
  * The app's name, the language and a "More" menu, with the setup steps (`steps`) under them while the farmer is
  * still setting up. Held sideways the phone is short, so everything goes into one row.
@@ -133,9 +169,13 @@ export function TopBar({ steps = null }: { steps?: ReactNode }) {
       data-testid="top-bar"
       className="relative flex flex-wrap items-center justify-between gap-x-2 bg-surface border-b border-line print:hidden phone-land:flex-nowrap phone-land:gap-x-3 phone-land:px-3 phone-land:py-1"
     >
-      <span data-testid="app-name" className="min-w-0 pl-3 py-2 flex items-center gap-2 phone-land:pl-0 phone-land:py-0">
-        <Mark />
-        <span className="font-display font-semibold text-big leading-tight truncate">{t("app.name")}</span>
+      {/* One row on a phone: the name shortens with "…" before the language and menu ever wrap. */}
+      <span data-testid="app-name" className="flex-1 min-w-0 pl-1 py-1 flex items-center gap-1.5 phone-land:flex-none phone-land:pl-0 phone-land:py-0">
+        <BackArrow />
+        <span className="max-[380px]:hidden flex-none">
+          <Mark />
+        </span>
+        <span className="min-w-0 font-display font-semibold text-big leading-tight truncate">{t("app.name")}</span>
       </span>
       <div className="flex items-center gap-1 flex-none pr-2 phone-land:pr-0 phone-land:order-3">
         <div role="radiogroup" aria-label={t("lang.label")} className="flex border-2 border-line-strong rounded-full overflow-hidden">

@@ -3,14 +3,16 @@
 // The split follows the field's shape only. Splitting by soil would need a soil map finer than the field, and the
 // one the app has gives one value for the whole field (see the note under the map).
 // Written with AI assistance (Claude, Anthropic).
-import { useId, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { CropId, FieldBundle, Option } from "../data/types";
 import { soilSummary } from "../data/soil";
 import { useLang, useT } from "../i18n";
 import { formatNumber } from "./FactParts";
 import { CropPlate } from "./CropPlate";
 import { stripPair } from "./Crops";
-import { agreement, fetchFieldZones, splitByVigour } from "../satellite/zones";
+import { agreement, fetchFieldZones, metresPerPixel, splitByVigour } from "../satellite/zones";
+import { blockTiles, fetchScenes, tileUrl, tileWindow } from "../timelapse/frames";
+import type { Scene } from "../timelapse/frames";
 import type { FieldZones } from "../satellite/zones";
 
 type Pt = [number, number];
@@ -118,7 +120,14 @@ export function pairFit(bundle: FieldBundle, pair: [CropId, CropId]): { key: str
  * line that leaves equal areas either side.
  */
 export function layoutPieces(ringLonLat: Pt[], layout: Layout): { poly: Pt[]; crop: 0 | 1 }[] {
-  const poly = toMetres(ringLonLat);
+  return piecesIn(toMetres(ringLonLat), layout, STRIP_METRES);
+}
+
+/** The same split for any flat outline, with the strip width in the outline's own units (metres, or tile pixels). */
+export function piecesIn(outline: Pt[], layout: Layout, strip: number): { poly: Pt[]; crop: 0 | 1 }[] {
+  // A closed ring repeats its first point; the cut works on the open one.
+  const last = outline[outline.length - 1];
+  const poly = outline.length > 3 && last[0] === outline[0][0] && last[1] === outline[0][1] ? outline.slice(0, -1) : outline;
   const a = longestSide(poly);
   const [c, s] = [Math.cos(a), Math.sin(a)];
   // v: the distance across the strips (perpendicular to the longest side).
@@ -143,11 +152,17 @@ export function layoutPieces(ringLonLat: Pt[], layout: Layout): { poly: Pt[]; cr
   }
   const pieces: { poly: Pt[]; crop: 0 | 1 }[] = [];
   let k = 0;
-  for (let v = lo; v < hi; v += STRIP_METRES, k++) {
-    const piece = band(v, Math.min(v + STRIP_METRES, hi));
+  for (let v = lo; v < hi; v += strip, k++) {
+    const piece = band(v, Math.min(v + strip, hi));
     if (piece.length >= 3) pieces.push({ poly: piece, crop: (k % 2) as 0 | 1 });
   }
   return pieces;
+}
+
+/** The newest picture with almost no cloud, for the backdrop. */
+export function backdropScene(scenes: Scene[]): Scene | null {
+  const clear = scenes.filter((s) => s.cloud < 5).sort((a, b) => b.datetime.localeCompare(a.datetime));
+  return clear[0] ?? null;
 }
 
 export function StripMap({ option, bundle }: { option: Option; bundle: FieldBundle }) {
@@ -155,6 +170,31 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const lang = useLang();
   const outline = bundle.field.outline;
   const clipId = useId();
+  // Every layout is drawn in the satellite tiles' own frame, so it can sit over the picture of the field.
+  const win = useMemo(() => tileWindow(outline), [outline]);
+  const box = useRef<HTMLElement>(null);
+  const [backdrop, setBackdrop] = useState<{ scene: Scene; format: "jpg" | "png" } | null>(null);
+  // The picture loads once the card is on screen (never while it sits in a closed fold).
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let gone = false;
+    const seen = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      seen.disconnect();
+      fetchScenes(win.centre)
+        .then((scenes) => {
+          const scene = backdropScene(scenes);
+          if (!gone && scene) setBackdrop({ scene, format: "jpg" });
+        })
+        .catch(() => undefined);
+    });
+    seen.observe(el);
+    return () => {
+      gone = true;
+      seen.disconnect();
+    };
+  }, [win]);
   const [layout, setLayout] = useState<Layout>("strips");
   const [year, setYear] = useState<0 | 1>(0);
   // From space: fetched only when the farmer asks, since it downloads a few satellite pictures.
@@ -166,7 +206,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   // the option's own order.
   const ordered: [CropId, CropId] = layout === "space" ? moistFirst(pair) : pair;
   const crops: [CropId, CropId] = year === 0 ? ordered : [ordered[1], ordered[0]];
-  const pieces = layout === "space" ? [] : layoutPieces(ring, layout);
+  const pieces = layout === "space" ? [] : piecesIn(win.points, layout, STRIP_METRES / metresPerPixel(win.z, win.centre[1]));
   const pick = (id: Layout) => {
     setLayout(id);
     if (id === "space" && zones.status !== "ready" && zones.status !== "loading") {
@@ -180,16 +220,13 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   const sides = space ? splitByVigour(space.cells) : [];
   const agree = space ? Math.round(agreement(space.cells, sides) * 100) : 0;
   const fit = pairFit(bundle, pair);
-  const outlineM = toMetres(ring);
-  const xs = outlineM.map((p) => p[0]);
-  const ys = outlineM.map((p) => p[1]);
-  const pad = 6;
-  const box = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + 2 * pad, Math.max(...ys) - Math.min(...ys) + 2 * pad];
   const pts = (poly: Pt[]) => poly.map((p) => p.join(",")).join(" ");
+  // See-through over the picture, so the field shows under the colours; nearly solid when there is no picture.
+  const alpha = backdrop ? 0.45 : 0.9;
   const seg = "flex-1 min-h-11 px-2 font-bold text-small";
 
   return (
-    <section className="mx-4 mt-4 p-3 bg-surface border border-line rounded-box" data-testid="strip-map" data-layout={layout} data-year={year}>
+    <section ref={box} className="mx-4 mt-4 p-3 bg-surface border border-line rounded-box" data-testid="strip-map" data-layout={layout} data-year={year}>
       <h2 className="text-big">{t("strips.head")}</h2>
       <p className="mt-1 text-body text-ink-soft">
         {layout === "space"
@@ -216,43 +253,54 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
           ))}
         </div>
       </div>
-      {space ? (
-        <svg
-          viewBox={[space.win.region.x, space.win.region.y, space.win.region.size, space.win.region.size].join(" ")}
-          className="mt-3 w-full max-h-64"
-          role="img"
-          data-testid="space-map"
-          aria-label={t("strips.mapLabel", { a: t(`crop.${crops[0]}`), b: t(`crop.${crops[1]}`) })}
-        >
-          <defs>
-            <clipPath id={clipId}>
-              <polygon points={space.win.points.map((p) => p.join(",")).join(" ")} />
-            </clipPath>
-          </defs>
-          <g clipPath={`url(#${clipId})`}>
-            {space.cells.map((c, i) => (
-              <rect key={i} x={c.x} y={c.y} width={c.size + 0.4} height={c.size + 0.4} fill={FILL[sides[i] === "weak" ? crops[0] : crops[1]]} />
-            ))}
-          </g>
-          <polygon points={space.win.points.map((p) => p.join(",")).join(" ")} fill="none" stroke="#1f3a2b" strokeWidth={1.5} strokeLinejoin="round" />
-        </svg>
-      ) : layout === "space" ? (
+      {layout === "space" && !space ? (
         <p className="mt-3 h-32 flex items-center justify-center rounded-box bg-sunk text-body text-ink-soft" role="status">
           {zones.status === "failed" ? t("strips.spaceFailedShort") : t("strips.spaceLoading")}
         </p>
       ) : (
-      <svg
-        viewBox={box.join(" ")}
-        className="mt-3 w-full max-h-64"
-        role="img"
-        aria-label={t("strips.mapLabel", { a: t(`crop.${crops[0]}`), b: t(`crop.${crops[1]}`) })}
-      >
-        {pieces.map((piece, i) => (
-          <polygon key={i} points={pts(piece.poly)} fill={FILL[crops[piece.crop]]} stroke="#fffcf6" strokeWidth={1} />
-        ))}
-        <polygon points={pts(outlineM)} fill="none" stroke="#1f3a2b" strokeWidth={2.5} strokeLinejoin="round" />
-      </svg>
+        <svg
+          viewBox={[win.region.x, win.region.y, win.region.size, win.region.size].join(" ")}
+          className="mt-3 w-full max-h-72 rounded-box bg-sunk"
+          role="img"
+          data-testid={space ? "space-map" : "layout-map"}
+          data-backdrop={backdrop ? backdrop.scene.id : undefined}
+          aria-label={t("strips.mapLabel", { a: t(`crop.${crops[0]}`), b: t(`crop.${crops[1]}`) })}
+        >
+          <defs>
+            <clipPath id={clipId}>
+              <polygon points={pts(win.points)} />
+            </clipPath>
+          </defs>
+          {backdrop
+            ? blockTiles(win).map(([x, y]) => (
+                <image
+                  key={`${x}-${y}`}
+                  href={tileUrl(backdrop.scene.id, win.z, x, y, backdrop.format)}
+                  x={(x - win.tx) * 256}
+                  y={(y - win.ty) * 256}
+                  width={256}
+                  height={256}
+                  preserveAspectRatio="none"
+                  onError={() => setBackdrop((b) => (b && b.format === "jpg" ? { ...b, format: "png" } : null))}
+                />
+              ))
+            : null}
+          <g clipPath={`url(#${clipId})`} opacity={alpha}>
+            {space
+              ? space.cells.map((c, i) => (
+                  <rect key={i} x={c.x} y={c.y} width={c.size + 0.4} height={c.size + 0.4} fill={FILL[sides[i] === "weak" ? crops[0] : crops[1]]} />
+                ))
+              : pieces.map((piece, i) => <polygon key={i} points={pts(piece.poly)} fill={FILL[crops[piece.crop]]} stroke="#fffcf6" strokeWidth={0.6} />)}
+          </g>
+          <polygon points={pts(win.points)} fill="none" stroke="#fffcf6" strokeWidth={3} strokeLinejoin="round" />
+          <polygon points={pts(win.points)} fill="none" stroke="#1f3a2b" strokeWidth={1.2} strokeLinejoin="round" />
+        </svg>
       )}
+      {backdrop ? (
+        <p className="mt-1 text-small text-ink-soft" data-testid="backdrop-credit">
+          {backdrop.scene.datetime.slice(0, 10)} · {t("timelapse.credit", { years: backdrop.scene.datetime.slice(0, 4) })}
+        </p>
+      ) : null}
       <ul className="mt-2 flex flex-col gap-1">
         {crops.map((crop, i) => (
           <li key={crop} className="flex items-center gap-2 text-body" data-testid="strip-legend" data-crop={crop}>

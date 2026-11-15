@@ -189,6 +189,14 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
         {t("timelapse.title")}
         <ChevronIcon className="w-4 h-4" />
       </Link>
+      <Link
+        to={to("/year")}
+        data-testid="today-year-link"
+        className="mx-4 inline-flex items-center gap-1 min-h-11 font-bold text-body underline underline-offset-4"
+      >
+        {t("today.weather")}
+        <ChevronIcon className="w-4 h-4" />
+      </Link>
 
       <div className="px-4 py-4 flex flex-col items-start gap-2">
         <p className="text-small text-ink-soft" data-testid="today-phone">
