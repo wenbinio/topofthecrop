@@ -341,12 +341,21 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
 - **Voice uses the phone, not us.** The app contains no hosted AI model and sends nothing to a server of ours. Its voice commands and "read aloud" use the browser's built-in speech recognition and speech synthesis, which the phone maker (Google, Apple, Samsung) provides; recognition may send the audio to the phone maker's servers. Spoken words become commands through a written list of phrases (`src/voice/commands.ts`), not a model.
 
+## Licence
+
+The code in this repository is under the MIT licence (`LICENSE`).
+
+That covers what the team wrote. Everything else keeps its own licence, which the tables under [Data](#data) name:
+- the data team's files in `data/` are built from the datasets listed in `DATA_SOURCES.md`, each under its own terms;
+- the map tiles in `public/tiles/s2/` contain modified Copernicus Sentinel data;
+- the parcels in `public/parcels/` are from the Agenzia delle Entrate, CC BY 4.0;
+- the aerial photos (AGEA), the forecast (MET Norway) and the other map layers are loaded live from their owners and are not part of this repository.
+
 ## Open questions
 
 - Is the submission deadline 23:59 Finland time, or does our local event close earlier?
 - Team member names for this page.
 - Must the repository be public for judging? (Planned: make it public before submitting.)
-- Licence for the code (planned: MIT).
 - Are the weather thresholds right for durum in the upper Bradano (30 °C or more, 15 April to 15 June for flowering; frost in March and April)?
 - Are the three alternative sequences right for the upper Bradano (chickpea → durum → durum, faba bean → durum → faba bean, vetch-oat forage → durum → durum)?
 - Sources for rotation income and nitrogen figures in Basilicata.

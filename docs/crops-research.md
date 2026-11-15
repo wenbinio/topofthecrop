@@ -50,6 +50,10 @@ Rotations built from them, each over three harvests: the four the app already ha
 - **Hay prices:** no southern quote exists; both used northern exchanges.
 - Water need, broomrape status and sowing months are the researchers' agronomic judgement.
 
+## Durum after a legume
+
+The income sum counts more durum grain after chickpea (16% the first harvest after, 10% the second) and after faba bean (12% the first harvest after). The sources are Lago-Olveira et al. 2023 (Puglia) and Garofalo et al. 2009 (Foggia, simulated), as cited in the team's research compilation; nobody on the team has checked them against the papers. No figure was found for lentil, pea or vetch, so they get none. See `docs/scoring.md`.
+
 ## Researched but left out of the app
 
 - **Sulla hay:** both researchers preferred it to berseem clover for dry calcareous clay, but it is normally kept for two years, and no yield or cost for the second year was found. Opus gave 6 t/ha from a search excerpt; Hydrogen gave 3.8.

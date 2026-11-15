@@ -139,3 +139,13 @@ Shown under "This season so far", for the field's centre, from MET Norway's open
 - A forecast is a best guess, most of all for rain a week ahead, so its figures carry low confidence and the block says to check again before sowing.
 - If MET Norway does not answer within 8 seconds, the block says the forecast is unavailable and offers to try again.
 - The link under it opens MET Norway's public forecast page (yr.no) for the same place. A web page cannot read the phone's own weather app.
+
+## More durum after a legume
+
+- Durum gives more grain when it follows a legume, which leaves nitrogen and breaks the cereal's diseases. The bundle carries this per crop as `durumAfter`, in percent, and `yieldLift` in `src/money/money.ts` applies it.
+- **Chickpea:** 16% more for the durum harvest straight after, 10% more for a second durum in a row (Lago-Olveira et al. 2023, a wheat and chickpea rotation in Puglia).
+- **Faba bean:** 12% more for the durum harvest straight after (Garofalo et al. 2009, a 53-year simulation for the Foggia area).
+- Only durum gets a lift, and only inside the three harvests shown: nothing is counted for the crop grown before the rotation starts.
+- The lift raises that harvest's sales. It shows on Why as a line under the durum harvest and names its study.
+- **How sure:** low. The figures come from the team's research compilation, which cites the papers; we have not opened the papers ourselves. The chickpea study worked with wheat at 5 t/ha, well above this area's 3 t/ha, so its percentage may not carry over.
+- **Lentil, pea and vetch get no lift** because no figure was found for them. That is a gap in the evidence, not a finding that they give nothing, and it tilts the comparison towards chickpea and faba bean.

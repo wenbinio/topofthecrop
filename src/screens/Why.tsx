@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import type { Economics, Fact, FieldBundle, Option } from "../data/types";
-import { optionMoney } from "../money/money";
+import { optionMoney, yieldLift } from "../money/money";
 import { buildPath } from "../ranking/diagnose";
 import { rankOptions } from "../ranking/rank";
 import { reasonsFor } from "../ranking/reasons";
@@ -76,6 +76,15 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
   const { pathname } = useLocation();
   const money = optionMoney(option, economics, state.money, state.extras);
   const n = (v: number) => formatNumber(Math.round(v), lang);
+  // The studies behind any extra durum grain after a legume, each named once.
+  const liftSources = [
+    ...new Map(
+      option.sequence.flatMap((_, i) => {
+        const lifted = yieldLift(option.sequence, i, economics);
+        return lifted ? [[lifted.fact.source.dataset, lifted.fact.source] as const] : [];
+      }),
+    ).values(),
+  ];
   return (
     <div className="py-2" data-testid="money-working">
       <p className="flex flex-wrap items-center justify-between gap-2 text-small font-bold text-ink-soft">
@@ -98,6 +107,11 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
               <td className="py-1 pr-1">
                 <CropName crop={y.crop} iconClassName="w-4 h-4" wrap />
                 <span className="block text-ink-soft">{option.firstHarvestYear + i}</span>
+                {y.lift > 0 && y.after ? (
+                  <span className="block text-ink-soft" data-testid="money-lift">
+                    {t("money.lift", { n: formatNumber(y.lift, lang), crop: t(`crop.${y.after}`).toLowerCase() })}
+                  </span>
+                ) : null}
               </td>
               <td className="py-1 px-1 text-right">{n(y.sales)}</td>
               <td className="py-1 px-1 text-right">−{n(y.costs)}</td>
@@ -120,6 +134,24 @@ function MoneyWorking({ option, economics }: { option: Option; economics: Econom
             <span className="font-bold text-ink">{t(`money.${column}`)}:</span> {t(`money.${column}Means`)}
           </li>
         ))}
+        {liftSources.length ? (
+          <li data-testid="money-lift-source">
+            <span className="font-bold text-ink">{t("money.liftWord")}:</span> {t("money.liftMeans")}{" "}
+            {liftSources.map((source, i) => (
+              <span key={source.dataset}>
+                {i > 0 ? "; " : ""}
+                {source.url ? (
+                  <a href={source.url} target="_blank" rel="noreferrer" className="underline">
+                    {source.dataset}
+                  </a>
+                ) : (
+                  source.dataset
+                )}
+              </span>
+            ))}
+            .
+          </li>
+        ) : null}
       </ul>
       <Link
         to={to(SETTINGS_PATH)}
