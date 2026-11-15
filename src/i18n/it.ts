@@ -697,7 +697,7 @@ export const it: Dict = {
   "year.back": "Torna al perché",
   "adviser.lead": "Fallo vedere a chi conosce la tua terra prima di seminare.",
   "strips.head": "Come verrebbe sul tuo campo",
-  "strips.leadStrips": "Strisce larghe {m} m, una passata di botte ciascuna, lungo il lato più lungo così il trattore va avanti e indietro.",
+  "strips.leadStrips": "Strisce larghe {m} m, una passata di botte ciascuna, lungo il lato più lungo, così il trattore va avanti e indietro.",
   "strips.leadHalves": "Due metà uguali, divise lungo il lato più lungo.",
   "strips.layout": "Disposizione",
   "strips.strips": "Strisce",
@@ -720,7 +720,7 @@ export const it: Dict = {
   // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
   "strips.drier": "su terra più asciutta, alta o debole",
   "strips.moister": "su terra più umida, bassa o forte; l'anno dopo si scambiano",
-  "strips.signals": "Dati: {list}. Concordano tutti sul {pct}% del campo.",
+  "strips.signals": "Dati: {list}. Concordano tutti: {pct}% del campo.",
   "strips.sig.green": "verde in {n} primavere",
   "strips.sig.moisture": "umidità delle foglie in {n} primavere",
   "strips.sig.ground": "zone alte e basse (30 m)",
