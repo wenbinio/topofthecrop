@@ -82,7 +82,7 @@ describe("drawing a field", () => {
     expect(button("Done")).toBeDisabled();
     await onMap(() => map.onTap(C));
     expect(map.drawnOutline).toEqual([A, B, C]);
-    expect(hint()).toMatch(/^[\d.]+ ha · drag dot to adjust$/);
+    expect(hint()).toMatch(/^[\d.]+ ha · drag a dot to adjust$/);
     expect(button("Done")).toBeEnabled();
   });
 
@@ -129,7 +129,7 @@ describe("drawing a field", () => {
     for (const p of [A, B, C]) await onMap(() => map.onTap(p));
     fireEvent.click(button("Trace"));
     await onMap(() => map.onTrace([A, [16.60001, 40.66001], [16.60002, 40.66]]));
-    expect(screen.getByRole("alert")).toHaveTextContent("Too small. Retry.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Too small. Try again.");
     expect(map.drawnOutline).toEqual([A, B, C]);
   });
 
@@ -142,7 +142,7 @@ describe("drawing a field", () => {
     expect(map.drawnOutline).toHaveLength(12);
     await onMap(() => map.onTap(A));
     expect(map.drawnOutline).toHaveLength(12);
-    expect(screen.getByRole("alert")).toHaveTextContent("Max 12 corners.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Up to 12 corners.");
   });
 
   it("coming back to step 1 with a drawn field opens it ready to adjust", async () => {
@@ -159,7 +159,7 @@ describe("drawing a field", () => {
     fireEvent.click(button("Find edges"));
     expect(map.edgeRequest!.at[0]).toBeCloseTo(16.602, 6);
     expect(map.edgeRequest!.at[1]).toBeCloseTo(40.661, 6);
-    expect(hint()).toBe("Finding field…");
+    expect(hint()).toBe("Finding your field…");
     const found: LngLat[] = [A, [16.605, 40.66], [16.605, 40.6625], D];
     await onMap(() => map.onEdges(found));
     expect(map.drawnOutline).toEqual(found);
@@ -173,14 +173,14 @@ describe("drawing a field", () => {
     fireEvent.click(button("Find edges"));
     await onMap(() => map.onEdges(null));
     expect(map.drawnOutline).toEqual([A, B, C]);
-    expect(screen.getByRole("alert")).toHaveTextContent("No edges found. Tap corners.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Couldn't find the edges. Tap the corners.");
   });
 
   it("with no shape yet, Find edges makes the next tap a point inside the field, not a corner", async () => {
     await startDrawing();
     expect(map.edgeRequest).toBeNull();
     fireEvent.click(button("Find edges"));
-    expect(hint()).toBe("Tap inside field");
+    expect(hint()).toBe("Tap inside the field");
     await onMap(() => map.onTap(C));
     expect(map.drawnOutline).toEqual([]);
     expect(map.edgeRequest!.at).toEqual(C);
@@ -213,12 +213,12 @@ describe("finding a field from a tap", () => {
     await openWithDemo();
     await onMap(() => map.onTap(A));
     expect(map.edgeRequest?.at).toEqual(A);
-    expect(screen.getByTestId("finding")).toHaveTextContent("Finding field…");
+    expect(screen.getByTestId("finding")).toHaveTextContent("Finding your field…");
     await onMap(() => map.onEdges([A, B, C, D]));
     expect(screen.getByTestId("draw-sheet")).toBeInTheDocument();
     expect(map.drawnOutline).toEqual([A, B, C, D]);
     expect(map.editable).toBe(true);
-    expect(hint()).toMatch(/^[\d.]+ ha · drag dot to adjust$/);
+    expect(hint()).toMatch(/^[\d.]+ ha · drag a dot to adjust$/);
     expect(button("Done")).toBeEnabled();
     // Undo clears it, leaving corners to tap.
     fireEvent.click(button("Undo"));
@@ -232,7 +232,7 @@ describe("finding a field from a tap", () => {
     await onMap(() => map.onEdges(null));
     expect(map.drawnOutline).toEqual([]);
     expect(hint()).toBe("Tap each corner");
-    expect(screen.getByRole("alert")).toHaveTextContent("No edges found. Tap corners.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Couldn't find the edges. Tap the corners.");
     expect(button("Done")).toBeDisabled();
   });
 

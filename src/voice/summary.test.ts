@@ -21,37 +21,37 @@ describe("screenSummary", () => {
       "Plant chickpea next. About 158 euro per hectare a year more than durum on durum. Needs little water. This is a suggestion: check locally first.",
     );
     expect(screenSummary("/options", bundle, state("it"))).toBe(
-      "Semina cece dopo. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. È un consiglio: prima verifica sul posto.",
+      "Semina cece la prossima annata. Circa più 158 euro per ettaro all'anno rispetto al ringrano. Vuole poca acqua. È solo un consiglio: prima verifica sul posto.",
     );
   });
 
   it("Options with soil first speaks the nitrogen in words", () => {
     expect(screenSummary("/options", bundle, state("en", ["soil", "income"]))).toBe(
-      "Plant faba bean next. About 60 kilos of nitrogen per hectare for next crop. About 57 euro per hectare a year more than durum on durum. This is a suggestion: check locally first.",
+      "Plant faba bean next. About 60 kilos of nitrogen per hectare for the next crop. About 57 euro per hectare a year more than durum on durum. This is a suggestion: check locally first.",
     );
     expect(screenSummary("/options", bundle, state("it", ["soil", "income"]))).toBe(
-      "Semina favino dopo. Circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno sul ringrano. È un consiglio: prima verifica sul posto.",
+      "Semina favino la prossima annata. Lascia circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno rispetto al ringrano. È solo un consiglio: prima verifica sul posto.",
     );
   });
 
   it("Why: the option, its reasons and what to check locally", () => {
     expect(screenSummary("/why/chickpea-durum-durum", bundle, state("en"))).toBe(
-      "Chickpea. About 158 euro per hectare a year more than durum on durum. Needs little water. Check locally: Any local pulse or forage buyer. Where to buy seed; best valley variety. Go over the plan with someone who knows your land.",
+      "Chickpea. About 158 euro per hectare a year more than durum on durum. Needs little water. Check locally: Is there a local buyer for pulses or forage. Where to buy seed, and which variety does best in the valley. Go over the plan with someone who knows your land.",
     );
     expect(screenSummary("/why/chickpea-durum-durum", bundle, state("it"))).toBe(
-      "Cece. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. Verifica sul posto: Acquirente vicino per legumi o foraggio. Dove comprare seme; varietà per la valle. Rivedi il piano con chi conosce la tua terra.",
+      "Cece. Circa più 158 euro per ettaro all'anno rispetto al ringrano. Vuole poca acqua. Verifica sul posto: C'è qualcuno in zona che compra legumi o foraggio. Dove comprare il seme e quale varietà va meglio qui in valle. Guarda il piano insieme a chi conosce la tua terra.",
     );
-    expect(screenSummary("/why/nothing", bundle, state("en"))).toBe("Option not in your list.");
+    expect(screenSummary("/why/nothing", bundle, state("en"))).toBe("That option is not in your list.");
   });
 
   it("Year: a usual, a dry and the driest year, each with its hot days now and by 2050 and its best fit", () => {
     expect(screenSummary("/year", bundle, state("en"))).toBe(
-      "Usual year. Hot flowering days: 9 days now, 17 days by 2050. Best fit then: Chickpea. " +
-        "Dry year. Hot flowering days: 12 days now, 21 days by 2050. Best fit then: Chickpea. " +
-        "Driest year. Hot flowering days: 16 days now, 27 days by 2050. Best fit then: Vetch-oat.",
+      "Usual year. Hot flowering days: 9 days now, 17 days by 2050. Best fit that year: Chickpea. " +
+        "Dry year. Hot flowering days: 12 days now, 21 days by 2050. Best fit that year: Chickpea. " +
+        "Driest year. Hot flowering days: 16 days now, 27 days by 2050. Best fit that year: Vetch-oat.",
     );
     expect(screenSummary("/year", bundle, state("it"))).toMatch(
-      /^Annata normale\. Caldo in fioritura: 9 giorni oggi, 17 giorni al 2050\. Più adatta allora: Cece\. Annata secca\. .* L'annata più secca\. Caldo in fioritura: 16 giorni oggi, 27 giorni al 2050\./,
+      /^Annata normale\. Caldo in fioritura: 9 giorni oggi, 17 giorni al 2050\. Più adatta quell'anno: Cece\. Annata secca\. .* L'annata più secca\. Caldo in fioritura: 16 giorni oggi, 27 giorni al 2050\./,
     );
   });
 
@@ -65,15 +65,15 @@ describe("screenSummary", () => {
 
   it("Check and share: what to check alone for the best fit, then who can look at it", () => {
     expect(screenSummary("/adviser", bundle, state("en"))).toBe(
-      "Check before you sow. Check these yourself: Any local pulse or forage buyer. Where to buy seed; best valley variety. " +
+      "Check before you sow. Check these yourself: Is there a local buyer for pulses or forage. Where to buy seed, and which variety does best in the valley. " +
         "No adviser? Ask one of these: Cooperative or seed dealer; CAA office, where you file your payment claim; " +
         "Your region's farm advisory service; A neighbour who grows it; An agronomist, if you have one.",
     );
-    expect(screenSummary("/adviser", bundle, state("it"))).toContain("Non hai un tecnico? Chiedi a uno di questi: Cooperativa o rivenditore di sementi; Il tuo CAA");
+    expect(screenSummary("/adviser", bundle, state("it"))).toContain("Se non hai un tecnico, chiedi a uno di questi: Cooperativa o rivenditore di sementi; Il tuo CAA");
   });
 
   it("elsewhere, the screen's heading", () => {
-    expect(screenSummary("/", null, state("it"))).toBe("Tocca il campo.");
+    expect(screenSummary("/", null, state("it"))).toBe("Tocca il tuo campo.");
     expect(screenSummary("/settings", null, state("en"))).toBe("Prices and support.");
   });
 });

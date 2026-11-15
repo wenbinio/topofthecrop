@@ -119,7 +119,7 @@ describe("a drawn field", () => {
     const first = renderAt(`/options?${o}`);
     const headline = (await screen.findByTestId("rec-headline", {}, { timeout: 10000 })).textContent;
     const findings = screen.getByTestId("findings").textContent;
-    expect(screen.getByTestId("farmland-note")).toHaveTextContent("Part of the outline is not farmland.");
+    expect(screen.getByTestId("farmland-note")).toHaveTextContent("Part of this outline isn't farmland.");
     first.unmount();
     // A fresh load of the same link.
     resetBasin();
@@ -140,11 +140,11 @@ describe("a drawn field", () => {
     cleanup();
 
     renderAt(`/why/chickpea-durum-durum?${o}`);
-    const unknowns = await screen.findByRole("heading", { name: "Not known" }, { timeout: 10000 });
+    const unknowns = await screen.findByRole("heading", { name: "What we don't know" }, { timeout: 10000 });
     const list = unknowns.parentElement!;
-    expect(list).toHaveTextContent("1 km area estimates");
+    expect(list).toHaveTextContent("estimates for a 1 km area");
     expect(list).toHaveTextContent("hot days are likely undercounted");
-    expect(list).toHaveTextContent("check with a soil test");
+    expect(list).toHaveTextContent("check them with a soil test");
   }, 30000);
 
   it("a shared link outside the basin opens live weather", async () => {
@@ -166,17 +166,17 @@ describe("a drawn field", () => {
   it("the demo field's Why also lists the temperature and soil caveats, but not the 1 km one", async () => {
     stubFetch();
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
-    const list = (await screen.findByRole("heading", { name: "Not known" })).parentElement!;
+    const list = (await screen.findByRole("heading", { name: "What we don't know" })).parentElement!;
     expect(list).toHaveTextContent("hot days are likely undercounted");
-    expect(list).toHaveTextContent("check with a soil test");
-    expect(list).not.toHaveTextContent("1 km area estimates");
+    expect(list).toHaveTextContent("check them with a soil test");
+    expect(list).not.toHaveTextContent("estimates for a 1 km area");
   });
 
   it("Find field draws the basin outline on the map", async () => {
     stubFetch();
     renderAt("/");
     await waitFor(() => expect(map.basinOutline?.type).toBe("FeatureCollection"));
-    expect(screen.getByText("Full results are inside the white line")).toBeInTheDocument();
+    expect(screen.getByText("Full results are for fields inside the white line")).toBeInTheDocument();
   });
 });
 
