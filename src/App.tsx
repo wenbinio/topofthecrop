@@ -22,7 +22,7 @@ const AreaWeather = lazy(() => import("./screens/AreaWeather"));
 const Print = lazy(() => import("./screens/Print"));
 const Settings = lazy(() => import("./screens/Settings"));
 const Credits = lazy(() => import("./screens/Credits"));
-// Not linked from the steps yet: the team tries it at #/timelapse with a field's link.
+// The field timelapse, linked from the Year screen.
 const Timelapse = lazy(() => import("./screens/Timelapse"));
 
 /** While a screen loaded on demand arrives: the same one loading line as the bundle gate. */

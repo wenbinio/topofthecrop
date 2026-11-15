@@ -1,7 +1,6 @@
 // "Your field from space": the farmer's own field, one clear Sentinel-2 picture a month for the last three years,
 // fetched live (src/timelapse/frames.ts), cropped to the field and its margin, with the outline and each picture's
-// date and time. A picture cloudy at the field is skipped before it is shown. Not linked from
-// the steps yet: reached at #/timelapse with the field's link while the team tries it.
+// date and time. A picture cloudy at the field is skipped before it is shown. Linked from the Year screen.
 // Written with AI assistance (Claude, Anthropic).
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";

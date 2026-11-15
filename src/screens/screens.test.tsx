@@ -265,7 +265,7 @@ describe("Data and credits", () => {
   });
 });
 
-describe("Field timelapse (#/timelapse, not linked yet)", () => {
+describe("Field timelapse (Your field from space)", () => {
   const stac = (features: object[]) => ({ type: "FeatureCollection", features, links: [] });
   const scene = (id: string, datetime: string, cloud: number) => ({ id, properties: { datetime, "eo:cloud_cover": cloud } });
   /** The STAC search, the ground check at the field (clear unless the scene's id says cloudy), and the bundle. */
@@ -296,6 +296,13 @@ describe("Field timelapse (#/timelapse, not linked yet)", () => {
     fireEvent.change(screen.getByRole("slider", { name: "Picture" }), { target: { value: "1" } });
     expect(screen.getByTestId("frame-date")).toHaveTextContent("10 Jul 2024");
     expect(screen.getByRole("button", { name: "Play" })).toBeInTheDocument();
+  });
+
+  it("opens from the Year screen", async () => {
+    serve(() => okJson(stac([scene("S2A_1", "2024-06-15T09:52:00Z", 1)])));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    fireEvent.click(await screen.findByTestId("timelapse-link"));
+    expect(await screen.findByTestId("frame-date")).toHaveTextContent("15 Jun 2024");
   });
 
   it("says so when no clear picture is found, and offers a retry when the service fails", async () => {
