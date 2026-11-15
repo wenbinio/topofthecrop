@@ -18,6 +18,7 @@ Top of the Crop is a phone web app for NASA Space Apps 2026 (challenge: Field Sh
 | `docs/support-and-prices.md`, `docs/crops-research.md` | Where the money and crop figures come from, and which are unverified |
 | `docs/durum-vs-faba-rotation-margins.md` | A research compilation the owner supplied (15 November 2026): continuous durum against a faba rotation, with ranges. It disagrees with the app's durum costs and has the faba rotation ahead; the app's figures were not changed. Its last section sets the two side by side |
 | `docs/checking-the-app.md` | A screen-by-screen check of the live app, with the demo field's expected figures |
+| `docs/space-apps-submission.md`, `docs/ai-log.md` | The text for the Space Apps project page (NASA data, other references, AI statement), and a log of how AI was used from the start of the project |
 
 ## Commands
 
@@ -146,7 +147,7 @@ Say so if you rely on any of these.
 - Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
 - Strip intercrops (an option with a second sequence, `strips`) are the stand-in for intercropping: every figure is the average of the two sequences and no gain from mixing is counted. They are ranked only when the farmer switches them on. Name a rotation with `OptionName`, and loop over `sequencesOf(option)`, never `option.sequence` alone, when a rule must cover every crop grown. The research behind them was read from search excerpts only (`docs/crops-research.md`, "Intercropping").
 - Step 6 is "Check and share", for farmers with or without an adviser. It names kinds of people to ask (cooperative, CAA office, regional advisory service, neighbour, agronomist), never a named office or a phone number. Nobody has confirmed with a farmer or a CAA that these are the right places to send each question.
-- Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.
+- Submission materials: the NASA data list, the other references and the AI statement are drafted in `docs/space-apps-submission.md`, and `docs/ai-log.md` logs how AI was used from the start; the 30-second video and the written description are with other team members. The deadline is 15 November 2026, 23:59 Finland time.
 - Left fixed on purpose and offered to the owner: nitrogen left for the next crop, and the dry-year penalty behind the dry and driest years.
 - "Your soil" on Options (`src/components/SoilCard.tsx`, rules in `src/data/soil.ts`) names the ground from the bundle's soil figures. It does not change the ranking, and says so. No checked rule yet says how soil should move each crop; add such rules only from a source, and as warnings on a rotation, not as hidden score changes.
 - "Your field today" (`/today`) keeps the farmer's plan in `localStorage` (`src/state/plan.ts`): the best fit, the data fingerprint, the date and the ticked checks. It tells a returning farmer when new data has changed the advice. It cannot notify a closed phone (no server), and the page says so; do not add a permission prompt for notifications the app cannot send. It gives no crop calendar (sowing or fertiliser dates): the app has no checked one.
