@@ -85,6 +85,10 @@ node scripts/make-placeholder-bundle.mjs
 
 No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weather.ts` calls NASA POWER for the field's centre and counts hot days at flowering, autumn rain and late frost over ten years. The screen says full results cover Bradano basin farmland only.
 
+### 4c-2. This season so far, for every field
+
+`src/components/SeasonNow.tsx` sits on the Year screen and on Area weather. It calls NASA POWER for daily rain from ten Septembers ago to today and shows the rain since 1 September, the usual amount by this date, a one-word verdict and the last day with 5 mm or more. `src/weather/season.ts` does the counting and holds the thresholds; `docs/scoring.md` states them in plain words. It loads on its own and never blocks the screen. It is the only part of the app that changes from day to day.
+
 ### 4d. One set of rules for both fields
 
 `src/data/field-rules.js` holds the rules that turn data into what the farmer sees: which months count as green, patchy or bare, when a risk icon appears, how the slider's stops are worked out. Both `scripts/real-field.mjs` (4a) and `src/data/fieldFromBasin.ts` (4b) import it, so the demo field and a drawn field can never be judged by different rules. It is plain JavaScript so Node can run it without a build; its types are in `field-rules.d.ts`.

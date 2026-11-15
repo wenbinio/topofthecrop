@@ -10,6 +10,9 @@ import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
 import { HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, LinkButton } from "../components/ui";
 import { AreaNote } from "../components/BundleProvider";
+import { openRing } from "../components/FieldShape";
+import { SeasonNow } from "../components/SeasonNow";
+import { centroid } from "../geo/geometry";
 
 const RISK_ORDER: Risk[] = ["dry", "frost", "heat", "rain"];
 
@@ -93,7 +96,9 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
       </div>
       <div className="flex flex-col min-w-0">
 
-      <div className="px-4 pt-5">
+      <SeasonNow centre={centroid(openRing(bundle.field.outline.coordinates))} />
+
+      <div className="px-4 pt-2">
         <h2 className="sr-only">{t("year.title")}</h2>
         <YearStrip months={months} />
         <div className="mt-2 flex flex-col gap-1">

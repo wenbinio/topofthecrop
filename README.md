@@ -78,7 +78,7 @@ Languages: English and Italian, switchable on every screen. The demo video and s
 | Landsat / HLS (Harmonized Landsat Sentinel-2) | Vegetation index over the seasons: green and bare months, stress years | Your field | 30 m |
 | SRTM elevation | Slope, for erosion risk on bare soil | Your field | 30 m |
 | ECOSTRESS | Land surface temperature and plant water stress, where scenes exist | Your field | 70 m |
-| NASA POWER | Daily temperature and rainfall history: hot days at flowering, frost days, dry autumns | Your area | about 50 km |
+| NASA POWER | Daily temperature and rainfall history: hot days at flowering, frost days, dry autumns. Also, live, this season's rain since 1 September against the same weeks in the ten seasons before | Your area | about 50 km |
 | GPM IMERG | Heavy-rain events | Your area | about 10 km |
 | SMAP | Soil moisture anomalies as regional context | Your area | 9–36 km |
 | NEX-GDDP-CMIP6 | Hot days at flowering by 2050 | Your area | about 25 km |
