@@ -10,6 +10,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 - A 0, "NaN" or "undefined" where a figure should be, or a code such as `year.rainHead` instead of words.
 - English words in Italian (dataset names and "about 11 km" are still English: known).
 - Text or a table cut off at the right edge of a phone.
+- A figure's **Source** (or the figure itself, on Options and Year) should open a small bubble with its dataset, date and confidence; a tap anywhere else should close it.
 - **Not a bug:** "not available" under *This season so far* or *Next 7 days* means NASA POWER or MET Norway did not answer. Tap *Try again*.
 
 ## 1. Find the field
@@ -29,9 +30,9 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 
 ## 4. Why (tap Chickpea)
 
-- [ ] *Per year* **729**; durum 2028 shows "+16% grain after chickpea", 2029 "+10%".
-- [ ] *Why suggested*, six steps: less green than usual; more hot days at flowering; decline with heat; area-wide; chose income; chose water.
-- [ ] *Evidence*, each line once: hot flowering days **4** (range 0–8), bare months **2** (1–6), Oct–May rain **542 mm** (418–631), water durum needs **509 mm** (487–544), topsoil clay **37%**, soil water in spring **30.1%** (27.4–32), water crops used **319 mm** (277–346).
+- [ ] The screen opens with *Why suggested*, six steps: less green than usual; more hot days at flowering; decline with heat; area-wide; chose income; chose water.
+- [ ] *Over three harvests*: per year **729**; durum 2028 shows "+16% grain after chickpea", 2029 "+10%". *What the columns mean* opens on a tap.
+- [ ] *Evidence*, each line once, each with a *Source* to tap: hot flowering days **4** (range 0–8), bare months **2** (1–6), Oct–May rain **542 mm** (418–631), water durum needs **509 mm** (487–544), topsoil clay **37%**, soil water in spring **30.1%** (27.4–32), water crops used **319 mm** (277–346).
 
 ## 5. Year
 
@@ -44,7 +45,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 ## 6. Check and share
 
 - [ ] What to check yourself, who else can check, then Print, WhatsApp and Copy link.
-- [ ] *Data and credits* is one folded line; tapping opens the credits and the AI note.
+- [ ] *Data and credits* at the bottom opens a page of its own with the credits and the AI note; *Back* returns.
 - [ ] *Print page* ends with the same credits.
 
 ## 7. Prices and support (top bar)
