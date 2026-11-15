@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import type { CropId, Fact, FieldBundle, Limit, Option } from "../data/types";
+import type { CropId, Economics, Fact, FieldBundle, Limit, Option } from "../data/types";
+import { weakLinks } from "../money/money";
 import { LIMITS } from "../data/types";
 import { useLang, useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
@@ -28,8 +29,9 @@ import { StripMap } from "../components/StripMap";
  * The plan: one answer, the three harvests, the reasons and how sure the app is, then what to do with it.
  * Everything else (the other choices, the evidence) is a tap away, never on screen by default.
  */
-function Recommendation({ best, current }: { best: RankedOption | undefined; current: Option | undefined }) {
+function Recommendation({ best, current, economics }: { best: RankedOption | undefined; current: Option | undefined; economics?: Economics }) {
   const t = useT();
+  const lang = useLang();
   const [state] = useAppState();
   if (!best) return null;
   const option = best.option;
@@ -43,6 +45,9 @@ function Recommendation({ best, current }: { best: RankedOption | undefined; cur
   );
   const sowNext = option.isCurrent ? "durum" : option.sequence[0];
   const sure = option.facts.income.confidence;
+  // When unsure, say which figures are unsure, rather than a general warning.
+  const weak = economics && sure === "low" ? weakLinks(option, economics, state.money) : [];
+  const parts = new Intl.ListFormat(lang, { type: "conjunction" }).format(weak.map((w) => t(`options.weak.${w.kind}`, { crop: t(`crop.${w.crop}`).toLocaleLowerCase(lang) })));
   return (
     <div className="px-4 pt-3 pb-2" data-testid="recommendation" data-option-id={option.id}>
       <div className="flex items-center gap-3">
@@ -76,7 +81,7 @@ function Recommendation({ best, current }: { best: RankedOption | undefined; cur
       </div>
       {/* One honest line on how sure the app is, right beside the claim, instead of a badge on every row. */}
       <p className="mt-3 px-3 py-2 rounded-box bg-note text-body" data-testid="how-sure" data-confidence={sure}>
-        <b>{t("options.sure", { level: t(`confidence.${sure}`).toLocaleLowerCase() })}</b> {t(`options.sureWhy.${sure}`)}
+        <b>{t("options.sure", { level: t(`confidence.${sure}`).toLocaleLowerCase() })}</b> {weak.length ? <span data-testid="how-sure-weak">{t("options.sureWhy.lowParts", { parts })}</span> : t(`options.sureWhy.${sure}`)}
       </p>
     </div>
   );
@@ -161,7 +166,7 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
           {t("basin.notFarmland")}
         </p>
       ) : null}
-      <Recommendation best={best} current={current} />
+      <Recommendation best={best} current={current} economics={bundle.economics} />
       {best?.option.strips ? <StripMap option={best.option} bundle={bundle} /> : null}
 
       {/* What to do with the plan: keep it, share it, or ask why. */}
