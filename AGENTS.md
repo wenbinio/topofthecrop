@@ -14,7 +14,7 @@ Top of the Crop is a phone web app for NASA Space Apps 2026 (challenge: Field Sh
 | `HANDOVER-FRONTEND.md` | How the front end is put together and how it reads the data |
 | `HANDOVER.md` | The data team's guide to the files in `data/` (written by the data lead) |
 | `DATA_SOURCES.md` | Every dataset, its licence and citation |
-| `docs/scoring.md` | The ranking and weather rules in plain words |
+| `docs/scoring.md` | Every rule and threshold in plain words: ranking, weather, this season's rain, the forecast, the yield lift |
 | `docs/support-and-prices.md`, `docs/crops-research.md` | Where the money and crop figures come from, and which are unverified |
 
 ## Commands
@@ -41,13 +41,15 @@ npm test
 npm run build
 ```
 
-Run typecheck, test and build before every commit. All three must pass.
+Run typecheck, test and build before every commit. All three must pass. `npm test` runs only `src/**/*.test.*`; spare copies of the repo under `.claude/` are left out on purpose.
 
-To regenerate the demo field's bundle after changing crop figures, support payments or `data/field.json`:
+Scripts that rebuild shipped data (each says in its header how to run it):
 
-```bash
-node scripts/make-placeholder-bundle.mjs
-```
+| Script | Rebuilds | When |
+|---|---|---|
+| `node scripts/make-placeholder-bundle.mjs` | `public/data/genzano-demo.json` | After changing a crop figure, a payment, the yield lift or `data/field.json` |
+| `python scripts/build-basemap.py <folder>` | `public/tiles/s2/` | For a newer Sentinel-2 picture of the basin |
+| `node scripts/fetch-parcels.mjs <code> "<name>" <w> <s> <e> <n>` | `public/parcels/<code>/` | To add a commune's cadastral parcels |
 
 ## Rules that must not be broken
 
@@ -56,7 +58,9 @@ node scripts/make-placeholder-bundle.mjs
 - `null` in the data means "no data". Show "no data" or leave the part out. Never turn it into 0.
 - Every number on screen is a `Fact` with a source, a resolution and a confidence. Do not add a bare number.
 - Figures for a drawn field come from 1 km squares. They are labelled "For the 1 km area around your field" and carry scale `"area"`, never `"field"`.
-- A range `[low, typical, high]` is the 10th percentile, the median and the 90th percentile.
+- A range `[low, typical, high]` is the 10th percentile, the median and the 90th percentile. New ranges follow the same rule.
+- Measurements and model output (bare months, hot days, rain, the 2050 outlook, the forecast) are never editable by the farmer. Assumptions behind the income are: see "What the farmer can change".
+- A threshold that is our own judgement is named as such in the code and written in `docs/scoring.md`.
 
 **The data folder**
 - Never edit files in `data/` by hand. They come from the notebooks in `ColabNotebooks/`. To update them, replace the files as `HANDOVER.md` section 9 says.
@@ -64,36 +68,74 @@ node scripts/make-placeholder-bundle.mjs
 - `src/data/fieldshift-data.js` is the data lead's helper. Do not change it; ask them.
 
 **Hackathon rules**
-- Outside (non-NASA) material must be free and open. Before adding a dataset, map layer, font or library, read its licence on the owner's own page and record it in the README.
+- Outside (non-NASA) material must be free and open. Before adding a dataset, map layer, font or library, read its licence on the owner's own page, not in a search summary, and record it in the README. An AI researcher's claim about a licence or an endpoint is a lead to test, not a fact: one of ours was wrong about a service, and we were wrong about another.
 - Do not use NASA logos or branding. Naming NASA datasets in citations is fine.
 - AI use must be acknowledged. A file written with AI help says so in its header, and the README's "Use of AI" section lists the tools.
 - No account, key or server. The app must work as plain files on any static host.
+- The team's code is under MIT (`LICENSE`). Data, map tiles, parcels and live services keep their own licences.
 
 **Wording**
 - Farmers read this on a phone. Use plain, short words. Say "aerial photo", not "orthoimagery".
 - Every string lives in both `src/i18n/en.ts` and `src/i18n/it.ts`, under the same key. A test fails if the keys differ.
 - A crop's name is always shown through the `CropName` component, so its symbol comes with it.
+- If a screen shows a figure a farmer might not understand (costs, gross margin, a priority), say what it means on the screen.
 
 **Code**
 - TypeScript is strict: no unused locals or parameters, `import type` for types, no enums or parameter properties.
-- All state lives in the link (the hash query). Do not add local storage or a store. Add a parameter in `src/state/url.ts` and document it in the README.
+- All of the farmer's choices live in the link (the hash query). Do not add local storage or a store. Add a parameter in `src/state/url.ts` and document it. Whether a Settings section is folded open is not a choice and stays in component state.
 - All MapLibre code stays in `src/components/Map.tsx`.
 - Rules that turn data into field facts live once, in `src/data/field-rules.js`, shared by the demo-field script and the drawn-field builder. Change a rule there, never in one caller.
-- Money sums live once, in `src/money/money.ts`. The bundle script repeats the same sum on purpose so the shipped file matches; keep the two in step.
+- Money sums live once, in `src/money/money.ts`. `scripts/make-placeholder-bundle.mjs` repeats the same sum on purpose so the shipped file matches; keep the two in step (the yield lift is in both).
 - Tests use the frozen fixture `src/test-fixtures/money-bundle.json`. Only `src/data/public-bundle.test.ts` reads the shipped bundle.
+- A block that calls a live service loads on its own, gives up after 8 seconds, offers a retry, and never blocks the rest of the screen.
+
+## What the farmer can change
+
+Everything behind the income figure, on the Settings screen, which is split into fold-out sections. Each is a key in the link parameter `m`:
+
+| Figure | Key | Limits |
+|---|---|---|
+| Crop price | `p.<crop>` | 0–5,000 €/t |
+| Crop direct costs | `c.<crop>` | 0–5,000 €/ha |
+| Crop yield in a usual year | `y.<crop>` | 0–20 t/ha |
+| More durum after a legume, first and second harvest | `l1.<crop>`, `l2.<crop>` | 0–100% |
+| Support payment amount, and on or off | `s.<id>`, `on.<id>` | 0–2,000 €/ha |
+
+Payments the farmer adds travel in `x`. A typed figure counts as "fair" confidence and tags the income "Yours". To make a new figure editable: add it to `resolveMoney`, `setMoney` and `MONEY_LIMITS` in `src/money/money.ts`, allow its key prefix in `src/state/url.ts`, add a row to a section in `src/screens/Settings.tsx`, and list it on the printout when changed (`src/screens/Print.tsx`).
+
+## Live services the app calls
+
+| Service | For | Licence | Notes |
+|---|---|---|---|
+| NASA POWER | Area weather history; this season's rain so far | Open | 2 to 4 days behind; about 50 km grid |
+| MET Norway Locationforecast | Seven-day forecast | CC BY 4.0, NLOD 2.0 | The one part that is not NASA data: NASA has no forecast a web page can call |
+| AGEA orthophotos (WMTS) | Aerial photos on the map | CC BY 4.0 | Use the WMTS tile path; `exportImage` returns a blank checkerboard |
+| EOX Sentinel-2 cloudless 2016, NASA GIBS Blue Marble | Map layers | CC BY 4.0, public domain | |
+| Photon | Town search | Open | |
+
+A web page cannot read the phone's own weather app or call the cadastre directly; parcels are downloaded ahead of time.
 
 ## Git
 
 - `main` deploys to the live site on every push, through `.github/workflows/pages.yml`.
-- Work on a branch, open a pull request, merge when typecheck, tests and build pass.
+- Work on a branch, open a pull request, merge when typecheck, tests and build pass. After merging, wait for the deploy run for that commit and check the live site.
 - Teammates push data and research straight to `main`. Fetch before you branch and before you merge.
 - Commit or push only when the person you are working for asks.
 - Do not commit `node_modules/`, `dist/` or `.claude/`.
+- After switching branches or a run of edits, restart `npm run dev`: it can serve stale files and show a blank page.
 
 ## What has never been checked
 
 Say so if you rely on any of these.
-- The app on a real phone: touch drawing, edge-finding, the Settings inputs, rotation, voice with a real microphone.
-- The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures.
+- The app on a real phone beyond one screenshot of the Why screen in Android Chrome: touch drawing, edge-finding, the Settings inputs, rotation, voice with a real microphone.
+- The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures. The yield lift comes from the team's research compilation; nobody opened the papers.
 - Each rotation's risk rating and the priority score rules, which are our judgement.
-- How long the basin data takes to load on a slow phone connection.
+- NASA POWER's 592 mm for autumn 2025 at the demo field, about five times the usual.
+- The forecast against another forecast, and AGEA's service under load.
+
+## State on 15 November 2026
+
+- Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
+- On local branch `feat/settings-sections`, not yet published: the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections, and editable costs, yields and lift.
+- Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.
+- Left fixed on purpose and offered to the owner: nitrogen left for the next crop, and the dry-year penalty behind the slider.

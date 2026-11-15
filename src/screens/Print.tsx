@@ -71,6 +71,27 @@ function MoneyUsed({ economics }: { economics: Economics }) {
             </li>
           );
         })}
+        {/* Likewise yields and the extra durum after a legume: listed only where the farmer changed them. */}
+        {economicsCrops(economics).map((c) => {
+          const y = r.yields[c];
+          if (!y?.edited) return null;
+          return (
+            <li key={`y.${c}`} data-testid="print-yield">
+              <CropName crop={c} />, {t("print.yield")}: <b>{formatNumber(y.value, lang)} t/ha</b>
+              {changed(true)}
+            </li>
+          );
+        })}
+        {economicsCrops(economics).flatMap((c) =>
+          (r.lifts[c] ?? []).map((l, which) =>
+            l.edited ? (
+              <li key={`l${which}.${c}`} data-testid="print-lift">
+                <CropName crop={c} />, {t(which === 0 ? "print.liftFirst" : "print.liftSecond")}: <b>{formatNumber(l.value, lang)}%</b>
+                {changed(true)}
+              </li>
+            ) : null,
+          ),
+        )}
         {economics.support.map((item) => {
           const s = r.support.find((x) => x.id === item.id);
           if (!s) return null;

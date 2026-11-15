@@ -137,7 +137,7 @@ function FactLine({ fact }: { fact: Fact | undefined }) {
   );
 }
 
-type SectionId = "prices" | "costs" | "support" | "own";
+type SectionId = "prices" | "costs" | "yields" | "lift" | "support" | "own";
 
 /**
  * A fold-out part of Settings: a header button with the section's name, a one-line summary and a chevron.
@@ -195,9 +195,13 @@ function Section({
 
 type CropFigure = { value: number; default: number; edited: boolean };
 
-/** One crop's editable figure (a price or its costs), with "Yours" and the starting figure once changed. */
+/**
+ * One crop's editable figure (a price, its costs, its yield, or the extra durum after it), with "Yours" and the
+ * starting figure once changed. `sub` is a second line under the crop's name.
+ */
 function CropFigureRow({
   crop,
+  sub,
   figure,
   limits,
   label,
@@ -205,6 +209,7 @@ function CropFigureRow({
   onCommit,
 }: {
   crop: CropId;
+  sub?: string;
   figure: CropFigure;
   limits: Limits;
   label: string;
@@ -217,6 +222,7 @@ function CropFigureRow({
     <li className="flex items-start gap-3 px-4 py-2 border-b border-line" data-testid={testId} data-crop={crop}>
       <span className="flex-1 min-w-0 flex flex-col pt-2.5">
         <CropName crop={crop} iconClassName="w-7 h-7" className="font-bold text-big" wrap />
+        {sub ? <span className="text-small font-bold text-ink-soft">{sub}</span> : null}
         {figure.edited ? (
           <span className="flex flex-wrap items-center gap-2 mt-0.5 text-small text-ink-soft">
             <YoursTag />
@@ -240,11 +246,15 @@ function Editor({ economics }: { economics: Economics }) {
   const setExtra = (index: number, extra: ExtraSupport | null) =>
     setState({ extras: extra ? extras.map((e, i) => (i === index ? extra : e)) : extras.filter((_, i) => i !== index) });
 
-  const figure = (key: "price" | "costs", crop: CropId): CropFigure => {
+  const figure = (key: "price" | "costs" | "yield", crop: CropId): CropFigure => {
     const fallback = Number(cropFigures(economics, crop)[key].value);
-    const r = (key === "price" ? resolved.prices : resolved.costs)[crop];
+    const r = (key === "price" ? resolved.prices : key === "costs" ? resolved.costs : resolved.yields)[crop];
     return r ?? { value: fallback, default: fallback, edited: false };
   };
+  // More durum after a legume: one row per figure the bundle has (first harvest after, second in a row).
+  const liftRows = crops.flatMap((crop) => (resolved.lifts[crop] ?? []).map((f, which) => ({ crop, which, figure: f })));
+  const yieldsChanged = crops.filter((c) => figure("yield", c).edited).length;
+  const liftsChanged = liftRows.filter((row) => row.figure.edited).length;
   const pricesChanged = crops.filter((c) => figure("price", c).edited).length;
   const costsChanged = crops.filter((c) => figure("costs", c).edited).length;
   const supportChanged = resolved.support.filter((s) => s.edited).length;
@@ -254,6 +264,8 @@ function Editor({ economics }: { economics: Economics }) {
   const [open, setOpen] = useState<Record<SectionId, boolean>>(() => ({
     prices: pricesChanged > 0,
     costs: costsChanged > 0,
+    yields: yieldsChanged > 0,
+    lift: liftsChanged > 0,
     support: supportChanged > 0,
     own: extras.length > 0,
   }));
@@ -326,6 +338,65 @@ function Editor({ economics }: { economics: Economics }) {
             ))}
           </ul>
         </Section>
+
+        <Section
+          id="yields"
+          title={t("settings.yields")}
+          unit="t/ha"
+          summary={withChanged(cropCount, yieldsChanged)}
+          open={open.yields}
+          onToggle={() => toggle("yields")}
+        >
+          <p className="px-4 pt-2 text-body" data-testid="yields-means">
+            {t("settings.yieldsMeans")}
+          </p>
+          <FactLine fact={first?.yield} />
+          <ul className="border-t border-line bg-surface" data-testid="yield-list">
+            {crops.map((crop) => (
+              <CropFigureRow
+                key={crop}
+                crop={crop}
+                figure={figure("yield", crop)}
+                limits={MONEY_LIMITS.yield}
+                label={t("settings.yieldOf", { crop: t(`crop.${crop}`) })}
+                testId="yield-row"
+                onCommit={(v) => commit(`y.${crop}`, v)}
+              />
+            ))}
+          </ul>
+        </Section>
+
+        {liftRows.length ? (
+          <Section
+            id="lift"
+            title={t("settings.lift")}
+            unit="%"
+            summary={withChanged(count(liftRows.length, "settings.sumFiguresOne", "settings.sumFigures"), liftsChanged)}
+            open={open.lift}
+            onToggle={() => toggle("lift")}
+          >
+            <p className="px-4 pt-2 text-body" data-testid="lift-means">
+              {t("settings.liftMeans")}
+            </p>
+            <ul className="mt-2 border-t border-line bg-surface" data-testid="lift-list">
+              {liftRows.map((row) => {
+                const which = t(row.which === 0 ? "settings.liftFirst" : "settings.liftSecond");
+                return (
+                  <CropFigureRow
+                    key={`${row.crop}.${row.which}`}
+                    crop={row.crop}
+                    sub={which}
+                    figure={row.figure}
+                    limits={MONEY_LIMITS.lift}
+                    label={t("settings.liftOf", { crop: t(`crop.${row.crop}`), which })}
+                    testId="lift-row"
+                    onCommit={(v) => commit(`l${row.which + 1}.${row.crop}`, v)}
+                  />
+                );
+              })}
+            </ul>
+          </Section>
+        ) : null}
 
         <Section
           id="support"
