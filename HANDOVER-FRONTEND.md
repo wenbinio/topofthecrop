@@ -12,7 +12,7 @@ A farmer goes through six steps. Each step is one screen and one route.
 
 | Step | Route | Screen file | What it shows |
 |---|---|---|---|
-| 1 | `/` | `src/screens/FindField.tsx` | Map, town search, "My location", tap or draw a field |
+| 1 | `/` | `src/screens/FindField.tsx` | Map, town search, "My location", tap or draw a field, or find it by parcel number |
 | 2 | `/questions` | `src/screens/Questions.tsx` | Last crop, limits, pick two priorities |
 | 3 | `/options` | `src/screens/Options.tsx` | What the satellites see, the recommendation, ranked rotations |
 | 4 | `/why/:optionId` | `src/screens/Why.tsx` | One rotation: income sum, evidence, what we don't know, what to check locally |
@@ -135,6 +135,8 @@ All map code is in `src/components/Map.tsx`. The picture is four open layers sta
 
 ## 7. Other parts
 
+- **Parcel lookup:** on step 1 a farmer in Genzano di Lucania can type the sheet (foglio) and parcel (particella) numbers from their farm file. `src/data/parcels.ts` reads `public/parcels/D971/index.json` and the one sheet file it needs, and the parcel's outline becomes the drawn shape, cut down to 12 corners so it fits in a link. The files come from `scripts/fetch-parcels.mjs`, which downloads them ahead of time from the Agenzia delle Entrate (CC BY 4.0), because its service refuses calls from a web page. Only one commune ships so far. A parcel is a property unit, not always a field, and the form says so.
+
 - **Languages:** `src/i18n/en.ts` and `it.ts` hold every string under the same keys. `useT()` gives a screen its translate function.
 - **Two views:** Standard shows sources and ranges; Simple shows bigger text and fewer figures. Same screens, different theme file and a few `simple` branches.
 - **Crop symbols:** `src/components/Crops.tsx`. Use `CropName` wherever a crop is named.
@@ -161,6 +163,6 @@ All map code is in `src/components/Map.tsx`. The picture is four open layers sta
 
 ## 10. Ideas already scoped
 
-- **Find a field by parcel number.** Italy's cadastral parcel map (Agenzia delle Entrate, CC BY 4.0) returns each parcel's outline with its commune, sheet and parcel number. Its server refuses calls from a web page, so parcels would be downloaded ahead of time and shipped like the map tiles. Genzano di Lucania is commune `D971`. A parcel is not always a field.
+- **More communes for the parcel lookup, and parcel lines on the map.** Only Genzano di Lucania (`D971`) ships. Each further commune is one run of `scripts/fetch-parcels.mjs`. Drawing the parcel lines on the map, so a farmer can tap a parcel instead of typing its number, is the natural next step; a field made of several parcels cannot be joined yet.
 - **Show more of the data.** See the "not yet shown" list in 4e.
 - **Submission materials.** The 30-second video, the written description, the NASA data list and the AI-use statement are not started.

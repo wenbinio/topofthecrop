@@ -1,0 +1,337 @@
+{
+  "commune": {
+    "code": "D971",
+    "name": "Genzano di Lucania"
+  },
+  "source": "Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS)",
+  "licence": "CC BY 4.0",
+  "credit": "Parcels © Agenzia delle Entrate, CC BY 4.0",
+  "fetched": "2026-11-15",
+  "parcels": 23796,
+  "sheets": {
+    "000100": {
+      "sheet": "1",
+      "parcels": 256
+    },
+    "000200": {
+      "sheet": "2",
+      "parcels": 144
+    },
+    "000300": {
+      "sheet": "3",
+      "parcels": 68
+    },
+    "000400": {
+      "sheet": "4",
+      "parcels": 80
+    },
+    "000500": {
+      "sheet": "5",
+      "parcels": 183
+    },
+    "000600": {
+      "sheet": "6",
+      "parcels": 133
+    },
+    "000700": {
+      "sheet": "7",
+      "parcels": 175
+    },
+    "000800": {
+      "sheet": "8",
+      "parcels": 83
+    },
+    "000900": {
+      "sheet": "9",
+      "parcels": 136
+    },
+    "001000": {
+      "sheet": "10",
+      "parcels": 199
+    },
+    "001100": {
+      "sheet": "11",
+      "parcels": 69
+    },
+    "001200": {
+      "sheet": "12",
+      "parcels": 177
+    },
+    "001300": {
+      "sheet": "13",
+      "parcels": 122
+    },
+    "001400": {
+      "sheet": "14",
+      "parcels": 160
+    },
+    "001500": {
+      "sheet": "15",
+      "parcels": 129
+    },
+    "001600": {
+      "sheet": "16",
+      "parcels": 156
+    },
+    "001700": {
+      "sheet": "17",
+      "parcels": 182
+    },
+    "001800": {
+      "sheet": "18",
+      "parcels": 286
+    },
+    "001900": {
+      "sheet": "19",
+      "parcels": 180
+    },
+    "002000": {
+      "sheet": "20",
+      "parcels": 128
+    },
+    "002100": {
+      "sheet": "21",
+      "parcels": 166
+    },
+    "002200": {
+      "sheet": "22",
+      "parcels": 171
+    },
+    "002300": {
+      "sheet": "23",
+      "parcels": 96
+    },
+    "002400": {
+      "sheet": "24",
+      "parcels": 91
+    },
+    "002500": {
+      "sheet": "25",
+      "parcels": 225
+    },
+    "002600": {
+      "sheet": "26",
+      "parcels": 220
+    },
+    "002700": {
+      "sheet": "27",
+      "parcels": 284
+    },
+    "002800": {
+      "sheet": "28",
+      "parcels": 229
+    },
+    "002900": {
+      "sheet": "29",
+      "parcels": 113
+    },
+    "003000": {
+      "sheet": "30",
+      "parcels": 99
+    },
+    "003100": {
+      "sheet": "31",
+      "parcels": 175
+    },
+    "003200": {
+      "sheet": "32",
+      "parcels": 123
+    },
+    "003300": {
+      "sheet": "33",
+      "parcels": 198
+    },
+    "003400": {
+      "sheet": "34",
+      "parcels": 238
+    },
+    "003500": {
+      "sheet": "35",
+      "parcels": 549
+    },
+    "003600": {
+      "sheet": "36",
+      "parcels": 660
+    },
+    "003700": {
+      "sheet": "37",
+      "parcels": 748
+    },
+    "003800": {
+      "sheet": "38",
+      "parcels": 940
+    },
+    "003900": {
+      "sheet": "39",
+      "parcels": 319
+    },
+    "004000": {
+      "sheet": "40",
+      "parcels": 1164
+    },
+    "004100": {
+      "sheet": "41",
+      "parcels": 683
+    },
+    "004200": {
+      "sheet": "42",
+      "parcels": 657
+    },
+    "004300": {
+      "sheet": "43",
+      "parcels": 1476
+    },
+    "004400": {
+      "sheet": "44",
+      "parcels": 1376
+    },
+    "004500": {
+      "sheet": "45",
+      "parcels": 808
+    },
+    "004600": {
+      "sheet": "46",
+      "parcels": 1111
+    },
+    "004700": {
+      "sheet": "47",
+      "parcels": 383
+    },
+    "004800": {
+      "sheet": "48",
+      "parcels": 266
+    },
+    "004900": {
+      "sheet": "49",
+      "parcels": 373
+    },
+    "005000": {
+      "sheet": "50",
+      "parcels": 442
+    },
+    "005100": {
+      "sheet": "51",
+      "parcels": 307
+    },
+    "0051A0": {
+      "sheet": "51A",
+      "parcels": 80
+    },
+    "005200": {
+      "sheet": "52",
+      "parcels": 99
+    },
+    "005300": {
+      "sheet": "53",
+      "parcels": 87
+    },
+    "005400": {
+      "sheet": "54",
+      "parcels": 84
+    },
+    "005500": {
+      "sheet": "55",
+      "parcels": 127
+    },
+    "005600": {
+      "sheet": "56",
+      "parcels": 264
+    },
+    "005700": {
+      "sheet": "57",
+      "parcels": 297
+    },
+    "005800": {
+      "sheet": "58",
+      "parcels": 207
+    },
+    "005900": {
+      "sheet": "59",
+      "parcels": 175
+    },
+    "006000": {
+      "sheet": "60",
+      "parcels": 185
+    },
+    "006100": {
+      "sheet": "61",
+      "parcels": 170
+    },
+    "006200": {
+      "sheet": "62",
+      "parcels": 254
+    },
+    "006300": {
+      "sheet": "63",
+      "parcels": 127
+    },
+    "006400": {
+      "sheet": "64",
+      "parcels": 95
+    },
+    "006500": {
+      "sheet": "65",
+      "parcels": 139
+    },
+    "006600": {
+      "sheet": "66",
+      "parcels": 80
+    },
+    "006700": {
+      "sheet": "67",
+      "parcels": 353
+    },
+    "006800": {
+      "sheet": "68",
+      "parcels": 408
+    },
+    "006900": {
+      "sheet": "69",
+      "parcels": 358
+    },
+    "007000": {
+      "sheet": "70",
+      "parcels": 239
+    },
+    "007100": {
+      "sheet": "71",
+      "parcels": 102
+    },
+    "007200": {
+      "sheet": "72",
+      "parcels": 243
+    },
+    "007300": {
+      "sheet": "73",
+      "parcels": 380
+    },
+    "007400": {
+      "sheet": "74",
+      "parcels": 232
+    },
+    "007500": {
+      "sheet": "75",
+      "parcels": 414
+    },
+    "007600": {
+      "sheet": "76",
+      "parcels": 162
+    },
+    "007700": {
+      "sheet": "77",
+      "parcels": 252
+    },
+    "007800": {
+      "sheet": "78",
+      "parcels": 227
+    },
+    "007900": {
+      "sheet": "79",
+      "parcels": 57
+    },
+    "008000": {
+      "sheet": "80",
+      "parcels": 163
+    }
+  }
+}

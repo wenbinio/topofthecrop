@@ -66,6 +66,17 @@ export const en = {
   "find.trace": "Trace",
   "find.done": "Done",
   "find.basinHint": "Full results inside white line",
+  "parcel.open": "Parcel number",
+  "parcel.title": "Find by parcel",
+  "parcel.commune": "Commune: {name}",
+  "parcel.sheet": "Sheet (foglio)",
+  "parcel.parcel": "Parcel (particella)",
+  "parcel.find": "Find parcel",
+  "parcel.searching": "Looking…",
+  "parcel.noSheet": "No such sheet here.",
+  "parcel.noParcel": "No such parcel on that sheet.",
+  "parcel.failed": "Parcels not loading. Try again.",
+  "parcel.note": "A parcel is not always one field. Adjust the outline after.",
   "field.yours": "Your field",
 
   // area weather
