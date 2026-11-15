@@ -39,6 +39,17 @@ const IT: Record<string, string> = {
   "Trial weather station (Denora et al. 2025)": "Stazione meteo della prova (Denora et al. 2025)",
   "Trial soil analysis (Denora et al. 2025)": "Analisi del terreno della prova (Denora et al. 2025)",
   "MET Norway forecast": "Previsioni MET Norway",
+  // Support payments' own official pages
+  "European Commission: basic income support for sustainability (BISS)": "Commissione europea: sostegno di base al reddito per la sostenibilità (BISS)",
+  "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025": "Circolare AGEA 94143 del 21 nov 2025: importi dei pagamenti PAC 2025",
+  "MASAF decree DM 585284 of 30 October 2025: durum wheat supply-chain fund (up to 100 €/ha)":
+    "Decreto MASAF DM 585284 del 30 ottobre 2025: fondo per la filiera del grano duro (fino a 100 €/ha)",
+  "Interministerial decree of 22 December 2025 (DM 688617): food-sovereignty fund 2025-26, legumes 250 €/ha with a supply-chain contract":
+    "Decreto interministeriale del 22 dicembre 2025 (DM 688617): fondo per la sovranità alimentare 2025-26, legumi 250 €/ha con contratto di filiera",
+  "CSR Basilicata: SRA03 no-till call 2026 (Determination 100 of 13 Feb 2026, extended to 30 June 2026 by Determination 423)":
+    "CSR Basilicata: bando SRA03 semina su sodo 2026 (Determinazione 100 del 13 feb 2026, prorogato al 30 giugno 2026 dalla Determinazione 423)",
+  "CSR Basilicata 2023-2027 (regional rural development plan): SRA01 and SRA29 payment tables":
+    "CSR Basilicata 2023-2027 (piano regionale di sviluppo rurale): tabelle dei pagamenti SRA01 e SRA29",
   "Your own figures": "Le tue cifre",
   // Resolutions: how far a figure reaches
   "one trial, two seasons": "una prova, due annate",
