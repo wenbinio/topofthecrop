@@ -429,6 +429,53 @@ describe("2024 and 2026 compared with a usual season (Year)", () => {
     expect(await screen.findByTestId("stress-line")).toHaveTextContent("Much less green than nearby fields in 2023. Check locally");
   });
 
+  it("the printout ends with the season-by-season graphs, before the credits", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withSeasons())));
+    renderAt("/print?f=genzano-demo&p=income,water");
+    const trends = await screen.findByTestId("print-trends");
+    // greenness, water used and rain: this test data has no hot-days series, so that graph is left out
+    expect(within(trends).getAllByTestId("trend-chart")).toHaveLength(3);
+    expect(screen.getByText("How the seasons went")).toBeInTheDocument();
+    const credits = screen.getByTestId("credit-lines");
+    expect(trends.compareDocumentPosition(credits) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("the printout draws the data team's pictures from the field's own data, before the season graphs", async () => {
+    const b = withSeasons();
+    b.fieldData.by2050 = {
+      ssp245: { hotDays: fact(5.4, "days", [4.2, 6.9], "2041-2060") },
+      ssp585: { hotDays: fact(6, "days", [4.8, 9.7], "2041-2060") },
+    };
+    const rain = (season: string, window: string, station: number, satellites: number) =>
+      ({ season, window, station: fact(station, "mm", [station, station], season), satellites: fact(satellites, "mm", [satellites, satellites], season) });
+    const temperature = (season: string, station: number, era5Land: number) =>
+      ({ season, window: "sowing-harvest", station: fact(station, "°C", [station, station], season), era5Land: fact(era5Land, "°C", [era5Land, era5Land], season) });
+    b.fieldData.groundCheck = {
+      rain: [rain("2022-23", "oct-may", 673.6, 656), rain("2022-23", "sowing-harvest", 673.6, 498), rain("2023-24", "sowing-harvest", 314.6, 308)],
+      temperature: [temperature("2022-23", 13.58, 12.4), temperature("2023-24", 15.47, 13)],
+    };
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(b)));
+    renderAt("/print?f=genzano-demo&p=income,water");
+    const explain = await screen.findByTestId("print-explain");
+    expect(within(explain).getAllByTestId("explain-season")).toHaveLength(4);
+    expect(within(explain).getByText("no data")).toBeInTheDocument(); // spring soil water has no 2026 figure: never a zero bar
+    const heat = within(explain).getByTestId("explain-heat");
+    expect(heat.querySelectorAll('[data-range="1"]')).toHaveLength(2); // how far the climate models disagree, on both 2041-2060 bars
+    expect(heat.parentElement).toHaveTextContent("ERA5-Land read 1.2–2.5 °C cooler than the trial's own weather station");
+    const check = within(explain).getByTestId("explain-check");
+    expect(check.querySelectorAll("[data-bar]")).toHaveLength(4); // two seasons, sowing to harvest only
+    expect(explain.compareDocumentPosition(screen.getByTestId("print-trends")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("the printout leaves out a picture whose figures are missing", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withSeasons())));
+    renderAt("/print?f=genzano-demo&p=income,water");
+    const explain = await screen.findByTestId("print-explain");
+    expect(within(explain).getAllByTestId("explain-season")).toHaveLength(4);
+    expect(screen.queryByTestId("explain-heat")).toBeNull(); // no 2041-2060 hot days in this data
+    expect(screen.queryByTestId("explain-check")).toBeNull(); // the rain check is for the demo field's station only
+  });
+
   it("without field data there is no card", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
     await screen.findByTestId("def-normal");

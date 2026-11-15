@@ -38,16 +38,17 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 
 - [ ] Three cards, no slider. **Usual year:** hot days **4** now, **5.4** by 2050; rain **542** and **520 mm**; "A usual season (2001–2020)."
 - [ ] **Dry year:** **8** and **10** days, **418** and **393 mm**. **Driest year:** **13** and **15** days, **390** and **367 mm**. Each card ends with its best fit.
-- [ ] *This season so far* (live): rain since 1 September, usual by now, a verdict, the last day with 5 mm or more, and "Not counted: NASA POWER rain for October 2025…".
+- [ ] *This season so far* (live): rain since 1 September, usual by now, a verdict, the last day with 5 mm or more, and "We left out NASA POWER rain for October 2025…".
 - [ ] *Next 7 days* (live): rain for each day and the coldest night.
-- [ ] *Your field from space* (under the slider) opens a timelapse: dated pictures with the field's yellow outline filling the frame, play, pause and a slider. *Back* returns.
-- [ ] *2024 and 2026 against a usual season*: 2024 **413 mm ↓, 27.3% ↓, 0.60, 258 mm ↓**; 2026 **651 mm ↑, 32.8% ↑, 0.72, 326 mm**; then "Much less green than nearby fields in 2018 and 2023…". Nothing cut off on a phone.
+- [ ] *Your field from space* (near the top, under the heading) opens a timelapse: dated pictures with the field's yellow outline filling the frame, play, pause and a slider. *Back* returns.
+- [ ] *2024 and 2026 compared with a usual season*: 2024 **413 mm ↓, 27.3% ↓, 0.60, 258 mm ↓**; 2026 **651 mm ↑, 32.8% ↑, 0.72, 326 mm**; then "Much less green than nearby fields in 2018 and 2023…". Nothing cut off on a phone.
 
 ## 6. Check and share
 
 - [ ] What to check yourself, who else can check, then Print, WhatsApp and Copy link.
 - [ ] *Data and credits* at the bottom opens a page of its own with the credits and the AI note; *Back* returns.
 - [ ] *Print page* ends with the same credits.
+- [ ] *Print page*, before the credits: *What the data shows* has bars for 2024 and 2026 against a usual season (rain **542, 413, 651 mm**; soil water **30.1, 27.3, 32.8%**; greenness **0.71, 0.60, 0.72**; water used **319, 258, 326 mm**), hot flowering days **4** today and **5.4** and **6** by 2041–2060 with a line on each future bar, and the rain check (station **674** and **315 mm**, satellites **498** and **308 mm**). Then *How the seasons went*: four line graphs, the last five seasons darker.
 
 ## 7. Prices and support (top bar)
 
@@ -57,7 +58,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 ## 8. Your own field
 
 - [ ] Draw a field **inside** the white line: figures say **Area** (the 1 km around your field) and differ from the demo's.
-- [ ] Draw one **outside**: *Area weather* shows hot days, autumn rain and late frost from NASA POWER, with "Not counted: NASA POWER rain for October 2025…".
+- [ ] Draw one **outside**: *Area weather* shows hot days, autumn rain and late frost from NASA POWER, with "We left out NASA POWER rain for October 2025…".
 
 ## 9. Italian
 

@@ -336,3 +336,22 @@ The fingerprint is the one `vite.config.ts` makes from the shipped data. A chang
 - **Credit:** "Contains modified Copernicus Sentinel data" with the years the pictures span, as the Sentinel Data
   Legal Notice asks.
 
+## The printout's graphs
+
+Before the credits, the printout has two sets of graphs.
+
+**What the data shows** (`src/components/ExplainCharts.tsx`) redraws the data team's pictures in `DataPics/` from
+the field's own data, so a drawn field gets its own: the Year screen's 2024 and 2026 against a usual season, as
+bars; hot flowering days today (2001–2020) and by 2041–2060 under middle and high emissions, with a line for how
+far the 29 climate models disagree (10th to 90th percentile); and, for the demo field only, satellite rain from
+sowing to harvest against the trial's own weather station. A bar with no data is named "no data", never drawn as
+zero, and a picture whose figures are missing is left out.
+
+**How the seasons went** draws one line graph for each of peak greenness, hot flowering days, water used by crops
+and October–May rain, season by season since 2001 (`src/components/TrendChart.tsx`). Each draws the same
+comparison as the Why steps' signals (`seasonBand` beside `seasonSignal` in `src/data/field-rules.js`): the grey
+band is the 25th to 75th percentile of 2001–2020, and the dark stretch of the line is the last five seasons after
+2020, with a dashed line and its figure at their median. A season with no data breaks the line: it is never joined
+across or drawn as zero. Rain has no signal; its graph shows what lies behind the Year screen's usual, dry and
+driest years.
+
