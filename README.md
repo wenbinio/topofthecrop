@@ -1,6 +1,6 @@
 # Top of the Crop
 
-**What should I plant after the wheat?** A phone web app that helps a durum wheat farmer in the Bradano river valley (Basilicata, southern Italy) compare crop rotations for their own field using NASA Earth observations, and take the answer to their agricultural adviser.
+**What should I plant after the wheat?** A phone web app that helps a durum wheat farmer in the Bradano river valley (Basilicata, southern Italy) compare crop rotations for their own field using NASA Earth observations, and check the answer locally before sowing, with an adviser or without one.
 
 - **Event:** NASA International Space Apps Challenge 2026 (14–15 November 2026)
 - **Challenge:** [Field Shift: Adapting Farms with NASA Data](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/)
@@ -28,9 +28,9 @@ Six steps, each one screen on a phone.
 | 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029): continuous durum plus three alternatives. The top one says "Best fit for you". | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
 | 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | Every number shows its source, its range, and whether it describes "your field" or "your area". Terms such as NDVI open a one-line explanation. |
 | 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. | One headline number: hot days at flowering, now and by 2050. |
-| 6. Take it to your adviser | A one-page printout and a WhatsApp link. | The link reopens the same field and answers. |
+| 6. Check and share | What the farmer can check alone for the best-fit rotation; who can look at the plan if there is no adviser (cooperative or seed dealer, the CAA office, the region's farm advisory service, a neighbour, an agronomist); a one-page printout and a WhatsApp link. | The link reopens the same field and answers. No names or phone numbers: we could not keep them right. |
 
-The tool supports a conversation with a local adviser. It never tells the farmer what to do, and every option lists what must be checked locally.
+The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named in step 6. It never tells the farmer what to do, and every option lists what must be checked locally.
 
 ### How it sits beside existing tools
 

@@ -18,28 +18,28 @@ const state = (lang: Lang, priorities: Priority[] = ["income", "water"], extra: 
 describe("screenSummary", () => {
   it("Options: headline, reasons, adviser line", () => {
     expect(screenSummary("/options", bundle, state("en"))).toBe(
-      "Plant chickpea next. About 158 euro per hectare a year more than durum on durum. Needs little water. Suggestion: check with adviser.",
+      "Plant chickpea next. About 158 euro per hectare a year more than durum on durum. Needs little water. A suggestion: check it locally first.",
     );
     expect(screenSummary("/options", bundle, state("it"))).toBe(
-      "Semina cece dopo. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. Consiglio: verifica col tecnico.",
+      "Semina cece dopo. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. Un consiglio: prima verifica sul posto.",
     );
   });
 
   it("Options with soil first speaks the nitrogen in words", () => {
     expect(screenSummary("/options", bundle, state("en", ["soil", "income"]))).toBe(
-      "Plant faba bean next. About 60 kilos of nitrogen per hectare for next crop. About 57 euro per hectare a year more than durum on durum. Suggestion: check with adviser.",
+      "Plant faba bean next. About 60 kilos of nitrogen per hectare for next crop. About 57 euro per hectare a year more than durum on durum. A suggestion: check it locally first.",
     );
     expect(screenSummary("/options", bundle, state("it", ["soil", "income"]))).toBe(
-      "Semina favino dopo. Circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno sul ringrano. Consiglio: verifica col tecnico.",
+      "Semina favino dopo. Circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno sul ringrano. Un consiglio: prima verifica sul posto.",
     );
   });
 
   it("Why: the option, its reasons and what to check locally", () => {
     expect(screenSummary("/why/chickpea-durum-durum", bundle, state("en"))).toBe(
-      "Chickpea. About 158 euro per hectare a year more than durum on durum. Needs little water. Check locally: Any local pulse or forage buyer. Where to buy seed; best valley variety. Review plan with adviser.",
+      "Chickpea. About 158 euro per hectare a year more than durum on durum. Needs little water. Check locally: Any local pulse or forage buyer. Where to buy seed; best valley variety. Go over the plan with someone who knows your land.",
     );
     expect(screenSummary("/why/chickpea-durum-durum", bundle, state("it"))).toBe(
-      "Cece. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. Verifica sul posto: Acquirente vicino per legumi o foraggio. Dove comprare seme; varietà per la valle. Rivedi il piano col tecnico.",
+      "Cece. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. Verifica sul posto: Acquirente vicino per legumi o foraggio. Dove comprare seme; varietà per la valle. Rivedi il piano con chi conosce la tua terra.",
     );
     expect(screenSummary("/why/nothing", bundle, state("en"))).toBe("Option not in your list.");
   });
@@ -60,8 +60,16 @@ describe("screenSummary", () => {
     expect(screenSummary("/questions", bundle, state("en"))).toBe("Last crop: Durum. Your priorities: 1 Income, 2 Water.");
   });
 
+  it("Check and share: what to check alone for the best fit, then who can look at it", () => {
+    expect(screenSummary("/adviser", bundle, state("en"))).toBe(
+      "Check before you sow. Check yourself: Any local pulse or forage buyer. Where to buy seed; best valley variety. " +
+        "No adviser? Ask one of these: Cooperative or seed dealer; CAA office, where you file your payment claim; " +
+        "Your region's farm advisory service; A neighbour who grows it; An agronomist, if you have one.",
+    );
+    expect(screenSummary("/adviser", bundle, state("it"))).toContain("Non hai un tecnico? Chiedi a uno di questi: Cooperativa o rivenditore di sementi; Il tuo CAA");
+  });
+
   it("elsewhere, the screen's heading", () => {
-    expect(screenSummary("/adviser", bundle, state("en"))).toBe("For your adviser.");
     expect(screenSummary("/", null, state("it"))).toBe("Tocca il campo.");
     expect(screenSummary("/settings", null, state("en"))).toBe("Prices and support.");
   });

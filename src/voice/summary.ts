@@ -8,6 +8,7 @@ import { optionCrop } from "../components/Crops";
 import { rankOptions } from "../ranking/rank";
 import type { Reason } from "../ranking/reasons";
 import { reasonsFor } from "../ranking/reasons";
+import { WHO, ownChecks } from "../screens/check-share";
 import { SETTINGS_PATH } from "../screens/settings/path";
 
 /** Unit marks and signs written out, so the phone says "euro per hectare a year" rather than reading symbols. */
@@ -113,6 +114,21 @@ export function questionsSummary(state: AppState): string {
   return lines.join(" ");
 }
 
+/** Check and share: what to check alone for the best fit, then who else can look at it. */
+export function checkSummary(bundle: FieldBundle, state: AppState): string {
+  const lang = state.lang;
+  const t = (key: string) => translate(lang, key);
+  const best = ranking(bundle, state).ranked[0];
+  const checks = best ? ownChecks(best.option.why.checkLocally).map((k) => sentence(t(k).replace(/\?$/, ""))) : [];
+  return [
+    sentence(t("adviser.title")),
+    checks.length ? `${t("adviser.self")}: ${checks.join(" ")}` : "",
+    sentence(`${t("adviser.who")}: ${WHO.map((who) => t(`adviser.who.${who}`)).join("; ")}`),
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 const HEADINGS: [test: (route: string) => boolean, key: string][] = [
   [(r) => r === "/", "find.hint"],
   [(r) => r.startsWith("/area"), "area.title"],
@@ -128,6 +144,7 @@ export function screenSummary(route: string, bundle: FieldBundle | null, state: 
   if (bundle && route.startsWith("/options")) text = optionsSummary(bundle, state);
   else if (bundle && route.startsWith("/why/")) text = whySummary(bundle, state, decodeURIComponent(route.slice(5)));
   else if (bundle && route.startsWith("/year")) text = yearSummary(bundle, state);
+  else if (bundle && route.startsWith("/adviser")) text = checkSummary(bundle, state);
   else if (route.startsWith("/questions")) text = questionsSummary(state);
   else text = sentence(translate(lang, HEADINGS.find(([test]) => test(route))?.[1] ?? "app.name"));
   return spoken(text, lang);

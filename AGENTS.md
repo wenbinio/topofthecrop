@@ -140,5 +140,6 @@ Say so if you rely on any of these.
 - Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
 - Also live: the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
 - Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
+- Step 6 is "Check and share", for farmers with or without an adviser. It names kinds of people to ask (cooperative, CAA office, regional advisory service, neighbour, agronomist), never a named office or a phone number. Nobody has confirmed with a farmer or a CAA that these are the right places to send each question.
 - Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.
 - Left fixed on purpose and offered to the owner: nitrogen left for the next crop, and the dry-year penalty behind the slider.

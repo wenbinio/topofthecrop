@@ -5,7 +5,7 @@ import { DEMO_FIELD_ID } from "./data/types";
 import { isUsableRing } from "./geo/geometry";
 import { LangContext, useT } from "./i18n";
 import { useAppState, useTo } from "./state/useAppState";
-import { BundleGate, BundleProvider, useBundle } from "./components/BundleProvider";
+import { BundleGate, BundleProvider } from "./components/BundleProvider";
 import { StepBar } from "./components/StepBar";
 import { TopBar } from "./components/TopBar";
 import Adviser from "./screens/Adviser";
@@ -55,12 +55,6 @@ function field(render: Parameters<typeof BundleGate>[0]["children"]) {
   );
 }
 
-/** The adviser screen needs no bundle for the demo field; a drawn field must first prove to be in the basin. */
-function AdviserRoute() {
-  const { drawn } = useBundle();
-  return <Guard need="field">{drawn ? <BundleGate>{() => <Adviser />}</BundleGate> : <Adviser />}</Guard>;
-}
-
 function Shell() {
   const [state] = useAppState();
   const { pathname } = useLocation();
@@ -101,7 +95,7 @@ function Shell() {
             <Route path="/options" element={field((b) => <Options bundle={b} />)} />
             <Route path="/why/:optionId" element={field((b) => <Why bundle={b} />)} />
             <Route path="/year" element={field((b) => <Year bundle={b} />)} />
-            <Route path="/adviser" element={<AdviserRoute />} />
+            <Route path="/adviser" element={field((b) => <Adviser bundle={b} />)} />
             <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="*" element={<RedirectHome />} />
