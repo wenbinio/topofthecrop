@@ -24,11 +24,14 @@ export function outsideUsual(value: number, usual: Fact): "lower" | "higher" | n
   return value < usual.range[0] ? "lower" : value > usual.range[1] ? "higher" : null;
 }
 
-type Row = { key: string; usual: Fact; series: Series };
+export type CompareRow = { key: string; usual: Fact; series: Series };
 
-export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
-  const t = useT();
-  const lang = useLang();
+/**
+ * The rows of the card (Oct–May rain, spring soil water, peak greenness, water used) with a usual figure and a
+ * season series, and which of 2024 and 2026 the series covers. Null when there is nothing to compare. The printout's
+ * bar chart of the same comparison uses it too (src/components/ExplainCharts.tsx).
+ */
+export function compareRows(bundle: FieldBundle): { rows: CompareRow[]; shown: number[]; years: number[] } | null {
   const data = bundle.fieldData;
   if (!data) return null;
   const { years, series } = data.seasons;
@@ -38,11 +41,21 @@ export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
     ["years.green", data.greenness.peakGreenness, series.peakGreenness],
     ["years.water", data.water.cropWaterUse, series.cropWaterUse],
   ];
-  const rows: Row[] = candidates.flatMap(([key, usual, s]) =>
+  const rows: CompareRow[] = candidates.flatMap(([key, usual, s]) =>
     usual && s && typeof usual.value === "number" ? [{ key, usual, series: s }] : [],
   );
   const shown = COMPARE_YEARS.filter((year) => years.includes(year));
   if (!rows.length || !shown.length) return null;
+  return { rows, shown: [...shown], years };
+}
+
+export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
+  const t = useT();
+  const lang = useLang();
+  const data = bundle.fieldData;
+  const compared = compareRows(bundle);
+  if (!data || !compared) return null;
+  const { rows, shown, years } = compared;
   const flagged = stressSeasons(data.seasons);
   // HANDOVER.md, caveat 4: NASA GPM IMERG in Earth Engine ends in September 2025, so 2026 rain is the median of two sources.
   const rainNote = shown.includes(2026) && rows.some((row) => row.key === "years.rain");

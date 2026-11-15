@@ -48,6 +48,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 - [ ] What to check yourself, who else can check, then Print, WhatsApp and Copy link.
 - [ ] *Data and credits* at the bottom opens a page of its own with the credits and the AI note; *Back* returns.
 - [ ] *Print page* ends with the same credits.
+- [ ] *Print page*, before the credits: *What the data shows* has bars for 2024 and 2026 against a usual season (rain **542, 413, 651 mm**; soil water **30.1, 27.3, 32.8%**; greenness **0.71, 0.60, 0.72**; water used **319, 258, 326 mm**), hot flowering days **4** today and **5.4** and **6** by 2041–2060 with a line on each future bar, and the rain check (station **674** and **315 mm**, satellites **498** and **308 mm**). Then *How the seasons went*: four line graphs, the last five seasons darker.
 
 ## 7. Prices and support (top bar)
 

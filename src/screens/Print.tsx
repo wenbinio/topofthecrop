@@ -14,6 +14,7 @@ import { unknownsFor } from "../data/caveats";
 import { soilSummary } from "../data/soil";
 import { CreditLines } from "../components/DataCredits";
 import { TrendChart } from "../components/TrendChart";
+import { ExplainCharts, hasExplainCharts } from "../components/ExplainCharts";
 
 function Block({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
@@ -357,6 +358,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           </ul>
         </Block>
 
+        <Explain bundle={bundle} />
         <Trends bundle={bundle} />
 
         <Block title={t("credits.title")}>
@@ -371,6 +373,20 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
         </p>
       </article>
     </div>
+  );
+}
+
+/**
+ * The data team's pictures (DataPics/ in the repo) redrawn from this field's data: 2024 and 2026 against a usual
+ * season, hot flowering days now and by 2041-2060, and the demo field's rain check. Before the season-by-season graphs.
+ */
+function Explain({ bundle }: { bundle: FieldBundle }) {
+  const t = useT();
+  if (!hasExplainCharts(bundle)) return null;
+  return (
+    <Block title={t("explain.title")}>
+      <ExplainCharts bundle={bundle} />
+    </Block>
   );
 }
 
