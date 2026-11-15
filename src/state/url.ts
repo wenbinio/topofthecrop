@@ -100,7 +100,7 @@ function parseMoney(value: string): Money {
     const parts = pair.split(':');
     if (parts.length !== 2) continue;
     const [key, raw] = parts;
-    if (!/^(p|s|on)\.[a-z0-9-]{1,32}$/.test(key) || !raw.trim()) continue;
+    if (!/^(p|c|s|on)\.[a-z0-9-]{1,32}$/.test(key) || !raw.trim()) continue;
     const amount = Number(raw);
     if (!Number.isFinite(amount) || amount < 0 || amount > 5000) continue;
     if (key.startsWith('on.') && amount !== 0 && amount !== 1) continue;

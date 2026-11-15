@@ -22,6 +22,28 @@ const money = {
   masaf: { dataset: 'MASAF decrees and AGEA instructions', resolution: 'national', url: 'https://www.masaf.gov.it/' },
   csr: { dataset: 'CSR Basilicata 2023-2027', resolution: 'regional', url: 'https://basilicatacsr.it/' },
   research: { dataset: 'Crop research, Nov 2026', resolution: 'southern Italy', url: '' },
+  lago: { dataset: 'Lago-Olveira et al. 2023, wheat after chickpea, Puglia', resolution: 'one study', url: 'https://www.sciencedirect.com/science/article/pii/S0048969723037476' },
+  garofalo: { dataset: 'Garofalo et al. 2009, wheat after faba bean, Foggia (53-year simulation)', resolution: 'one study', url: 'https://publish.csiro.au/cp/cp08208' },
+};
+
+// YIELD LIFT: how much more grain durum gives after a legume, in percent, for the first durum harvest after it
+// and (where the study gives one) a second durum in a row. Taken from the team's research compilation, which
+// cites these papers; we have not opened the papers ourselves, so confidence is low. The chickpea study worked
+// with wheat at 5 t/ha, well above this area's 3 t/ha, so the percentage may not carry over. No figure was found
+// for lentil, pea or vetch, so they get none: that is a gap in the evidence, not a finding that they give nothing.
+const DURUM_AFTER = {
+  chickpea: { percents: [16, 10], source: money.lago },
+  faba: { percents: [12], source: money.garofalo },
+};
+const durumAfter = (crop) => DURUM_AFTER[crop]?.percents.map((percent) =>
+  researched(percent, '%', undefined, DURUM_AFTER[crop].source, 'low', '2026-11'));
+/** The same rule as yieldLift in src/money/money.ts. */
+const liftAt = (sequence, i) => {
+  if (sequence[i] !== 'durum' || i === 0) return 0;
+  const first = DURUM_AFTER[sequence[i - 1]]?.percents[0];
+  if (first !== undefined) return first;
+  if (i >= 2 && sequence[i - 1] === 'durum') return DURUM_AFTER[sequence[i - 2]]?.percents[1] ?? 0;
+  return 0;
 };
 
 // --- crops: docs/crops-research.md, "In the app" ----------------------------------------------
@@ -151,6 +173,7 @@ const economics = {
     yield: cropFact(crop, row.y, 't/ha'),
     price: cropFact(crop, row.p, '€/t', PRICE_SOURCE[crop]),
     costs: cropFact(crop, row.c, '€/ha'),
+    ...(DURUM_AFTER[crop] ? { durumAfter: durumAfter(crop) } : {}),
   }])),
   support,
 };
@@ -175,18 +198,19 @@ const option = (id, sequence, checkLocally) => {
   const first = CROP_TABLE[sequence[0]];
   const hasHay = sequence.some((crop) => CROP_TABLE[crop].machinery === 'hay');
 
-  // Income: the mean over the three years of yield × price − direct costs + default-on support, the sum the app does.
+  // Income: the mean over the three years of yield (with any lift after a legume) × price − direct costs
+  // + default-on support, the sum the app does.
   // Its range is a poor year to a good year: every crop at the low (high) end of its yield, at the usual price
   // and costs. Stacking the worst price and cost on top gave a range too wide to mean anything.
-  const yearMoney = (crop, end) => {
+  const yearMoney = (crop, end, i) => {
     const row = CROP_TABLE[crop];
     const at = (triple, high) => (end === 'mid' ? triple[0] : high ? triple[2] : triple[1]);
     const high = end === 'high';
-    return at(row.y, high) * row.p[0] - row.c[0] +
+    return at(row.y, high) * (1 + liftAt(sequence, i) / 100) * row.p[0] - row.c[0] +
       paymentsFor(id, crop).reduce((sum, item) => sum + item.amount.value, 0);
   };
-  const income = Math.round(mean(sequence.map((crop) => yearMoney(crop, 'mid'))));
-  const incomeRange = ['low', 'high'].map((end) => Math.round(mean(sequence.map((crop) => yearMoney(crop, end))) / 10) * 10);
+  const income = Math.round(mean(sequence.map((crop, i) => yearMoney(crop, 'mid', i))));
+  const incomeRange = ['low', 'high'].map((end) => Math.round(mean(sequence.map((crop, i) => yearMoney(crop, end, i))) / 10) * 10);
   // Its confidence: the weakest of the price, yield and cost facts of its crops and of the default-on support it gets.
   // The app works this out again (src/money/money.ts) so it follows the farmer's own figures.
   const incomeConfidence = weakest([

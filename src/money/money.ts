@@ -4,11 +4,12 @@ import type { Confidence, CropEconomics, CropId, Economics, ExtraSupport, Fact, 
 import { CROPS, SCENARIOS } from "../data/types";
 
 /** Bounds for anything the farmer types, so a slip of the finger cannot produce nonsense. */
-export const MONEY_LIMITS = { price: [0, 5000], support: [0, 2000] } as const;
+export const MONEY_LIMITS = { price: [0, 5000], costs: [0, 5000], support: [0, 2000] } as const;
 
 /** The figures in force: the bundle's, with the farmer's changes applied. */
 export type ResolvedMoney = {
   prices: Partial<Record<CropId, { value: number; default: number; edited: boolean }>>; // €/t, for the crops in `economics.crops`
+  costs: Partial<Record<CropId, { value: number; default: number; edited: boolean }>>; // €/ha, direct costs, same crops
   support: { id: string; on: boolean; amount: number; defaultOn: boolean; defaultAmount: number; edited: boolean }[]; // €/ha
   edited: boolean; // true if anything differs from the bundle
 };
@@ -16,7 +17,10 @@ export type ResolvedMoney = {
 /** One year of one rotation on one hectare. */
 export type YearMoney = {
   crop: CropId;
-  sales: number; // yield × price
+  sales: number; // yield × price, with `lift` already counted
+  /** Percent more grain because of the crop grown before (0 for none), and that crop. Only durum gets one. */
+  lift: number;
+  after?: CropId;
   costs: number;
   support: { id: string; amount: number }[]; // the payments that apply this year and are switched on
   margin: number; // sales − costs + support
@@ -45,6 +49,30 @@ function priceOf(resolved: ResolvedMoney, economics: Economics, crop: CropId): {
   return resolved.prices[crop] ?? { value: fallback, default: fallback, edited: false };
 }
 
+/** A crop's direct costs in force (the farmer's, or the bundle's). */
+function costsOf(resolved: ResolvedMoney, economics: Economics, crop: CropId): { value: number; default: number; edited: boolean } {
+  const fallback = Number(cropFigures(economics, crop).costs.value);
+  return resolved.costs[crop] ?? { value: fallback, default: fallback, edited: false };
+}
+
+/**
+ * The yield lift for harvest `index` of a rotation: durum gives more grain after some crops (`durumAfter` in
+ * the bundle). The harvest straight after takes the first figure; a second durum in a row takes the second.
+ * Nothing is counted for what grew before the rotation starts.
+ */
+export function yieldLift(sequence: CropId[], index: number, economics: Economics): { percent: number; after: CropId; fact: Fact } | null {
+  if (sequence[index] !== "durum" || index === 0) return null;
+  const before = sequence[index - 1];
+  const first = economics.crops[before]?.durumAfter?.[0];
+  if (first) return { percent: Number(first.value), after: before, fact: first };
+  if (index >= 2 && before === "durum") {
+    const earlier = sequence[index - 2];
+    const second = economics.crops[earlier]?.durumAfter?.[1];
+    if (second) return { percent: Number(second.value), after: earlier, fact: second };
+  }
+  return null;
+}
+
 /** Applies `money` to the bundle's economics. Unknown keys and out-of-range numbers are ignored. */
 export function resolveMoney(economics: Economics, money: Money): ResolvedMoney {
   const crops = economicsCrops(economics);
@@ -54,6 +82,12 @@ export function resolveMoney(economics: Economics, money: Money): ResolvedMoney 
     const value = within(override, MONEY_LIMITS.price) ? override : fallback;
     return [crop, { value, default: fallback, edited: value !== fallback }];
   })) as ResolvedMoney['prices'];
+  const costs = Object.fromEntries(crops.map(crop => {
+    const fallback = Number(cropFigures(economics, crop).costs.value);
+    const override = money[`c.${crop}`];
+    const value = within(override, MONEY_LIMITS.costs) ? override : fallback;
+    return [crop, { value, default: fallback, edited: value !== fallback }];
+  })) as ResolvedMoney['costs'];
   const support = economics.support.map(item => {
     const defaultAmount = Number(item.amount.value);
     const override = money[`s.${item.id}`];
@@ -63,7 +97,8 @@ export function resolveMoney(economics: Economics, money: Money): ResolvedMoney 
     return { id: item.id, on, amount, defaultOn: item.defaultOn, defaultAmount,
       edited: amount !== defaultAmount || on !== item.defaultOn };
   });
-  return { prices, support, edited: crops.some(crop => prices[crop]?.edited) || support.some(item => item.edited) };
+  return { prices, costs, support,
+    edited: crops.some(crop => prices[crop]?.edited || costs[crop]?.edited) || support.some(item => item.edited) };
 }
 
 function within(value: number, bounds: readonly [number, number]): boolean {
@@ -85,16 +120,19 @@ function extraApplies(extra: ExtraSupport, crop: CropId): boolean {
  */
 export function optionMoney(option: Option, economics: Economics, money: Money, extras: ExtraSupport[] = []): OptionMoney {
   const resolved = resolveMoney(economics, money);
-  const years = option.sequence.map(crop => {
+  const years = option.sequence.map((crop, index) => {
     const figures = cropFigures(economics, crop);
-    const sales = Number(figures.yield.value) * priceOf(resolved, economics, crop).value;
-    const costs = Number(figures.costs.value);
+    const lifted = yieldLift(option.sequence, index, economics);
+    const lift = lifted ? lifted.percent : 0;
+    const sales = Number(figures.yield.value) * (1 + lift / 100) * priceOf(resolved, economics, crop).value;
+    const costs = costsOf(resolved, economics, crop).value;
     const support = resolved.support.filter((item, i) => item.on && applies(economics.support[i], option, crop))
       .map(item => ({ id: item.id, amount: item.amount }));
     extras.forEach((extra, i) => {
       if (extraApplies(extra, crop)) support.push({ id: `x${i}`, amount: extra.amount });
     });
-    return { crop, sales, costs, support, margin: sales - costs + support.reduce((sum, item) => sum + item.amount, 0) };
+    return { crop, sales, lift, ...(lifted ? { after: lifted.after } : {}), costs, support,
+      margin: sales - costs + support.reduce((sum, item) => sum + item.amount, 0) };
   }) as OptionMoney['years'];
   return { years, perYear: Math.round(years.reduce((sum, year) => sum + year.margin, 0) / years.length) };
 }
@@ -110,15 +148,18 @@ export function weakestConfidence(list: Confidence[]): Confidence {
  * How sure the income figure is: the weakest confidence among the yield, price and cost facts of the option's
  * three crops and the amount facts of the support that applies and is switched on (leaving out payments made
  * on every rotation alike, which cannot change the comparison). A figure the farmer typed
- * (a price, a support amount, an added payment) counts as `fair`.
+ * (a price, a cost, a support amount, an added payment) counts as `fair`. A yield lift counts with its own confidence.
  */
 export function incomeConfidence(option: Option, economics: Economics, money: Money, extras: ExtraSupport[] = []): Confidence {
   const resolved = resolveMoney(economics, money);
   const list: Confidence[] = [];
-  for (const crop of option.sequence) {
+  option.sequence.forEach((crop, index) => {
     const figures = cropFigures(economics, crop);
-    list.push(figures.yield.confidence, figures.costs.confidence,
+    list.push(figures.yield.confidence,
+      costsOf(resolved, economics, crop).edited ? "fair" : figures.costs.confidence,
       priceOf(resolved, economics, crop).edited ? "fair" : figures.price.confidence);
+    const lifted = yieldLift(option.sequence, index, economics);
+    if (lifted) list.push(lifted.fact.confidence);
     resolved.support.forEach((item, i) => {
       const spec = economics.support[i];
       if (!item.on || !applies(spec, option, crop)) return;
@@ -129,14 +170,14 @@ export function incomeConfidence(option: Option, economics: Economics, money: Mo
     });
     // Likewise an added payment for every year is the same for every rotation; one for chosen crops is not.
     if (extras.some(extra => extra.crops.length > 0 && extraApplies(extra, crop))) list.push("fair");
-  }
+  });
   return weakestConfidence(list);
 }
 
 /** The income fact to show for an option: €/ha per year from `optionMoney`, its confidence from `incomeConfidence`. */
 export function incomeFact(option: Option, economics: Economics, money: Money, extras: ExtraSupport[] = []): Fact {
   const resolved = resolveMoney(economics, money);
-  const edited = option.sequence.some(crop => priceOf(resolved, economics, crop).edited || resolved.support.some((item, i) =>
+  const edited = option.sequence.some(crop => priceOf(resolved, economics, crop).edited || costsOf(resolved, economics, crop).edited || resolved.support.some((item, i) =>
     item.edited && (item.on || item.defaultOn) && applies(economics.support[i], option, crop))
     || extras.some(extra => extra.amount !== 0 && extraApplies(extra, crop)));
   const result: Fact = { ...option.facts.income, value: optionMoney(option, economics, money, extras).perYear,
@@ -177,9 +218,13 @@ export function setMoney(economics: Economics, money: Money, key: string, value:
   const result = { ...money };
   let fallback: number;
   const crop = economicsCrops(economics).find(crop => key === `p.${crop}`);
+  const costCrop = economicsCrops(economics).find(crop => key === `c.${crop}`);
   if (crop) {
     if (!within(value, MONEY_LIMITS.price)) return result;
     fallback = Number(cropFigures(economics, crop).price.value);
+  } else if (costCrop) {
+    if (!within(value, MONEY_LIMITS.costs)) return result;
+    fallback = Number(cropFigures(economics, costCrop).costs.value);
   } else {
     const item = economics.support.find(item => key === `s.${item.id}` || key === `on.${item.id}`);
     if (!item) return result;

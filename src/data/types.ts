@@ -163,6 +163,11 @@ export type CropEconomics = {
   yield: Fact; // t/ha
   price: Fact; // €/t
   costs: Fact; // €/ha, direct costs: seed, fertiliser, fuel, contractors
+  /**
+   * How much more grain durum gives after this crop, in percent: the first entry for the durum harvest straight
+   * after it, the second (if any) for a second durum harvest in a row. Left out for crops with no sourced figure.
+   */
+  durumAfter?: Fact[];
 };
 
 /** One public payment the farmer may receive. */
