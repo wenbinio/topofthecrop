@@ -17,6 +17,7 @@ Top of the Crop is a phone web app for NASA Space Apps 2026 (challenge: Field Sh
 | `docs/scoring.md` | Every rule and threshold in plain words: ranking, weather, this season's rain, the forecast, the yield lift |
 | `docs/support-and-prices.md`, `docs/crops-research.md` | Where the money and crop figures come from, and which are unverified |
 | `docs/durum-vs-faba-rotation-margins.md` | A research compilation the owner supplied (15 November 2026): continuous durum against a faba rotation, with ranges. It disagrees with the app's durum costs and has the faba rotation ahead; the app's figures were not changed. Its last section sets the two side by side |
+| `research-compilation/research-compilation.md` | The owner's research compilation (15 November 2026): CAP 2023–2027 support for the Bradano valley, legume-rotation economics. Summary below, under "Support payments from the research compilation" |
 | `docs/checking-the-app.md` | A screen-by-screen check of the live app, with the demo field's expected figures |
 
 ## Commands
@@ -107,6 +108,16 @@ Everything behind the income figure, on the Settings screen, which is split into
 | Support payment amount, and on or off | `s.<id>`, `on.<id>` | 0–2,000 €/ha |
 
 Payments the farmer adds travel in `x`. A typed figure counts as "fair" confidence and tags the income "Yours". To make a new figure editable: add it to `resolveMoney`, `setMoney` and `MONEY_LIMITS` in `src/money/money.ts`, allow its key prefix in `src/state/url.ts`, add a row to a section in `src/screens/settings/Editor.tsx`, and list it on the printout when changed (`src/screens/Print.tsx`).
+
+## Support payments from the research compilation
+
+From `research-compilation/research-compilation.md`. The app's payments are in `scripts/make-placeholder-bundle.mjs`; each cites its own page, shown behind "Source" on Settings.
+- **Region:** Basilicata is a Less Developed region. Much of the Alto Bradano is an Area with Natural Constraints (ANC), which scores 10–20% higher in grant calls; not counted in the income.
+- **Coupled support (CAP plan PD 06), €/ha:** durum 93.50 planned (min 84.15, max 102.86; 96.88 in 2027), Centre-South incl. Basilicata, certified seed; grain legumes 40.04 (29.00–44.04), chickpea, lentil, pea, faba, lupin, beans, not soybean; oilseeds (rapeseed, sunflower) 64.30, only under a supply-chain contract with certified seed. AGEA paid durum and legumes at the ceiling in 2024–25, which is what the app uses.
+- **Eco-scheme 4:** about 110 €/ha planned (paid about 58–72) for arable rotations with legumes or forage, with no synthetic plant protection products. Eco-schemes 2, 3 (tree crops) and 5 (pollinators, 250–500 €/ha) do not fit our rotations.
+- **Durum wheat fund (DM 677535):** up to 100 €/ha, 50 ha and €50,000 over three years; needs a three-year supply contract with a cooperative, consortium, producer organisation or processor, and certified seed; cut pro rata.
+- **How farmers claim:** the farm dossier (*fascicolo aziendale*) on SIAN, usually through a CAA office; AGEA checks crops with Sentinel satellites (Area Monitoring System).
+- **Rotation economics:** wheat after chickpea yields 16% and 10% more (Lago-Olveira et al. 2023, Puglia); durum–vetch intercrop margin 280.6 €/ha against 47.5 for durum alone (Denora et al. 2025, two seasons); more pulses cut nitrogen costs but raise disease and pesticide costs if sown too often.
 
 ## Live services the app calls
 
