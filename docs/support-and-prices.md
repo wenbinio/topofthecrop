@@ -16,9 +16,9 @@ These need no extra contract or multi-year commitment.
 |---|---|---|---|
 | Basic income support (BISS) | 170 €/ha, every year | Paid on the farmer's own entitlements, so there is no single rate. Opus: roughly 140–250. Hydrogen: national average 164 (2023), 175 (2024). | No firm figure. The farmer should enter their own. |
 | Redistributive payment (CRISS) | 90 €/ha, every year | 89.87 €/ha for 2025; 84.73 for 2024. First 14 ha of farms up to 50 ha. | Both agree on 2025. |
-| Coupled support, durum | 103 €/ha in durum years | 98.18 (2023), 102.86 (2024 and 2025, the ceiling). Needs certified seed from 2024. | Both agree. Opus read the AGEA circular. |
-| Coupled support, grain legumes | 44 €/ha in chickpea and faba years | 44.04 in 2023, 2024 and 2025 (the ceiling). | Both agree. |
-| Eco-scheme 4, rotation with a legume | 40 €/ha per year on the chickpea and faba rotations | Rate in a paid year: 64.33 (2023), 58.15 (2024); for 2025 Opus found 60.36 and Hydrogen 71.70. Which years are paid is disputed (next section). 40 is about 60 for two years in three. | Rate for 2025 disputed; eligibility disputed. |
+| Coupled support, durum | 102.86 €/ha in durum years (range 84.15 to 102.86) | Plan rate 93.50 (96.88 in 2027), floor 84.15, ceiling 102.86. Paid: 98.18 (2023), 102.86 (2024 and 2025, the ceiling). Needs certified seed from 2024. Source: Italy's CAP plan. | Both agree. Opus read the AGEA circular. |
+| Coupled support, grain legumes | 44.04 €/ha in chickpea, faba, lentil and pea years (range 29 to 44.04) | Plan rate 40.04 (41.48 in 2027), floor 29.00, ceiling 44.04. Paid 44.04 in 2023, 2024 and 2025. Covers chickpea, lentil, pea, faba bean, lupin and beans, not soybean. Source: Italy's CAP plan. | Both agree. |
+| Eco-scheme 4, rotation with a legume | 40 €/ha per year on the chickpea and faba rotations | Plan rate about 110 €/ha, for rotation with legume or forage crops and no synthetic plant protection products. Rate in a paid year: 64.33 (2023), 58.15 (2024); for 2025 Opus found 60.36 and Hydrogen 71.70. Which years are paid is disputed (next section). 40 is about 60 for two years in three. | Rate for 2025 disputed; eligibility disputed. |
 
 ## Payments listed but switched off
 
@@ -26,9 +26,10 @@ Each needs a contract or a multi-year commitment, or its eligibility is disputed
 
 | Payment | In the app | Research | Agreement |
 |---|---|---|---|
+| Coupled oilseeds (rapeseed, sunflower) | 98 €/ha in rapeseed years (range 64.3 to 98) | Plan rate 64.30 €/ha; 98 was paid in 2023. Needs a supply contract with a processor or seed company and certified seed; not for rapeseed in protected zones. | Conditions from the research compilation. |
 | Eco-scheme 4 with a vetch-oat year | 40 €/ha | Opus: qualifies like the other rotations. Hydrogen: a one-year vetch-oat mix followed by durum is excluded (cites a ministry FAQ). | Disputed. |
 | Coupled support for a legume forage mix | 44 €/ha in the vetch-oat year | Only if the legume is predominant and stays until flowering starts. | Both agree on the condition. |
-| Durum wheat fund | 100 €/ha in durum years | 100 €/ha ceiling for 2026 (200 was paid in 2024 and 2025). Needs a supply-chain contract of three years or more and certified seed; cut pro rata; up to 50 ha. | Both agree. Opus read the AGEA instructions. |
+| Durum wheat fund | 100 €/ha in durum years | 100 €/ha ceiling for 2026 (200 was paid in 2024 and 2025). Needs a three-year supply contract with a cooperative, consortium, producer organisation or a processor (mill, pasta maker) and certified seed; cut pro rata; up to 50 ha; at most 50,000 € over three years. Source: MASAF fund (DM 677535), via Informatore Agrario, 3 March 2026. | Both agree. Opus read the AGEA instructions. |
 | Food-sovereignty fund for legumes | 200 €/ha in chickpea and faba years | Up to 250 €/ha, cut pro rata; only on legume area above the farm's three-year average, under a three-year contract. | Both agree on the ceiling and conditions. |
 | No-till sowing (SRA03, Basilicata) | 300 €/ha | 300 €/ha, five-year commitment. The 2026 call closed on 30 June 2026. | Both agree; neither could open the region's own site. |
 | Integrated production (SRA01, Basilicata) | 171 €/ha | 171 €/ha arable (114 forage), five-year commitment. Not with organic on the same field. | Both agree. |
@@ -61,6 +62,22 @@ Both researchers found that durum after durum breaches the CAP crop-rotation con
 - **Agricultural diesel relief:** roughly 30–75 €/ha saved, the same for every rotation, so it does not change the comparison.
 - **Subsidised crop insurance and the AgriCat fund:** premium subsidy of up to 70% (not verified); AgriCat is funded by withholding about 3% of direct payments.
 - **Eco-scheme 5 (pollinators):** pays several hundred €/ha but only on land sown to nectar plants, which none of the four rotations is.
+
+## From the research compilation (15 November 2026)
+
+The owner's `research-compilation/research-compilation.md` changed these figures and conditions. The Italian CAP Strategic Plan text is at https://faolex.fao.org/docs/pdf/ita236756.pdf; the app's "Source" button opens the European Commission's page for the plan, https://agriculture.ec.europa.eu/cap-my-country/cap-strategic-plans/italy_en. None of these links could be opened from our build machine (the proxy refused them), so the pages are not checked.
+
+- **Plan rates and floors/ceilings.** Durum: 93.50 planned, 84.15 to 102.86. Grain legumes: 40.04 planned, 29.00 to 44.04. The app keeps the paid amount (102.86 and 44.04) as the figure, and the floor and ceiling as the range.
+- **Coupled oilseeds.** Rapeseed and sunflower, 64.30 €/ha planned, only under a supply contract with a processor or seed company, certified seed, not rapeseed in protected zones. The app keeps 98 (AGEA, 2023) with range 64.3 to 98, and now starts switched off because it needs a contract. This lowers the rapeseed rotation's income in the demo field from 621 to 589 €/ha.
+- **Eco-scheme 4.** Planned about 110 €/ha for arable land rotated with legume or forage crops without synthetic plant protection products. Paid rates were 58 to 72 because more land applied than planned. Amounts unchanged; every Eco-scheme 4 condition now states the no-synthetic-chemicals rule.
+- **Durum wheat fund.** Partners that can sign the three-year contract: cooperatives, consortia, producer organisations, processors. Cap of 50,000 € over three years. Source: https://informatoreagrario.it/seminativi/confermato-il-contributo-per-la-filiera-del-grano-duro/ (3 March 2026); see also https://www.confagricolturaro.it/confagricoltura-informa/tecnico/pac-e-psr/grano-duro-aiuto-de-minimis-2025/ (16 May 2025).
+- **Certified seed list.** CREA, species that can be certified: https://www.crea.gov.it/documents/63509/2367743/Specie-certificabili-07-10-2025.pdf/10a470d6-831e-a3e7-0d5f-d81518f9e9c3?t=1766054994158
+
+Not put in the app:
+- Eco-scheme 2 (grass cover in tree crops, about 120 €/ha) and Eco-scheme 3 (landscape olive groves, about 220 €/ha): no tree crops in the rotations.
+- Eco-scheme 5 (pollinators, about 250 €/ha arable, 500 tree crops): needs land sown to nectar plants, which no rotation is.
+- Areas with Natural Constraints: 10 to 20% higher grant scoring. A scoring advantage for some grants, not a per-hectare payment. https://agriculture.ec.europa.eu/media/news/cap-support-crucial-maintain-farming-areas-natural-constraints-shows-latest-study-2023-07-19_en
+- The application process: the farm dossier (fascicolo aziendale) kept on SIAN, applications often filed through a CAA office, and Area Monitoring System checks with Copernicus satellites. https://interoperable-europe.ec.europa.eu/collection/egovernment/document/italian-informative-agricultural-system-agea-sian , https://www.confagricoltura.it/eng/network-confagricoltura/farmer-s-confederation-system/agricultural-assistance-centre%E2%80%93-caa , https://consulenzaagricola.it/circolari/politica-agricola-comune-e-nazionale/20261-circolare-agea-su-area-monitoring-system-ams
 
 ## What may change
 
