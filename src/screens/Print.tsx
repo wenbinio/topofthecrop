@@ -246,6 +246,8 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
         </Block>
 
         <Block title={t("print.options")}>
+          {/* On a phone the table scrolls sideways; on paper it prints whole. */}
+          <div className="overflow-x-auto print:overflow-visible">
           <table className="w-full border-collapse">
             <thead>
               <tr className="text-left border-b border-line">
@@ -293,6 +295,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
               ))}
             </tbody>
           </table>
+          </div>
           {removed.length ? (
             <p className="mt-1">
               {t("print.removed")}:{" "}
