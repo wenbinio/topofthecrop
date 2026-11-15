@@ -106,6 +106,123 @@
 .tc-tap {
   min-height: var(--tc-tap);
 }
+
+/*
+ * Motion. One easing and two speeds for the whole app, so everything that opens, closes or is pressed moves the
+ * same way: quick for a press or a small bubble, a little slower for a panel that grows. All of it stops for a
+ * farmer who has asked their phone for less motion.
+ */
+:root {
+  --tc-ease: cubic-bezier(0.2, 0, 0, 1);
+  --tc-fast: 140ms;
+  --tc-med: 240ms;
+}
+a,
+button,
+label,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+/* A press answers at once: the control dips a little and its colours ease, instead of snapping. */
+.tc-tap {
+  transition:
+    background-color var(--tc-fast) var(--tc-ease),
+    border-color var(--tc-fast) var(--tc-ease),
+    color var(--tc-fast) var(--tc-ease),
+    opacity var(--tc-fast) var(--tc-ease),
+    transform 90ms var(--tc-ease);
+}
+.tc-tap:active:not(:disabled) {
+  transform: scale(0.98);
+}
+/* A chevron turns with its panel. */
+.tc-turn {
+  transition: transform var(--tc-med) var(--tc-ease);
+}
+/* A panel that opens on a tap (src/components/Fold.tsx): the grid row grows from nothing to its content. */
+.tc-fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--tc-med) var(--tc-ease);
+}
+.tc-fold[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.tc-fold-inner {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--tc-med) var(--tc-ease),
+    visibility 0s linear var(--tc-med);
+}
+.tc-fold[data-open="true"] > .tc-fold-inner {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--tc-med) var(--tc-ease),
+    visibility 0s;
+}
+/* Fully open: stop clipping, so a bubble on the last row can hang below the panel. */
+.tc-fold[data-settled="true"] > .tc-fold-inner {
+  overflow: visible;
+}
+/* Something small that appears where it was tapped: a line of explanation, a few more rows. */
+@keyframes tc-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.tc-reveal {
+  animation: tc-reveal var(--tc-med) var(--tc-ease) both;
+}
+/* A bubble grows out of the thing that opened it. */
+@keyframes tc-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+}
+.tc-pop {
+  transform-origin: top left;
+  animation: tc-pop var(--tc-fast) var(--tc-ease) both;
+}
+.tc-pop-end {
+  transform-origin: top right;
+}
+/* A new screen, or a new question, eases in instead of snapping. */
+@keyframes tc-screen {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.tc-screen {
+  animation: tc-screen var(--tc-med) var(--tc-ease) both;
+}
+/* The knob of an on/off switch slides. */
+.tc-knob {
+  transition: transform var(--tc-med) var(--tc-ease), background-color var(--tc-fast) var(--tc-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-tap,
+  .tc-turn,
+  .tc-fold,
+  .tc-fold-inner,
+  .tc-knob {
+    transition: none;
+  }
+  .tc-tap:active:not(:disabled) {
+    transform: none;
+  }
+  .tc-reveal,
+  .tc-pop,
+  .tc-screen {
+    animation: none;
+  }
+}
 .tc-icon {
   width: var(--tc-icon);
   height: var(--tc-icon);

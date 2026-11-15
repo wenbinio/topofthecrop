@@ -67,6 +67,13 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 
 Send a screenshot, the step number above, and the page's link (copy it from the address bar: it holds every choice made).
 
+## 11. One thing at a time
+
+- [ ] Questions: "Question 1 of 3" (last crop), Next, "Question 2 of 3" (limits), Next, "Question 3 of 3" (priorities). Next waits only on the last, for two priorities.
+- [ ] Options: the advice and its two reasons, then six rows under *Tap to look closer*. Each opens smoothly on a tap and closes on the next; nothing jumps.
+- [ ] Why: the reasons are open; *Over three harvests*, *What the data shows*, *Benefits*, *What we don't know* and *Check locally* open on a tap.
+- [ ] The switch under the other options is called **Intercropping**, and its knob slides.
+
 ## 10. Soil, and coming back
 
 - [ ] Options, demo field: *Your soil* reads **Heavy ground (clay loam)**, **Alkaline soil · pH 7.7 · measured in the trial here: 8.2**, then that it is an estimate and that the order does not use it. *Soil figures* opens ten rows and the trial's pH, each with a *Source*.

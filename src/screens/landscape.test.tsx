@@ -59,7 +59,14 @@ describe("held sideways", () => {
     expect(area).not.toContainElement(sheet);
   });
 
-  it.each(["/questions", "/options", "/year"])("%s uses two columns", async (path) => {
+  it("/questions is one column: one question at a time", async () => {
+    renderAt("/questions?f=genzano-demo&p=income,water");
+    const cols = await screen.findByTestId("two-cols");
+    expect(cols).not.toHaveClass("phone-land:grid");
+    expect(cols.children).toHaveLength(3);
+  });
+
+  it.each(["/options", "/year"])("%s uses two columns", async (path) => {
     renderAt(`${path}?f=genzano-demo&p=income,water`);
     const cols = await screen.findByTestId("two-cols");
     expect(cols).toHaveClass("phone-land:grid", "phone-land:grid-cols-2");

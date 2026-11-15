@@ -138,7 +138,7 @@ export function SourcePanel({ fact, id, align = "start" }: { fact: Fact; id: str
       id={id}
       role="note"
       data-testid="source-bubble"
-      className={`absolute z-30 top-full mt-1 ${align === "end" ? "right-0" : "left-0"} w-64 max-w-[80vw] p-2.5 flex flex-col gap-1 bg-surface text-ink border-2 border-line-strong rounded-sm shadow-lg text-small text-left font-normal normal-case tracking-normal whitespace-normal`}
+      className={`tc-pop ${align === "end" ? "tc-pop-end right-0" : "left-0"} absolute z-30 top-full mt-1 w-64 max-w-[80vw] p-2.5 flex flex-col gap-1 bg-surface text-ink border-2 border-line-strong rounded-sm shadow-lg text-small text-left font-normal normal-case tracking-normal whitespace-normal`}
     >
       <ScaleBadge scale={fact.scale} long />
       <span>

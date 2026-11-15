@@ -87,6 +87,8 @@ function Shell() {
         <TopBar steps={isPrint || isSettings ? null : <StepBar pathname={pathname} />} />
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
           <Suspense fallback={<ScreenLoading />}>
+          {/* Each screen eases in (tc-screen, index.css) instead of snapping into place. */}
+          <div key={pathname.split("/")[1] ?? ""} className="tc-screen flex-1 min-h-0 flex flex-col">
           <Routes>
             <Route
               path="/"
@@ -117,6 +119,7 @@ function Shell() {
             <Route path="/timelapse" element={field((b) => <Timelapse bundle={b} />)} />
             <Route path="*" element={<RedirectHome />} />
           </Routes>
+          </div>
           </Suspense>
         </main>
       </div>

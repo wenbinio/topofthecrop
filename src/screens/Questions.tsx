@@ -7,7 +7,7 @@ import { economicsCrops } from "../money/money";
 import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
 import { CropName } from "../components/Crops";
-import { CheckIcon } from "../components/Icons";
+import { BackIcon, CheckIcon } from "../components/Icons";
 import { MIN_RANKED, PRIORITY_ICON, RankMark, togglePriority } from "../components/Reasons";
 import { PriorityHelp, priorityLine } from "../components/Term";
 import { BackButton, Button, BottomBar, SectionTitle } from "../components/ui";
@@ -53,6 +53,9 @@ function Choice({
   );
 }
 
+/** Three questions, asked one at a time: last crop, limits, priorities. */
+const LAST_STEP = 2;
+
 export default function Questions({ bundle }: { bundle: FieldBundle }) {
   const t = useT();
   const go = useGo();
@@ -68,12 +71,18 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
   const nameId = useId();
   // The typed name stays local while typing (the link keeps it trimmed, which would eat a space as it is typed).
   const [name, setName] = useState(state.lastCropName);
+  // One question at a time. A farmer coming back with the priorities already in order lands on the last one.
+  const [step, setStep] = useState(() => (enough ? LAST_STEP : 0));
+  /** A question not on screen stays in the page, out of reach: not drawn, not focusable, not read aloud. */
+  const part = (n: number) => ({ className: step === n ? "tc-screen flex flex-col" : "hidden", inert: step !== n, "data-testid": `question-${n + 1}` });
 
   return (
     <div className="flex flex-col flex-1">
-      {/* Held sideways: last crop and limits on the left, priorities on the right. */}
-      <div data-testid="two-cols" className="flex flex-col phone-land:grid phone-land:grid-cols-2 phone-land:items-start phone-land:gap-x-2">
-      <div className="flex flex-col min-w-0">
+      <p className="px-4 pt-3 text-small font-bold text-ink-soft" data-testid="question-step" aria-live="polite">
+        {t("q.step", { n: step + 1, total: LAST_STEP + 1 })}
+      </p>
+      <div data-testid="two-cols" className="flex flex-col phone-land:w-full phone-land:max-w-[44rem] phone-land:mx-auto">
+      <div {...part(0)}>
       <SectionTitle>
         <span className="flex flex-wrap items-baseline gap-x-2">
           {t("q.lastCrop")}
@@ -113,7 +122,9 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
           />
         </div>
       ) : null}
+      </div>
 
+      <div {...part(1)}>
       <SectionTitle>{t("q.limits")}</SectionTitle>
       <div className="grid grid-cols-1 gap-2 px-4">
         {LIMITS.map((limit) => (
@@ -123,7 +134,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
         ))}
       </div>
       </div>
-      <div className="flex flex-col min-w-0">
+      <div {...part(2)}>
 
       <div className="px-4 pt-2 pb-1 phone-land:pt-4">
         <PriorityHelp>
@@ -156,8 +167,16 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       </div>
 
       <BottomBar>
-        <BackButton to={to("/")} />
-        <Button className="flex-1" disabled={!enough} onClick={() => go("/options")}>
+        {step === 0 ? (
+          <BackButton to={to("/")} />
+        ) : (
+          <Button look="secondary" className="flex-none px-3" data-testid="question-back" onClick={() => setStep(step - 1)}>
+            <BackIcon className="w-5 h-5 flex-none" />
+            {t("common.back")}
+          </Button>
+        )}
+        {/* Only the last question can hold the farmer back: it needs two priorities in order. */}
+        <Button className="flex-1" disabled={step === LAST_STEP && !enough} onClick={() => (step < LAST_STEP ? setStep(step + 1) : go("/options"))}>
           {t("common.next")}
         </Button>
       </BottomBar>
