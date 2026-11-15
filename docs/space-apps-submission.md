@@ -24,8 +24,9 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
 - Copernicus Sentinel-2 (ESA / European Union). Contains modified Copernicus Sentinel data 2016-2026.
   - Surface reflectance with Cloud Score+, in Google Earth Engine: 10 m greenness at the demo field. Pasquarella et al. 2023, Cloud Score+.
   - Our own map tiles of the Bradano basin, from four L2A scenes of 30 May 2026 (Sentinel-2 COGs on AWS Open Data). https://registry.opendata.aws/sentinel-2-l2a-cogs/
-  - The field timelapse ("Your field from space"), loaded live through Microsoft Planetary Computer. https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a
+  - The field timelapse ("Your field from space") and the intercrop map (greenness and leaf moisture), loaded live through Microsoft Planetary Computer. https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a
   - Sentinel-2 cloudless 2016 by EOX (CC BY 4.0), the zoomed-in map outside the basin. https://s2maps.eu
+- Copernicus DEM GLO-30 (ESA / European Union), 30 m. Used for high and low ground in the intercrop map, loaded live through Microsoft Planetary Computer. Notice: produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved. https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-30
 - ESA WorldCover 10 m 2021 v200 (CC BY 4.0). Used for the cropland mask. https://doi.org/10.5281/zenodo.7254221
 - JAXA GSMaP operational v8, gauge-adjusted. Used for a rain comparison at the demo field. GSMaP data were provided by JAXA. https://sharaku.eorc.jaxa.jp/GSMaP/
 
@@ -43,7 +44,7 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
 - Agenzia delle Entrate, Cartografia catastale (INSPIRE Cadastral Parcels WFS, CC BY 4.0). Used to find a field by its parcel numbers in Genzano di Lucania. https://wfs.cartografia.agenziaentrate.gov.it/inspire/wfs/owfs01.php
 - MET Norway Locationforecast 2.0 (CC BY 4.0 and NLOD 2.0). The seven-day forecast. Data from MET Norway. https://api.met.no/
 - Photon geocoder by komoot (OpenStreetMap data, © OpenStreetMap contributors). Used for town search. https://photon.komoot.io/
-- Microsoft Planetary Computer, STAC API and data API. Used to find and draw the Sentinel-2 pictures for the timelapse. https://planetarycomputer.microsoft.com/
+- Microsoft Planetary Computer, STAC API and data API. Used to find and draw the Sentinel-2 pictures and the heights for the timelapse and the intercrop map. https://planetarycomputer.microsoft.com/
 
 ## Research, prices and payment rules (references)
 
@@ -68,7 +69,7 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
 - CREA, list of species that can be certified (7 October 2025). Used for the certified-seed rule. https://www.crea.gov.it/documents/63509/2367743/Specie-certificabili-07-10-2025.pdf/10a470d6-831e-a3e7-0d5f-d81518f9e9c3?t=1766054994158
 - MASAF's slides on the 2024 CAP simplification. Used for the crop-rotation rule. https://fidaf.it/wp-content/uploads/2024/10/Semplificazione-PAC_30-ott-24.pdf
 - Regione Basilicata, CSR 2023-2027 (regional rural development plan), June 2023 version. Used for the SRA01 and SRA29 payments. https://europa.regione.basilicata.it/feasr/wp-content/uploads/2023/07/CSR-GIUGNO2023-Completo-web.pdf
-- CSR Basilicata, SRA03 no-till call 2026 (Determination 100 of 13 February 2026, extended to 30 June 2026). Used for the SRA03 payment. https://basilicatacsr.it/bando-csr/sra03-semina-su-sodo-annualita-2026/
+- CSR Basilicata, SRA03 no-till call 2026 (Determination 100 of 13 February 2026, extended to 30 June 2026). Used for the SRA03 payment. https://basilicatacsr.it/bando-csr/sra03-semina-su-sodo-annualita-2026/ (the 30 June deadline is also in the region's monitoring-committee slides, June 2026: https://agr.regione.basilicata.it/wp-content/uploads/2026/06/Comitato-di-monitoraggio.pdf)
 - Top of the Crop crop research notes, 14 November 2026. Every crop figure without a primary source: yields other than durum, direct costs other than durum and chickpea, water need. Compiled by the team from two AI research agents (see the AI statement). https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md
 - Top of the Crop research compilation (EU and Italian subsidies, market prices, rotation studies). https://github.com/wenbinio/topofthecrop/blob/main/research-compilation/research-compilation.md
 - Also consulted, not used for the app's figures:

@@ -111,7 +111,7 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 | Finding "Autumn rain varies" | `rain_autumn` | `cells_weather.json` |
 | Year strip: green, patchy, bare | `ndvi_month`, with `meta.thresholds` | `cells_greenness.json` |
 | Year strip: dry, frost, heat, heavy-rain icons | `rain_month`, `frost_month`, `hot30_month` | `cells_weather.json` |
-| "By 2050" and the slider's stops | `ssp245.hot`, `ssp585.hot`, through the helper's `projected()` | `cells_future.json` |
+| "By 2050" (hot days at flowering) | `ssp245.hot`, `ssp585.hot`, through the helper's `projected()` | `cells_future.json` |
 | Hottest season | `hot_days_flower_by_season` | `cells_weather.json` |
 | Usual high at flowering (hover on "hot days") | `tmax_flower`, `ssp245.tmaxfl` | weather, future |
 | Evidence lines on Why | `rain_season`, `durum_need`, `clay`, `sm_spring` (SMAP), `aet_season` (MODIS; `moreEvidence` in `field-rules.js`) | weather, water, soil |
