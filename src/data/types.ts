@@ -182,6 +182,8 @@ export type AreaWeather = {
   hotDaysAtFlowering: Fact;
   autumnRain: Fact;
   lateFrostDays: Fact;
+  /** NASA POWER rain months left out of the counts as impossible (POWER_BAD_RAIN_MONTHS in src/weather/weather.ts), YYYYMM. */
+  rainLeftOut?: string[];
 };
 
 /** Daily series keyed "YYYYMMDD", as NASA POWER returns them. -999 means missing. */

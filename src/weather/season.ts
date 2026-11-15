@@ -2,7 +2,7 @@
 // compares with the same weeks in earlier years, and when it last rained properly. It answers the autumn question
 // "has the rain come yet?" with live NASA data. Written with AI assistance (Claude, Anthropic).
 import type { Fact, LngLat } from "../data/types";
-import { POWER_TIMEOUT_MS } from "./weather";
+import { POWER_TIMEOUT_MS, rainOn } from "./weather";
 
 /** Thresholds are our own judgement, for the team to correct; they are also written in docs/scoring.md. */
 export const SEASON_RULES = {
@@ -31,10 +31,11 @@ export type SeasonWeather = {
   rain: Fact;
   /**
    * The middle value over the earlier seasons for the same days. Its range is the 10th to 90th percentile, as in
-   * the data team's files, so one freak season does not stretch it (NASA POWER gives 592 mm for autumn 2025 at
-   * the demo field, five times the usual).
+   * the data team's files, so one freak season does not stretch it.
    */
   usual: Fact;
+  /** NASA POWER rain months left out as impossible (POWER_BAD_RAIN_MONTHS), YYYYMM: an earlier season missing one is not counted. */
+  rainLeftOut: string[];
   standing: Standing;
   /** The latest day with `goodRainMm` or more, or null if none yet this season. */
   lastGoodRain: { date: string; daysAgo: number; mm: number } | null;
@@ -78,22 +79,23 @@ export async function fetchSeasonRain(centre: LngLat, today: Date = new Date(), 
   }
 }
 
-const has = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value) && value !== -999;
 
 /** Pure counting: turns the daily rain into this season's facts. Throws when this season has no data yet. */
 export function summariseSeason(rain: Record<string, number>, today: Date = new Date()): SeasonWeather {
   const start = seasonStart(today);
+  const leftOut = new Set<string>();
+  const rainAt = (time: number) => rainOn(rain, key(time), leftOut);
   // The latest day NASA has: POWER marks days it has not filled in yet with -999.
   let end = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-  while (end >= start && !has(rain[key(end)])) end -= DAY;
+  while (end >= start && rainAt(end) === undefined) end -= DAY;
   if (end < start) throw new Error("season: no data yet this season");
   const days = Math.round((end - start) / DAY) + 1;
 
   let total = 0;
   let lastGoodRain: SeasonWeather["lastGoodRain"] = null;
   for (let time = start; time <= end; time += DAY) {
-    const value = rain[key(time)];
-    if (!has(value)) continue;
+    const value = rainAt(time);
+    if (value === undefined) continue;
     total += value;
     if (value >= SEASON_RULES.goodRainMm) {
       lastGoodRain = { date: iso(time), daysAgo: Math.round((end - time) / DAY), mm: Math.round(value) };
@@ -107,8 +109,8 @@ export function summariseSeason(rain: Record<string, number>, today: Date = new 
     first.setUTCFullYear(first.getUTCFullYear() - back);
     let sum = 0, present = 0;
     for (let i = 0; i < days; i++) {
-      const value = rain[key(first.getTime() + i * DAY)];
-      if (!has(value)) continue;
+      const value = rainAt(first.getTime() + i * DAY);
+      if (value === undefined) continue;
       present++;
       sum += value;
     }
@@ -144,5 +146,6 @@ export function summariseSeason(rain: Record<string, number>, today: Date = new 
     usual: fact(mid, "season.usualByNow", [at(0.1), at(0.9)]),
     standing,
     lastGoodRain,
+    rainLeftOut: [...leftOut].sort(),
   };
 }

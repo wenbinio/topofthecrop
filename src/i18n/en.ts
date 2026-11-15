@@ -468,6 +468,7 @@ export const en = {
   "fact.risk": "Risk",
 
   "weather.hotDays": "Hot flowering days",
+  "weather.leftOut": "Not counted: NASA POWER rain for {months}, over three times other rain records at the demo field.",
   "weather.autumnRain": "Autumn rain",
   "weather.lateFrost": "Late frost days",
   "season.title": "This season so far",

@@ -452,6 +452,7 @@ export const it: Dict = {
   "fact.risk": "Rischio",
 
   "weather.hotDays": "Giorni caldi fioritura",
+  "weather.leftOut": "Non contata: la pioggia NASA POWER di {months}, oltre tre volte le altre misure di pioggia al campo demo.",
   "weather.autumnRain": "Pioggia d'autunno",
   "weather.lateFrost": "Giorni gelo tardivo",
   "season.title": "Questa stagione finora",
