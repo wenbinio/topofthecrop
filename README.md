@@ -101,7 +101,7 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 | SoilGrids (ISRIC, 250 m) | Topsoil clay on the Why screen; sand, silt, organic carbon, pH, nitrogen, CEC and water-holding capacity in the data |
 | FAO-56 (Allen et al. 1998) | The method behind reference evapotranspiration and durum's water need |
 | Denora et al. (2025), the vetch trial at the demo field | The trial's own weather station and soil, typed in from the paper and used only to check our figures |
-| Published agronomy trials and regional price data | Income (gross margin), nitrogen and water figures for each three-year rotation: see `docs/crops-research.md` and `docs/support-and-prices.md` |
+| Published agronomy trials and regional price data | Income (gross margin), nitrogen and water figures for each three-year rotation. Every source with its link: `DATA_SOURCES.md`, "Crop, price and support figures"; how sure each figure is: `docs/crops-research.md` and `docs/support-and-prices.md` |
 | Map picture, zoomed out: NASA Blue Marble (MODIS), from NASA GIBS. Public domain. | Finding the area |
 | Map picture, zoomed in, anywhere: Sentinel-2 cloudless 2016 by EOX (contains modified Copernicus Sentinel data 2016), 10 m, CC BY 4.0 | Finding and drawing a field outside the basin |
 | Map picture, zoomed in, Bradano basin: our own tiles in `public/tiles/s2/`, cut by `scripts/build-basemap.py` from four Sentinel-2 L2A scenes of 30 May 2026 (contains modified Copernicus Sentinel data 2026), 10 m | Finding and drawing a field in the basin |

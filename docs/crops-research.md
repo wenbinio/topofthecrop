@@ -22,6 +22,17 @@ The app's figures are the "In the app" columns. Where the two researchers differ
 
 Rotations built from them, each over three harvests: the four the app already had (durum → durum → durum, chickpea → durum → durum, faba → durum → faba, vetch-oat → durum → durum) plus lentil → durum → durum, pea → durum → durum, barley → durum → durum, rapeseed → durum → durum and coriander → durum → durum.
 
+## Where the app cites each figure
+
+Each figure opens its source from a tap in the app.
+
+- **Durum yield:** the trial at the demo field, Denora et al. (2025), https://doi.org/10.1016/j.ijagro.2025.100045.
+- **Prices**, from the exchange lists someone opened: durum from the national durum list and the Foggia exchange; chickpea, faba bean and barley from the Foggia and Bari lists; lentil from Bari; field pea from Bologna; vetch–oat hay from northern hay quotes.
+- **Every other crop figure** cites these notes as "Our crop research notes, 14 Nov 2026", linked to the table above. That covers yields other than durum, every direct cost, nitrogen left, water need, machinery, buyer, broomrape status, and the rapeseed and coriander prices.
+- **Each rotation:** its income is worked out from these figures and the payments (`docs/scoring.md`, "How the income figure is worked out"). Its nitrogen and water come from its first crop here. Its risk is our own rule (`docs/scoring.md`, "Each rotation's risk").
+
+The full list of sources, with links, is in `DATA_SOURCES.md`, "Crop, price and support figures".
+
 ## What each researcher found
 
 | Crop | Opus: yield / price / costs / N | Hydrogen: yield / price / costs / N |
@@ -54,7 +65,12 @@ Rotations built from them, each over three harvests: the four the app already ha
 
 ## Durum after a legume
 
-The income sum counts more durum grain after chickpea (16% the first harvest after, 10% the second) and after faba bean (12% the first harvest after). The sources are Lago-Olveira et al. 2023 (Puglia) and Garofalo et al. 2009 (Foggia, simulated), as cited in the team's research compilation; nobody on the team has checked them against the papers. No figure was found for lentil, pea or vetch, so they get none. See `docs/scoring.md`.
+The income sum counts more durum grain after chickpea (16% the first harvest after, 10% the second) and after faba bean (12% the first harvest after).
+
+- **Chickpea:** Lago-Olveira, S., Rebolledo-Leiva, R., Garofalo, P., Moreira, M. T. and González-García, S. (2023). Environmental and economic benefits of wheat and chickpea crop rotation in the Mediterranean region of Apulia (Italy). Science of the Total Environment 896, 165124. https://doi.org/10.1016/j.scitotenv.2023.165124. Its Table S3, copied into `research-compilation/research-compilation.md`, gives wheat 5.8 and 5.5 t/ha after chickpea against 5 t/ha in continuous wheat. Nobody has checked the table against the paper, and those yields are well above this area's 3 t/ha.
+- **Faba bean:** Garofalo, P., Di Paolo, E. and Rinaldi, M. (2009). Durum wheat (*Triticum durum* Desf.) in rotation with faba bean (*Vicia faba* var. *minor* L.): long-term simulation case study. Crop and Pasture Science 60(3), 240–250. https://doi.org/10.1071/CP08208. A 53-year CropSyst simulation for southern Italy; its abstract gives +12% on average, more in dry years. Checked against the abstract on 15 November 2026.
+
+No figure was found for lentil, pea or vetch, so they get none. See `docs/scoring.md`.
 
 ## Intercropping
 

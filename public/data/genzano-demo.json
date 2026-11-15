@@ -11,9 +11,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Denora et al. 2025, durum trial at Genzano di Lucania",
+            "resolution": "one trial, two seasons",
+            "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -45,9 +45,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -64,9 +64,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -81,7 +81,7 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "National durum price list and Foggia exchange",
+            "dataset": "Foggia and Bari exchange price lists, 2025-26",
             "resolution": "regional market",
             "url": "https://www.fg.camcom.it/"
           },
@@ -98,9 +98,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -112,9 +112,9 @@
             "unit": "%",
             "scale": "area",
             "source": {
-              "dataset": "Lago-Olveira et al. 2023, wheat after chickpea, Puglia",
+              "dataset": "Lago-Olveira et al. 2023, Sci. Total Environ. 896, 165124: wheat after chickpea, Puglia",
               "resolution": "one study",
-              "url": "https://www.sciencedirect.com/science/article/pii/S0048969723037476"
+              "url": "https://doi.org/10.1016/j.scitotenv.2023.165124"
             },
             "confidence": "low",
             "placeholder": false,
@@ -125,9 +125,9 @@
             "unit": "%",
             "scale": "area",
             "source": {
-              "dataset": "Lago-Olveira et al. 2023, wheat after chickpea, Puglia",
+              "dataset": "Lago-Olveira et al. 2023, Sci. Total Environ. 896, 165124: wheat after chickpea, Puglia",
               "resolution": "one study",
-              "url": "https://www.sciencedirect.com/science/article/pii/S0048969723037476"
+              "url": "https://doi.org/10.1016/j.scitotenv.2023.165124"
             },
             "confidence": "low",
             "placeholder": false,
@@ -145,9 +145,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -162,7 +162,7 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "National durum price list and Foggia exchange",
+            "dataset": "Foggia and Bari exchange price lists, 2025-26",
             "resolution": "regional market",
             "url": "https://www.fg.camcom.it/"
           },
@@ -179,9 +179,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -193,9 +193,9 @@
             "unit": "%",
             "scale": "area",
             "source": {
-              "dataset": "Garofalo et al. 2009, wheat after faba bean, Foggia (53-year simulation)",
+              "dataset": "Garofalo et al. 2009, Crop Pasture Sci. 60, 240-250: wheat after faba bean, 53-year simulation",
               "resolution": "one study",
-              "url": "https://publish.csiro.au/cp/cp08208"
+              "url": "https://doi.org/10.1071/CP08208"
             },
             "confidence": "low",
             "placeholder": false,
@@ -213,9 +213,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -247,9 +247,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -266,9 +266,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -283,9 +283,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Bari exchange price list, Italian green lentils",
+            "resolution": "regional market",
+            "url": "https://www.ba.camcom.it/"
           },
           "confidence": "low",
           "placeholder": false,
@@ -300,9 +300,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -319,9 +319,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -336,9 +336,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Bologna exchange price list, field pea",
+            "resolution": "northern market",
+            "url": "https://www.bo.camcom.gov.it/"
           },
           "confidence": "low",
           "placeholder": false,
@@ -353,9 +353,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -372,9 +372,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -389,9 +389,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Foggia and Bari exchange price lists, 2025-26",
+            "resolution": "regional market",
+            "url": "https://www.fg.camcom.it/"
           },
           "confidence": "low",
           "placeholder": false,
@@ -406,9 +406,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -425,9 +425,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -442,9 +442,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -459,9 +459,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -478,9 +478,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -495,9 +495,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -512,9 +512,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "placeholder": false,
@@ -957,9 +957,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
             "resolution": "regional",
-            "url": "https://basilicatacsr.it/"
+            "url": "https://europa.regione.basilicata.it/feasr/"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -989,9 +989,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
             "resolution": "regional",
-            "url": "https://basilicatacsr.it/"
+            "url": "https://europa.regione.basilicata.it/feasr/"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -1021,9 +1021,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
             "resolution": "regional",
-            "url": "https://basilicatacsr.it/"
+            "url": "https://europa.regione.basilicata.it/feasr/"
           },
           "confidence": "low",
           "placeholder": false,
@@ -1606,9 +1606,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -1619,9 +1619,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -1637,9 +1637,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -1650,9 +1650,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -1826,9 +1826,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -1844,9 +1844,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -1885,9 +1885,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -1898,9 +1898,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -1916,9 +1916,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -1929,9 +1929,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -2104,9 +2104,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -2122,9 +2122,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -2163,9 +2163,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -2176,9 +2176,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -2194,9 +2194,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -2207,9 +2207,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -2385,9 +2385,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -2403,9 +2403,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -2444,9 +2444,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "fair",
           "label": "fact.income",
@@ -2457,9 +2457,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "fair",
           "label": "fact.water",
@@ -2471,9 +2471,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "fair",
           "label": "fact.nitrogen",
@@ -2484,9 +2484,9 @@
           "value": "high",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -2653,9 +2653,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "fair",
             "label": "benefit.nitrogen",
@@ -2671,9 +2671,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "fair",
             "label": "benefit.income",
@@ -2711,9 +2711,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -2724,9 +2724,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -2742,9 +2742,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -2755,9 +2755,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -2931,9 +2931,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -2949,9 +2949,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -2989,9 +2989,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -3002,9 +3002,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -3020,9 +3020,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3033,9 +3033,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -3209,9 +3209,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -3227,9 +3227,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -3268,9 +3268,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -3281,9 +3281,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -3295,9 +3295,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3308,9 +3308,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -3477,9 +3477,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -3495,9 +3495,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -3535,9 +3535,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -3548,9 +3548,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -3562,9 +3562,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3575,9 +3575,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -3747,9 +3747,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -3765,9 +3765,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -3806,9 +3806,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -3819,9 +3819,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -3833,9 +3833,9 @@
           "unit": "kg N/ha",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -3846,9 +3846,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -4018,9 +4018,9 @@
             "unit": "kg N/ha",
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -4036,9 +4036,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -4082,9 +4082,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -4095,9 +4095,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -4113,9 +4113,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -4126,9 +4126,9 @@
           "value": "low",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -4302,9 +4302,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -4320,9 +4320,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",
@@ -4372,9 +4372,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Worked out from the crop figures and payments",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
           },
           "confidence": "low",
           "label": "fact.income",
@@ -4385,9 +4385,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.water",
@@ -4403,9 +4403,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
+            "dataset": "Our crop research notes, 14 Nov 2026",
             "resolution": "southern Italy",
-            "url": ""
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
           },
           "confidence": "low",
           "label": "fact.nitrogen",
@@ -4416,9 +4416,9 @@
           "value": "medium",
           "scale": "area",
           "source": {
-            "dataset": "Crop research, Nov 2026",
-            "resolution": "southern Italy",
-            "url": ""
+            "dataset": "Our own rule, no source yet",
+            "resolution": "this rotation",
+            "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#each-rotations-risk--placeholder-rule"
           },
           "confidence": "low",
           "label": "fact.risk",
@@ -4591,9 +4591,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
+              "dataset": "Our crop research notes, 14 Nov 2026",
               "resolution": "southern Italy",
-              "url": ""
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md#in-the-app"
             },
             "confidence": "low",
             "label": "benefit.nitrogen",
@@ -4609,9 +4609,9 @@
             ],
             "scale": "area",
             "source": {
-              "dataset": "Crop research, Nov 2026",
-              "resolution": "southern Italy",
-              "url": ""
+              "dataset": "Worked out from the crop figures and payments",
+              "resolution": "this rotation",
+              "url": "https://github.com/wenbinio/topofthecrop/blob/main/docs/scoring.md#how-the-income-figure-is-worked-out"
             },
             "confidence": "low",
             "label": "benefit.income",

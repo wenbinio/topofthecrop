@@ -78,4 +78,4 @@ Both researchers found that durum after durum breaches the CAP crop-rotation con
 - Turin fertiliser prices via CLAL: https://teseo.clal.it/en/?section=fertilizzanti_torino
 - MASAF slides on the 2024 CAP simplification (crop-rotation rule): https://fidaf.it/wp-content/uploads/2024/10/Semplificazione-PAC_30-ott-24.pdf
 
-Not opened by anyone: the Regione Basilicata and CSR Basilicata pages would not load, so the three regional payments rest on search results and trade press.
+Not opened by anyone: the Regione Basilicata and CSR Basilicata pages would not load, so the three regional payments rest on search results and trade press. The app links them to the region's rural development portal, https://europa.regione.basilicata.it/feasr/.
