@@ -2,7 +2,7 @@
 // visit (above all, whether new data has changed the advice), what to do before sowing, what to watch this
 // month, and the live rain and forecast. The plan is kept on the phone (src/state/plan.ts); nothing is sent.
 // The app cannot alert a closed phone, and says so. Written with AI assistance (Claude, Anthropic).
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { FieldBundle } from "../data/types";
 import { DATA_STAMP } from "../data/fresh";
@@ -43,15 +43,21 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
   const mine = opened && opened.key === key ? opened : null;
   const [change, setChange] = useState<PlanChange>(() => planChange(opened, { key, bestId, stamp }));
   const [done, setDone] = useState<string[]>(() => mine?.done ?? []);
+  // The latest ticks, for any save that runs after a tap (the first save of the page can land later than a quick tap).
+  const doneNow = useRef<string[]>(done);
   const [forgotten, setForgotten] = useState(false);
   const today = dayStamp(now);
   // The date and the advice the message compares with: kept as they were until acknowledged.
   const since = mine?.savedAt ?? today;
   const was = change === "advice" && mine?.bestId ? bundle.options.find((option) => option.id === mine.bestId) : undefined;
 
+  // Once the farmer has acknowledged a change, no later save (a tick, or the answers' link settling) may write the
+  // old advice back.
+  const seen = useRef(false);
   const keep = (ticks: string[], acknowledged: boolean) => {
     if (forgotten) return;
-    const unseen = mine && !acknowledged && (change === "data" || change === "advice");
+    if (acknowledged) seen.current = true;
+    const unseen = mine && !seen.current && (change === "data" || change === "advice");
     // Until the farmer has seen a change, what is kept still describes the visit before it.
     writePlan({
       query, key, field: bundle.field.name, done: ticks,
@@ -60,7 +66,7 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
   };
   // A first visit, or nothing new: keep the plan (and the language and view of this visit) at once.
   useEffect(() => {
-    keep(done, false);
+    keep(doneNow.current, false);
     // Only when the page opens or the farmer's answers change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
@@ -68,7 +74,8 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
   const checks = best ? ownChecks(best.option.why.checkLocally) : [];
   const ticked = checks.filter((check) => done.includes(check));
   const toggle = (check: string) => {
-    const next = done.includes(check) ? done.filter((item) => item !== check) : [...done, check];
+    const next = doneNow.current.includes(check) ? doneNow.current.filter((item) => item !== check) : [...doneNow.current, check];
+    doneNow.current = next;
     setDone(next);
     keep(next, false);
   };
@@ -119,7 +126,7 @@ export default function Today({ bundle, now = new Date(), stamp = DATA_STAMP }: 
             className="mt-2 ml-8"
             data-testid="plan-seen"
             onClick={() => {
-              keep(done, true);
+              keep(doneNow.current, true);
               setChange("same");
             }}
           >
