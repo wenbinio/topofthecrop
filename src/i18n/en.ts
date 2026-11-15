@@ -615,7 +615,7 @@ export const en = {
   "forecast.full": "Full forecast for this place",
   "forecast.error": "The forecast is not available.",
 
-  // the decision tree (README "How options are ranked")
+  // the decision tree (README "How the advice is made"; docs/scoring.md)
   "diagnosis.water-heat-stress": "Water and heat stress: the crop is getting weaker",
   "diagnosis.decline-with-heat": "Crop falling off with heat: could be heat, disease or a thin stand",
   "diagnosis.less-canopy-less-water": "Less leaf and water use, without extra heat: poor start or short of nutrients",

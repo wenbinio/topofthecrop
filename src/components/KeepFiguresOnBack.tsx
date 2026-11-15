@@ -5,7 +5,7 @@
 // figures, it puts the newest figures into it. Then "Next" from there, and every link built from it, carries them
 // too, however many steps back the farmer went. Leaving Settings by Back also saves the figures into the plan kept on
 // this phone. A link for another field (pasted or opened from a message) is left as it is.
-// This is the one deliberate exception to "every choice lives only in the link" (AGENTS.md): the figures are held in
+// This is the one deliberate exception to "every choice lives only in the link" (README, "Running it"): the figures are held in
 // memory for this visit only, never stored. Written with AI assistance (Claude, Anthropic).
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useNavigationType } from "react-router-dom";

@@ -180,7 +180,7 @@ At the demo field 2024 had 413 mm of rain (usual 542), 27.3% soil water (usual
 30.1), 0.60 peak greenness (usual 0.71, inside the range) and 258 mm of water
 used (usual 319). 2026 had 651 mm, 32.8%, 0.72 and 326 mm. 2026 rain is the
 median of CHIRPS and ERA5-Land only, because NASA GPM IMERG in Earth Engine ends
-in September 2025 (`HANDOVER.md`, caveat 4); the card says so.
+in September 2025 ("Data caveats" below, item 4); the card says so.
 
 The same card names the seasons the **demo field** was much less green than
 nearby rain-fed fields (`stressSeasons` in `src/data/field-rules.js`). The data
@@ -381,3 +381,24 @@ band is the 25th to 75th percentile of 2001–2020, and the dark stretch of the 
 across or drawn as zero. Rain has no signal; its graph shows what lies behind the Year screen's usual, dry and
 driest years.
 
+## Data caveats
+
+From the data team's checks of the files in `data/` (they were in the data handover, now removed). The evidence screen shows the ones that change how a farmer reads a number.
+
+1. **Traced fields are 1 km estimates.** Only the demo field has greenness from inside its own outline (MODIS, with HLS and Sentinel-2 as checks) and soil at its centre. Its weather, water and future values come from the same 6–28 km grids as any other field.
+2. **ERA5-Land runs cool at the demo field.** It reads 1.2–2.5 °C below the trial's station and 1.3–1.7 °C below NASA POWER. Hot days are probably undercounted, now and in the future, and frost nights overcounted.
+3. **Rain against the trial's station** differs by 1–31%, depending on which months are counted (the paper doesn't say). Both show the 2024 drought; the station's drop is sharper (−53% against −38%).
+4. **Season 2026 rain uses two of the three sources:** IMERG in Earth Engine ends in September 2025.
+5. **The demo field's peak greenness is always below nearby fields,** by 0.09 on average. Judge a season by `peak_vs_nearby_z`, not the raw gap.
+6. **MODIS dates come from 16-day composites:** about a week either way.
+7. **Don't compare MODIS and HLS values directly:** MODIS reads about 0.07 higher at the field.
+8. **Soil is a prediction.** The trial measured pH 8.2 and nitrogen 0.9 g/kg; SoilGrids gives 7.7 and 1.54.
+9. **Monthly typical values are medians,** so 12 months add up to about 5% less than the typical year.
+10. **The 2022 EU crop map** labels 86% of arable land as durum (58% in 2018), so treat `durum22` with care.
+11. **Missing values:**
+    - Greenness for 5 farmland squares.
+    - Green-up for 2 squares and dry-off for 3.
+    - MODIS water use for 135 squares.
+    - SMAP before 2016.
+12. **Durum water need may run low:** ERA5-Land's ET₀ is 84% of TerraClimate's at the field.
+13. **Hot-days chart:** bars are typical seasons. Only the 2041–2060 bars get lines (the spread across models); today's year-to-year range goes in a note.

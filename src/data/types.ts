@@ -1,4 +1,4 @@
-// The data contract. The README section "The data contract" is the source of truth;
+// The data contract. This file is the source of truth;
 // fields may be added here but not renamed.
 import type { Polygon } from "geojson";
 

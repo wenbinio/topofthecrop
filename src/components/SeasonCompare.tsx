@@ -57,7 +57,7 @@ export function SeasonCompare({ bundle }: { bundle: FieldBundle }) {
   if (!data || !compared) return null;
   const { rows, shown, years } = compared;
   const flagged = stressSeasons(data.seasons);
-  // HANDOVER.md, caveat 4: NASA GPM IMERG in Earth Engine ends in September 2025, so 2026 rain is the median of two sources.
+  // Data caveat 4 (docs/scoring.md): NASA GPM IMERG in Earth Engine ends in September 2025, so 2026 rain is the median of two sources.
   const rainNote = shown.includes(2026) && rows.some((row) => row.key === "years.rain");
 
   return (

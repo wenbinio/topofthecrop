@@ -1,7 +1,7 @@
 import type { Confidence, Finding, Limit, Priority, Signal, Signals } from "../data/types";
 import { LIMITS } from "../data/types";
 
-/** One row of the README signal-agreement table. `key` is a dictionary key suffix. */
+/** One row of the signal-agreement table (docs/scoring.md). `key` is a dictionary key suffix. */
 export type Diagnosis = {
   key:
     | "water-heat-stress"
@@ -16,7 +16,7 @@ export type Diagnosis = {
   confidence: Confidence;
 };
 
-/** README "How options are ranked", stage 1: the decision tree over the three signals. */
+/** README "How the advice is made", step 1: the decision tree over the three signals (docs/scoring.md). */
 export function diagnose(signals: Signals): Diagnosis {
   if (Object.values(signals).includes('no-data')) return { key: 'not-enough-data', confidence: 'low' };
   const rows: Diagnosis[] = [
@@ -42,7 +42,7 @@ const SIGNAL_WARNINGS: [keyof Signals, Signal][] = [['greenness', 'falling'], ['
 export function buildPath(finding: Finding, limits: Limit[], priorities: Priority[]): string[] {
   const path: string[] = [];
   if (finding.expectedBare) {
-    // README pre-check: bare soil after harvest gives the same signals as a failing crop. Say what it is.
+    // Pre-check (docs/scoring.md): bare soil after harvest gives the same signals as a failing crop. Say what it is.
     path.push('path.expectedBare');
   } else {
     // Each signal in a fixed order: the direction that counts as a warning, or that there is no record to compare.

@@ -7,7 +7,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import type { Plugin } from 'vite'
 
-/** The data team's files (HANDOVER.md), never edited by hand and never copied into git twice. */
+/** The data team's files (from ColabNotebooks/), never edited by hand and never copied into git twice. */
 const DATA_DIR = fileURLToPath(new URL('./data/', import.meta.url))
 const dataFiles = () => readdirSync(DATA_DIR).filter((name) => /\.(json|geojson)$/.test(name))
 
