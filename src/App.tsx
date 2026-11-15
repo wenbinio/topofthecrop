@@ -15,6 +15,7 @@ import FindField from "./screens/FindField";
 import Options from "./screens/Options";
 import Questions from "./screens/Questions";
 import Today from "./screens/Today";
+import Plans from "./screens/Plans";
 import { SETTINGS_PATH } from "./screens/settings/path";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
@@ -116,6 +117,7 @@ function Shell() {
             <Route path="/year" element={field((b) => <Year bundle={b} />)} />
             <Route path="/adviser" element={field((b) => <Adviser bundle={b} />)} />
             <Route path="/today" element={field((b) => <Today bundle={b} />)} />
+            <Route path="/plans" element={field((b) => <Plans bundle={b} />)} />
             <Route path="/print" element={field((b) => <Print bundle={b} />)} />
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="/credits" element={<Credits />} />

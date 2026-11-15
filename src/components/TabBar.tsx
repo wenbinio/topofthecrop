@@ -2,20 +2,21 @@
 // The tab bar sits at the bottom, in reach of a thumb. Written with AI assistance (Claude, Anthropic).
 import { Link } from "react-router-dom";
 import { useT } from "../i18n";
-import { rankOptions } from "../ranking/rank";
-import { useAppState, useTo } from "../state/useAppState";
-import { useBundle } from "./BundleProvider";
+import { useTo } from "../state/useAppState";
 
 /** Routes that belong to the plan, where the tab bar shows instead of the setup steps. */
 export function isPlanRoute(pathname: string): boolean {
-  return ["/options", "/why", "/year", "/adviser", "/today", "/timelapse"].some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return ["/options", "/why", "/year", "/adviser", "/today", "/timelapse", "/plans"].some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-/** Which tab a plan route sits under: the weather detail belongs to Why, sharing to the plan, the timelapse to the field. */
-export function tabOf(pathname: string): "field" | "plan" | "why" {
+/**
+ * Which tab a route sits under. My field: this month on the field. Advice: today's recommendation and everything
+ * behind it (why, the weather in detail, sharing). My plans: the plans kept before.
+ */
+export function tabOf(pathname: string): "field" | "advice" | "plans" {
   if (pathname.startsWith("/today") || pathname.startsWith("/timelapse")) return "field";
-  if (pathname.startsWith("/why") || pathname.startsWith("/year")) return "why";
-  return "plan";
+  if (pathname.startsWith("/plans")) return "plans";
+  return "advice";
 }
 
 function FieldTabIcon() {
@@ -34,11 +35,10 @@ function PlanTabIcon() {
     </svg>
   );
 }
-function WhyTabIcon() {
+function PlansTabIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 11v5.5M12 7.8v.1" />
+    <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.5L6 20V5a1 1 0 0 1 1-1z" />
     </svg>
   );
 }
@@ -46,25 +46,11 @@ function WhyTabIcon() {
 export function TabBar({ pathname }: { pathname: string }) {
   const t = useT();
   const to = useTo();
-  const [state] = useAppState();
-  const bundle = useBundle();
   const here = tabOf(pathname);
-
-  let whyPath = "/options";
-  if (bundle.status === "ready") {
-    const { ranked } = rankOptions({
-      options: bundle.bundle.options,
-      limits: state.limits,
-      priorities: state.priorities,
-      lastCrop: state.lastCrop,
-      intercrops: state.intercrops,
-    });
-    if (ranked[0]) whyPath = `/why/${ranked[0].option.id}`;
-  }
   const tabs = [
     { id: "field", path: "/today", Icon: FieldTabIcon },
-    { id: "plan", path: "/options", Icon: PlanTabIcon },
-    { id: "why", path: whyPath, Icon: WhyTabIcon },
+    { id: "advice", path: "/options", Icon: PlanTabIcon },
+    { id: "plans", path: "/plans", Icon: PlansTabIcon },
   ] as const;
 
   return (

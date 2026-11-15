@@ -766,6 +766,15 @@ export const en = {
   "limit.broomrape.def": "Broomrape, the parasitic weed that attacks faba bean, pea and lentil, has been in this field. The crops it attacks get a warning.",
   "q.limitHelp": "What \"{limit}\" means",
   "common.backTop": "Back",
+  "tab.advice": "Advice",
+  "tab.plans": "My plans",
+  "plans.title": "My plans",
+  "plans.lead": "Every plan you kept, newest first. They stay on this phone.",
+  "plans.empty": "No plans kept yet. Tap \"Keep this plan\" on your advice and it shows up here.",
+  "plans.saved": "Kept on {date}",
+  "plans.current": "Your current answers",
+  "plans.open": "Open",
+  "plans.remove": "Remove",
 } as const;
 
 export type DictKey = keyof typeof en;

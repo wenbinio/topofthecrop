@@ -51,6 +51,8 @@ export function readPlan(): SavedPlan | null {
 export function writePlan(plan: SavedPlan): boolean {
   try {
     window.localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(plan));
+    // Every plan kept also goes into the farmer's list of past plans.
+    recordPlan({ query: plan.query, key: plan.key, bestId: plan.bestId, field: plan.field, savedAt: plan.savedAt });
     return true;
   } catch {
     return false;
@@ -90,4 +92,43 @@ export function dayStamp(date: Date): string {
 /** Where this calendar month sits in the bundle's twelve months, which start in October. */
 export function monthIndex(date: Date): number {
   return (date.getMonth() + 3) % 12;
+}
+
+/** One kept plan in the farmer's list of past plans ("My plans"). */
+export type PlanRecord = { query: string; key: string; bestId: string | null; field: string; savedAt: string };
+
+export const PLANS_STORAGE_KEY = "topofthecrop.plans.v1";
+/** How many past plans are kept; the oldest go first. */
+export const PLANS_KEPT = 20;
+
+/** The kept plans, newest first; empty when there are none or storage is blocked. */
+export function readPlans(): PlanRecord[] {
+  try {
+    const raw = window.localStorage.getItem(PLANS_STORAGE_KEY);
+    const list = raw ? (JSON.parse(raw) as unknown) : [];
+    if (!Array.isArray(list)) return [];
+    return list.filter(
+      (p): p is PlanRecord =>
+        !!p && isText(p.query) && isText(p.key) && isText(p.field) && isText(p.savedAt) && /^\d{4}-\d{2}-\d{2}$/.test(p.savedAt) && (p.bestId === null || isText(p.bestId)),
+    );
+  } catch {
+    return [];
+  }
+}
+
+function writePlans(list: PlanRecord[]): void {
+  try {
+    window.localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(list.slice(0, PLANS_KEPT)));
+  } catch {
+    /* storage blocked: the list simply stays empty */
+  }
+}
+
+/** Adds a plan to the list, or moves it to the top with its new date and best fit when the same answers were kept before. */
+export function recordPlan(plan: PlanRecord): void {
+  writePlans([plan, ...readPlans().filter((p) => p.key !== plan.key)]);
+}
+
+export function removePlanRecord(key: string): void {
+  writePlans(readPlans().filter((p) => p.key !== key));
 }
