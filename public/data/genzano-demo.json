@@ -105,7 +105,35 @@
           "confidence": "low",
           "placeholder": false,
           "asOf": "2026-11"
-        }
+        },
+        "durumAfter": [
+          {
+            "value": 16,
+            "unit": "%",
+            "scale": "area",
+            "source": {
+              "dataset": "Lago-Olveira et al. 2023, wheat after chickpea, Puglia",
+              "resolution": "one study",
+              "url": "https://www.sciencedirect.com/science/article/pii/S0048969723037476"
+            },
+            "confidence": "low",
+            "placeholder": false,
+            "asOf": "2026-11"
+          },
+          {
+            "value": 10,
+            "unit": "%",
+            "scale": "area",
+            "source": {
+              "dataset": "Lago-Olveira et al. 2023, wheat after chickpea, Puglia",
+              "resolution": "one study",
+              "url": "https://www.sciencedirect.com/science/article/pii/S0048969723037476"
+            },
+            "confidence": "low",
+            "placeholder": false,
+            "asOf": "2026-11"
+          }
+        ]
       },
       "faba": {
         "yield": {
@@ -158,7 +186,22 @@
           "confidence": "low",
           "placeholder": false,
           "asOf": "2026-11"
-        }
+        },
+        "durumAfter": [
+          {
+            "value": 12,
+            "unit": "%",
+            "scale": "area",
+            "source": {
+              "dataset": "Garofalo et al. 2009, wheat after faba bean, Foggia (53-year simulation)",
+              "resolution": "one study",
+              "url": "https://publish.csiro.au/cp/cp08208"
+            },
+            "confidence": "low",
+            "placeholder": false,
+            "asOf": "2026-11"
+          }
+        ]
       },
       "vetch-oat": {
         "yield": {
@@ -1412,11 +1455,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 653,
+          "value": 729,
           "unit": "€/ha",
           "range": [
-            320,
-            1030
+            370,
+            1130
           ],
           "scale": "area",
           "source": {
@@ -1476,19 +1519,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.653,
+          "income": 0.729,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
         },
         "drier": {
-          "income": 0.577,
+          "income": 0.644,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
         },
         "much-drier": {
-          "income": 0.468,
+          "income": 0.522,
           "water": 0.667,
           "soil": 0.567,
           "forage": 0.05
@@ -1614,11 +1657,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 653,
+            "value": 729,
             "unit": "€/ha",
             "range": [
-              320,
-              1030
+              370,
+              1130
             ],
             "scale": "area",
             "source": {
@@ -1655,11 +1698,11 @@
       "firstHarvestYear": 2027,
       "facts": {
         "income": {
-          "value": 432,
+          "value": 467,
           "unit": "€/ha",
           "range": [
-            200,
-            700
+            220,
+            750
           ],
           "scale": "area",
           "source": {
@@ -1719,19 +1762,19 @@
       },
       "scores": {
         "normal": {
-          "income": 0.432,
+          "income": 0.467,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "drier": {
-          "income": 0.367,
+          "income": 0.397,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
         },
         "much-drier": {
-          "income": 0.281,
+          "income": 0.304,
           "water": 0.55,
           "soil": 0.95,
           "forage": 0.3
@@ -1856,11 +1899,11 @@
             "asOf": "2026-11"
           },
           {
-            "value": 432,
+            "value": 467,
             "unit": "€/ha",
             "range": [
-              200,
-              700
+              220,
+              750
             ],
             "scale": "area",
             "source": {

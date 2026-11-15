@@ -278,7 +278,7 @@ type AreaWeather = {
 - **The year strip in step 5** still shows the field's year as observed under the current rotation. A separate strip for each option is out of scope.
 - **The slider** has three stops: normal, drier and hotter, much drier and hotter. It changes the ranking, the hot-days number and the risk icons. All three are precomputed in the bundle; the browser does no climate maths.
 - **Simple view** is the same components with a `view` flag. It swaps the design tokens, hides dataset labels until tapped, and shows the findings and options as weather-style rows under one big headline. No separate screens.
-- **Sharing link.** Hash routing (`/#/options?...`), so it works on any static host. The demo field travels as its id. A drawn field travels as its outline, simplified to at most 12 points at 5 decimal places. Nothing is stored on a server.
+- **Sharing link.** Hash routing (`/#/options?...`), so it works on any static host. The demo field travels as its id. A drawn field travels as its outline, simplified to at most 12 points at 5 decimal places. The farmer's own figures from Settings travel in `m`, only where they differ from ours: `p.<crop>` a crop's price (€/t), `c.<crop>` a crop's direct costs (€/ha), `y.<crop>` its yield (t/ha), `l1.<crop>` and `l2.<crop>` the extra durum after it (%), `s.<support id>` a support amount (€/ha) and `on.<support id>` 1 or 0 for a payment switched on or off. Payments the farmer added travel in `x`. Nothing is stored on a server.
 - **Print page** is a route in the same app that reads the same link.
 - **Map picture:** four open layers, none needing an account or key: NASA Blue Marble zoomed out, Sentinel-2 cloudless 2016 (EOX, CC BY 4.0) zoomed in, over the Bradano basin our own Sentinel-2 picture of one clear day (30 May 2026), and on top AGEA's aerial photos (CC BY 4.0) wherever AGEA serves them. Sentinel-2 pixels are 10 m; the AGEA photos show about 1.8 m in Basilicata. If AGEA's server does not answer, the Sentinel-2 picture underneath still shows. We dropped Esri World Imagery, which the scaffold used, because it is under a commercial licence (the Esri Master License Agreement), and the challenge rules ask for outside material that is free and open. Of Italy's other public aerial photos, the national geoportal's and the Basilicata region's could not be loaded from a web page when we tested them on 15 November 2026.
 - **Target devices:** current Chrome on Android and Safari on iPhone, from 360 px wide.
@@ -341,12 +341,21 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
 - **Voice uses the phone, not us.** The app contains no hosted AI model and sends nothing to a server of ours. Its voice commands and "read aloud" use the browser's built-in speech recognition and speech synthesis, which the phone maker (Google, Apple, Samsung) provides; recognition may send the audio to the phone maker's servers. Spoken words become commands through a written list of phrases (`src/voice/commands.ts`), not a model.
 
+## Licence
+
+The code in this repository is under the MIT licence (`LICENSE`).
+
+That covers what the team wrote. Everything else keeps its own licence, which the tables under [Data](#data) name:
+- the data team's files in `data/` are built from the datasets listed in `DATA_SOURCES.md`, each under its own terms;
+- the map tiles in `public/tiles/s2/` contain modified Copernicus Sentinel data;
+- the parcels in `public/parcels/` are from the Agenzia delle Entrate, CC BY 4.0;
+- the aerial photos (AGEA), the forecast (MET Norway) and the other map layers are loaded live from their owners and are not part of this repository.
+
 ## Open questions
 
 - Is the submission deadline 23:59 Finland time, or does our local event close earlier?
 - Team member names for this page.
 - Must the repository be public for judging? (Planned: make it public before submitting.)
-- Licence for the code (planned: MIT).
 - Are the weather thresholds right for durum in the upper Bradano (30 °C or more, 15 April to 15 June for flowering; frost in March and April)?
 - Are the three alternative sequences right for the upper Bradano (chickpea → durum → durum, faba bean → durum → faba bean, vetch-oat forage → durum → durum)?
 - Sources for rotation income and nitrogen figures in Basilicata.

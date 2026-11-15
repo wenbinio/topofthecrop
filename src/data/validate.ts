@@ -150,6 +150,14 @@ export function validateBundle(json: unknown): FieldBundle {
         fact(record[key], `${path}.${key}`);
         number(object(record[key], `${path}.${key}`).value, `${path}.${key}.value`);
       }
+      if (record.durumAfter !== undefined) {
+        const lifts = array(record.durumAfter, `${path}.durumAfter`);
+        check(lifts.length >= 1 && lifts.length <= 2, `${path}.durumAfter must hold one or two facts`);
+        lifts.forEach((lift, i) => {
+          fact(lift, `${path}.durumAfter[${i}]`);
+          number(object(lift, `${path}.durumAfter[${i}]`).value, `${path}.durumAfter[${i}].value`);
+        });
+      }
     }
     const supportIds = new Set<string>();
     array(economics.support, 'economics.support').forEach((value, i) => {

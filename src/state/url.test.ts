@@ -43,12 +43,13 @@ it('rejects malformed money values and keys', () => {
   expect(decodeState(`m=p.durum:-1;p.faba:NaN;s.x:Infinity;p.:2;p.UPPER:3;x.foo:1;p.${'a'.repeat(33)}:1;p.empty:;p.space: ;p.extra:1:2;on.good:0;s.good:5000`).money)
     .toEqual({ 'on.good': 0, 's.good': 5000 });
 });
-it('keeps at most forty valid money pairs', () => {
-  const pairs = Array.from({ length: 45 }, (_, i) => `s.item-${i}:${i}`);
+// Eighty: nine crops with a price, a cost and a yield each, the lifts, and every payment's amount and switch.
+it('keeps at most eighty valid money pairs', () => {
+  const pairs = Array.from({ length: 85 }, (_, i) => `s.item-${i}:${i}`);
   const money = decodeState(`m=invalid;${pairs.join(';')}`).money;
-  expect(Object.keys(money)).toHaveLength(40);
-  expect(money['s.item-39']).toBe(39);
-  expect(money).not.toHaveProperty('s.item-40');
+  expect(Object.keys(money)).toHaveLength(80);
+  expect(money['s.item-79']).toBe(79);
+  expect(money).not.toHaveProperty('s.item-80');
 });
 it('drops invalid positions, deduplicates limits, and gives the demo id precedence', () => {
   expect(decodeState('o=181,0;0,91;NaN,1;,;1,2;3,4').outline).toBeNull();

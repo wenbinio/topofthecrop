@@ -44,7 +44,7 @@ Everything the farmer chose is in the link, after the `#`. There is no local sto
 | `p` | The two priorities: income, water, soil, forage |
 | `s` | Scenario for the slider: normal, drier, much-drier |
 | `v`, `g` | View (standard or simple) and language (en or it) |
-| `m` | The farmer's own prices and support switches |
+| `m` | The farmer's own figures: `p.<crop>` price, `c.<crop>` direct costs, `y.<crop>` yield, `l1.<crop>` and `l2.<crop>` the extra durum after that crop (first and second harvest), `s.<id>` support amount, `on.<id>` support switch. Up to 80 figures. |
 | `x` | Payments the farmer added |
 
 ## 4. How the app links to the data
@@ -145,6 +145,7 @@ All map code is in `src/components/Map.tsx`. The picture is four open layers sta
 - **Two views:** Standard shows sources and ranges; Simple shows bigger text and fewer figures. Same screens, different theme file and a few `simple` branches.
 - **Crop symbols:** `src/components/Crops.tsx`. Use `CropName` wherever a crop is named.
 - **Voice:** `src/voice/`. A push-to-talk microphone and a read-aloud button, using the phone browser's own speech service. `commands.ts` is a pure parser for English and Italian; `apply.ts` turns a command into a state change. Hidden where the browser has no speech support.
+- **Settings in fold-out sections:** `Settings.tsx` groups the figures into four sections (crop prices, crop costs, support payments, the farmer's own payments), each behind a header button with a one-line summary. All start closed except a section holding something the farmer changed; which are open is plain component state, not part of the link. Reset, the adviser line and the voice note stay outside the sections.
 - **Sideways phones:** the custom Tailwind variant `phone-land` (landscape, at most 500 px tall and 1000 px wide) rearranges screens into two columns.
 
 ## 8. Tests and publishing
@@ -159,10 +160,9 @@ All map code is in `src/components/Map.tsx`. The picture is four open layers sta
 - **Never tried on a real phone.** Touch drawing, edge-finding, Settings inputs, rotation and voice have only been checked in a desktop browser or by tests.
 - **Crop figures are unverified.** Costs and nitrogen for every crop except durum are recalled, not sourced. See `docs/crops-research.md`.
 - **Two things are still our judgement:** each rotation's risk rating and the priority score rules. Both are marked as placeholders.
-- **No yield lift after a legume.** The team's research cites durum yielding 16% then 10% more after chickpea, and 12% more after faba bean. The income sum does not count this, which is partly why faba bean earns less than durum on durum.
+- **The yield lift covers two crops only.** Durum counts 16% then 10% more grain after chickpea and 12% more after faba bean (`durumAfter` in the bundle, `yieldLift` in `src/money/money.ts`). Lentil, pea and vetch get none because no figure was found, which tilts the comparison. The figures come from the team's research compilation; nobody opened the papers.
 - **The Standard Options screen is long**, well over the 40-word target in the README.
 - **The AGEA photos are a live service.** If it fails during a demo, the map falls back to the 10 m picture.
-- **No licence file yet.** The team planned MIT.
 - **Not offline.** The team's plan mentioned working offline once opened; there is no service worker.
 
 ## 10. Ideas already scoped
