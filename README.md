@@ -337,7 +337,7 @@ The video opens on the Genzano field and the hot-days number, not on a logo.
 Space Apps allows AI tools if their use is disclosed and they do not produce the core idea.
 
 - **The idea and the six-step design** came from the team.
-- **AI coding and research tools** were used to build it: Claude (Opus for interface code and design, Sonnet for background research), OpenAI Codex (Sol, for audits), and Gemini (Hydrogen, for read-only reviews and for editing the app's wording in English and Italian, which a person then read and applied), coordinated with a multi-agent tool called fleet.
+- **AI coding and research tools** were used to build it: Claude (Opus for interface code and design, Sonnet for background research), OpenAI Codex (Sol, for audits), and Gemini (Hydrogen, for read-only reviews and for editing the app's wording in English and Italian, which Claude then checked and applied; no native Italian speaker has read it), coordinated with a multi-agent tool called fleet.
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark.
 - **The app itself contains no AI model.** Options come from a written decision tree and ranking rules.
