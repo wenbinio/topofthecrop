@@ -3,7 +3,7 @@ import { PRIORITIES } from "../data/types";
 import { useLang, useT } from "../i18n";
 import type { Reason } from "../ranking/reasons";
 import { formatNumber, ScaleBadge } from "./FactParts";
-import { BareSoilIcon, CheckIcon, DropIcon, EuroIcon, SheafIcon } from "./Icons";
+import { BareSoilIcon, DropIcon, EuroIcon, SheafIcon } from "./Icons";
 import { RichText, priorityLine } from "./Term";
 
 export const PRIORITY_ICON: Record<Priority, typeof DropIcon> = {
@@ -52,20 +52,34 @@ export function ReasonList({ reasons, option, testId }: { reasons: Reason[]; opt
   );
 }
 
-/** Choosing a third priority lets go of the one chosen first; tapping a chosen one releases it. */
+/** How many priorities the farmer must put in order before the app moves on. */
+export const MIN_RANKED = 2;
+
+/** Tapping a priority adds it at the end of the order; tapping one already in the order takes it out and the later ones move up. */
 export function togglePriority(chosen: Priority[], p: Priority): Priority[] {
-  if (chosen.includes(p)) return chosen.filter((x) => x !== p);
-  if (chosen.length < 2) return [...chosen, p];
-  return [...chosen.slice(1), p];
+  return chosen.includes(p) ? chosen.filter((x) => x !== p) : [...chosen, p];
 }
 
-/** The four priorities as toggle chips. Chosen chips are filled and carry a tick. */
+/** The place of a priority in the farmer's order, as a number in a ring. */
+export function RankMark({ place, className = "" }: { place: number; className?: string }) {
+  return (
+    <span
+      data-testid="rank-mark"
+      className={`inline-flex flex-none items-center justify-center w-6 h-6 rounded-full border-2 border-current font-mono text-small leading-none ${className}`}
+    >
+      {place}
+    </span>
+  );
+}
+
+/** The four priorities as chips. Tapped in order of importance; a chip in the order is filled and carries its place. */
 export function PriorityChips({ chosen, onChange }: { chosen: Priority[]; onChange: (next: Priority[]) => void }) {
   const t = useT();
   return (
     <div role="group" aria-label={t("options.priorities")} className="flex flex-wrap gap-2" data-testid="priority-chips">
       {PRIORITIES.map((p) => {
-        const on = chosen.includes(p);
+        const place = chosen.indexOf(p) + 1;
+        const on = place > 0;
         const Icon = PRIORITY_ICON[p];
         return (
           <button
@@ -73,13 +87,15 @@ export function PriorityChips({ chosen, onChange }: { chosen: Priority[]; onChan
             type="button"
             role="checkbox"
             aria-checked={on}
+            aria-label={t(`priority.${p}`)}
+            data-rank={on ? place : undefined}
             title={t(priorityLine(p))}
             onClick={() => onChange(togglePriority(chosen, p))}
             className={`tc-tap inline-flex items-center gap-1.5 px-3 rounded-box border-2 font-bold text-body ${
               on ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"
             }`}
           >
-            {on ? <CheckIcon className="w-5 h-5 flex-none" /> : <Icon className="w-5 h-5 flex-none" />}
+            {on ? <RankMark place={place} /> : <Icon className="w-5 h-5 flex-none" />}
             {t(`priority.${p}`)}
           </button>
         );

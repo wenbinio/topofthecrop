@@ -1,6 +1,7 @@
 // What "read aloud" says on each screen: built from what the screen shows, through the dictionaries. Pure.
 import type { AppState, FieldBundle, Lang, Option } from "../data/types";
 import { PRIORITIES } from "../data/types";
+import { MIN_RANKED } from "../components/Reasons";
 import { translate } from "../i18n";
 import { formatNumber, unitText, valueText } from "../components/FactParts";
 import { optionCrop } from "../components/Crops";
@@ -103,9 +104,9 @@ export function questionsSummary(state: AppState): string {
     state.lastCrop === "other" ? state.lastCropName || t("q.otherPlain") : cropWord(state.lastCrop, lang);
   const lines = [sentence(`${t("q.lastCrop")}: ${last}`)];
   if (state.priorities.length) {
-    lines.push(sentence(`${t("options.priorities")}: ${state.priorities.map((p) => t(`priority.${p}`)).join(", ")}`));
+    lines.push(sentence(`${t("options.priorities")}: ${state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ")}`));
   }
-  if (state.priorities.length < 2) {
+  if (state.priorities.length < MIN_RANKED) {
     const left = PRIORITIES.filter((p) => !state.priorities.includes(p)).map((p) => t(`priority.${p}`));
     lines.push(sentence(`${t("q.priorities")}: ${left.join(", ")}`));
   }

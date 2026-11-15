@@ -19,9 +19,14 @@ it('round-trips a four-point drawn field and accepts a leading question mark', (
   expect(new URLSearchParams(encoded).get('o')).toBe(state.outline?.map(point => point.map(n => n.toFixed(5)).join(',')).join(';'));
   expect(decodeState(`?${encoded}`)).toEqual(state);
 });
-it('drops unknown values and keeps the first two distinct valid priorities', () => {
+it('drops unknown values and keeps the distinct valid priorities in the order given', () => {
   expect(decodeState('p=money,income,income,soil,water&s=wet&v=fancy&g=fr&c=maize&l=x&o=abc&f=other'))
-    .toEqual({ ...DEFAULT_STATE, priorities: ['income', 'soil'] });
+    .toEqual({ ...DEFAULT_STATE, priorities: ['income', 'soil', 'water'] });
+  expect(decodeState('p=forage,water,soil,income,forage').priorities).toEqual(['forage', 'water', 'soil', 'income']);
+});
+it('keeps a full order of four priorities through the link', () => {
+  const state = { ...DEFAULT_STATE, priorities: ['soil', 'forage', 'income', 'water'] as const };
+  expect(decodeState(encodeState({ ...state, priorities: [...state.priorities] })).priorities).toEqual(state.priorities);
 });
 it('rejects two-point outlines', () => expect(decodeState('o=1,2;3,4').outline).toBeNull());
 it('cuts outlines to twelve points and rounds to five decimals', () => {

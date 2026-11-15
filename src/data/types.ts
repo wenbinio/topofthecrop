@@ -138,7 +138,7 @@ export type AppState = {
   lastCrop: LastCrop;
   lastCropName: string; // the typed name when lastCrop is "other", trimmed, at most LAST_CROP_NAME_MAX; otherwise ""
   limits: Limit[];
-  priorities: Priority[]; // zero to two, in the order chosen
+  priorities: Priority[]; // zero to four, most important first
   scenario: Scenario;
   view: View;
   lang: Lang;

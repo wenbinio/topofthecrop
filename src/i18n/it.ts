@@ -91,7 +91,8 @@ export const it: Dict = {
 
   "q.lastCrop": "Ultima coltura",
   "q.limits": "Vincoli",
-  "q.priorities": "Scegline 2",
+  "q.priorities": "Tocca prima ciò che conta di più",
+  "q.prioritiesHint": "Poi le altre, in ordine. Almeno 2; lascia fuori quelle che non ti servono.",
   "q.other": "Altro…",
   "q.otherPlain": "Altro",
   "q.otherName": "Nome coltura",
@@ -450,7 +451,7 @@ export const it: Dict = {
   "voice.quote": "«{heard}»:",
   "voice.on": "{what}: sì",
   "voice.off": "{what}: no",
-  "voice.pick2": "Prima scegline 2",
+  "voice.pick2": "Prima metti in ordine 2 priorità",
   "voice.lang.en": "English",
   "voice.lang.it": "Italiano",
   "voice.missed": "Non ho capito.",

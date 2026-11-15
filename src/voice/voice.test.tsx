@@ -135,21 +135,28 @@ describe("microphone", () => {
     expect(screen.getByTestId("voice-line")).toHaveTextContent("«reddito» → Reddito: sì");
   });
 
-  it("a priority by voice follows the chips: a third lets go of the first", async () => {
+  it("a priority by voice follows the chips: it joins the end of the order", async () => {
     renderAt("/options?f=genzano-demo&p=soil,income");
     await screen.findByTestId("recommendation");
     tapMic().say("forage");
-    await waitFor(() => expect(lastPath).toContain("p=income%2Cforage"));
-    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("aria-checked", "true");
+    await waitFor(() => expect(lastPath).toContain("p=soil%2Cincome%2Cforage"));
+    expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "3");
   });
 
-  it("“next” on Questions with one priority stays and says pick 2", async () => {
+  it("priorities said in a row are ranked in the order said", async () => {
+    renderAt("/questions?f=genzano-demo");
+    await screen.findByTestId("last-crop");
+    tapMic().say("soil, water, income");
+    await waitFor(() => expect(lastPath).toContain("p=soil%2Cwater%2Cincome"));
+  });
+
+  it("“next” on Questions with one priority stays and says to rank 2", async () => {
     renderAt("/questions?f=genzano-demo");
     await screen.findByTestId("last-crop");
     tapMic().say("water, next");
     await waitFor(() => expect(lastPath).toContain("p=water"));
     expect(lastPath.split("?")[0]).toBe("/questions");
-    expect(screen.getByTestId("voice-line")).toHaveTextContent("Water on, Pick 2 first");
+    expect(screen.getByTestId("voice-line")).toHaveTextContent("Water on, Rank 2 priorities first");
   });
 
   it("says what to try when it did not understand", async () => {

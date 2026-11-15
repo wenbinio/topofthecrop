@@ -131,13 +131,14 @@ A web page cannot read the phone's own weather app or call the cadastre directly
 Say so if you rely on any of these.
 - The app on a real phone beyond one screenshot of the Why screen in Android Chrome: touch drawing, edge-finding, the Settings inputs, rotation, voice with a real microphone.
 - The crop figures against their sources. Costs and nitrogen for every crop except durum are recalled figures. The yield lift comes from the team's research compilation; nobody opened the papers.
-- Each rotation's risk rating and the priority score rules, which are our judgement.
+- Each rotation's risk rating, the priority score rules and the weights for the farmer's order of priorities (4, 3, 2, 1), which are our judgement.
 - NASA POWER's 592 mm for autumn 2025 at the demo field, about five times the usual.
 - The forecast against another forecast, and AGEA's service under load.
 
 ## State on 15 November 2026
 
 - Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
-- On local branch `feat/settings-sections`, not yet published: the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections, and editable costs, yields and lift.
+- Also live: the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
+- Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
 - Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.
 - Left fixed on purpose and offered to the owner: nitrogen left for the next crop, and the dry-year penalty behind the slider.

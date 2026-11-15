@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import fixture from '../test-fixtures/money-bundle.json';
 import type { Option } from '../data/types';
 import type { RankInput } from './rank';
-import { rankOptions } from './rank';
+import { RANK_WEIGHTS, rankOptions } from './rank';
 
 const options = fixture.options as Option[];
 const chickpea = 'chickpea-durum-durum';
@@ -12,10 +12,10 @@ const durum = 'durum-durum-durum';
 const input: RankInput = { options, priorities: ['income', 'water'], limits: [], scenario: 'normal' };
 const ids = (result: ReturnType<typeof rankOptions>) => result.ranked.map(row => row.option.id);
 
-it('ranks income and water and marks only first as best without mutation', () => {
+it('ranks income then water and marks only first as best without mutation', () => {
   const before = structuredClone(input);
   const result = rankOptions(input);
-  expect(ids(result)).toEqual([chickpea, forage, faba, durum]);
+  expect(ids(result)).toEqual([chickpea, faba, forage, durum]);
   expect(result.ranked.map(row => row.best)).toEqual([true, false, false, false]);
   expect(result.removed).toEqual([]);
   expect(input).toEqual(before);
@@ -25,6 +25,29 @@ it('puts forage then chickpea first in much-drier weather', () => {
 });
 it('puts faba then chickpea first for income and soil', () => {
   expect(ids(rankOptions({ ...input, priorities: ['income', 'soil'] })).slice(0, 2)).toEqual([faba, chickpea]);
+});
+it('counts the first priority more than the second, so the order matters', () => {
+  // Income first: faba (income 0.7, water 0.5) beats vetch-oat (0.45, 0.8). Water first: the other way round.
+  expect(ids(rankOptions({ ...input, priorities: ['income', 'water'] }))).toEqual([chickpea, faba, forage, durum]);
+  expect(ids(rankOptions({ ...input, priorities: ['water', 'income'] }))).toEqual([chickpea, forage, faba, durum]);
+});
+it('counts a third and a fourth priority, each less than the one before', () => {
+  expect(RANK_WEIGHTS).toEqual([4, 3, 2, 1]);
+  expect(ids(rankOptions({ ...input, priorities: ['soil', 'income'] }))).toEqual([faba, chickpea, forage, durum]);
+  // Forage in third place lifts vetch-oat past chickpea.
+  expect(ids(rankOptions({ ...input, priorities: ['soil', 'income', 'forage'] }))).toEqual([faba, forage, chickpea, durum]);
+  expect(ids(rankOptions({ ...input, priorities: ['income', 'soil', 'water', 'forage'] }))).toEqual([chickpea, faba, forage, durum]);
+  expect(ids(rankOptions({ ...input, priorities: ['soil', 'water', 'income', 'forage'] }))[0]).toBe(forage);
+});
+it('gives a priority left out of the order no weight', () => {
+  const plain = structuredClone(options[0]);
+  const hay = structuredClone(options[0]);
+  plain.id = 'plain'; hay.id = 'hay';
+  plain.scores.normal = { income: 0.6, water: 0.5, soil: 0.5, forage: 0 };
+  hay.scores.normal = { income: 0.5, water: 0.5, soil: 0.5, forage: 1 };
+  const pair = { ...input, options: [hay, plain] };
+  expect(ids(rankOptions({ ...pair, priorities: ['income', 'water', 'soil'] }))).toEqual(['plain', 'hay']);
+  expect(ids(rankOptions({ ...pair, priorities: ['income', 'water', 'soil', 'forage'] }))).toEqual(['hay', 'plain']);
 });
 it('averages all priorities when none are selected', () => {
   expect(ids(rankOptions({ ...input, priorities: [] }))).toEqual([forage, faba, chickpea, durum]);
@@ -67,7 +90,7 @@ it('breaks ties on other priorities and preserves input order on complete ties',
 
 it('leaves out an option whose first crop is the legume just grown', () => {
   const result = rankOptions({ ...input, lastCrop: 'chickpea' });
-  expect(ids(result)).toEqual([forage, faba, durum]);
+  expect(ids(result)).toEqual([faba, forage, durum]);
   expect(result.repeats.map(option => option.id)).toEqual([chickpea]);
   expect(result.ranked[0]).toMatchObject({ rank: 1, best: true });
 });

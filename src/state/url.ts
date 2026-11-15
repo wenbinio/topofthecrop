@@ -4,7 +4,7 @@ import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LAST_CROP_NAME_MAX, 
 
 /**
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
- * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities, s scenario, v view, g language, m money,
+ * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities (in the farmer's order, most important first), s scenario, v view, g language, m money,
  * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded).
  */
 export function encodeState(state: AppState): string {
@@ -48,7 +48,7 @@ export function decodeState(query: string): AppState {
     lastCropName: lastCropName(lastCrop, params.get('cn') ?? ''),
     limits: LIMITS.filter(limit => limits.includes(limit)),
     priorities: [...new Set(priorities)].filter((priority): priority is AppState['priorities'][number] =>
-      PRIORITIES.some(known => known === priority)).slice(0, 2),
+      PRIORITIES.some(known => known === priority)),
     scenario: SCENARIOS.find(scenario => scenario === params.get('s')) ?? DEFAULT_STATE.scenario,
     view: params.get('v') === 'simple' ? 'simple' : DEFAULT_STATE.view,
     lang: params.get('g') === 'it' ? 'it' : DEFAULT_STATE.lang,

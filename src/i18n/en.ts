@@ -96,7 +96,8 @@ export const en = {
   // step 2
   "q.lastCrop": "Last crop",
   "q.limits": "Limits",
-  "q.priorities": "Pick 2",
+  "q.priorities": "Tap what matters most first",
+  "q.prioritiesHint": "Then the next, in order. Rank at least 2; leave out any that do not matter to you.",
   "q.other": "Other…",
   "q.otherPlain": "Other",
   "q.otherName": "Crop name",
@@ -469,7 +470,7 @@ export const en = {
   "voice.quote": "“{heard}”:",
   "voice.on": "{what} on",
   "voice.off": "{what} off",
-  "voice.pick2": "Pick 2 first",
+  "voice.pick2": "Rank 2 priorities first",
   "voice.lang.en": "English",
   "voice.lang.it": "Italiano",
   "voice.missed": "Didn't catch that.",

@@ -58,10 +58,18 @@ alternatives disappear, the current rotation still appears first.
 
 For each weather scenario, the bundle supplies a score between zero and one
 for income, water, soil and forage. Higher means a better fit to that priority.
-Average the farmer's chosen priorities with equal weight. If none are chosen,
-average all four. A higher average comes first. If two options tie, compare
-their average for the remaining priorities. If they still tie, keep the order
-in the supplied bundle. Number the survivors from one; only first is best fit.
+The farmer puts the priorities in order by tapping them, most important first:
+at least two, up to all four. Each place has a weight: first 4, second 3,
+third 2, fourth 1. An option's score is the weighted average of its scores for
+the ranked priorities. A priority the farmer leaves out has no weight. If none
+are ranked (an old or hand-made link), average all four equally. A higher
+score comes first. If two options tie, compare their plain average for the
+priorities left out. If they still tie, keep the order in the supplied bundle.
+Number the survivors from one; only first is best fit.
+
+The weights 4, 3, 2, 1 are our own judgement (`RANK_WEIGHTS` in
+`src/ranking/rank.ts`): the simplest rule in which each place counts less than
+the one before. Nobody has tested them against farmers' real choices.
 
 The normal, drier and much-drier settings use separate supplied scores.
 Scores only set the order and are never shown. The farmer sees the signals,
@@ -85,9 +93,9 @@ Starting figures leave ranking scores unchanged. A change multiplies each
 scenario's income score by the new annual income divided by the starting annual
 income. That multiplier is limited to zero through two, and the score to zero
 through one. If starting income is zero or negative, leave the score alone.
-Other priority scores stay unchanged. Income affects ranking when chosen (or
-when all priorities are used), and can break ties otherwise. Choosing soil and
-water keeps the demo order because their combined scores do not tie.
+Other priority scores stay unchanged. Income affects ranking with the weight
+of its place in the farmer's order (or equally with the rest when no order is
+given), and can break ties when it is left out.
 
 ## Count area weather — placeholder thresholds and windows
 
