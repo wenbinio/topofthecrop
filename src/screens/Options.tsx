@@ -153,7 +153,11 @@ export default function Options({ bundle }: { bundle: FieldBundle }) {
   const sowNext = best ? best.option.sequence[0] : undefined;
   const intercrop = best?.option.strips
     ? undefined
-    : (bundle.options.find((o) => o.strips && sowNext && stripPair(o)?.includes(sowNext)) ?? bundle.options.find((o) => o.strips));
+    : (() => {
+        // Only a pair the ranking would allow: not the legume just grown, not one the farmer's limits rule out.
+        const allowed = bundle.options.filter((o) => o.strips && !stripPair(o)?.some((c) => c === state.lastCrop) && !o.removedBy.some((l) => state.limits.includes(l)));
+        return allowed.find((o) => sowNext && stripPair(o)?.includes(sowNext)) ?? allowed[0];
+      })();
 
   return (
     <div className="flex flex-col flex-1">

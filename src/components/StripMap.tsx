@@ -220,7 +220,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
   // In "From space" the cereal starts on the greener ground and the other crop on the weaker; other layouts keep
   // the option's own order.
   const ordered: [CropId, CropId] = layout === "space" ? moistFirst(pair) : pair;
-  const crops: [CropId, CropId] = year === 0 ? ordered : [ordered[1], ordered[0]];
+  const crops: [CropId, CropId] = year === 0 || layout === "space" ? ordered : [ordered[1], ordered[0]];
   const pieces = layout === "space" ? [] : piecesIn(win.points, layout, STRIP_METRES / metresPerPixel(win.z, win.centre[1]));
   const pick = (id: Layout) => {
     loadBackdrop();
@@ -261,6 +261,8 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
             </button>
           ))}
         </div>
+        {/* Placed by ground, the map is for the first harvest year only: in year two the swap would undo it. */}
+        {layout === "space" ? null : (
         <div role="radiogroup" aria-label={t("strips.year")} className="flex border-2 border-line-strong rounded-box overflow-hidden">
           {([0, 1] as const).map((y) => (
             <button key={y} type="button" role="radio" aria-checked={year === y} onClick={() => {
@@ -271,6 +273,7 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
             </button>
           ))}
         </div>
+        )}
       </div>
       {layout === "space" && !space ? (
         <p className="mt-3 h-32 flex items-center justify-center rounded-box bg-sunk text-body text-ink-soft" role="status">
@@ -354,6 +357,11 @@ export function StripMap({ option, bundle }: { option: Option; bundle: FieldBund
       <p className="mt-2 text-small text-ink-soft" data-testid="strip-note">
         {t(layout === "space" ? "strips.spaceNote" : "strips.note")}
       </p>
+      {layout === "space" ? (
+        <p className="mt-1 text-small text-ink-soft" data-testid="space-first-year">
+          {t("strips.spaceFirstYear")}
+        </p>
+      ) : null}
       {/* The heights come from Copernicus DEM GLO-30, adapted into high and low ground: its licence asks for this notice. */}
       {layout === "space" && space?.signals.includes("ground") ? (
         <p className="mt-1 text-small text-ink-soft" data-testid="dem-notice">

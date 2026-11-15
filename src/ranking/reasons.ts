@@ -39,8 +39,10 @@ function waterReason(option: Option): Reason {
 }
 
 function forageReason(option: Option): Reason {
-  const yes = sequencesOf(option).flat().includes("vetch-oat");
-  return { priority: "forage", key: yes ? "reason.forage.yes" : "reason.forage.no", vars: {} };
+  // Matches the forage score: a hay crop counts most, faba bean or pea (grain for livestock) some, others none.
+  const crops = sequencesOf(option).flat();
+  const key = crops.includes("vetch-oat") ? "reason.forage.yes" : crops.some((c) => c === "faba" || c === "pea") ? "reason.forage.some" : "reason.forage.no";
+  return { priority: "forage", key, vars: {} };
 }
 
 /** One short reason per chosen priority, in the order chosen, for why this rotation suits (or does not suit) it. */

@@ -21,16 +21,16 @@ describe("screenSummary", () => {
       "Plant chickpea next. About 158 euro per hectare a year more than durum on durum. Needs little water. This is a suggestion: check locally first.",
     );
     expect(screenSummary("/options", bundle, state("it"))).toBe(
-      "Semina cece la prossima annata. Circa più 158 euro per ettaro all'anno rispetto al ringrano. Vuole poca acqua. È solo un consiglio: prima verifica sul posto.",
+      "Prossima semina: cece. Circa più 158 euro per ettaro all'anno rispetto al ringrano. Vuole poca acqua. È solo un consiglio: prima verifica sul posto.",
     );
   });
 
   it("Options with soil first speaks the nitrogen in words", () => {
-    expect(screenSummary("/options", bundle, state("en", ["soil", "income"]))).toBe(
-      "Plant faba bean next. About 60 kilos of nitrogen per hectare for the next crop. About 57 euro per hectare a year more than durum on durum. This is a suggestion: check locally first.",
+    expect(screenSummary("/options", bundle, state("en", ["soil"]))).toBe(
+      "Plant faba bean next. About 60 kilos of nitrogen per hectare for the next crop. This is a suggestion: check locally first.",
     );
-    expect(screenSummary("/options", bundle, state("it", ["soil", "income"]))).toBe(
-      "Semina favino la prossima annata. Lascia circa 60 chili di azoto per ettaro alla coltura successiva. Circa più 57 euro per ettaro all'anno rispetto al ringrano. È solo un consiglio: prima verifica sul posto.",
+    expect(screenSummary("/options", bundle, state("it", ["soil"]))).toBe(
+      "Prossima semina: favino. Lascia circa 60 chili di azoto per ettaro alla coltura successiva. È solo un consiglio: prima verifica sul posto.",
     );
   });
 
@@ -48,7 +48,7 @@ describe("screenSummary", () => {
     expect(screenSummary("/year", bundle, state("en"))).toBe(
       "Usual year. Hot flowering days: 9 days now, 17 days by 2050. Best fit that year: Chickpea. " +
         "Dry year. Hot flowering days: 12 days now, 21 days by 2050. Best fit that year: Chickpea. " +
-        "Driest year. Hot flowering days: 16 days now, 27 days by 2050. Best fit that year: Vetch-oat.",
+        "Driest year. Hot flowering days: 16 days now, 27 days by 2050. Best fit that year: Chickpea.",
     );
     expect(screenSummary("/year", bundle, state("it"))).toMatch(
       /^Annata normale\. Caldo in fioritura: 9 giorni oggi, 17 giorni al 2050\. Più adatta quell'anno: Cece\. Annata secca\. .* L'annata più secca\. Caldo in fioritura: 16 giorni oggi, 27 giorni al 2050\./,

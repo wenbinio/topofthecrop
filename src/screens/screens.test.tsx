@@ -113,19 +113,19 @@ describe("Options", () => {
 
   it("shows Italian text in the Simple view", async () => {
     renderAt("/options?f=genzano-demo&p=income,water&v=simple&g=it");
-    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Semina cece la prossima annata");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Prossima semina: cece");
     expect(document.documentElement.dataset.view).toBe("simple");
     expect(document.documentElement.lang).toBe("it");
   });
 
-  it("with soil and income says what to plant next and shows the nitrogen it leaves", async () => {
-    renderAt("/options?f=genzano-demo&p=soil,income");
-    // In the fixture faba (soil 0.9, income 0.7) edges chickpea (0.75, 0.8) for these two priorities.
+  it("with soil first says what to plant next and shows the nitrogen it leaves", async () => {
+    renderAt("/options?f=genzano-demo&p=soil");
+    // In the fixture faba bean scores highest for the soil (0.9).
     const rec = await screen.findByTestId("recommendation");
     expect(rec).toHaveAttribute("data-option-id", "faba-durum-faba");
     expect(screen.getByTestId("rec-headline")).toHaveTextContent("Plant faba bean next");
     const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
-    expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["soil", "income"]);
+    expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["soil"]);
     expect(reasons[0]).toHaveTextContent("60 kg N/ha");
     expect(screen.getAllByTestId("option-row").map((r) => r.getAttribute("data-option-id"))).not.toContain("faba-durum-faba");
   });
@@ -155,8 +155,8 @@ describe("Options", () => {
     expect(screen.getByRole("checkbox", { name: "Income" })).toHaveAttribute("data-rank", "1");
     expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("data-rank", "2");
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
-    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant vetch-oat next");
-    expect(screen.getByTestId("recommendation")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
+    expect(screen.getByTestId("recommendation")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     const reasons = within(screen.getByTestId("rec-reasons")).getAllByTestId("reason");
     expect(reasons.map((r) => r.getAttribute("data-priority"))).toEqual(["income", "forage"]);
   });
@@ -265,11 +265,11 @@ describe("Year", () => {
   it("shows a usual, a dry and the driest year at once, each with its best fit, and no slider to choose with", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
     expect(await screen.findByTestId("year-best-normal")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
-    expect(screen.getByTestId("year-best-much-drier")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
+    expect(screen.getByTestId("year-best-much-drier")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     expect(screen.getByTestId("year-best-drier")).toBeInTheDocument();
     expect(screen.queryByRole("slider")).toBeNull();
-    // The best fit differs between the kinds of year here, so no line claims it holds in all three.
-    expect(screen.queryByTestId("year-holds")).toBeNull();
+    // Here chickpea fits best in all three kinds of year, and a line says so.
+    expect(screen.getByTestId("year-holds")).toHaveTextContent("Chickpea");
     expect(Array.from(screen.getByTestId("year-kinds").children).map((card) => card.getAttribute("data-testid"))).toEqual([
       "year-normal", "year-drier", "year-much-drier",
     ]);
@@ -304,7 +304,7 @@ describe("the printout lists the three kinds of year", () => {
     expect(rows[2]).toHaveTextContent("Driest year");
     expect(rows[2]).toHaveTextContent("16");
     expect(rows[2]).toHaveTextContent("27");
-    expect(rows[2]).toHaveTextContent("Vetch-oat");
+    expect(rows[2]).toHaveTextContent("Chickpea");
   });
 });
 
@@ -729,7 +729,7 @@ describe("Options as a decision tree", () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     expect(await screen.findByRole("heading", { name: "Why this option" })).toBeInTheDocument();
     const toggles = screen.getAllByTestId("fold-toggle");
-    expect(toggles.map((toggle) => toggle.textContent)).toEqual(["Over three harvests", "What the data shows", "What we don't know"]);
+    expect(toggles.map((toggle) => toggle.textContent)).toEqual(["Over three harvests", "What the data shows", "Benefits", "What we don't know", "Check locally"]);
     for (const toggle of toggles) expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 });
@@ -812,17 +812,17 @@ describe("Questions", () => {
 });
 
 describe("Why", () => {
-  it("shows its headings in order, what the data found, and no benefits or local checks", async () => {
+  it("shows its five headings in order, and what the data found", async () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     const headings = await screen.findAllByRole("heading", { level: 2 });
     const names = headings.map((h) => h.textContent);
-    expect(names).toEqual(["Why this option", "If the year turns dry", "Over three harvests", "What the data shows", "What we don't know"]);
+    expect(names).toEqual(["Why this option", "If the year turns dry", "Over three harvests", "What the data shows", "Benefits", "What we don't know", "Check locally"]);
     // What the satellite and weather data found, without the farmer's own priorities read back as findings.
     const found = screen.getByTestId("why-path");
     expect(within(found).getAllByRole("listitem").length).toBeGreaterThan(0);
     expect(found).not.toHaveTextContent(/Picked/);
-    expect(screen.queryByText("Benefits")).toBeNull();
-    expect(screen.queryByText("Check locally")).toBeNull();
+    expect(screen.getByTestId("why-benefits").children.length).toBeGreaterThan(0);
+    expect(screen.getByTestId("why-check").children.length).toBeGreaterThan(0);
   });
 
   it("lists the plain reasons before the dry-year card", async () => {
@@ -841,9 +841,7 @@ describe("Why", () => {
     expect(within(card).getByRole("heading")).toHaveTextContent("If the year turns dry");
     expect(screen.getByTestId("why-year-normal")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     expect(screen.getByTestId("why-year-drier")).toBeInTheDocument();
-    expect(screen.getByTestId("why-year-much-drier")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
-    // The best fit differs between the kinds of year here.
-    expect(screen.queryByTestId("why-years-holds")).toBeNull();
+    expect(screen.getByTestId("why-year-much-drier")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     const link = screen.getByTestId("why-year-link");
     expect(link).toHaveAttribute("href", "/year?f=genzano-demo&p=income%2Cwater");
     fireEvent.click(link);

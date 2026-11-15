@@ -31,7 +31,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first (on a 
 - [ ] "About **158** €/ha/yr more than durum on durum" and "Needs little water".
 - [ ] *How sure we are:* **low**, naming what is not yet checked against a local source (the chickpea yield, the chickpea costs, the extra durum after chickpea).
 - [ ] Buttons: *Why this plan?*, *Other choices (8)*, *Keep this plan*, *Share it*; *Your priorities: 1 Income, 2 Water*; *Change my answers*.
-- [ ] *Other choices*, yearly income: Lentil **603**, Coriander **554**, Rapeseed **595**, Vetch-oat **476**, Now (durum on durum) **557**, Barley **453**, Pea **529**, Faba bean **469** €/ha/yr.
+- [ ] *Other choices*, yearly income: Lentil **603**, Coriander **554**, Vetch-oat **476**, Barley **453**, Rapeseed **595**, Now (durum on durum) **557**, Pea **529**, Faba bean **469** €/ha/yr.
 - [ ] *What we see*: bare after harvest **2 months** (1–6), hot flowering **4 days** (0–8), autumn rain **156 mm** (97–200).
 - [ ] *Your soil*: **Heavy ground (clay loam)**, **Alkaline soil · pH 7.7 · measured in the trial here: 8.2**, then that it is an estimate and that the order does not use it. *Change* lets you set the soil and a pH from a soil test.
 - [ ] *Where to intercrop on your field*: the **Intercropping** switch. Switched on, *Other choices* becomes 10, and the map shows the field split between chickpea and durum: *Strips* (24 m wide), *Two halves* or *From space* (needs a signal).
