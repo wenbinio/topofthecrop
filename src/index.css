@@ -298,3 +298,9 @@ summary {
   width: 44px;
   height: 44px;
 }
+
+/* Botanical plates (CropPlate): the paper is transparent and the edges are feathered in the files themselves,
+   so a painting sits straight on the page with no box around it. */
+.tc-plate {
+  background: transparent;
+}

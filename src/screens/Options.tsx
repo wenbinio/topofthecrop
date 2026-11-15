@@ -11,6 +11,7 @@ import { FieldShape, openRing } from "../components/FieldShape";
 import { Findings } from "../components/Findings";
 import { SoilCard } from "../components/SoilCard";
 import { Fold } from "../components/Fold";
+import { CropPlate } from "../components/CropPlate";
 import { soilSummary } from "../data/soil";
 import { ChevronIcon, EuroIcon, WarnIcon } from "../components/Icons";
 import { CropName, Slotted, stripsNext } from "../components/Crops";
@@ -39,10 +40,12 @@ function Recommendation({ best, current, simple }: { best: RankedOption | undefi
   ) : (
     <Slotted text={t("options.plant")} slots={{ crop: <CropName crop={option.sequence[0]} lower /> }} />
   );
+  const sowNext = option.isCurrent ? "durum" : option.sequence[0];
   return (
     <div className="px-4 pt-4 pb-1" data-testid="recommendation" data-option-id={option.id}>
-      <div className="flex items-start justify-between gap-2">
-        <h1 className={simple ? "text-head" : "text-big"} data-testid="rec-headline">
+      <div className="flex items-start gap-3">
+        <CropPlate crop={sowNext} big className="w-24 h-24" />
+        <h1 className={`flex-1 min-w-0 ${simple ? "text-head" : "text-big"}`} data-testid="rec-headline">
           {headline}
         </h1>
         <ReadButton />

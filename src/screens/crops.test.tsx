@@ -91,7 +91,8 @@ describe("last crop", () => {
     expect(radios).toHaveLength(10);
     expect(radios.at(-1)).toHaveTextContent("Other…");
     expect(within(group).getByRole("radio", { name: "Coriander" })).toBeInTheDocument();
-    expect(cropIconsIn(group)).toHaveLength(9);
+    // The last-crop question shows each crop's botanical plate above its name.
+    expect(within(group).getAllByTestId("crop-plate").map((p) => p.getAttribute("data-crop"))).toHaveLength(9);
   });
 
   it("Other opens a name box; the name goes into the link and onto the printout", async () => {

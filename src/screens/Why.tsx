@@ -242,7 +242,7 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
   return (
     <div className="flex flex-col flex-1">
       {back}
-      <div className="px-4 pb-2 flex items-end justify-between gap-3">
+      <div className="px-4 pb-2 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-head">
             <OptionName option={option} />
