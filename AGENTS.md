@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for any person or AI agent changing this repository. Read this first, then `HANDOVER-FRONTEND.md` for how the app is built and `HANDOVER.md` for the data files.
+Instructions for any person or AI agent changing this repository. Read this first, then `README.md` for how the app is built and what the data contract is.
 
 ## What this is
 
@@ -11,8 +11,6 @@ Top of the Crop is a phone web app for NASA Space Apps 2026 (challenge: Field Sh
 | File | What it tells you |
 |---|---|
 | `README.md` | The design, the data contract, the decisions made and why |
-| `HANDOVER-FRONTEND.md` | How the front end is put together and how it reads the data |
-| `HANDOVER.md` | The data team's guide to the files in `data/` (the data lead's, written with Claude) |
 | `DATA_SOURCES.md` | Every dataset, its licence and citation |
 | `docs/scoring.md` | Every rule and threshold in plain words: ranking, weather, this season's rain, the forecast, the yield lift |
 | `docs/support-and-prices.md`, `docs/crops-research.md` | Where the money and crop figures come from, and which are unverified |
@@ -66,7 +64,7 @@ Scripts that rebuild shipped data (each says in its header how to run it):
 - A threshold that is our own judgement is named as such in the code and written in `docs/scoring.md`.
 
 **The data folder**
-- Never edit files in `data/` by hand. They come from the notebooks in `ColabNotebooks/`. To update them, replace the files as `HANDOVER.md` section 9 says.
+- Never edit files in `data/` by hand. They come from the notebooks in `ColabNotebooks/`. To update them: rerun the notebook concerned in Colab, then 06; 06 downloads `field_shift_for_repo.zip`, whose `data/` files replace the old ones and whose `DATA_SOURCES.md` goes at the top of the repo; then `node scripts/make-placeholder-bundle.mjs` rebuilds the demo field's bundle. Keys stay the same, so the app needs no change. The data caveats are in `docs/scoring.md`, "Data caveats".
 - Never add Basilicata weather-station records to the repo. Their terms are non-commercial and checking-only.
 - `src/data/fieldshift-data.js` is the data lead's helper. Do not change it; ask them.
 

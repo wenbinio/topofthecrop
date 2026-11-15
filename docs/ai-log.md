@@ -39,7 +39,7 @@ How AI tools were used during the competition (14–15 November 2026): what we a
   - **AI:** walked us through it: uploading folders, moving files in github.dev, committing
 - **Handing the data to the app**
   - **We:** asked how the app would use each data file, and for a handover
-  - **AI:** summarised how each screen uses the data; wrote the handover guide ([`HANDOVER.md`](../HANDOVER.md)) and a tested helper for reading the files ([`src/data/fieldshift-data.js`](../src/data/fieldshift-data.js))
+  - **AI:** summarised how each screen uses the data; wrote the handover guide (`HANDOVER.md`, removed before submission; its caveats are now in `docs/scoring.md`) and a tested helper for reading the files ([`src/data/fieldshift-data.js`](../src/data/fieldshift-data.js))
 
 ## The app
 

@@ -101,7 +101,7 @@ describe("a drawn field in the basin", () => {
   });
 
   it("a square without greenness leaves out that finding and that evidence, never shows 0, and marks the strip no data", () => {
-    // One of the five farmland squares with no usable MODIS pixels (HANDOVER section 7, item 11).
+    // One of the five farmland squares with no usable MODIS pixels (docs/scoring.md, "Data caveats", item 11).
     const id = "1kmE4812N1981";
     expect(d.cells_greenness.cells[id]).toBeUndefined();
     const square = d.farmSquares.find((f) => f.id === id)!;
@@ -160,7 +160,7 @@ describe("a drawn field's other figures (bundle.fieldData)", () => {
   });
 
   it("leaves out MODIS water use where the squares have none, rather than showing 0", () => {
-    // One of the 135 farmland squares with no 500 m pixel that is mostly rain-fed arable (HANDOVER section 7).
+    // One of the 135 farmland squares with no 500 m pixel that is mostly rain-fed arable (docs/scoring.md, "Data caveats").
     const cells = d.cells_water.cells as Record<string, { aet_season: (number | null)[] | null }>;
     const square = d.farmSquares.find((f) => {
       const aet = cells[String(f.id)]?.aet_season;

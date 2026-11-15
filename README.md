@@ -10,7 +10,7 @@
 
 > The field figures are real: they come from the data team's files in `data/`. The crop and money figures are researched but nobody has checked them against their sources (`docs/crops-research.md`). Two things are still our own judgement and are marked as placeholders in the app: each rotation's risk rating and the priority score rules.
 
-**New here?** Read `AGENTS.md` for the rules, `HANDOVER-FRONTEND.md` for how the app is built and how it reads the data, and `HANDOVER.md` for the data files.
+**New here?** Read `AGENTS.md` for the rules; this README explains how the app is built and how it reads the data, and `DATA_SOURCES.md` lists every dataset.
 
 ## The problem
 
@@ -121,7 +121,7 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 - **Confidence word.** Each option carries one: good, fair or low.
 - **Income is a gross margin.** It is the average per year over the three-year sequence, in €/ha, and the "Why?" screen states the prices used and their date.
 - **Placeholders are labelled.** Each rotation's risk rating has no source yet and is marked on screen as a placeholder. Crop figures nobody has checked carry a confidence (often low), and the plan's "How sure" line names them.
-- **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. For the whole Bradano basin the data team extracted every 1 km square of farmland ahead of time too (`data/`, documented in `HANDOVER.md`); the app downloads those files only when a farmer draws a field. NASA POWER needs no login and allows calls from any website, so the app calls it live: for fields outside the basin, and for this season's rain on every field.
+- **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. For the whole Bradano basin the data team extracted every 1 km square of farmland ahead of time too (`data/`, from the notebooks in `ColabNotebooks/`); the app downloads those files only when a farmer draws a field. NASA POWER needs no login and allows calls from any website, so the app calls it live: for fields outside the basin, and for this season's rain on every field.
 
 ### How options are ranked
 
@@ -254,7 +254,7 @@ type FieldBundle = {
       level: "eu" | "italy" | "basilicata"; amount: Fact; crops: CropId[]; options: string[]; defaultOn: boolean }[];
   };
   fieldData?: FieldData;               // the rest of the data team's figures as Facts, for evidence screens:
-                                       // see FieldData in src/data/types.ts and HANDOVER-FRONTEND.md section 4f
+                                       // see FieldData in src/data/types.ts
 };
 ```
 
@@ -320,7 +320,7 @@ src/
 public/data/    genzano-demo.json, the demo field's bundle
 public/tiles/   the basin's own Sentinel-2 map picture
 public/parcels/ cadastral parcels for Genzano di Lucania
-data/           the data team's files (HANDOVER.md); never edited by hand, served at data/basin/
+data/           the data team's files, from ColabNotebooks/; never edited by hand, served at data/basin/
 ColabNotebooks/ the data team's notebooks that make data/
 scripts/        builders for the demo bundle, the basin map picture and the parcels
 docs/           scoring.md, crops-research.md, support-and-prices.md, checking-the-app.md, space-apps-submission.md, ai-log.md
@@ -351,7 +351,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 **What the team did**
 - **The idea and the design.** The farmer's question, the steps from field to plan (now three setup steps, then tabs), and a phone web app rather than a dashboard came from the team.
 - **The place.** The team picked rain-fed durum in southern Italy after its own Earth Engine run (10 November 2026) compared how often satellites get a clear view of cropland in 17 areas. It chose the demo field, the site of a published durum and vetch trial (Denora et al. 2025), so the satellite figures could be checked against what was measured there.
-- **The data.** The data lead ran every notebook in Google Earth Engine, checked the results against the trial's own weather station and against other datasets, and decided what reaches the app (`HANDOVER.md`). Those checks caught, for example, NASA POWER's impossible rain months, which the app now leaves out.
+- **The data.** The data lead ran every notebook in Google Earth Engine, checked the results against the trial's own weather station and against other datasets, and decided what reaches the app (the caveats are in `docs/scoring.md`). Those checks caught, for example, NASA POWER's impossible rain months, which the app now leaves out.
 - **The research.** The team's research compilation (`research-compilation/`) is behind the extra durum after a legume.
 - **The product.** The team tried each version of the app, decided what to change (for example putting the priorities in order instead of picking two, and defining what "drier" means) and reviewed every change before it went live.
 
@@ -359,7 +359,7 @@ A log of how AI was used during the competition, with what we asked it to do and
 
 **What AI tools did**
 - **AI coding and research tools** were used to build it: Claude (Opus for interface code and design, Sonnet for background research), OpenAI Codex (Sol, for audits), and Gemini (Hydrogen, for read-only reviews and for editing the app's wording in English and Italian over three passes, the last a rewrite of the Italian so it reads as a person's writing, which Claude then checked and applied; no native Italian speaker has read it), coordinated with a multi-agent tool called fleet.
-- **The data notebooks** in `ColabNotebooks/` were written with Claude (Anthropic) on claude.ai, as were their checks, `HANDOVER.md`, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
+- **The data notebooks** in `ColabNotebooks/` were written with Claude (Anthropic) on claude.ai, as were their checks, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark. The nine crop pictures (botanical plates in `public/crops/`) were drawn with ChatGPT image generation from a written brief; each file carries a visible "AI" badge.
 - **The app says so too.** A short version of this section (Gemini wrote the on-screen wording; AI research agents gathered the crop and price figures), with the credit lines the data licences ask for, is on the "Data and credits" page, linked from Check and share, and on the printout (`src/components/DataCredits.tsx`).
@@ -419,7 +419,7 @@ The basin data needs no extra step: a small plugin in `vite.config.ts` serves `d
 
 The demo field's figures come from `data/field.json`. `scripts/real-field.mjs` turns it into field facts, and `scripts/make-placeholder-bundle.mjs` (named from when its figures were made up) adds the rotations and money and writes `public/data/genzano-demo.json`. Run `node scripts/make-placeholder-bundle.mjs` after replacing `data/field.json` or changing a crop figure. The bundle's shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. A figure with no source yet (each rotation's risk rating) carries `placeholder: true`, and the screen showing it says so; crop figures carry a confidence instead.
 
-The basin files in `data/` come from the data team's notebooks; to update them, replace the files as `HANDOVER.md` section 9 says. Keys stay the same, so the app needs no change.
+The basin files in `data/` come from the data team's notebooks; to update them, follow the steps in `AGENTS.md` ("Never edit files in `data/` by hand"). Keys stay the same, so the app needs no change.
 
 The basin's map picture in `public/tiles/s2/` (1,597 tiles, about 25 MB, zooms 10 to 14) is cut by `scripts/build-basemap.py` from four Sentinel-2 L2A true-colour scenes of 30 May 2026, each under 1% cloud, downloaded without a login from the public `sentinel-cogs` archive. `public/tiles/s2/about.json` lists the scenes. To rebuild it for another day, download each scene's `TCI.tif`, name them `TCI_<square>.tif`, and run `python scripts/build-basemap.py <folder>` (needs rasterio, numpy, pillow, mercantile and shapely). The script was written with AI assistance.
 
