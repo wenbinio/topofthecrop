@@ -279,7 +279,7 @@ A strip intercrop is two sequences grown side by side, each on half the field, s
 
 - **Intercropping in some years only.** A year in which both sequences have the same crop is an ordinary year with one crop on the whole field. So a rotation can be, for example, strips in years 1 and 3 and durum alone in year 2. The model, the screens and the tests handle this; no such rotation is shipped, for the reason below.
 
-**Is combining rotation and intercropping better?** Worked out with the app's own sums on 15 November 2026 (chickpea and durum, demo field figures):
+**Is combining rotation and intercropping better?** Worked out with the app's own sums on 15 November 2026 (chickpea and durum, demo field figures), before durum's and chickpea's costs were updated from their sources the same day. With the sourced costs the first two read 715 and 667; the conclusion below holds:
 
 | Pattern | Income €/ha a year | Note |
 |---|---|---|
