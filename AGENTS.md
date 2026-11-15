@@ -12,10 +12,11 @@ Top of the Crop is a phone web app for NASA Space Apps 2026 (challenge: Field Sh
 |---|---|
 | `README.md` | The design, the data contract, the decisions made and why |
 | `HANDOVER-FRONTEND.md` | How the front end is put together and how it reads the data |
-| `HANDOVER.md` | The data team's guide to the files in `data/` (written by the data lead) |
+| `HANDOVER.md` | The data team's guide to the files in `data/` (the data lead's, written with Claude) |
 | `DATA_SOURCES.md` | Every dataset, its licence and citation |
 | `docs/scoring.md` | Every rule and threshold in plain words: ranking, weather, this season's rain, the forecast, the yield lift |
 | `docs/support-and-prices.md`, `docs/crops-research.md` | Where the money and crop figures come from, and which are unverified |
+| `docs/checking-the-app.md` | A screen-by-screen check of the live app, with the demo field's expected figures |
 
 ## Commands
 
@@ -139,7 +140,7 @@ Say so if you rely on any of these.
 ## State on 15 November 2026
 
 - Live: the six steps, basin-wide results for drawn fields, voice, open map imagery with AGEA aerial photos, parcel lookup for Genzano di Lucania, this season's rain and the seven-day forecast.
-- Also live: the Year screen's card comparing 2024 and 2026 with a usual season (with the demo field's seasons much less green than nearby fields), two more evidence lines on Why (NASA SMAP soil water, NASA MODIS crop water use), the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
+- Also live: "Data and credits" (the licences' credit lines and the AI note) on Check and share and the printout; NASA POWER's three impossible rain months left out of the live rain; the Year screen's card comparing 2024 and 2026 with a usual season (with the demo field's seasons much less green than nearby fields), two more evidence lines on Why (NASA SMAP soil water, NASA MODIS crop water use), the yield lift after chickpea and faba bean, the MIT licence, Settings in fold-out sections with editable prices, costs, yields and lift, and the map and three screens loaded on demand.
 - Step 2 asks the farmer to put priorities in order (tap to number them) instead of picking two.
 - Step 6 is "Check and share", for farmers with or without an adviser. It names kinds of people to ask (cooperative, CAA office, regional advisory service, neighbour, agronomist), never a named office or a phone number. Nobody has confirmed with a farmer or a CAA that these are the right places to send each question.
 - Not started: the submission materials (30-second video, written description, NASA data list, AI-use statement). The deadline is 15 November 2026, 23:59 Finland time.

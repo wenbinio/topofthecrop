@@ -25,9 +25,9 @@ Six steps, each one screen on a phone.
 |---|---|---|
 | 1. Find your field | Satellite map, town search, "My location". Tap the field. If we have no outline for it, or the wrong one, draw it: tap each corner, then pull any dot to adjust. Tracing round it with one finger also works. | The Genzano demo field is preloaded. A field drawn on the basin's farmland gets the same steps from the 1 km squares around it; anywhere else gets live NASA weather history for its area. |
 | 2. Three questions | Last crop; limits (no irrigation, cereal machinery only, no buyer nearby, broomrape before); put the priorities (income, water, soil, forage) in order by tapping them, most important first: at least 2, up to all 4. | Big buttons. Last crop is pre-filled from the EU crop map. |
-| 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029): continuous durum plus three alternatives. The top one says "Best fit for you". | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
+| 3. Your options | "What we see on your field": three measured findings (for example bare soil July to October). Then the four best-ranked rotations (a "More options" row opens the rest), each a three-year sequence shown as three crop icons with the harvest year under each (for example chickpea 2027, durum 2028, durum 2029). The top one is marked "Best fit", and its income is compared with durum after durum, what the farmer grows now. | At most four facts per option: income in €/ha per year (averaged over the three years), water, nitrogen, risk; plus a confidence word. Possible public support shows as a small tag. |
 | 4. Why? | Tap an option for five headings: why suggested, evidence, benefits, what we don't know, check locally. "Why suggested" opens with the path that led here, as plain steps. | Every number shows its source, its range, and whether it describes "your field" or "your area". Terms such as NDVI open a one-line explanation. |
-| 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. | One headline number: hot days at flowering, now and by 2050. |
+| 5. Your field's year | One strip from October to September: green and bare months, risk icons (dry autumn, heat at flowering, heavy rain on bare soil, frost). One slider, "try a drier, hotter year", re-ranks the options. Below: this season's rain so far and the next seven days (live), and 2024 and 2026 against a usual season. | Two headline figures: hot days at flowering and October–May rain, now and by 2050. |
 | 6. Check and share | What the farmer can check alone for the best-fit rotation; who can look at the plan if there is no adviser (cooperative or seed dealer, the CAA office, the region's farm advisory service, a neighbour, an agronomist); a one-page printout and a WhatsApp link. | The link reopens the same field and answers. No names or phone numbers: we could not keep them right. |
 
 The tool supports a conversation with someone who knows the land: an adviser where the farmer has one, otherwise the people named in step 6. It never tells the farmer what to do, and every option lists what must be checked locally.
@@ -59,7 +59,7 @@ The app has one set of screens and two looks, switched from the top bar. The cho
 |---|---|---|
 | For | A farmer or adviser who wants to see the data | A farmer who wants the answer at a glance |
 | Look | Satellite first: the map fills the screen, and the options screen opens with a vegetation thumbnail of the field and a 12-month green/bare strip | Weather app: one big headline for the field, then the findings and options as forecast-style rows, each led by an icon and one number |
-| Detail | Dataset and resolution labels on screen (for example "LANDSAT · 30 m") | Dataset labels hidden until tapped; risk shown as an icon plus one word |
+| Detail | Dataset and resolution labels on screen (for example "NASA MODIS (MOD13Q1) · 250 m") | Dataset labels hidden until tapped; risk shown as an icon plus one word |
 
 The mockups for both are in `docs/mockups/`: direction B is the Standard view and direction D is the Simple view.
 
@@ -114,8 +114,8 @@ Not used: ECOSTRESS (not processed in time, so the app has no surface-temperatur
 - **Source and range.** Every number links to its dataset and shows a range, not only a point value.
 - **Confidence word.** Each option carries one: good, fair or low.
 - **Income is a gross margin.** It is the average per year over the three-year sequence, in €/ha, and the "Why?" screen states the prices used and their date.
-- **Placeholders are labelled.** Until real data arrives, the screen says so.
-- **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. For the whole Bradano basin the data team extracted every 1 km square of farmland ahead of time too (`data/`, documented in `HANDOVER.md`); the app downloads those files only when a farmer draws a field. NASA POWER needs no login and allows calls from any website, so the app calls it live for fields outside the basin.
+- **Placeholders are labelled.** A figure nobody has sourced yet, such as each rotation's risk rating, is marked on screen.
+- **How data reaches the app.** The browser cannot read most NASA archives directly (login and cross-site restrictions). We extract the data for the demo field ahead of time into one JSON bundle. For the whole Bradano basin the data team extracted every 1 km square of farmland ahead of time too (`data/`, documented in `HANDOVER.md`); the app downloads those files only when a farmer draws a field. NASA POWER needs no login and allows calls from any website, so the app calls it live: for fields outside the basin, and for this season's rain on every field.
 
 ### How options are ranked
 
@@ -145,11 +145,9 @@ Two checks run before the table is read, so the tree does not blame the field fo
 - **Is the field bare on purpose?** After harvest, low greenness is expected and is reported as a bare-soil period, not as decline.
 - **Is the whole area affected?** Heat and autumn rain come from area grids (ERA5-Land; CHIRPS, NASA GPM IMERG and ERA5-Land), so those findings are marked as weather-driven, not specific to this field.
 
-This table is a first draft for the team to correct. The findings it produces are the "What we see on your field" strip in step 3, and the signals behind each one are the "Evidence" in step 4.
+The table is our own judgement and needs an agronomist's check. The findings it produces are the "What we see on your field" strip in step 3, and the signals behind each one are the "Evidence" in step 4.
 
 **2. Each finding points to rotation traits that address it.** For example: repeated water stress at grain fill points to crops that finish earlier or use less water; bare soil through summer points to a crop or cover that shortens the bare period; decline under continuous durum with no heat or water signal points to a legume break. This mapping from finding to rotation is the agronomy the team writes down in `docs/scoring.md`.
-
-**3a. A legume just grown is not grown again.** If the farmer's last crop is a legume (chickpea, faba bean, lentil, pea, vetch-oat), an option that starts with the same crop is left out, and the Options screen says so in one line. The current rotation is never left out.
 
 **3. The farmer's limits rule options in or out.** The limits from step 2 are yes/no facts, so they are also branches, not scores. Each either removes an option or flags it, and keeps its reason:
 
@@ -160,13 +158,15 @@ This table is a first draft for the team to correct. The findings it produces ar
 
 A dealbreaker stays a dealbreaker: no score can outvote it. The current rotation is never removed, so there is always a baseline to compare against.
 
+**3a. A legume just grown is not grown again.** If the farmer's last crop is a legume (chickpea, faba bean, lentil, pea, vetch-oat), an option that starts with the same crop is left out, and the Options screen says so in one line. The current rotation is never left out.
+
 **4. The options that remain are ordered by the farmer's priorities, in the farmer's order.** Each option has a score from 0 to 1 for income, water, soil and forage. The farmer ranks at least two of the four; the first counts 4, the second 3, the third 2, the fourth 1, and the scores are averaged with those weights. A priority left out has no weight and only breaks ties. The weights are our own judgement (`docs/scoring.md`). This is the only place an index is used, and only to put a short list in order.
 
 **5. The slider re-runs the ordering** for a drier, hotter year. Each stop is defined from the data: normal is a typical season (2001–2020), drier a 1-in-10 dry and hot season, much drier the driest and hottest seasons since 2001, each also shown by 2050. The Year screen says so under the slider and shows the stop's October–May rain beside its hot days (`docs/scoring.md`, "The slider").
 
 **6. The farmer sees the path, never the score.** The "Why?" screen shows the route taken as plain steps, for example "greenness falling and water use dropping → water stress → no irrigation → you chose income and soil". Score numbers are not shown anywhere in the app.
 
-The tree's branches and the score definitions are set in the data phase and written down in `docs/scoring.md`.
+The tree's branches and the score definitions are written down in `docs/scoring.md`.
 
 ## Tech stack
 
@@ -215,7 +215,7 @@ type CropId = "durum" | "chickpea" | "faba" | "vetch-oat" | "lentil" | "pea" | "
 type FieldBundle = {
   field: { id: string; name: string; areaHa: number; outline: GeoJSON.Polygon };
   lastCrop: { crop: CropId; source: Fact["source"] };
-  findings: {                                                         // exactly three
+  findings: {                                                         // three; a drawn field leaves out one it has no data for
     title: string; detail: string; fact: Fact;
     signals: { greenness: Signal; temperature: Signal; waterUse: Signal };
     weatherDriven: boolean;            // the whole area shows it, not just this field
@@ -227,6 +227,7 @@ type FieldBundle = {
     risksByScenario?: Partial<Record<Scenario, ("dry" | "frost" | "heat" | "rain")[][]>>;  // risk icons per month for a slider stop
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
     flowerHigh?: { now: Fact; by2050: Fact };  // usual daytime high, 15 April to 15 June, °C; shown with the "hot day" definition
+    rainSeason?: Record<Scenario, { now: Fact; by2050: Fact }>;  // October–May rain at each slider stop
   };
   options: {
     id: string;                        // "chickpea-durum-durum"
@@ -262,10 +263,11 @@ type AreaWeather = {
   hotDaysAtFlowering: Fact;            // scale "area", source NASA POWER, placeholder false
   autumnRain: Fact;
   lateFrostDays: Fact;
+  rainLeftOut?: string[];              // NASA POWER rain months left out as impossible, "YYYYMM"
 };
 ```
 
-### Decisions already made for the builder
+### Decisions made while building
 
 - **Which fields work.** Three cases, and no fake results for any of them:
   - **The Genzano demo field** has its own bundle, with figures from inside its own outline. Tapping it selects it.
@@ -285,46 +287,37 @@ type AreaWeather = {
   - durum → durum → durum (what the farmer does now)
 - **Three years, fixed.** Every option has exactly three crops. The card shows them as three icons with the year under each, not as a sentence. Longer or shorter rotations are out of scope for this version.
 - **The year strip in step 5** still shows the field's year as observed under the current rotation. A separate strip for each option is out of scope.
-- **The slider** has three stops: normal, drier and hotter, much drier and hotter. It changes the ranking, the hot-days number and the risk icons. All three are precomputed in the bundle; the browser does no climate maths.
+- **The slider** has three stops: normal, drier and hotter, much drier and hotter. It changes the ranking, the hot-days and rain figures and the risk icons. All three are precomputed in the bundle; the browser does no climate maths.
 - **Simple view** is the same components with a `view` flag. It swaps the design tokens, hides dataset labels until tapped, and shows the findings and options as weather-style rows under one big headline. No separate screens.
 - **Sharing link.** Hash routing (`/#/options?...`), so it works on any static host. The demo field travels as its id. A drawn field travels as its outline, simplified to at most 12 points at 5 decimal places. The farmer's own figures from Settings travel in `m`, only where they differ from ours: `p.<crop>` a crop's price (€/t), `c.<crop>` a crop's direct costs (€/ha), `y.<crop>` its yield (t/ha), `l1.<crop>` and `l2.<crop>` the extra durum after it (%), `s.<support id>` a support amount (€/ha) and `on.<support id>` 1 or 0 for a payment switched on or off. Payments the farmer added travel in `x`. Nothing is stored on a server.
 - **Print page** is a route in the same app that reads the same link.
 - **Map picture:** four open layers, none needing an account or key: NASA Blue Marble zoomed out, Sentinel-2 cloudless 2016 (EOX, CC BY 4.0) zoomed in, over the Bradano basin our own Sentinel-2 picture of one clear day (30 May 2026), and on top AGEA's aerial photos (CC BY 4.0) wherever AGEA serves them. Sentinel-2 pixels are 10 m; the AGEA photos show about 1.8 m in Basilicata. If AGEA's server does not answer, the Sentinel-2 picture underneath still shows. We dropped Esri World Imagery, which the scaffold used, because it is under a commercial licence (the Esri Master License Agreement), and the challenge rules ask for outside material that is free and open. Of Italy's other public aerial photos, the national geoportal's and the Basilicata region's could not be loaded from a web page when we tested them on 15 November 2026.
 - **Target devices:** current Chrome on Android and Safari on iPhone, from 360 px wide.
 
-### Planned layout
+### Layout
 
 ```
 src/
-  screens/      one file per step (FindField, Questions, Options, Why, Year, Adviser)
-  components/   shared pieces (TopBar, StepBar, FactBadge, OptionRow, YearStrip, Map)
-  ranking/      scoring rules and tests
-  weather/      NASA POWER call, and the counting rules with tests
-  state/        URL encoding and decoding
+  screens/      one file per step (FindField, Questions, Options, Why, Year, Adviser), plus Settings, Print and
+                AreaWeather; the bigger ones keep their parts in a folder (find-field/, settings/)
+  components/   shared pieces: the map, crop names and symbols, fact rows, the year strip, the live weather blocks, credits
+  data/         the data contract, loading and checking a bundle, and the rules that turn the data files into field facts
+  money/        the income sums
+  ranking/      diagnosis and ranking rules, with tests
+  weather/      the NASA POWER and MET Norway calls and their counting rules, with tests
+  voice/        voice commands and read-aloud
+  state/        the link: the farmer's choices in and out of the address
+  geo/          drawing, edge-finding and outline maths
   i18n/         en.ts, it.ts
   theme/        standard.css, simple.css
-public/data/    genzano-demo.json
-data/           the data team's basin files (HANDOVER.md); never edited by hand, served at data/basin/
-ColabNotebooks/ the data team's notebooks that make data/ (HANDOVER.md, DATA_SOURCES.md)
-docs/           scoring.md, crops-research.md, support-and-prices.md, mockups/
+public/data/    genzano-demo.json, the demo field's bundle
+public/tiles/   the basin's own Sentinel-2 map picture
+public/parcels/ cadastral parcels for Genzano di Lucania
+data/           the data team's files (HANDOVER.md); never edited by hand, served at data/basin/
+ColabNotebooks/ the data team's notebooks that make data/
+scripts/        builders for the demo bundle, the basin map picture and the parcels
+docs/           scoring.md, crops-research.md, support-and-prices.md, checking-the-app.md, mockups/
 ```
-
-## Build plan
-
-This was the plan on Saturday 14 November, kept for the record; `AGENTS.md` says where things stand.
-
-Frontend first, on placeholder data. The data work follows and swaps in real numbers through the data contract. Times are Finland time.
-
-| When | What | Done when |
-|---|---|---|
-| Sat by 16:00 | Scaffold, both themes, top bar, step bar, deploy pipeline | A public link shows an empty app in both views and both languages |
-| Sat by 21:00 | All six screens on the placeholder bundle; tap and draw on the map; ranking with tests. In parallel: the live weather module with tests | The Genzano demo runs start to finish on a phone, and a field drawn elsewhere shows real weather for its area |
-| Sat evening to Sun 12:00 | Data phase: extract the real Genzano bundle (HLS, SRTM, POWER, GPM, CMIP6 first; ECOSTRESS and SMAP if time allows); choose agronomy sources; set scoring | No placeholder flag left in the demo bundle |
-| Sun by 15:00 | Slider, term explanations, print page, WhatsApp link, Italian wording check | Every row of the challenge table above is visible in the app |
-| Sun by 18:00 | 30-second video, submission text, NASA data list, AI-use statement | Draft submission saved on the project page |
-| Sun by 21:00 | Submit, then test every link in a private window | Submitted, with three hours of margin |
-
-If time runs short, cut in this order: ECOSTRESS and SMAP, live weather for other fields (fall back to "demo field only"), the WhatsApp link, the Simple view's separate look (keep the switch for detail level only). Never cut: real NASA data for the demo field, the five "Why?" headings, the scale badges.
 
 ## Submission
 
@@ -344,11 +337,18 @@ The video opens on the Genzano field and the hot-days number, not on a logo.
 
 ## Use of AI
 
-Space Apps allows AI tools if their use is disclosed and they do not produce the core idea.
+Space Apps allows AI tools if their use is disclosed and they do not produce the core idea. In short: the idea, the choices and the checking are the team's; most of the code and the notebooks were written with AI tools.
 
-- **The idea and the six-step design** came from the team.
+**What the team did**
+- **The idea and the design.** The farmer's question, the six steps, and a phone web app rather than a dashboard came from the team.
+- **The place.** The team picked rain-fed durum in southern Italy after its own Earth Engine run (10 November 2026) compared how often satellites get a clear view of cropland in 17 areas. It chose the demo field, the site of a published durum and vetch trial (Denora et al. 2025), so the satellite figures could be checked against what was measured there.
+- **The data.** The data lead ran every notebook in Google Earth Engine, checked the results against the trial's own weather station and against other datasets, and decided what reaches the app (`HANDOVER.md`). Those checks caught, for example, NASA POWER's impossible rain months, which the app now leaves out.
+- **The research.** The team's research compilation (`research-compilation/`) is behind the extra durum after a legume.
+- **The product.** The team tried each version of the app, decided what to change (for example putting the priorities in order instead of picking two, and defining what "drier" means) and reviewed every change before it went live.
+
+**What AI tools did**
 - **AI coding and research tools** were used to build it: Claude (Opus for interface code and design, Sonnet for background research), OpenAI Codex (Sol, for audits), and Gemini (Hydrogen, for read-only reviews and for editing the app's wording in English and Italian, which Claude then checked and applied; no native Italian speaker has read it), coordinated with a multi-agent tool called fleet.
-- **The data** in `data/` and `DATA_SOURCES.md` comes from Google Colab notebooks (`ColabNotebooks/`) written with Claude (Anthropic) on claude.ai and run by the team with Google Earth Engine. Claude also wrote the notebooks' checks, `HANDOVER.md`, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
+- **The data notebooks** in `ColabNotebooks/` were written with Claude (Anthropic) on claude.ai, as were their checks, `HANDOVER.md`, the data helper `src/data/fieldshift-data.js` and the code that turns the data into the app's figures. The data values come from the cited datasets, not from the AI, except a few published values from the trial at the demo field (its weather station's rain and temperature, and its soil), typed in from Denora et al. (2025) and labelled as such.
 - **Code in this repository** was largely written by these tools and reviewed by the team.
 - **No AI-generated images or video** are used without a visible watermark.
 - **The app says so too.** A short version of this section, with the credit lines the data licences ask for, is under "Data and credits" at the end of Check and share and on the printout (`src/components/DataCredits.tsx`).
@@ -369,11 +369,9 @@ That covers what the team wrote. Everything else keeps its own licence, which th
 
 - Is the submission deadline 23:59 Finland time, or does our local event close earlier?
 - Team member names for this page.
-- Must the repository be public for judging? (Planned: make it public before submitting.)
 - Are the weather thresholds right for durum in the upper Bradano (30 °C or more, 15 April to 15 June for flowering; frost in March and April)?
-- Are the three alternative sequences right for the upper Bradano (chickpea → durum → durum, faba bean → durum → faba bean, vetch-oat forage → durum → durum)?
-- Sources for rotation income and nitrogen figures in Basilicata.
-- What to say about public support (CAP eco-schemes) and where to source it.
+- Are the eight alternative sequences right for the upper Bradano?
+- The crop, price and support figures, checked against their sources (`docs/crops-research.md`, `docs/support-and-prices.md`).
 - Italian wording needs a check by a native speaker.
 
 ## Running it
@@ -406,9 +404,9 @@ npm run build
 
 The basin data needs no extra step: a small plugin in `vite.config.ts` serves `data/*.json` and `data/*.geojson` at `data/basin/` while `npm run dev` runs, and writes them to `dist/data/basin/` on `npm run build` (so the GitHub Pages workflow ships them too). Nothing is copied into `public/`, so the files exist once in git. The demo field never downloads them; a drawn field loads them once per session (about 4.6 MB, 1.2 MB gzipped), with the same 8-second limit per file as the demo bundle and a Retry.
 
-### Replacing the placeholder data
+### Updating the data
 
-The app reads one file, `public/data/genzano-demo.json`. Its shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. `scripts/make-placeholder-bundle.mjs` shows how the current placeholder file is produced. Set `placeholder` to `false` on each fact as real numbers replace made-up ones; the "placeholder figures" note disappears from a screen once none of its facts are placeholders.
+The demo field's figures come from `data/field.json`. `scripts/real-field.mjs` turns it into field facts, and `scripts/make-placeholder-bundle.mjs` (named from when its figures were made up) adds the rotations and money and writes `public/data/genzano-demo.json`. Run `node scripts/make-placeholder-bundle.mjs` after replacing `data/field.json` or changing a crop figure. The bundle's shape is defined in `src/data/types.ts` and checked when the app loads it, so a wrong file fails with a message saying what is wrong. A figure nobody has sourced carries `placeholder: true`, and the screen showing it says so.
 
 The basin files in `data/` come from the data team's notebooks; to update them, replace the files as `HANDOVER.md` section 9 says. Keys stay the same, so the app needs no change.
 
