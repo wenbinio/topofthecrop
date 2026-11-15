@@ -9,6 +9,7 @@ import type { Fact, FieldBundle, LngLat } from "./types";
 import { CLIMATE_SCENARIOS, DRAWN_FIELD_ID } from "./types";
 import { AREA_UNKNOWN } from "./caveats";
 import { fieldFromBasin, ringPolygon } from "./fieldFromBasin";
+import { measuredSignals } from "./field-rules.js";
 import { loadData, outlineValues, projected, squareAt } from "./fieldshift-data.js";
 import type { BasinData } from "./fieldshift-data.js";
 import { validateBundle } from "./validate";
@@ -163,5 +164,36 @@ describe("a drawn field's other figures (bundle.fieldData)", () => {
     expect(data.water.cropWaterUse).toBeUndefined();
     expect(data.seasons.series.cropWaterUse).toBeUndefined();
     expect(data.water.soilWaterSpring).toBeDefined();
+  });
+});
+
+describe("a drawn field's signals and slider rain", () => {
+  const CENTRE: LngLat = [16.092837, 40.823353];
+
+  it("signals are worked out from its own season series, the same for every finding", () => {
+    const b = build(box(CENTRE)).bundle!;
+    const expected = measuredSignals(b.fieldData!.seasons);
+    expect(Object.values(expected).every((s) => ["falling", "rising", "normal"].includes(s))).toBe(true);
+    for (const finding of b.findings) expect(finding.signals).toEqual(expected);
+  });
+
+  it("a square with no MODIS water use says water use has no record (no-data), not that it is normal", () => {
+    const cells = d.cells_water.cells as Record<string, { aet_season: (number | null)[] | null }>;
+    const square = d.farmSquares.find((f) => {
+      const aet = cells[String(f.id)]?.aet_season;
+      return aet === null || (Array.isArray(aet) && aet[1] === null);
+    })!;
+    const b = build(box([square.properties.lon, square.properties.lat])).bundle!;
+    expect(b.findings[0].signals.waterUse).toBe("no-data");
+  });
+
+  it("each slider stop has Oct-May rain now and by 2050, drier than the stop before", () => {
+    const rain = build(box(CENTRE)).bundle!.year.rainSeason!;
+    expect(Number(rain.drier.now.value)).toBeLessThan(Number(rain.normal.now.value));
+    expect(Number(rain["much-drier"].now.value)).toBeLessThanOrEqual(Number(rain.drier.now.value));
+    for (const stop of Object.values(rain)) {
+      expect(stop.now.scale).toBe("area");
+      expect(stop.by2050.confidence).toBe("low");
+    }
   });
 });
