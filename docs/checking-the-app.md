@@ -30,14 +30,14 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 
 ## 4. Why (tap Chickpea)
 
-- [ ] The screen opens with *Why suggested*, six steps: less green than usual; more hot days at flowering; decline with heat; area-wide; chose income; chose water.
+- [ ] The screen opens with *Why this option*, six steps: less green than usual; more hot flowering days; falling off with heat; across the area; picked income; picked water.
 - [ ] *Over three harvests*: per year **729**; durum 2028 shows "+16% grain after chickpea", 2029 "+10%". *What the columns mean* opens on a tap.
-- [ ] *Evidence*, each line once, each with a *Source* to tap: hot flowering days **4** (range 0–8), bare months **2** (1–6), Oct–May rain **542 mm** (418–631), water durum needs **509 mm** (487–544), topsoil clay **37%**, soil water in spring **30.1%** (27.4–32), water crops used **319 mm** (277–346).
+- [ ] *What the data shows*, each line once, each with a *Source* to tap: hot flowering days **4** (range 0–8), bare months **2** (1–6), Oct–May rain **542 mm** (418–631), water durum needs **509 mm** (487–544), topsoil clay **37%**, soil water in spring **30.1%** (27.4–32), water crops used **319 mm** (277–346).
 
 ## 5. Year
 
-- [ ] **Normal:** hot days **4 → 5.4** by 2050; rain **542 → 520 mm**; "A usual season (2001–2020)."
-- [ ] Slide to **Drier:** **8 → 10** days, **418 → 393 mm**. **Much drier:** **13 → 15** days, **390 → 367 mm**.
+- [ ] Three cards, no slider. **Usual year:** hot days **4** now, **5.4** by 2050; rain **542** and **520 mm**; "A usual season (2001–2020)."
+- [ ] **Dry year:** **8** and **10** days, **418** and **393 mm**. **Driest year:** **13** and **15** days, **390** and **367 mm**. Each card ends with its best fit.
 - [ ] *This season so far* (live): rain since 1 September, usual by now, a verdict, the last day with 5 mm or more, and "Not counted: NASA POWER rain for October 2025…".
 - [ ] *Next 7 days* (live): rain for each day and the coldest night.
 - [ ] *Your field from space* (under the slider) opens a timelapse: dated pictures with the field's yellow outline filling the frame, play, pause and a slider. *Back* returns.
@@ -66,3 +66,10 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first, so th
 ## Reporting a problem
 
 Send a screenshot, the step number above, and the page's link (copy it from the address bar: it holds every choice made).
+
+## 10. Soil, and coming back
+
+- [ ] Options, demo field: *Your soil* reads **Heavy ground (clay loam)**, **Alkaline soil · pH 7.7 · measured in the trial here: 8.2**, then that it is an estimate and that the order does not use it. *Soil figures* opens ten rows and the trial's pH, each with a *Source*.
+- [ ] Step 6: **My field today** opens *Your field today*. First time: "This plan is now kept on this phone." Tick a check, reload: the tick is still there.
+- [ ] Open the first screen again: a card offers **My field today** and **Pick another field**.
+- [ ] *What to watch in <this month>* shows the usual cover and risks. The rain so far and the forecast load below.

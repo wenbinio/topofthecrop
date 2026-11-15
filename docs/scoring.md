@@ -91,37 +91,47 @@ The weights 4, 3, 2, 1 are our own judgement (`RANK_WEIGHTS` in
 `src/ranking/rank.ts`): the simplest rule in which each place counts less than
 the one before. Nobody has tested them against farmers' real choices.
 
-The normal, drier and much-drier settings use separate supplied scores.
+A usual, a dry and the driest year use separate supplied scores. Every screen
+ranks for a usual year; only the Year screen also shows the best fit in the
+other two.
 Scores only set the order and are never shown. The farmer sees the signals,
 diagnosis, weather-driven note, limits and chosen priorities instead.
 Income is average annual gross margin across the three harvests, not revenue;
 the supporting facts should give the prices used and their date.
 
-## The slider: normal, drier, much drier
+## Usual, dry and driest years
 
-Each stop is defined from the data, the same way for hot days and for rain
-(`hotDayStops` and `rainStops` in `src/data/field-rules.js`). Under the slider
-the Year screen says what the stop means and shows its October to May rain.
+The Year screen shows three kinds of year at once, each with its October to May
+rain, its hot days at flowering and the rotation that fits it best. The farmer
+does not choose one. Until 15 November 2026 this was a slider with three stops;
+it was removed because it read as if the farmer were deciding how dry the year
+is, when every figure comes from the record. In code and in the bundle the
+three are still called `normal`, `drier` and `much-drier`.
 
-| Stop | Today | By 2041–2060 |
+Each is defined from the data, the same way for hot days and for rain
+(`hotDayStops` and `rainStops` in `src/data/field-rules.js`).
+
+| Kind of year | Today | By 2041–2060 |
 |---|---|---|
-| Normal | A typical season, 2001–2020: the median, with the 10th to 90th percentile | Today's typical value plus the middle path's change (SSP2-4.5), median of 29 models |
-| Drier | A 1-in-10 dry and hot season: the 10th percentile of October–May rain and the 90th percentile of hot days at flowering | That season plus the high path's change (SSP5-8.5) |
-| Much drier | The driest and the hottest seasons since 2001 (not always the same season) | Those seasons plus the high path's change |
+| Usual (`normal`) | A typical season, 2001–2020: the median, with the 10th to 90th percentile | Today's typical value plus the middle path's change (SSP2-4.5), median of 29 models |
+| Dry (`drier`) | A 1-in-10 dry and hot season: the 10th percentile of October–May rain and the 90th percentile of hot days at flowering | That season plus the high path's change (SSP5-8.5) |
+| Driest (`much-drier`) | The driest and the hottest seasons since 2001 (not always the same season) | Those seasons plus the high path's change |
 
-At the demo field: normal 542 mm and 4 hot days; drier 418 mm and 8 hot days;
-much drier 390 mm (the 2017 season) and 13 hot days. By 2050 on the high path:
+At the demo field: usual 542 mm and 4 hot days; dry 418 mm and 8 hot days;
+driest 390 mm (the 2017 season) and 13 hot days. By 2050 on the high path:
 393 mm and 10 hot days; 367 mm and 15 hot days.
 
-Two parts of the slider are still our judgement and are left fixed on purpose:
+Two parts are still our judgement and are left fixed on purpose:
 
-- **The extra risk icons** (`risksByScenario`): drier adds a dry-autumn icon in
-  October and November and a heat icon in April to June; much drier also adds a
-  dry icon in September and December.
+- **The extra risk icons** (`risksByScenario`): a dry year adds a dry-autumn icon
+  in October and November and a heat icon in April to June; the driest also adds
+  a dry icon in September and December. They are still in the bundle but no
+  longer shown: the month strip is a usual year.
 - **The dry-year penalty** (`DRY` in `scripts/make-placeholder-bundle.mjs`): in a
-  drier year each option's income score is multiplied by the mean, over its three
+  dry year each option's income score is multiplied by the mean, over its three
   crops, of 0.95, 0.85 or 0.7 for crops that need little, some or a lot of water;
-  in a much drier year 0.85, 0.65 or 0.45. The other scores stay the same.
+  in the driest year 0.85, 0.65 or 0.45. This is a fixed table by crop, not water data for
+  the field. The other scores stay the same.
 
 ## 2024 and 2026 against a usual season
 
@@ -280,6 +290,28 @@ Background and sources: `docs/crops-research.md`, "Intercropping".
 - The lift raises that harvest's sales. It shows on Why as a line under the durum harvest and names its study.
 - **How sure:** low. The figures come from the team's research compilation, which cites the papers; we have not opened the papers ourselves. The chickpea study worked with wheat at 5 t/ha, well above this area's 3 t/ha, so its percentage may not carry over.
 - **Lentil, pea and vetch get no lift** because no figure was found for them. That is a gap in the evidence, not a finding that they give nothing, and it tilts the comparison towards chickpea and faba bean.
+
+## Your soil
+
+The Options screen names the field's ground from the soil figures in the bundle (SoilGrids 2.0, 250 m; for a drawn field, the 1 km squares). Nothing here changes the order of the rotations.
+
+- **Texture class:** the USDA triangle on sand, silt and clay (`textureClass` in `src/data/soil.ts`). Clay is the listed figure, or what sand and silt leave.
+- **Heavy, medium or light** is our own grouping of the twelve classes: heavy for every class with "clay" in its name, medium for loam, silt loam and silt, light for sandy loam, loamy sand and sand.
+- **pH band:** acid under 6.5, alkaline over 7.3, neutral between (`PH_BANDS`). On the demo field the band follows the pH the trial measured (8.2), shown beside the map's 7.7.
+- **Honesty:** the map's own range is wide (clay 5.6 to 76.4% on the demo field), so the card calls itself an estimate and sends the farmer to a soil test. The one-line meanings ("drains slowly", "crops take up iron and phosphorus less easily") are textbook statements, not findings for this field.
+
+## Your field today
+
+What a returning farmer is told (`planChange` in `src/state/plan.ts`), comparing what the phone kept with what the app works out now for the same field and answers:
+
+| Kept on the phone | Now | Message |
+|---|---|---|
+| Nothing, or another field or other answers | | The plan is now kept |
+| Same best fit, same data fingerprint | | Nothing has changed |
+| Same best fit, other fingerprint | | The data was updated; the best fit holds |
+| Another best fit | | Warning: the advice has changed, with both rotations named |
+
+The fingerprint is the one `vite.config.ts` makes from the shipped data. A change stays on screen until the farmer taps "Got it". The live rain and forecast do not enter the ranking, so they can never change the advice. "What to watch" is the bundle's usual cover and risks for the calendar month; the to-do list is the best fit's own checks.
 
 ## Field timelapse
 

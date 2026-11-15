@@ -22,7 +22,7 @@ export type Fact = {
   placeholder: boolean; // true until real data replaces it
 };
 
-export type Scenario = "normal" | "drier" | "much-drier"; // the three slider stops
+export type Scenario = "normal" | "drier" | "much-drier"; // the three kinds of year shown on Field year: usual, dry (1 in 10), driest since 2001
 export type Priority = "income" | "water" | "soil" | "forage";
 export type Limit = "no-irrigation" | "cereal-machinery" | "no-buyer" | "broomrape";
 export type Signal = "rising" | "falling" | "normal" | "no-data";
@@ -122,7 +122,7 @@ export type FieldBundle = {
   };
   options: Option[]; // 3 to 12, exactly one with isCurrent
   economics?: Economics; // prices, yields, costs and support behind the income figures
-  /** The rest of the data team's figures for this field, for the evidence screens. Not shown on a screen yet. */
+  /** The rest of the data team's figures for this field, for the evidence screens. The soil group is shown on Options ("Your soil"); most of the rest is not shown yet. */
   fieldData?: FieldData;
 };
 
@@ -224,7 +224,6 @@ export type AppState = {
   lastCropName: string; // the typed name when lastCrop is "other", trimmed, at most LAST_CROP_NAME_MAX; otherwise ""
   limits: Limit[];
   priorities: Priority[]; // zero to four, most important first
-  scenario: Scenario;
   /**
    * Whether strip intercrops are ranked with the other rotations. Off until the farmer asks on the Options screen:
    * they are a stand-in nobody here has tried, so they must not become the first advice unasked.
@@ -294,7 +293,6 @@ export const DEFAULT_STATE: AppState = {
   lastCropName: "",
   limits: [],
   priorities: [],
-  scenario: "normal",
   intercrops: false,
   view: "standard",
   lang: "en",

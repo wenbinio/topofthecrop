@@ -14,7 +14,7 @@ describe("LeftOutNote", () => {
   it("says the rain was not counted and why", () => {
     render(<LeftOutNote months={["202510"]} />);
     expect(screen.getByTestId("rain-left-out").textContent).toBe(
-      "Not counted: NASA POWER rain for October 2025, over three times other rain records at the demo field.",
+      "We left out NASA POWER rain for October 2025, because it is over three times higher than other rain records at the demo field.",
     );
   });
 

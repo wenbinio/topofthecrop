@@ -181,7 +181,7 @@ describe("crop icons beside crop names", () => {
     cleanup();
 
     renderAt("/year?f=genzano-demo&p=income,water");
-    expect(cropIconsIn(await screen.findByTestId("year-best"))).toEqual(["chickpea"]);
+    expect(cropIconsIn(await screen.findByTestId("year-best-normal"))).toEqual(["chickpea"]);
     cleanup();
 
     renderAt("/settings?f=genzano-demo&p=income,water");
@@ -238,7 +238,7 @@ describe("strip intercrops", () => {
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Plant chickpea next");
     const toggle = screen.getByTestId("intercrops-toggle");
     expect(toggle).toHaveAttribute("aria-checked", "false");
-    expect(toggle).toHaveTextContent("Also show strip intercrops (2)");
+    expect(toggle).toHaveTextContent("Also show crops in strips (2)");
     expect(toggle).toHaveTextContent("Counted as if each were grown alone");
     fireEvent.click(screen.getByTestId("more-options"));
     expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual([]);
@@ -246,7 +246,7 @@ describe("strip intercrops", () => {
     fireEvent.click(toggle);
     await waitFor(() => expect(param("i")).toBe("1"));
     expect(screen.getByTestId("intercrops-toggle")).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByTestId("intercrops-toggle")).toHaveTextContent("Showing strip intercrops");
+    expect(screen.getByTestId("intercrops-toggle")).toHaveTextContent("Showing crops in strips");
     expect(rowIds().filter((id) => id?.startsWith("strips-"))).toEqual(["strips-chickpea-durum", "strips-faba-durum"]);
     expect(screen.getByTestId("rec-headline")).toHaveTextContent("Sow chickpea and durum in strips next");
     const row = screen.getAllByTestId("option-row").find((r) => r.getAttribute("data-option-id") === "strips-chickpea-durum")!;

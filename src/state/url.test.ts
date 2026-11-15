@@ -10,7 +10,7 @@ it('omits defaults and restores an empty query', () => {
 });
 it('round-trips the full demo state, canonicalizing limits only', () => {
   const state: AppState = { ...DEFAULT_STATE, fieldId: fixture.field.id, limits: ['no-buyer', 'no-irrigation'],
-    priorities: ['soil', 'income'], scenario: 'drier', view: 'simple', lang: 'it', lastCrop: 'chickpea' };
+    priorities: ['soil', 'income'], view: 'simple', lang: 'it', lastCrop: 'chickpea' };
   expect(decodeState(encodeState(state))).toEqual({ ...state, limits: ['no-irrigation', 'no-buyer'] });
 });
 it('round-trips a four-point drawn field and accepts a leading question mark', () => {
@@ -23,6 +23,10 @@ it('drops unknown values and keeps the distinct valid priorities in the order gi
   expect(decodeState('p=money,income,income,soil,water&s=wet&v=fancy&g=fr&c=maize&l=x&o=abc&f=other'))
     .toEqual({ ...DEFAULT_STATE, priorities: ['income', 'soil', 'water'] });
   expect(decodeState('p=forage,water,soil,income,forage').priorities).toEqual(['forage', 'water', 'soil', 'income']);
+});
+it('ignores the stop of the old dry-year slider, so an old link opens as a usual year', () => {
+  expect(decodeState('f=genzano-demo&s=much-drier')).toEqual({ ...DEFAULT_STATE, fieldId: 'genzano-demo' });
+  expect(encodeState(decodeState('f=genzano-demo&s=much-drier'))).toBe('f=genzano-demo');
 });
 it('keeps a full order of four priorities through the link', () => {
   const state = { ...DEFAULT_STATE, priorities: ['soil', 'forage', 'income', 'water'] as const };

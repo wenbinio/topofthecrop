@@ -162,12 +162,12 @@ describe("Settings", () => {
     act(() => {
       fireEvent.change(durum, { target: { value: "" } });
     });
-    expect(screen.getByTestId("money-error")).toHaveTextContent("Enter number");
+    expect(screen.getByTestId("money-error")).toHaveTextContent("Enter a number");
     expect(durum).toHaveAttribute("aria-invalid", "true");
     act(() => {
       fireEvent.change(durum, { target: { value: "4o0" } });
     });
-    expect(screen.getByTestId("money-error")).toHaveTextContent("Enter number");
+    expect(screen.getByTestId("money-error")).toHaveTextContent("Enter a number");
     act(() => {
       fireEvent.change(durum, { target: { value: "99999" } });
     });
@@ -193,7 +193,7 @@ describe("Settings", () => {
 
   it("(f) with no field chosen says so and shows no inputs", async () => {
     renderAt("/settings");
-    expect(await screen.findByTestId("settings-no-field")).toHaveTextContent("Pick field first.");
+    expect(await screen.findByTestId("settings-no-field")).toHaveTextContent("Pick a field first.");
     expect(screen.queryAllByRole("textbox")).toHaveLength(0);
     expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
   });
@@ -228,7 +228,7 @@ describe("Settings", () => {
     ];
     for (const route of routes) {
       const { unmount } = renderAt(route);
-      const gear = await screen.findByRole("link", { name: "Prezzi e sostegni" });
+      const gear = await screen.findByRole("link", { name: "Prezzi e aiuti" });
       const href = gear.getAttribute("href") ?? "";
       expect(href.startsWith("/settings?"), route).toBe(true);
       expect(href, route).toContain("g=it");

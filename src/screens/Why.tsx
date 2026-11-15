@@ -210,7 +210,6 @@ export default function Why({ bundle }: { bundle: FieldBundle }) {
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
-    scenario: state.scenario,
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   });

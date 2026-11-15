@@ -85,7 +85,7 @@ describe("finding a field by parcel number", () => {
     await openForm();
     type("56", "159");
     fireEvent.click(screen.getByRole("button", { name: "Find parcel" }));
-    expect((await screen.findByTestId("draw-hint")).textContent).toMatch(/ha · drag dot to adjust$/);
+    expect((await screen.findByTestId("draw-hint")).textContent).toMatch(/ha · drag a dot to adjust$/);
     expect(map.drawnOutline!.length).toBeGreaterThanOrEqual(3);
     expect(map.drawnOutline!.length).toBeLessThanOrEqual(MAX_CORNERS);
     expect(map.editable).toBe(true);
@@ -99,14 +99,14 @@ describe("finding a field by parcel number", () => {
     await openForm();
     type("999", "1");
     fireEvent.click(screen.getByRole("button", { name: "Find parcel" }));
-    expect((await screen.findByTestId("parcel-note")).textContent).toBe("That sheet was not found here.");
+    expect((await screen.findByTestId("parcel-note")).textContent).toBe("Couldn't find that sheet here.");
   });
 
   it("says so when the parcel is not on that sheet, and clears the message on typing", async () => {
     await openForm();
     type("56", "7");
     fireEvent.click(screen.getByRole("button", { name: "Find parcel" }));
-    expect((await screen.findByTestId("parcel-note")).textContent).toBe("That parcel was not found on that sheet.");
+    expect((await screen.findByTestId("parcel-note")).textContent).toBe("Couldn't find that parcel on that sheet.");
     type("56", "15");
     expect(screen.queryByTestId("parcel-note")).toBeNull();
   });

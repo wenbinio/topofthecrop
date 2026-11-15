@@ -16,8 +16,10 @@ A farmer goes through six steps. Each step is one screen and one route.
 | 2 | `/questions` | `src/screens/Questions.tsx` | Last crop, limits, priorities tapped in order (at least two) |
 | 3 | `/options` | `src/screens/Options.tsx` | What the satellites see, the recommendation, ranked rotations |
 | 4 | `/why/:optionId` | `src/screens/Why.tsx` | One rotation: income sum, evidence, what we don't know, what to check locally |
-| 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days and October–May rain now and by 2050, the drier-year slider, this season's rain and the forecast (live), 2024 and 2026 against a usual season |
+| 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days and October–May rain now and by 2050, a usual, a dry and the driest year side by side with the best fit in each, this season's rain and the forecast (live), 2024 and 2026 against a usual season |
 | 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Check and share": what to check alone for the best fit, who can look at the plan without an adviser, then the link and a one-page printout. The route keeps its old name so shared links still open |
+
+"Your field today" (`/today`, `src/screens/Today.tsx`) is where a farmer comes back: whether new data has changed the advice since the last visit, a tick list of what to do before sowing, what is usual this month, and the live rain and forecast. It opens from step 6 and from a card on step 1 (`src/components/WelcomeBack.tsx`). The plan is kept in the phone's `localStorage` (`src/state/plan.ts`), never sent. There are no push notifications: the app has no server, so it can only compare when the page is opened, and the page says so.
 
 Three more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin), `/settings` (`Settings.tsx`, the farmer's own prices and support payments) and `/credits` (`Credits.tsx`, the data credits and the AI note, linked from Check and share). `/timelapse` (`Timelapse.tsx`, one clear Sentinel-2 picture a month of the farmer's field, fetched live by `src/timelapse/frames.ts`) is linked from the Year screen ("Your field from space").
 
@@ -42,7 +44,7 @@ Everything the farmer chose is in the link, after the `#`. There is no local sto
 | `c`, `cn` | Last crop (a crop id or `other`), and its typed name when `other` |
 | `l` | Limits: no irrigation, cereal machinery only, no buyer, broomrape history |
 | `p` | The priorities in the farmer's order, most important first (two to four of income, water, soil, forage) |
-| `s` | Scenario for the slider: normal, drier, much-drier |
+| `s` | No longer used (the stop of the old dry-year slider). Ignored when read, never written |
 | `i` | `1` when strip intercrops are ranked with the other rotations (the switch on the Options screen) |
 | `v`, `g` | View (standard or simple) and language (en or it) |
 | `m` | The farmer's own figures: `p.<crop>` price, `c.<crop>` direct costs, `y.<crop>` yield, `l1.<crop>` and `l2.<crop>` the extra durum after that crop (first and second harvest), `s.<id>` support amount, `on.<id>` support switch. Up to 80 figures. |
@@ -92,7 +94,7 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 
 ### 4d. One set of rules for both fields
 
-`src/data/field-rules.js` holds the rules that turn data into what the farmer sees: which months count as green, patchy or bare, when a risk icon appears, how the slider's stops are worked out. Both `scripts/real-field.mjs` (4a) and `src/data/fieldFromBasin.ts` (4b) import it, so the demo field and a drawn field can never be judged by different rules. It is plain JavaScript so Node can run it without a build; its types are in `field-rules.d.ts`.
+`src/data/field-rules.js` holds the rules that turn data into what the farmer sees: which months count as green, patchy or bare, when a risk icon appears, how a usual, a dry and the driest year are worked out. Both `scripts/real-field.mjs` (4a) and `src/data/fieldFromBasin.ts` (4b) import it, so the demo field and a drawn field can never be judged by different rules. It is plain JavaScript so Node can run it without a build; its types are in `field-rules.d.ts`.
 
 ### 4e. Which data keys reach the screen
 
@@ -111,7 +113,7 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 | Basin outline on the map | the whole file | `area.geojson` |
 | Source names and resolutions | `meta.sources` | `field.json` |
 | Why: the signal steps (less green, more hot days, less water used) | `peak_by_season`, `hot_days_flower_by_season`, `aet_by_season`: the last five seasons against 2001–2020 (`measuredSignals` in `field-rules.js`) | greenness, weather, water |
-| Year: what each slider stop means, and its Oct–May rain now and by 2050 | `rain_season` and `rain_season_by_season` (typical, 1-in-10 dry, driest since 2001), `ssp245.rainse`, `ssp585.rainse` (`rainStops`) | weather, future |
+| Year: what each kind of year means, and its Oct–May rain now and by 2050 | `rain_season` and `rain_season_by_season` (typical, 1-in-10 dry, driest since 2001), `ssp245.rainse`, `ssp585.rainse` (`rainStops`) | weather, future |
 | Year: 2024 and 2026 against a usual season (`src/components/SeasonCompare.tsx`) | `rain_season`, `sm_spring`, `peak_ndvi`, `aet_season`, typical and by season (`fieldData.seasons`) | weather, water, greenness |
 | Year, demo field only: seasons much less green than nearby fields | `peak_vs_nearby_z` at or below −1.5 (`stressSeasons`) | `field.json` `greenness.seasons` |
 

@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
@@ -84,7 +84,7 @@ describe("Options", () => {
 
   it("shows Italian text in the Simple view", async () => {
     renderAt("/options?f=genzano-demo&p=income,water&v=simple&g=it");
-    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Semina cece dopo");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Semina cece la prossima annata");
     expect(document.documentElement.dataset.view).toBe("simple");
     expect(document.documentElement.lang).toBe("it");
   });
@@ -148,7 +148,7 @@ describe("Options", () => {
     renderAt("/options?f=genzano-demo&p=soil,income&l=no-irrigation");
     expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Keep durum: it fits best");
     expect(screen.getAllByTestId("option-row")).toHaveLength(1);
-    expect(screen.getByTestId("rec-reasons")).toHaveTextContent("No nitrogen added");
+    expect(screen.getByTestId("rec-reasons")).toHaveTextContent("Leaves no nitrogen");
   });
 });
 
@@ -187,7 +187,7 @@ describe("AreaWeather", () => {
       }),
     );
     renderAt("/area?o=16.1,40.9;16.11,40.9;16.11,40.91;16.1,40.91");
-    expect(await screen.findByTestId("weather-error")).toHaveTextContent("Weather history unavailable.");
+    expect(await screen.findByTestId("weather-error")).toHaveTextContent("Past weather is not available.");
     expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
     const demo = screen.getByRole("button", { name: "Demo field" });
     fireEvent.click(demo);
@@ -197,32 +197,68 @@ describe("AreaWeather", () => {
 });
 
 describe("Year", () => {
-  it("moving the slider to the last stop makes vetch-oat the best fit", async () => {
+  it("shows a usual, a dry and the driest year at once, each with its best fit, and no slider to choose with", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
-    const best = await screen.findByTestId("year-best");
-    expect(best).toHaveAttribute("data-option-id", "chickpea-durum-durum");
-    const slider = screen.getByRole("slider");
-    act(() => {
-      fireEvent.change(slider, { target: { value: "2" } });
-    });
-    await waitFor(() => expect(screen.getByTestId("year-best")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum"));
-    expect(lastPath).toContain("s=much-drier");
+    expect(await screen.findByTestId("year-best-normal")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    expect(screen.getByTestId("year-best-much-drier")).toHaveAttribute("data-option-id", "vetch-oat-durum-durum");
+    expect(screen.getByTestId("year-best-drier")).toBeInTheDocument();
+    expect(screen.queryByRole("slider")).toBeNull();
+    // The best fit differs between the kinds of year here, so no line claims it holds in all three.
+    expect(screen.queryByTestId("year-holds")).toBeNull();
+    expect(Array.from(screen.getByTestId("year-kinds").children).map((card) => card.getAttribute("data-testid"))).toEqual([
+      "year-normal", "year-drier", "year-much-drier",
+    ]);
+  });
+
+  it("says so in one line when the same rotation fits best in all three", async () => {
+    // A bundle in which a dry year changes no score: the usual year's best fit holds in all three.
+    const steady = structuredClone(fixture);
+    for (const option of steady.options) Object.assign(option.scores, { drier: option.scores.normal, "much-drier": option.scores.normal });
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(steady)));
+    renderAt("/year?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("year-holds")).toHaveTextContent("Chickpea fits best in all three.");
+    expect(screen.getByTestId("year-best-much-drier")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+  });
+
+  it("an old link's slider stop changes nothing: the usual year is still ranked for a usual year", async () => {
+    renderAt("/year?f=genzano-demo&p=income,water&s=much-drier");
+    expect(await screen.findByTestId("year-best-normal")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    fireEvent.click(screen.getByRole("link", { name: "Back" }));
+    await waitFor(() => expect(lastPath.startsWith("/options?")).toBe(true));
+    expect(lastPath).not.toContain("s=");
   });
 });
 
-describe("what each slider stop means", () => {
-  it("a line under the slider says what the stop is, and changes with it", async () => {
+describe("the printout lists the three kinds of year", () => {
+  it("each with its hot days now and by 2050 and its best fit", async () => {
+    renderAt("/print?f=genzano-demo&p=income,water");
+    const rows = within(await screen.findByTestId("print-years")).getAllByRole("row").slice(1);
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveTextContent("Usual year");
+    expect(rows[0]).toHaveTextContent("Chickpea");
+    expect(rows[2]).toHaveTextContent("Driest year");
+    expect(rows[2]).toHaveTextContent("16");
+    expect(rows[2]).toHaveTextContent("27");
+    expect(rows[2]).toHaveTextContent("Vetch-oat");
+  });
+});
+
+describe("what each kind of year means", () => {
+  it("a line under each name says what it is, and each has its own hot days", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
-    expect(await screen.findByTestId("scenario-def")).toHaveTextContent("A usual season (2001–2020).");
-    act(() => {
-      fireEvent.change(screen.getByRole("slider"), { target: { value: "1" } });
-    });
-    await waitFor(() => expect(screen.getByTestId("scenario-def")).toHaveTextContent("As dry and as hot as 1 season in 10."));
-    // The frozen fixture has no rain per stop, so no rain line shows.
-    expect(screen.queryByTestId("rain-stop")).toBeNull();
+    expect(await screen.findByTestId("def-normal")).toHaveTextContent("A usual season (2001–2020).");
+    expect(screen.getByTestId("def-drier")).toHaveTextContent("As dry and hot as 1 season in 10.");
+    expect(screen.getByTestId("def-much-drier")).toHaveTextContent("The driest and hottest seasons since 2001.");
+    expect(screen.getByTestId("year-normal")).toHaveTextContent("Usual year");
+    expect(screen.getByTestId("hot-normal")).toHaveTextContent("9");
+    expect(screen.getByTestId("hot-normal")).toHaveTextContent("17");
+    expect(screen.getByTestId("hot-much-drier")).toHaveTextContent("16");
+    expect(screen.getByTestId("hot-much-drier")).toHaveTextContent("27");
+    // The frozen fixture has no rain per kind of year, so no rain line shows.
+    expect(screen.queryByTestId("rain-normal")).toBeNull();
   });
 
-  it("with rain per stop in the bundle, it shows the stop's Oct-May rain now and by 2050", async () => {
+  it("with rain in the bundle, each kind of year shows its Oct-May rain now and by 2050", async () => {
     const withRain = structuredClone(fixture);
     const fact = (value: number) => ({
       value, unit: "mm", scale: "area", confidence: "fair", placeholder: false,
@@ -236,11 +272,12 @@ describe("what each slider stop means", () => {
       },
     });
     vi.stubGlobal("fetch", vi.fn(async () => okJson(withRain)));
-    renderAt("/year?f=genzano-demo&p=income,water&s=much-drier");
-    const line = await screen.findByTestId("rain-stop");
-    expect(screen.getByTestId("scenario-def")).toHaveTextContent("The driest and the hottest seasons since 2001.");
+    renderAt("/year?f=genzano-demo&p=income,water");
+    const line = await screen.findByTestId("rain-much-drier");
     expect(line).toHaveTextContent("390");
     expect(line).toHaveTextContent("367");
+    expect(screen.getByTestId("rain-normal")).toHaveTextContent("542");
+    expect(screen.getByTestId("rain-drier")).toHaveTextContent("393");
   });
 });
 
@@ -319,10 +356,10 @@ describe("Field timelapse (Your field from space)", () => {
 describe("Why: the reasons first, sources one tap away", () => {
   it("opens with why it is suggested, before the numbers, and shows no dataset until a Source is tapped", async () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
-    const reasons = await screen.findByRole("heading", { name: "Why suggested" });
+    const reasons = await screen.findByRole("heading", { name: "Why this option" });
     const numbers = screen.getByRole("heading", { name: "Over three harvests" });
     expect(reasons.compareDocumentPosition(numbers) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    const evidence = screen.getByRole("heading", { name: "Evidence" }).closest("section")!;
+    const evidence = screen.getByRole("heading", { name: "What the data shows" }).closest("section")!;
     // The fixture's hot days come from NASA POWER: hidden until the first Source is tapped.
     expect(within(evidence).queryByText(/NASA POWER/)).toBeNull();
     fireEvent.click(within(evidence).getAllByRole("button", { name: "Source" })[0]);
@@ -333,14 +370,14 @@ describe("Why: the reasons first, sources one tap away", () => {
 describe("Why: the finding's figure is listed once", () => {
   it("the evidence list leaves out the repeat of the finding's own figure, and keeps the rest", async () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
-    const evidence = (await screen.findByRole("heading", { name: "Evidence" })).closest("section")!;
+    const evidence = (await screen.findByRole("heading", { name: "What the data shows" })).closest("section")!;
     // chickpea answers the hot-flowering finding: its hot days used to appear twice in a row
     expect(within(evidence).getAllByText("Hot flowering days")).toHaveLength(1);
     expect(within(evidence).getByText("Bare months after harvest")).toBeInTheDocument();
   });
 });
 
-describe("2024 and 2026 against a usual season (Year)", () => {
+describe("2024 and 2026 compared with a usual season (Year)", () => {
   const source = { dataset: "NASA SMAP L4 soil moisture", resolution: "9 km", url: "" };
   const fact = (value: number, unit: string, range: [number, number], asOf: string) =>
     ({ value, unit, range, asOf, scale: "area", confidence: "fair", placeholder: false, label: "data.x", source });
@@ -382,19 +419,19 @@ describe("2024 and 2026 against a usual season (Year)", () => {
     expect(screen.queryByTestId("compare-years.soil-2026")).toBeNull();
     expect(within(card).getByText("no data")).toBeInTheDocument();
     expect(card).toHaveTextContent("2016–2025"); // SMAP's usual period, beside its usual figure
-    expect(screen.getByTestId("rain-2026-note")).toHaveTextContent("NASA GPM data stop in September 2025");
+    expect(screen.getByTestId("rain-2026-note")).toHaveTextContent("NASA GPM data ended in September 2025");
     expect(screen.queryByTestId("stress-line")).toBeNull();
   });
 
   it("names the seasons much less green than nearby fields, ending in check locally", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => okJson(withSeasons([-1.69, -0.65, -0.74, 0.06]))));
     renderAt("/year?f=genzano-demo&p=income,water");
-    expect(await screen.findByTestId("stress-line")).toHaveTextContent("Much less green than nearby fields in 2023: check locally");
+    expect(await screen.findByTestId("stress-line")).toHaveTextContent("Much less green than nearby fields in 2023. Check locally");
   });
 
   it("without field data there is no card", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");
-    await screen.findByTestId("scenario-def");
+    await screen.findByTestId("def-normal");
     expect(screen.queryByTestId("season-compare")).toBeNull();
   });
 });
@@ -424,7 +461,7 @@ describe("what counts as a hot day", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Hot flowering days" }));
     const line = screen.getByTestId("hot-def");
     expect(line).toHaveTextContent("30 °C");
-    expect(line).toHaveTextContent("22.9 °C now, 24.5 °C by 2050");
+    expect(line).toHaveTextContent("22.9 °C now, and 24.5 °C by 2050");
   });
 
   it("the Hot flowering finding on Options opens the same line", async () => {
@@ -440,7 +477,7 @@ describe("Check and share (step 6)", () => {
     const own = await screen.findByTestId("own-checks");
     expect(own).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     const items = within(own).getAllByTestId("own-check").map((li) => li.textContent);
-    expect(items).toEqual(["Any local pulse or forage buyer?", "Where to buy seed; best valley variety"]);
+    expect(items).toEqual(["Is there a local buyer for pulses or forage?", "Where to buy seed, and which variety does best in the valley"]);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Check before you sow");
   });
 
@@ -543,7 +580,7 @@ describe("Why", () => {
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     const headings = await screen.findAllByRole("heading", { level: 2 });
     const names = headings.map((h) => h.textContent);
-    const five = ["Why suggested", "Evidence", "Benefits", "Not known", "Check locally"];
+    const five = ["Why this option", "What the data shows", "Benefits", "What we don't know", "Check locally"];
     expect(names.filter((n) => five.includes(n ?? ""))).toEqual(five);
     expect(within(screen.getByTestId("why-path")).getAllByRole("listitem").length).toBeGreaterThan(2);
   });
@@ -571,7 +608,7 @@ describe("bundle failure", () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 404, json: async () => ({}) }) as unknown as Response));
     renderAt("/options?f=genzano-demo&p=income,water");
     expect(await screen.findByRole("button", { name: "Retry" })).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent("Field data not loaded.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not load the field data.");
   });
 });
 

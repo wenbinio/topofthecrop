@@ -6,7 +6,7 @@ import { LegendExplain, coverLine } from "./Term";
 /** Calendar month numbers in strip order: October first. */
 export const STRIP_MONTHS = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
-const COVER_CLASS: Record<Cover, string> = {
+export const COVER_CLASS: Record<Cover, string> = {
   green: "tc-cover-green",
   part: "tc-cover-part",
   bare: "tc-cover-bare",

@@ -529,11 +529,11 @@
         "defaultOn": true,
         "name": {
           "en": "Basic income support",
-          "it": "Sostegno base reddito"
+          "it": "Sostegno base al reddito"
         },
         "condition": {
-          "en": "Based on your entitlements; varies by farm. Enter your figure.",
-          "it": "Sui tuoi titoli; varia per azienda. Metti tua cifra."
+          "en": "It depends on your entitlements and varies by farm. Enter your figure.",
+          "it": "Dipende dai tuoi titoli e cambia da un'azienda all'altra. Metti la tua cifra."
         },
         "amount": {
           "value": 170,
@@ -564,8 +564,8 @@
           "it": "Sostegno ridistributivo"
         },
         "condition": {
-          "en": "First 14 ha, farms up to 50 ha.",
-          "it": "Primi 14 ha, aziende fino a 50 ha."
+          "en": "Paid on the first 14 ha, for farms up to 50 ha.",
+          "it": "Vale sui primi 14 ha, solo per le aziende fino a 50 ha."
         },
         "amount": {
           "value": 90,
@@ -593,11 +593,11 @@
         "defaultOn": true,
         "name": {
           "en": "Coupled durum support",
-          "it": "Accoppiato grano duro"
+          "it": "Accoppiato per il grano duro"
         },
         "condition": {
-          "en": "Centre-South durum, grown to full ripeness, certified seed.",
-          "it": "Grano duro Centro-Sud a maturazione, seme certificato."
+          "en": "For durum in Centre-South Italy, grown to full ripeness with certified seed.",
+          "it": "È per il grano duro del Centro-Sud, portato a maturazione piena con seme certificato."
         },
         "amount": {
           "value": 103,
@@ -627,11 +627,11 @@
         "defaultOn": true,
         "name": {
           "en": "Coupled grain legumes",
-          "it": "Accoppiato leguminose granella"
+          "it": "Accoppiato leguminose da granella"
         },
         "condition": {
-          "en": "Chickpea, faba bean, lentil or pea grown to full ripeness.",
-          "it": "Cece, favino, lenticchia o pisello coltivati fino a maturazione piena."
+          "en": "Paid on chickpea, faba bean, lentil or pea grown to full ripeness.",
+          "it": "Lo prendi su cece, favino, lenticchia o pisello portati fino a maturazione piena."
         },
         "amount": {
           "value": 44,
@@ -664,11 +664,11 @@
         "defaultOn": true,
         "name": {
           "en": "Coupled oilseeds",
-          "it": "Accoppiato oleaginose"
+          "it": "Accoppiato per le oleaginose"
         },
         "condition": {
-          "en": "For oilseed crops. Uses the 2023 payment rate.",
-          "it": "Per colture oleaginose. Importo del 2023."
+          "en": "Applies to oilseed crops, using the 2023 payment rate.",
+          "it": "Va alle colture oleaginose; l'importo è quello del 2023."
         },
         "amount": {
           "value": 98,
@@ -698,11 +698,11 @@
         "defaultOn": true,
         "name": {
           "en": "Eco-scheme 4: legume rotation",
-          "it": "Eco-schema 4: rotazione leguminosa"
+          "it": "Eco-schema 4: rotazione con leguminosa"
         },
         "condition": {
-          "en": "About 60 €/ha in eligible years (about 2 of 3). No legume herbicides or pesticides; residues worked in.",
-          "it": "Circa 60 €/ha anni validi (circa 2 su 3). No diserbi o fitofarmaci su legume; residui interrati."
+          "en": "Pays about 60 €/ha in the years that qualify (about 2 out of 3). You cannot use herbicides or pesticides on the legume, and you have to work the residues into the soil.",
+          "it": "Dà circa 60 €/ha negli anni validi, circa 2 su 3. Non puoi usare diserbi o fitofarmaci sulla leguminosa, e devi interrare i residui."
         },
         "amount": {
           "value": 40,
@@ -735,11 +735,11 @@
         "defaultOn": false,
         "name": {
           "en": "Eco-scheme 4: vetch-oat year",
-          "it": "Eco-schema 4: anno veccia-avena"
+          "it": "Eco-schema 4: anno di veccia-avena"
         },
         "condition": {
-          "en": "Sources disagree if vetch-oat before durum counts. Ask your adviser.",
-          "it": "Fonti discordi se veccia-avena prima del grano duro valga. Chiedi al tecnico."
+          "en": "Sources disagree on whether vetch-oat before durum counts. Ask your adviser.",
+          "it": "Le fonti non concordano sul fatto che la veccia-avena prima del grano duro valga. Chiedi al tecnico."
         },
         "amount": {
           "value": 40,
@@ -772,8 +772,8 @@
           "it": "Eco-schema 4: coltura da rinnovo"
         },
         "condition": {
-          "en": "Only if rapeseed or coriander count as renewal crops. Ask your CAA office.",
-          "it": "Solo se colza o coriandolo valgono come colture da rinnovo. Chiedi al tuo CAA."
+          "en": "You get this only if rapeseed or coriander count as renewal crops. Ask your CAA office.",
+          "it": "Lo prendi solo se colza o coriandolo valgono come colture da rinnovo. Chiedi al tuo CAA."
         },
         "amount": {
           "value": 40,
@@ -804,11 +804,11 @@
         "defaultOn": false,
         "name": {
           "en": "Eco-scheme 4: strips",
-          "it": "Eco-schema 4: strisce"
+          "it": "Eco-schema 4: a strisce"
         },
         "condition": {
-          "en": "Only if each strip is declared as its own parcel and no herbicide or pesticide touches the legume strip. Ask your CAA office.",
-          "it": "Solo se ogni striscia è dichiarata come appezzamento a sé e nessun diserbo o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA."
+          "en": "Applies only if each strip is declared as its own parcel and no herbicide or pesticide touches the legume strip. Ask your CAA office.",
+          "it": "Vale solo se dichiari ogni striscia come appezzamento a sé e nessun diserbo o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA."
         },
         "amount": {
           "value": 40,
@@ -839,11 +839,11 @@
         "defaultOn": false,
         "name": {
           "en": "Coupled legume forage",
-          "it": "Accoppiato erbaio leguminose"
+          "it": "Accoppiato erbaio di leguminose"
         },
         "condition": {
-          "en": "Only if vetch dominates mix and stays until flowering starts.",
-          "it": "Solo se prevale veccia fino a inizio fioritura."
+          "en": "Paid only if vetch makes up most of the mix and stays until flowering starts.",
+          "it": "Prendi l'aiuto solo se nell'erbaio prevale la veccia e resta in campo fino all'inizio della fioritura."
         },
         "amount": {
           "value": 44,
@@ -876,8 +876,8 @@
           "it": "Fondo grano duro"
         },
         "condition": {
-          "en": "3+ yr supply contract, certified seed. Max 50 ha; cut if too many apply.",
-          "it": "Contratto filiera almeno 3 anni, seme certificato. Max 50 ha; taglio se troppe domande."
+          "en": "Needs a supply contract of at least 3 years and certified seed. Covers up to 50 ha, and the payout is cut if too many apply.",
+          "it": "Serve un contratto di filiera di almeno 3 anni e seme certificato. Copre fino a 50 ha; se arrivano troppe domande, l'importo viene tagliato."
         },
         "amount": {
           "value": 100,
@@ -907,11 +907,11 @@
         "defaultOn": false,
         "name": {
           "en": "Legume sovereignty fund",
-          "it": "Fondo sovranità leguminose"
+          "it": "Fondo sovranità per le leguminose"
         },
         "condition": {
-          "en": "3-yr supply contract; pays legume ha above 3-yr average. Max 250 €/ha; cut if too many apply.",
-          "it": "Contratto filiera 3 anni; paga ha legumi sopra media 3 anni. Max 250 €/ha; taglio se troppe domande."
+          "en": "Needs a 3-year supply contract and pays on the legume hectares above the 3-year average. Caps at 250 €/ha, and is cut if too many apply.",
+          "it": "Ci vuole un contratto di filiera di 3 anni, e paga gli ettari a leguminose sopra la media dei 3 anni. Al massimo dà 250 €/ha; se ci sono troppe domande, viene tagliato."
         },
         "amount": {
           "value": 200,
@@ -945,8 +945,8 @@
           "it": "Semina su sodo (SRA03)"
         },
         "condition": {
-          "en": "5-year no-till on all crops. 2026 call closed.",
-          "it": "Impegno 5 anni su sodo, tutte le colture. Bando 2026 chiuso."
+          "en": "Requires 5 years of no-till sowing across all crops. The 2026 call is closed.",
+          "it": "Ti impegni per 5 anni a seminare su sodo su tutte le colture. Il bando 2026 è chiuso."
         },
         "amount": {
           "value": 300,
@@ -977,8 +977,8 @@
           "it": "Produzione integrata (SRA01)"
         },
         "condition": {
-          "en": "5-year regional integrated rules. Not with organic on same field.",
-          "it": "Impegno 5 anni regole integrate regionali. No col biologico sullo stesso campo."
+          "en": "Requires 5 years following the regional integrated production rules. You cannot combine it with organic on the same field.",
+          "it": "Devi seguire per 5 anni le regole regionali della produzione integrata. Non puoi prenderlo insieme al biologico sullo stesso campo."
         },
         "amount": {
           "value": 171,
@@ -1009,8 +1009,8 @@
           "it": "Biologico (SRA29)"
         },
         "condition": {
-          "en": "5 years certified organic. Sources disagree on arable rate; last call closed May 2025.",
-          "it": "5 anni biologico certificato. Fonti discordi sul premio seminativi; ultimo bando chiuso maggio 2025."
+          "en": "Requires 5 years of certified organic farming. Sources disagree on the arable rate, and the last call closed in May 2025.",
+          "it": "Serve il biologico certificato per 5 anni. Le fonti non concordano sul premio per i seminativi, e l'ultimo bando ha chiuso a maggio 2025."
         },
         "amount": {
           "value": 258,

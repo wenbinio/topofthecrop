@@ -30,7 +30,6 @@ export function whyPath(state: AppState, bundle: FieldBundle | null, route: stri
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
-    scenario: state.scenario,
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   });
@@ -114,10 +113,6 @@ export function applyCommands(state: AppState, commands: VoiceCommand[], route: 
         set("lastCrop", cmd.crop);
         set("lastCropName", "");
         done.push({ kind: "crop", crop: cmd.crop });
-        break;
-      case "scenario":
-        set("scenario", cmd.scenario);
-        done.push({ kind: "say", key: `scenario.${cmd.scenario}` });
         break;
       case "view":
         set("view", cmd.view);

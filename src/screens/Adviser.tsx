@@ -39,7 +39,6 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
     options: bundle.options,
     limits: state.limits,
     priorities: state.priorities,
-    scenario: state.scenario,
     lastCrop: state.lastCrop,
     intercrops: state.intercrops,
   }).ranked[0];
@@ -105,6 +104,9 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
       <CreditsLink />
       <BottomBar>
         <BackButton to={to("/year")} />
+        <LinkButton to={to("/today")} className="flex-1">
+          {t("today.open")}
+        </LinkButton>
       </BottomBar>
     </div>
   );
