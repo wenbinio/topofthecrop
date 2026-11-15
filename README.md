@@ -351,7 +351,7 @@ Space Apps allows AI tools if their use is disclosed and they do not produce the
 - **The research.** The team's research compilation (`research-compilation/`) is behind the extra durum after a legume.
 - **The product.** The team tried each version of the app, decided what to change (for example putting the priorities in order instead of picking two, and defining what "drier" means) and reviewed every change before it went live.
 
-A log of how AI was used, from the first preparation to the deadline, is in `docs/ai-log.md`.
+A log of how AI was used during the competition, with what we asked it to do and how it helped, is in `docs/ai-log.md`.
 
 **What AI tools did**
 - **AI coding and research tools** were used to build it: Claude (Opus for interface code and design, Sonnet for background research), OpenAI Codex (Sol, for audits), and Gemini (Hydrogen, for read-only reviews and for editing the app's wording in English and Italian over three passes, the last a rewrite of the Italian so it reads as a person's writing, which Claude then checked and applied; no native Italian speaker has read it), coordinated with a multi-agent tool called fleet.
