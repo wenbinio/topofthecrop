@@ -43,7 +43,7 @@ export const en = {
   "find.searchError": "Search unavailable",
   "find.locate": "My location",
   "find.locateError": "Location blocked",
-  "find.basemap": "Aerial photo · not NASA",
+  "find.basemap": "Aerial photo: AGEA · satellite: ESA, NASA",
   "find.hint": "Tap your field",
   "find.draw": "Draw your field",
   "find.isThis": "Your field?",

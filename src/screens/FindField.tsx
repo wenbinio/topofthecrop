@@ -17,7 +17,7 @@ import { Button } from "../components/ui";
 
 /** Where the map opens before the bundle arrives: the Genzano demo field. */
 const DEMO_CENTRE: LngLat = [16.0928, 40.8234];
-const OPEN_ZOOM = 15;
+const OPEN_ZOOM = 15.5;
 
 type Mode =
   | { k: "idle" }
@@ -237,7 +237,7 @@ export default function FindField() {
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => flyTo([pos.coords.longitude, pos.coords.latitude], 17),
+      (pos) => flyTo([pos.coords.longitude, pos.coords.latitude], 16),
       () => setLocError(true),
       { timeout: 10000, enableHighAccuracy: true },
     );
