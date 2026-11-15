@@ -37,7 +37,7 @@ export type RankResult = {
 export const RANK_WEIGHTS: readonly number[] = [4, 3, 2, 1];
 
 /**
- * README "How options are ranked", stages 3 to 5: leave out a legume just grown, filter by limits, then order by priorities.
+ * README "How the advice is made", steps 2 and 3: leave out a legume just grown, filter by limits, then order by priorities.
  * The score never leaves this module.
  */
 export function rankOptions(input: RankInput): RankResult {
