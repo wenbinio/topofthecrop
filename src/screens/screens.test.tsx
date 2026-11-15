@@ -242,6 +242,16 @@ describe("what each slider stop means", () => {
   });
 });
 
+describe("Why: the finding's figure is listed once", () => {
+  it("the evidence list leaves out the repeat of the finding's own figure, and keeps the rest", async () => {
+    renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
+    const evidence = (await screen.findByRole("heading", { name: "Evidence" })).closest("section")!;
+    // chickpea answers the hot-flowering finding: its hot days used to appear twice in a row
+    expect(within(evidence).getAllByText("Hot flowering days")).toHaveLength(1);
+    expect(within(evidence).getByText("Bare months after harvest")).toBeInTheDocument();
+  });
+});
+
 describe("2024 and 2026 against a usual season (Year)", () => {
   const source = { dataset: "NASA SMAP L4 soil moisture", resolution: "9 km", url: "" };
   const fact = (value: number, unit: string, range: [number, number], asOf: string) =>
