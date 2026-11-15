@@ -90,6 +90,7 @@ Scripts that rebuild shipped data (each says in its header how to run it):
 - Money sums live once, in `src/money/money.ts`. `scripts/make-placeholder-bundle.mjs` repeats the same sum on purpose so the shipped file matches; keep the two in step (the yield lift is in both).
 - Tests use the frozen fixture `src/test-fixtures/money-bundle.json`. Only `src/data/public-bundle.test.ts` reads the shipped bundle.
 - A block that calls a live service loads on its own, gives up after 8 seconds, offers a retry, and never blocks the rest of the screen.
+- The site's own data files (the demo field, the basin files, the parcels) are fetched through `stamped()` in `src/data/fresh.ts`, which adds a fingerprint of the shipped data to the address. The host caches files for ten minutes; without the fingerprint a newly published app can read the previous data. Fetch a new shipped data file the same way, and add its folder to `dataStamp()` in `vite.config.ts`.
 
 ## What the farmer can change
 

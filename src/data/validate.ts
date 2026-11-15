@@ -1,3 +1,4 @@
+import { stamped } from "./fresh";
 import type { FieldBundle } from "./types";
 import { CHECK_WINDOWS, CLIMATE_SCENARIOS, CROPS, FIELD_DATA_KEYS, LIMITS, PRIORITIES, SCENARIOS } from "./types";
 
@@ -250,7 +251,8 @@ export async function loadBundle(fieldId: string): Promise<FieldBundle> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), BUNDLE_TIMEOUT_MS);
   try {
-    const response = await fetch(`${import.meta.env.BASE_URL}data/${encodeURIComponent(fieldId)}.json`, { signal: controller.signal });
+    // Stamped with the data's fingerprint (fresh.ts), so a newly published app never reads the previous file.
+    const response = await fetch(stamped(`${import.meta.env.BASE_URL}data/${encodeURIComponent(fieldId)}.json`), { signal: controller.signal });
     if (!response.ok) throw new Error(`bundle: request failed (${response.status})`);
     return validateBundle(await response.json());
   } finally {
