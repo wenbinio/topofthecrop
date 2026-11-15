@@ -187,6 +187,7 @@ describe("crop icons beside crop names", () => {
     renderAt("/settings?f=genzano-demo&p=income,water");
     const rows = await screen.findAllByTestId("price-row");
     for (const r of rows) expect(cropIconsIn(r)).toEqual([r.getAttribute("data-crop")]);
+    fireEvent.click(screen.getByRole("button", { name: /^Your own payments/ }));
     fireEvent.click(screen.getByRole("button", { name: "Add a payment" }));
     const toggle = within(screen.getByTestId("extra-form")).getByRole("button", { name: "Faba bean" });
     expect(cropIconsIn(toggle)).toEqual(["faba"]);
