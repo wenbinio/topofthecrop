@@ -544,9 +544,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "European Commission: basic income support for sustainability (BISS)",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://agriculture.ec.europa.eu/common-agricultural-policy/income-support/biss_en"
           },
           "confidence": "low",
           "placeholder": false,
@@ -854,9 +854,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "dataset": "AGEA circular 94143 of 21 Nov 2025: CAP payment amounts for 2025",
             "resolution": "national",
-            "url": "https://www.agea.gov.it/"
+            "url": "https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -888,9 +888,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "MASAF durum wheat fund (Fondo grano duro, DM 585284 of 30 October 2025)",
+            "dataset": "MASAF decree DM 585284 of 30 October 2025: durum wheat supply-chain fund (up to 100 €/ha)",
             "resolution": "national",
-            "url": "https://informatoreagrario.it/seminativi/confermato-il-contributo-per-la-filiera-del-grano-duro/"
+            "url": "https://www.masaf.gov.it/flex/cm/pages/ServeAttachment.php/L/IT/D/1%252Ff%252F2%252FD.b517ae94300369dfdb7e/P/BLOB%3AID%3D24153/E/pdf?mode=download"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -922,9 +922,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "MASAF decrees and AGEA instructions",
+            "dataset": "Interministerial decree of 22 December 2025 (DM 688617): food-sovereignty fund 2025-26, legumes 250 €/ha with a supply-chain contract",
             "resolution": "national",
-            "url": "https://www.masaf.gov.it/"
+            "url": "https://www.masaf.gov.it/flex/cm/pages/ServeAttachment.php/L/IT/D/1%252Fe%252F3%252FD.6b2cc4eca1e0649ff298/P/BLOB%3AID%3D24096/E/pdf?mode=download"
           },
           "confidence": "fair",
           "placeholder": false,
@@ -959,9 +959,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
+            "dataset": "CSR Basilicata: SRA03 no-till call 2026 (Determination 100 of 13 Feb 2026, extended to 30 June 2026 by Determination 423)",
             "resolution": "regional",
-            "url": "https://europa.regione.basilicata.it/feasr/"
+            "url": "https://basilicatacsr.it/bando-csr/sra03-semina-su-sodo-annualita-2026/"
           },
           "confidence": "good",
           "placeholder": false,
@@ -991,9 +991,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan): SRA01 and SRA29 payment tables",
             "resolution": "regional",
-            "url": "https://europa.regione.basilicata.it/feasr/"
+            "url": "https://europa.regione.basilicata.it/feasr/wp-content/uploads/2023/07/CSR-GIUGNO2023-Completo-web.pdf"
           },
           "confidence": "good",
           "placeholder": false,
@@ -1023,9 +1023,9 @@
           ],
           "scale": "area",
           "source": {
-            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan)",
+            "dataset": "CSR Basilicata 2023-2027 (regional rural development plan): SRA01 and SRA29 payment tables",
             "resolution": "regional",
-            "url": "https://europa.regione.basilicata.it/feasr/"
+            "url": "https://europa.regione.basilicata.it/feasr/wp-content/uploads/2023/07/CSR-GIUGNO2023-Completo-web.pdf"
           },
           "confidence": "good",
           "placeholder": false,
