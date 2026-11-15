@@ -59,10 +59,16 @@ NASA datasets were read through Google Earth Engine, except NASA POWER (its API)
 - Foggia commodity exchange, weekly price lists, and the national durum price list (2025-26). Used for durum, chickpea, faba bean and barley prices. https://www.fg.camcom.it/
 - Bari commodity exchange, cereal and legume price lists (2025-26). Used for chickpea, faba bean, barley and lentil prices. https://www.ba.camcom.it/
 - Bologna commodity exchange price lists. Used for the field pea price and the hay quotes behind vetch-oat hay. https://www.bo.camcom.gov.it/
-- AGEA payment circulars for CAP 2023-2027 (2023, 2024 and 2025 unit amounts; operating instructions 30/2025 and 47/2026). Used for the support payments. https://www.agea.gov.it/
-- MASAF decrees, and MASAF's slides on the 2024 CAP simplification (the crop-rotation rule). https://www.masaf.gov.it/ and https://fidaf.it/wp-content/uploads/2024/10/Semplificazione-PAC_30-ott-24.pdf
-- Regione Basilicata, CSR 2023-2027 (regional rural development plan). Used for the regional payments. https://www.basilicatacsr.it/ (plan documents also at https://europa.regione.basilicata.it/feasr/)
-- Italy's CAP Strategic Plan 2023-2027 (in the team's research compilation). https://faolex.fao.org/docs/pdf/ita236756.pdf
+- AGEA circular 94143 of 21 November 2025, CAP payment amounts for 2025. Used for coupled durum, grain legumes and oilseeds, the redistributive payment and Eco-scheme 4. https://www.agea.gov.it/documents-apigw/documents/d/agea/agea-94143-21-11-25-a-opr-circolareageasaldi2025-pdf
+- AGEA payment circulars for CAP 2023-2027 (2023, 2024 and 2025 unit amounts; operating instructions 30/2025 and 47/2026). Background for the support payments. https://www.agea.gov.it/
+- European Commission, basic income support for sustainability (BISS). Describes the basic payment; the app's 170 €/ha is our estimate. https://agriculture.ec.europa.eu/common-agricultural-policy/income-support/biss_en
+- Italy's CAP Strategic Plan 2023-2027: coupled income support (PD 06) and eco-schemes (PD 05). Used for planned rates, floors and ceilings. https://agriculture.ec.europa.eu/cap-my-country/cap-strategic-plans/italy_en (plan text: https://faolex.fao.org/docs/pdf/ita236756.pdf)
+- MASAF decree DM 585284 of 30 October 2025, durum wheat supply-chain fund (up to 100 €/ha). Used for the durum fund. https://www.masaf.gov.it/flex/cm/pages/ServeBLOB.php/L/IT/IDPagina/24153
+- Interministerial decree of 22 December 2025 (DM 688617), food-sovereignty fund 2025-26 (legumes 250 €/ha with a supply-chain contract). Used for the legume fund. https://www.masaf.gov.it/flex/cm/pages/ServeBLOB.php/L/IT/IDPagina/24096
+- CREA, list of species that can be certified (7 October 2025). Used for the certified-seed rule. https://www.crea.gov.it/documents/63509/2367743/Specie-certificabili-07-10-2025.pdf/10a470d6-831e-a3e7-0d5f-d81518f9e9c3?t=1766054994158
+- MASAF's slides on the 2024 CAP simplification. Used for the crop-rotation rule. https://fidaf.it/wp-content/uploads/2024/10/Semplificazione-PAC_30-ott-24.pdf
+- Regione Basilicata, CSR 2023-2027 (regional rural development plan), June 2023 version. Used for the SRA01 and SRA29 payments. https://europa.regione.basilicata.it/feasr/wp-content/uploads/2023/07/CSR-GIUGNO2023-Completo-web.pdf
+- CSR Basilicata, SRA03 no-till call 2026 (Determination 100 of 13 February 2026, extended to 30 June 2026). Used for the SRA03 payment. https://basilicatacsr.it/bando-csr/sra03-semina-su-sodo-annualita-2026/
 - Top of the Crop crop research notes, 14 November 2026. Every crop figure without a primary source: yields other than durum, direct costs other than durum and chickpea, water need. Compiled by the team from two AI research agents (see the AI statement). https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md
 - Top of the Crop research compilation (EU and Italian subsidies, market prices, rotation studies). https://github.com/wenbinio/topofthecrop/blob/main/research-compilation/research-compilation.md
 - Also consulted, not used for the app's figures:
@@ -81,7 +87,7 @@ The idea, the choices and the checking are the team's. Most of the code and the 
 
 What the team did:
 - Chose the problem: what a rain-fed durum farmer should grow next.
-- Designed the app: six steps on a phone, not a dashboard.
+- Designed the app for a phone, not a dashboard: three setup steps, then the plan.
 - Picked the place after its own Earth Engine run compared satellite views of cropland in 17 areas.
 - Chose a demo field where a published trial lets us check satellite figures against ground measurements.
 - Ran every data notebook and checked the results against the trial's weather station and other datasets. Those checks caught NASA POWER's impossible rain months, which the app now leaves out.
