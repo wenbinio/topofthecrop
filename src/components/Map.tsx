@@ -46,7 +46,7 @@ export type MapProps = {
   onTrace: (points: LngLat[]) => void;
 };
 
-// The map picture comes from three open sources, coarsest first. None needs an account or a key.
+// The map picture comes from four open sources, coarsest first. None needs an account or a key.
 /** The whole world, zoomed out: NASA Blue Marble (MODIS), from NASA's own tile service. Public domain. */
 const NASA_TILES =
   "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg";
@@ -69,8 +69,26 @@ const BASIN_TILE_BOUNDS: [number, number, number, number] = [15.7175, 40.3384, 1
 const BASIN_ATTRIBUTION = "Bradano basin: contains modified Copernicus Sentinel data 2026";
 /** Sentinel-2 pixels are 10 m: about one screen pixel at zoom 14 here. Past that the map only enlarges them. */
 const DETAIL_MAX_TILE_ZOOM = 14;
+/**
+ * On top, where they exist: Italy's own aerial photos (AGEA orthophotos, CC BY 4.0, an EU "high-value dataset";
+ * licence at https://geoportale.agea.gov.it/legal-notes). AGEA flies each region every three years and serves
+ * one layer per flight year. Outside a year's regions the service answers with a see-through tile, so the three
+ * years stack and the Sentinel-2 picture shows wherever, or whenever, AGEA has nothing.
+ * Checked on 15 November 2026: 2023 covers Basilicata and serves it to tile level 16 (about 1.8 m; level 17
+ * answers "400"); 2022 covers Puglia, the basin's eastern edge, to level 18.
+ */
+const AGEA_YEARS: { year: number; maxzoom: number }[] = [
+  { year: 2022, maxzoom: 18 },
+  { year: 2023, maxzoom: 16 },
+  { year: 2024, maxzoom: 16 },
+];
+const AGEA_FROM_ZOOM = 12;
+const ageaTiles = (year: number) =>
+  `https://geoportale.agea.gov.it/image/rest/services/AgEA/Ortofoto_AgEA_${year}/ImageServer/WMTS/tile/1.0.0/AgEA_Ortofoto_AgEA_${year}/default/GoogleMapsCompatible/{z}/{y}/{x}`;
+const AGEA_ATTRIBUTION =
+  'Aerial photos &copy; <a href="https://geoportale.agea.gov.it/" target="_blank" rel="noreferrer">AGEA</a>, flights 2022&ndash;2024, CC BY 4.0';
 /** Enlarging still helps a thumb place a corner, up to here. */
-const MAP_MAX_ZOOM = 18;
+const MAP_MAX_ZOOM = 19;
 
 /** The address of the app's own tiles, whatever folder the app is served from. */
 function basinTiles(): string {
@@ -270,6 +288,12 @@ export default function Map({
             bounds: BASIN_TILE_BOUNDS,
             attribution: BASIN_ATTRIBUTION,
           },
+          ...Object.fromEntries(
+            AGEA_YEARS.map(({ year, maxzoom }, i) => [
+              `agea${year}`,
+              { type: "raster" as const, tiles: [ageaTiles(year)], tileSize: 256, maxzoom, ...(i === 0 ? { attribution: AGEA_ATTRIBUTION } : {}) },
+            ]),
+          ),
           basin: { type: "geojson", data: polygonData(null) },
           field: { type: "geojson", data: polygonData(null) },
           drawn: { type: "geojson", data: polygonData(null) },
@@ -279,6 +303,7 @@ export default function Map({
           { id: "nasa", type: "raster", source: "nasa", maxzoom: SENTINEL_FROM_ZOOM + 1 },
           { id: "sentinel", type: "raster", source: "sentinel", minzoom: SENTINEL_FROM_ZOOM },
           { id: "ours", type: "raster", source: "ours" },
+          ...AGEA_YEARS.map(({ year }) => ({ id: `agea${year}`, type: "raster" as const, source: `agea${year}`, minzoom: AGEA_FROM_ZOOM })),
           { id: "basin-line", type: "line", source: "basin", paint: { "line-color": basin, "line-width": 1.5, "line-opacity": 0.8 } },
           { id: "field-fill", type: "fill", source: "field", paint: { "fill-color": field, "fill-opacity": 0.12 } },
           { id: "field-line", type: "line", source: "field", paint: { "line-color": field, "line-width": 3 } },
