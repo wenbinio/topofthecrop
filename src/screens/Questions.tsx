@@ -2,7 +2,8 @@ import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import type { FieldBundle, Limit } from "../data/types";
 import { CROPS, LAST_CROP_NAME_MAX, LIMITS, PRIORITIES } from "../data/types";
-import { useT } from "../i18n";
+import { useLang, useT } from "../i18n";
+import { sourceText } from "../i18n/sources";
 import { economicsCrops } from "../money/money";
 import { toggleLimit } from "../state/toggles";
 import { useAppState, useGo, useTo } from "../state/useAppState";
@@ -66,6 +67,7 @@ const LAST_STEP = 2;
 
 export default function Questions({ bundle }: { bundle: FieldBundle }) {
   const t = useT();
+  const lang = useLang();
   const go = useGo();
   const to = useTo();
   const [state, setState] = useAppState();
@@ -96,7 +98,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
         <h1 className="text-head">{t("q.lastCropQ")}</h1>
         {!bundle.lastCrop.appDefault ? (
           <p className="mt-1 text-body text-ink-soft" data-testid="last-crop-hint">
-            {t("q.lastCropHint", { crop: t(`crop.${bundle.lastCrop.crop}`).toLocaleLowerCase(), source: bundle.lastCrop.source.dataset })}
+            {t("q.lastCropHint", { crop: t(`crop.${bundle.lastCrop.crop}`).toLocaleLowerCase(), source: sourceText(bundle.lastCrop.source.dataset, lang) })}
           </p>
         ) : null}
       </div>

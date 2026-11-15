@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Confidence, Fact, Lang, Scale } from "../data/types";
 import { hasKey, useLang, useT } from "../i18n";
+import { sourceText } from "../i18n/sources";
 import type { Translate } from "../i18n";
 import { AreaScaleIcon, FieldScaleIcon } from "./Icons";
 
@@ -56,12 +57,13 @@ export function YoursTag() {
 
 /** Dataset and resolution, e.g. "LANDSAT / HLS · 30 m". Hidden in Simple view until tapped. A figure the farmer changed shows "Yours" instead. */
 export function DatasetLabel({ fact, always = false }: { fact: Fact; always?: boolean }) {
+  const lang = useLang();
   if (fact.edited) return <YoursTag />;
   return (
     <span
       className={`${always ? "" : "tc-dataset "}font-mono text-small uppercase tracking-wide text-ink-soft`}
     >
-      {fact.source.dataset} · {fact.source.resolution}
+      {sourceText(fact.source.dataset, lang)} · {sourceText(fact.source.resolution, lang)}
     </span>
   );
 }
@@ -220,10 +222,10 @@ export function FactDetail({ fact }: { fact: Fact }) {
       t("money.yoursLong")
     ) : fact.source.url ? (
       <a key="src" href={fact.source.url} target="_blank" rel="noreferrer" className="underline">
-        {fact.source.dataset} · {fact.source.resolution}
+        {sourceText(fact.source.dataset, lang)} · {sourceText(fact.source.resolution, lang)}
       </a>
     ) : (
-      `${fact.source.dataset} · ${fact.source.resolution}`
+      `${sourceText(fact.source.dataset, lang)} · ${sourceText(fact.source.resolution, lang)}`
     ),
   );
   if (fact.asOf) parts.push(t("common.asOf", { date: fact.asOf }));
