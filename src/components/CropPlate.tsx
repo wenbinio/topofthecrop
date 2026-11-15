@@ -1,7 +1,7 @@
 // A crop's botanical plate: a small painting of the plant with its seed or pod, on its own paper.
 // Used where there is room to see it (the three harvests, the advice, the last-crop question). Inside a sentence the
 // crop keeps its line icon (CropName), because a painting at text size is only a smudge.
-// The plates were made with AI (ChatGPT image generation) from a written brief; see docs/credits.
+// The plates were made with AI (ChatGPT image generation) from a written brief, and are not photographs.
 // Written with AI assistance (Claude, Anthropic).
 import type { CropId } from "../data/types";
 
