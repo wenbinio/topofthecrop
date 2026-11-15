@@ -1,6 +1,6 @@
 # Data sources
 
-All data in `data/` comes from the datasets below, processed by the notebooks in `notebooks/` (last checked 2026-11-14T16:51Z).
+All data in `data/` comes from the datasets below, processed by the notebooks in `ColabNotebooks/` (last checked 2026-11-14T16:51Z).
 Every dataset is free and openly licensed. Rain and temperature published for the trial at the demo field (Denora et al. 2025) are quoted, with the citation, only to check results: see Ground check below and `weather.ground_check` in `field.json`.
 
 | Dataset | Used for | Earth Engine ID or service | Resolution | Licence | Citation |
