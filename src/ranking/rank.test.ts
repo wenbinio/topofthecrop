@@ -66,7 +66,7 @@ it('orders flags by LIMITS without removing flagged options', () => {
 it('turns a removal into a flag for the current option', () => {
   const current: Option = { ...options[3], removedBy: ['no-irrigation'] };
   expect(rankOptions({ ...input, options: [current], limits: ['no-irrigation'] })).toEqual({
-    ranked: [{ option: current, rank: 1, best: true, flags: ['no-irrigation'] }], removed: [], repeats: [],
+    ranked: [{ option: current, rank: 1, best: true, flags: ['no-irrigation'] }], removed: [], repeats: [], intercrops: [],
   });
 });
 it('retains the current rotation when all alternatives are removed', () => {

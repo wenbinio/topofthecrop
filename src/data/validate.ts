@@ -178,6 +178,13 @@ export function validateBundle(json: unknown): FieldBundle {
       known(crop, CROPS, `${path}.sequence`);
       usedCrops.add(crop as string);
     });
+    // A strip intercrop: the second sequence, grown beside the first.
+    if (option.strips !== undefined) {
+      array(option.strips, `${path}.strips`, 3).forEach(crop => {
+        known(crop, CROPS, `${path}.strips`);
+        usedCrops.add(crop as string);
+      });
+    }
     number(option.firstHarvestYear, `${path}.firstHarvestYear`);
     check(Number.isInteger(option.firstHarvestYear), `${path}.firstHarvestYear`);
     const facts = object(option.facts, `${path}.facts`);

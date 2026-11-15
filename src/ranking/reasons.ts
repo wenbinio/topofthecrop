@@ -1,4 +1,5 @@
 import type { Option, Priority } from "../data/types";
+import { sequencesOf } from "../data/types";
 
 export type Reason = { priority: Priority; key: string; vars: Record<string, string | number> };
 
@@ -38,7 +39,7 @@ function waterReason(option: Option): Reason {
 }
 
 function forageReason(option: Option): Reason {
-  const yes = option.sequence.includes("vetch-oat");
+  const yes = sequencesOf(option).flat().includes("vetch-oat");
   return { priority: "forage", key: yes ? "reason.forage.yes" : "reason.forage.no", vars: {} };
 }
 

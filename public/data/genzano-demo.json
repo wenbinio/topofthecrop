@@ -799,6 +799,41 @@
         ]
       },
       {
+        "id": "eco-rotation-strips",
+        "level": "eu",
+        "defaultOn": false,
+        "name": {
+          "en": "Eco-scheme 4: strips",
+          "it": "Eco-schema 4: strisce"
+        },
+        "condition": {
+          "en": "Only if each strip is declared as its own parcel and no herbicide or pesticide touches the legume strip. Ask your CAA office.",
+          "it": "Solo se ogni striscia è dichiarata come appezzamento a sé e nessun diserbo o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA."
+        },
+        "amount": {
+          "value": 40,
+          "unit": "€/ha",
+          "range": [
+            0,
+            72
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "AGEA payment circulars, CAP 2023-2027",
+            "resolution": "national",
+            "url": "https://www.agea.gov.it/"
+          },
+          "confidence": "low",
+          "placeholder": false,
+          "asOf": "2025"
+        },
+        "crops": [],
+        "options": [
+          "strips-chickpea-durum",
+          "strips-faba-durum"
+        ]
+      },
+      {
         "id": "coupled-forage-legume",
         "level": "italy",
         "defaultOn": false,
@@ -4018,6 +4053,585 @@
         ],
         "checkLocally": [
           "check.contract",
+          "check.seed",
+          "check.adviser"
+        ]
+      }
+    },
+    {
+      "id": "strips-chickpea-durum",
+      "isCurrent": false,
+      "sequence": [
+        "chickpea",
+        "durum",
+        "chickpea"
+      ],
+      "strips": [
+        "durum",
+        "chickpea",
+        "durum"
+      ],
+      "firstHarvestYear": 2027,
+      "facts": {
+        "income": {
+          "value": 692,
+          "unit": "€/ha",
+          "range": [
+            320,
+            1130
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.income",
+          "placeholder": false,
+          "asOf": "2026-11"
+        },
+        "water": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.water",
+          "placeholder": false,
+          "asOf": "2026-11"
+        },
+        "nitrogen": {
+          "value": 10,
+          "unit": "kg N/ha",
+          "range": [
+            8,
+            20
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.nitrogen",
+          "placeholder": false,
+          "asOf": "2026-11"
+        },
+        "risk": {
+          "value": "low",
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.risk",
+          "placeholder": true,
+          "asOf": "2026-11"
+        }
+      },
+      "scores": {
+        "normal": {
+          "income": 0.692,
+          "water": 0.725,
+          "soil": 0.7,
+          "forage": 0.05
+        },
+        "drier": {
+          "income": 0.623,
+          "water": 0.725,
+          "soil": 0.7,
+          "forage": 0.05
+        },
+        "much-drier": {
+          "income": 0.519,
+          "water": 0.725,
+          "soil": 0.7,
+          "forage": 0.05
+        }
+      },
+      "removedBy": [],
+      "flaggedBy": [
+        "no-buyer",
+        "broomrape"
+      ],
+      "supportTag": true,
+      "why": {
+        "suggested": "why.strips-chickpea-durum.suggested",
+        "evidence": [
+          {
+            "value": 2,
+            "unit": "months",
+            "range": [
+              1,
+              6
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "NASA MODIS (MOD13Q1)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.bareMonths",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 4,
+            "unit": "days",
+            "range": [
+              0,
+              8
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
+            },
+            "confidence": "fair",
+            "label": "evidence.hotDays",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 542,
+            "unit": "mm",
+            "range": [
+              418,
+              631
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "evidence.rainSeason",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 509,
+            "unit": "mm",
+            "range": [
+              487,
+              544
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "FAO-56 crop water need from ERA5-Land",
+              "resolution": "about 11 km",
+              "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+            },
+            "confidence": "fair",
+            "label": "evidence.durumNeed",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 37,
+            "unit": "%",
+            "range": [
+              5.6,
+              76.4
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "SoilGrids 2.0 (ISRIC)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5194/soil-7-217-2021"
+            },
+            "confidence": "fair",
+            "label": "evidence.clay",
+            "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
+            "placeholder": false
+          }
+        ],
+        "benefits": [
+          {
+            "value": 10,
+            "unit": "kg N/ha",
+            "range": [
+              8,
+              20
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Crop research, Nov 2026",
+              "resolution": "southern Italy",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.nitrogen",
+            "placeholder": false,
+            "asOf": "2026-11"
+          },
+          {
+            "value": 692,
+            "unit": "€/ha",
+            "range": [
+              320,
+              1130
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Crop research, Nov 2026",
+              "resolution": "southern Italy",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.income",
+            "placeholder": false,
+            "asOf": "2026-11"
+          }
+        ],
+        "unknowns": [
+          "unknown.stripsGain",
+          "unknown.stripsRare",
+          "unknown.prices",
+          "unknown.soilDepth",
+          "unknown.fieldHistory"
+        ],
+        "checkLocally": [
+          "check.stripWidth",
+          "check.stripClaim",
+          "check.stripSpray",
+          "check.stripReturn",
+          "check.buyer",
+          "check.seed",
+          "check.adviser"
+        ]
+      }
+    },
+    {
+      "id": "strips-faba-durum",
+      "isCurrent": false,
+      "sequence": [
+        "faba",
+        "durum",
+        "faba"
+      ],
+      "strips": [
+        "durum",
+        "faba",
+        "durum"
+      ],
+      "firstHarvestYear": 2027,
+      "facts": {
+        "income": {
+          "value": 466,
+          "unit": "€/ha",
+          "range": [
+            210,
+            750
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.income",
+          "placeholder": false,
+          "asOf": "2026-11"
+        },
+        "water": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.water",
+          "placeholder": false,
+          "asOf": "2026-11"
+        },
+        "nitrogen": {
+          "value": 18,
+          "unit": "kg N/ha",
+          "range": [
+            15,
+            30
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.nitrogen",
+          "placeholder": false,
+          "asOf": "2026-11"
+        },
+        "risk": {
+          "value": "medium",
+          "scale": "area",
+          "source": {
+            "dataset": "Crop research, Nov 2026",
+            "resolution": "southern Italy",
+            "url": ""
+          },
+          "confidence": "low",
+          "label": "fact.risk",
+          "placeholder": true,
+          "asOf": "2026-11"
+        }
+      },
+      "scores": {
+        "normal": {
+          "income": 0.466,
+          "water": 0.55,
+          "soil": 0.95,
+          "forage": 0.3
+        },
+        "drier": {
+          "income": 0.396,
+          "water": 0.55,
+          "soil": 0.95,
+          "forage": 0.3
+        },
+        "much-drier": {
+          "income": 0.303,
+          "water": 0.55,
+          "soil": 0.95,
+          "forage": 0.3
+        }
+      },
+      "removedBy": [],
+      "flaggedBy": [
+        "broomrape"
+      ],
+      "supportTag": true,
+      "why": {
+        "suggested": "why.strips-faba-durum.suggested",
+        "evidence": [
+          {
+            "value": 2,
+            "unit": "months",
+            "range": [
+              1,
+              6
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "NASA MODIS (MOD13Q1)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.bareMonths",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 4,
+            "unit": "days",
+            "range": [
+              0,
+              8
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
+            },
+            "confidence": "fair",
+            "label": "evidence.hotDays",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 542,
+            "unit": "mm",
+            "range": [
+              418,
+              631
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "evidence.rainSeason",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 509,
+            "unit": "mm",
+            "range": [
+              487,
+              544
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "FAO-56 crop water need from ERA5-Land",
+              "resolution": "about 11 km",
+              "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+            },
+            "confidence": "fair",
+            "label": "evidence.durumNeed",
+            "asOf": "2001-2020",
+            "placeholder": false
+          },
+          {
+            "value": 37,
+            "unit": "%",
+            "range": [
+              5.6,
+              76.4
+            ],
+            "scale": "field",
+            "source": {
+              "dataset": "SoilGrids 2.0 (ISRIC)",
+              "resolution": "250 m",
+              "url": "https://doi.org/10.5194/soil-7-217-2021"
+            },
+            "confidence": "fair",
+            "label": "evidence.clay",
+            "asOf": "SoilGrids 2.0",
+            "placeholder": false
+          },
+          {
+            "value": 30.1,
+            "unit": "%",
+            "range": [
+              27.4,
+              32
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA SMAP L4 soil moisture",
+              "resolution": "about 9 km",
+              "url": "https://doi.org/10.5067/T5RUATAQREF8"
+            },
+            "confidence": "fair",
+            "label": "evidence.soilWaterSpring",
+            "asOf": "2016-2025",
+            "placeholder": false
+          },
+          {
+            "value": 319,
+            "unit": "mm",
+            "range": [
+              277,
+              346
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "NASA MODIS (MOD16A2GF)",
+              "resolution": "500 m",
+              "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+            },
+            "confidence": "fair",
+            "label": "evidence.cropWaterUse",
+            "asOf": "2001-2020",
+            "placeholder": false
+          }
+        ],
+        "benefits": [
+          {
+            "value": 18,
+            "unit": "kg N/ha",
+            "range": [
+              15,
+              30
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Crop research, Nov 2026",
+              "resolution": "southern Italy",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.nitrogen",
+            "placeholder": false,
+            "asOf": "2026-11"
+          },
+          {
+            "value": 466,
+            "unit": "€/ha",
+            "range": [
+              210,
+              750
+            ],
+            "scale": "area",
+            "source": {
+              "dataset": "Crop research, Nov 2026",
+              "resolution": "southern Italy",
+              "url": ""
+            },
+            "confidence": "low",
+            "label": "benefit.income",
+            "placeholder": false,
+            "asOf": "2026-11"
+          }
+        ],
+        "unknowns": [
+          "unknown.stripsGain",
+          "unknown.stripsRare",
+          "unknown.prices",
+          "unknown.soilDepth",
+          "unknown.fieldHistory"
+        ],
+        "checkLocally": [
+          "check.stripWidth",
+          "check.stripClaim",
+          "check.stripSpray",
+          "check.stripReturn",
+          "check.buyer",
           "check.seed",
           "check.adviser"
         ]

@@ -4,7 +4,7 @@ import { CROPS, DEFAULT_STATE, DEMO_FIELD_ID, EXTRA_LIMITS, LAST_CROP_NAME_MAX, 
 
 /**
  * AppState to a query string (no leading "?"). Defaults are left out, so a fresh state encodes to "".
- * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities (in the farmer's order, most important first), s scenario, v view, g language, m money,
+ * Parameter names: f field id, o outline, c last crop (a crop id or "other"), cn its typed name (only with c=other), l limits, p priorities (in the farmer's order, most important first), s scenario, i strip intercrops shown (1), v view, g language, m money,
  * x added payments (`name~amount~crop,crop` joined by `|`, the name percent-encoded).
  */
 export function encodeState(state: AppState): string {
@@ -20,6 +20,7 @@ export function encodeState(state: AppState): string {
   if (state.limits.length) params.set('l', state.limits.join(','));
   if (state.priorities.length) params.set('p', state.priorities.join(','));
   if (state.scenario !== DEFAULT_STATE.scenario) params.set('s', state.scenario);
+  if (state.intercrops) params.set('i', '1');
   if (state.view !== DEFAULT_STATE.view) params.set('v', state.view);
   if (state.lang !== DEFAULT_STATE.lang) params.set('g', state.lang);
   const money = Object.keys(state.money).sort().map(key => `${key}:${state.money[key]}`).join(';');
@@ -50,6 +51,7 @@ export function decodeState(query: string): AppState {
     priorities: [...new Set(priorities)].filter((priority): priority is AppState['priorities'][number] =>
       PRIORITIES.some(known => known === priority)),
     scenario: SCENARIOS.find(scenario => scenario === params.get('s')) ?? DEFAULT_STATE.scenario,
+    intercrops: params.get('i') === '1',
     view: params.get('v') === 'simple' ? 'simple' : DEFAULT_STATE.view,
     lang: params.get('g') === 'it' ? 'it' : DEFAULT_STATE.lang,
     money: parseMoney(params.get('m') ?? ''),

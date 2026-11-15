@@ -125,6 +125,17 @@ const support = [
     options: ['rapeseed-durum-durum', 'coriander-durum-durum'],
   },
   {
+    // Two researchers (Gemini Hydrogen, working from search excerpts of the decree and AGEA's instructions, not the
+    // documents themselves) both found that strips can keep this payment if each strip is declared as its own
+    // parcel. Nobody on the team has checked, so it is off until the farmer's CAA office says yes.
+    id: 'eco-rotation-strips', level: 'eu', defaultOn: false,
+    name: { en: "Eco-scheme 4: strips", it: "Eco-schema 4: strisce" },
+    condition: { en: "Only if each strip is declared as its own parcel and no herbicide or pesticide touches the legume strip. Ask your CAA office.",
+      it: "Solo se ogni striscia è dichiarata come appezzamento a sé e nessun diserbo o fitofarmaco tocca la striscia di leguminosa. Chiedi al tuo CAA." },
+    amount: researched(40, '€/ha', [0, 72], money.agea, 'low', '2025'), crops: [],
+    options: ['strips-chickpea-durum', 'strips-faba-durum'],
+  },
+  {
     id: 'coupled-forage-legume', level: 'italy', defaultOn: false,
     name: { en: "Coupled legume forage", it: "Accoppiato erbaio leguminose" },
     condition: { en: "Only if vetch dominates mix and stays until flowering starts.",
@@ -193,39 +204,55 @@ const paymentsFor = (id, crop) => support.filter((item) => item.defaultOn && app
 const DRY = { drier: { low: 0.95, medium: 0.85, high: 0.7 }, 'much-drier': { low: 0.85, medium: 0.65, high: 0.45 } };
 const WATER = { low: 0.9, medium: 0.55, high: 0.2 };
 
-const option = (id, sequence, checkLocally) => {
+// STRIP INTERCROPS: `strips` is a second sequence grown beside the first, each on half the field in strips wide
+// enough for the drill and the combine, swapped every year (so each strip is durum after a legume, or the legume).
+// Each strip is an ordinary sole crop, so nothing new is assumed: every figure below is the plain average of the
+// two sequences, and no gain or loss from growing them side by side is counted. This is the app's stand-in for
+// intercropping until a true mixture has figures of its own (docs/crops-research.md, "Intercropping").
+const THIRST = { low: 0, medium: 1, high: 2 };
+const option = (id, sequence, checkLocally, strips) => {
   const isCurrent = id === CURRENT_ID;
-  const first = CROP_TABLE[sequence[0]];
-  const hasHay = sequence.some((crop) => CROP_TABLE[crop].machinery === 'hay');
+  const grown = strips ? [sequence, strips] : [sequence];
+  const firsts = grown.map((seq) => CROP_TABLE[seq[0]]);
+  const first = firsts[0];
+  const allCrops = grown.flat();
+  const hasHay = allCrops.some((crop) => CROP_TABLE[crop].machinery === 'hay');
 
   // Income: the mean over the three years of yield (with any lift after a legume) × price − direct costs
   // + default-on support, the sum the app does.
   // Its range is a poor year to a good year: every crop at the low (high) end of its yield, at the usual price
   // and costs. Stacking the worst price and cost on top gave a range too wide to mean anything.
-  const yearMoney = (crop, end, i) => {
+  const yearMoney = (seq, crop, end, i) => {
     const row = CROP_TABLE[crop];
     const at = (triple, high) => (end === 'mid' ? triple[0] : high ? triple[2] : triple[1]);
     const high = end === 'high';
-    return at(row.y, high) * (1 + liftAt(sequence, i) / 100) * row.p[0] - row.c[0] +
+    return at(row.y, high) * (1 + liftAt(seq, i) / 100) * row.p[0] - row.c[0] +
       paymentsFor(id, crop).reduce((sum, item) => sum + item.amount.value, 0);
   };
-  const income = Math.round(mean(sequence.map((crop, i) => yearMoney(crop, 'mid', i))));
-  const incomeRange = ['low', 'high'].map((end) => Math.round(mean(sequence.map((crop, i) => yearMoney(crop, end, i))) / 10) * 10);
+  // The mean over the three years, and for strips over the two halves of the field.
+  const perYear = (end) => mean(grown.map((seq) => mean(seq.map((crop, i) => yearMoney(seq, crop, end, i)))));
+  const income = Math.round(perYear('mid'));
+  const incomeRange = ['low', 'high'].map((end) => Math.round(perYear(end) / 10) * 10);
   // Its confidence: the weakest of the price, yield and cost facts of its crops and of the default-on support it gets.
   // The app works this out again (src/money/money.ts) so it follows the farmer's own figures.
   const incomeConfidence = weakest([
-    ...sequence.flatMap((crop) => ['yield', 'price', 'costs'].map((key) => economics.crops[crop][key].confidence)),
+    ...allCrops.flatMap((crop) => ['yield', 'price', 'costs'].map((key) => economics.crops[crop][key].confidence)),
+    // The lift after a legume counts too where it is used (as incomeConfidence in src/money/money.ts does).
+    ...grown.flatMap((seq) => seq.flatMap((crop, i) => (liftAt(seq, i) ? ['low'] : []))),
     // Payments made on every rotation alike are left out: they cannot change which option is better.
-    ...sequence.flatMap((crop) => paymentsFor(id, crop).filter((item) => item.crops.length > 0 || item.options.length > 0)
+    ...allCrops.flatMap((crop) => paymentsFor(id, crop).filter((item) => item.crops.length > 0 || item.options.length > 0)
       .map((item) => item.amount.confidence)),
   ]);
 
   // Nitrogen: what the first crop leaves for the next (0 for cereals, rapeseed, coriander and the current rotation).
-  const n = !isCurrent && first.n ? first.n : null;
-  // Water: the first crop's water need.
-  // Risk (our judgement, so it stays a placeholder): high for the current rotation; medium when the first crop
+  // For strips: per hectare of the whole field, so the average of the two first crops (durum leaves none).
+  const stripN = strips && firsts.some((crop) => crop.n) ? [0, 1, 2].map((k) => Math.round(mean(firsts.map((crop) => crop.n?.[k] ?? 0)))) : null;
+  const n = isCurrent ? null : strips ? stripN : first.n ? first.n : null;
+  // Water: the first crop's water need; for strips, the thirstier of the two first crops.
+  const water = firsts.reduce((a, b) => (THIRST[b.water] > THIRST[a.water] ? b : a)).water;
+  // Risk (our judgement, so it stays a placeholder): high for the current rotation; medium when a first crop
   // is a broomrape host ("yes") or sold on contract only; else low.
-  const risk = isCurrent ? 'high' : first.broomrape === 'yes' || first.buyer === 'contract' ? 'medium' : 'low';
+  const risk = isCurrent ? 'high' : firsts.some((crop) => crop.broomrape === 'yes' || crop.buyer === 'contract') ? 'medium' : 'low';
 
   // Limits. Flags: cereal-machinery for lentil (low cut) and rapeseed (side knives), where a special header is
   // advised; no-buyer when the first crop's buyer is limited or contract only; broomrape when it is a host (yes or
@@ -234,9 +261,9 @@ const option = (id, sequence, checkLocally) => {
   const flaggedBy = [];
   const removedBy = [];
   if (!isCurrent) {
-    if (first.machinery === 'low-cut' || first.machinery === 'side-knives') flaggedBy.push('cereal-machinery');
-    if (first.buyer === 'limited' || first.buyer === 'contract') flaggedBy.push('no-buyer');
-    if (first.broomrape === 'yes' || first.broomrape === 'partly') flaggedBy.push('broomrape');
+    if (firsts.some((crop) => crop.machinery === 'low-cut' || crop.machinery === 'side-knives')) flaggedBy.push('cereal-machinery');
+    if (firsts.some((crop) => crop.buyer === 'limited' || crop.buyer === 'contract')) flaggedBy.push('no-buyer');
+    if (firsts.some((crop) => crop.broomrape === 'yes' || crop.broomrape === 'partly')) flaggedBy.push('broomrape');
     if (hasHay) removedBy.push('cereal-machinery');
   }
 
@@ -246,10 +273,12 @@ const option = (id, sequence, checkLocally) => {
   //   water   the mean over the three crops of low 0.9, medium 0.55, high 0.2; the same at every stop.
   //   soil    0.2 + (nitrogen left, summed over the three crops) / 75, plus 0.1 if any crop is not durum; at most 0.95.
   //   forage  0.95 with a hay crop, 0.3 with faba or pea, else 0.05.
-  const needs = sequence.map((crop) => CROP_TABLE[crop].water);
-  const nitrogenSum = sequence.reduce((sum, crop) => sum + (CROP_TABLE[crop].n?.[0] ?? 0), 0);
-  const soil = Math.min(0.95, 0.2 + nitrogenSum / 75 + (sequence.some((crop) => crop !== 'durum') ? 0.1 : 0));
-  const forage = hasHay ? 0.95 : sequence.some((crop) => crop === 'faba' || crop === 'pea') ? 0.3 : 0.05;
+  //   For strips each of these is taken over both halves of the field: the means over all six crop-years, and
+  //   the nitrogen summed per half and then averaged.
+  const needs = allCrops.map((crop) => CROP_TABLE[crop].water);
+  const nitrogenSum = mean(grown.map((seq) => seq.reduce((sum, crop) => sum + (CROP_TABLE[crop].n?.[0] ?? 0), 0)));
+  const soil = Math.min(0.95, 0.2 + nitrogenSum / 75 + (allCrops.some((crop) => crop !== 'durum') ? 0.1 : 0));
+  const forage = hasHay ? 0.95 : allCrops.some((crop) => crop === 'faba' || crop === 'pea') ? 0.3 : 0.05;
   const row = (factor) => ({
     income: round3(clamp01((income / 1000) * factor)),
     water: round3(mean(needs.map((need) => WATER[need]))),
@@ -266,19 +295,20 @@ const option = (id, sequence, checkLocally) => {
   // option gets and durum on durum does not. (Coupled durum support comes with every rotation here, so counting
   // it would tag them all, the current one included.)
   const currentGets = new Set(paymentsFor(CURRENT_ID, 'durum').map((item) => item.id));
-  const supportTag = !isCurrent && sequence.some((crop) => paymentsFor(id, crop).some((item) =>
+  const supportTag = !isCurrent && allCrops.some((crop) => paymentsFor(id, crop).some((item) =>
     item.id !== 'basic-income' && item.id !== 'redistributive' && !currentGets.has(item.id)));
 
   const research = (value, unit, range, confidence, label, placeholder = false) =>
     fact(value, unit, range, 'area', money.research, confidence, label, { asOf: '2026-11', placeholder });
   const incomeFact = (label) => research(income, '€/ha', incomeRange, incomeConfidence, label);
-  const nitrogenFact = (label) => research(n ? n[0] : 0, 'kg N/ha', n ? [n[1], n[2]] : undefined, isCurrent ? 'fair' : first.confidence, label);
+  const firstConfidence = weakest(firsts.map((crop) => crop.confidence));
+  const nitrogenFact = (label) => research(n ? n[0] : 0, 'kg N/ha', n ? [n[1], n[2]] : undefined, isCurrent ? 'fair' : firstConfidence, label);
 
   return {
-    id, isCurrent, sequence, firstHarvestYear: 2027,
+    id, isCurrent, sequence, ...(strips ? { strips } : {}), firstHarvestYear: 2027,
     facts: {
       income: incomeFact('fact.income'),
-      water: research(first.water, undefined, undefined, first.confidence, 'fact.water'),
+      water: research(water, undefined, undefined, firstConfidence, 'fact.water'),
       nitrogen: nitrogenFact('fact.nitrogen'),
       risk: research(risk, undefined, undefined, 'low', 'fact.risk', true),
     },
@@ -287,8 +317,10 @@ const option = (id, sequence, checkLocally) => {
       suggested: `why.${id}.suggested`,
       evidence: realField.evidence,
       benefits: [nitrogenFact('benefit.nitrogen'), incomeFact('benefit.income')],
-      unknowns: ['unknown.prices', 'unknown.soilDepth', 'unknown.fieldHistory'],
-      checkLocally: checkLocally ?? (isCurrent ? ['check.rotationRule', 'check.adviser'] : ['check.buyer', 'check.seed', 'check.adviser']),
+      unknowns: [...(strips ? ['unknown.stripsGain', 'unknown.stripsRare'] : []), 'unknown.prices', 'unknown.soilDepth', 'unknown.fieldHistory'],
+      checkLocally: checkLocally ?? (isCurrent ? ['check.rotationRule', 'check.adviser']
+        : strips ? ['check.stripWidth', 'check.stripClaim', 'check.stripSpray', 'check.stripReturn', 'check.buyer', 'check.seed', 'check.adviser']
+        : ['check.buyer', 'check.seed', 'check.adviser']),
     },
   };
 };
@@ -310,6 +342,9 @@ const bundle = {
     option('barley-durum-durum', ['barley', 'durum', 'durum'], ['check.seed', 'check.adviser']),
     option('rapeseed-durum-durum', ['rapeseed', 'durum', 'durum'], ['check.contract', 'check.seed', 'check.adviser']),
     option('coriander-durum-durum', ['coriander', 'durum', 'durum'], ['check.contract', 'check.seed', 'check.adviser']),
+    // Strip intercrops: half the field in each crop every year, the strips swapped the next year.
+    option('strips-chickpea-durum', ['chickpea', 'durum', 'chickpea'], undefined, ['durum', 'chickpea', 'durum']),
+    option('strips-faba-durum', ['faba', 'durum', 'faba'], undefined, ['durum', 'faba', 'durum']),
   ],
   // The rest of the team's figures for the field, for the evidence screens (also from field.json).
   fieldData: realField.fieldData,

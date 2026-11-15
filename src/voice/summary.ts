@@ -4,7 +4,7 @@ import { PRIORITIES } from "../data/types";
 import { MIN_RANKED } from "../components/Reasons";
 import { translate } from "../i18n";
 import { formatNumber, unitText, valueText } from "../components/FactParts";
-import { optionCrop } from "../components/Crops";
+import { optionWords } from "../components/Crops";
 import { rankOptions } from "../ranking/rank";
 import type { Reason } from "../ranking/reasons";
 import { reasonsFor } from "../ranking/reasons";
@@ -48,6 +48,7 @@ function ranking(bundle: FieldBundle, state: AppState) {
     priorities: state.priorities,
     scenario: state.scenario,
     lastCrop: state.lastCrop,
+    intercrops: state.intercrops,
   });
 }
 
@@ -64,7 +65,9 @@ export function optionsSummary(bundle: FieldBundle, state: AppState): string {
   const option = best.option;
   const headline = option.isCurrent
     ? translate(lang, "options.stay", { crop: cropWord("durum", lang, true) })
-    : translate(lang, "options.plant", { crop: cropWord(option.sequence[0], lang, true) });
+    : option.strips && option.strips[0] !== option.sequence[0]
+      ? translate(lang, "options.plantStrips", { a: cropWord(option.sequence[0], lang, true), b: cropWord(option.strips[0], lang, true) })
+      : translate(lang, "options.plant", { crop: cropWord(option.sequence[0], lang, true) });
   return [sentence(headline), ...reasonsLines(option, bundle, state), sentence(translate(lang, "options.adviser"))].join(" ");
 }
 
@@ -75,7 +78,7 @@ export function whySummary(bundle: FieldBundle, state: AppState, optionId: strin
   if (!option) return sentence(translate(lang, "why.notFound"));
   const checks = option.why.checkLocally.map((k) => sentence(translate(lang, k).replace(/\?$/, "")));
   return [
-    sentence(cropWord(optionCrop(option), lang)),
+    sentence(optionWords(option, (key, vars) => translate(lang, key, vars))),
     ...reasonsLines(option, bundle, state),
     checks.length ? `${translate(lang, "why.h.check")}: ${checks.join(" ")}` : "",
   ]
@@ -93,7 +96,7 @@ export function yearSummary(bundle: FieldBundle, state: AppState): string {
   const lines = [
     sentence(`${t("year.hotHead")}, ${t(`scenario.${state.scenario}`).toLocaleLowerCase(lang)}: ${days(hot.now)} ${t("year.now")}, ${days(hot.by2050)} ${t("year.by2050")}`),
   ];
-  if (best) lines.push(sentence(`${t("year.best")}: ${cropWord(optionCrop(best.option), lang)}`));
+  if (best) lines.push(sentence(`${t("year.best")}: ${optionWords(best.option, (key, vars) => translate(lang, key, vars))}`));
   return lines.join(" ");
 }
 

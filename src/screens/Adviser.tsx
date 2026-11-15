@@ -7,7 +7,7 @@ import type { FieldBundle } from "../data/types";
 import { useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
-import { CropName, CropSequence, optionCrop } from "../components/Crops";
+import { CropSequence, OptionName } from "../components/Crops";
 import { ChatIcon, LinkIcon, PrintIcon } from "../components/Icons";
 import { BackButton, BottomBar, Button, Headline, LinkButton, SectionTitle } from "../components/ui";
 import { WHO, ownChecks } from "./check-share";
@@ -41,6 +41,7 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
     priorities: state.priorities,
     scenario: state.scenario,
     lastCrop: state.lastCrop,
+    intercrops: state.intercrops,
   }).ranked[0];
   const checks = best ? ownChecks(best.option.why.checkLocally) : [];
 
@@ -53,7 +54,7 @@ export default function Adviser({ bundle }: { bundle: FieldBundle }) {
           <SectionTitle>{t("adviser.self")}</SectionTitle>
           <div className="px-4">
             <div className="flex items-center justify-between gap-3">
-              <CropName crop={optionCrop(best.option)} className="text-big font-bold" />
+              <OptionName option={best.option} className="text-big font-bold" />
               <CropSequence option={best.option} />
             </div>
             <ul className="list-disc pl-5 pt-1 text-body">

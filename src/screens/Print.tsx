@@ -5,7 +5,7 @@ import { cropFigures, economicsCrops, resolveMoney } from "../money/money";
 import { useLang, useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { shareLink, useAppState, useTo } from "../state/useAppState";
-import { CropName, PaidIn, Slotted, optionCrop } from "../components/Crops";
+import { CropName, OptionName, PaidIn, Slotted } from "../components/Crops";
 import { PlaceholderNote, ScaleBadge, YoursTag, formatNumber, rangeText, unitText, valueText } from "../components/FactParts";
 import { BackIcon, CropIcon, PrintIcon } from "../components/Icons";
 import { Button } from "../components/ui";
@@ -126,6 +126,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
     priorities: state.priorities,
     scenario: state.scenario,
     lastCrop: state.lastCrop,
+    intercrops: state.intercrops,
   });
   const best = ranked[0];
   const link = shareLink("/options", state);
@@ -210,7 +211,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                 <tr key={r.option.id} className="align-top border-b border-line">
                   <td className="py-1 pr-2">
                     <b>
-                      {r.rank}. <CropName crop={optionCrop(r.option)} />
+                      {r.rank}. <OptionName option={r.option} />
                     </b>
                     {r.best ? ` · ${t("options.best")}` : ""}
                     {r.option.isCurrent ? ` · ${t("options.current")}` : ""}
@@ -218,6 +219,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
                       {r.option.sequence.map((c, i) => (
                         <span key={i} className="inline-flex items-center gap-0.5">
                           <CropIcon crop={c} className="w-4 h-4" />
+                          {r.option.strips && r.option.strips[i] !== c ? <CropIcon crop={r.option.strips[i]} className="w-4 h-4" /> : null}
                           {r.option.firstHarvestYear + i}
                         </span>
                       ))}
@@ -247,7 +249,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
               {removed.map((r, i) => (
                 <span key={r.option.id}>
                   {i > 0 ? "; " : ""}
-                  <CropName crop={optionCrop(r.option)} /> ({r.by.map((l) => t(`limit.${l}`)).join(", ")})
+                  <OptionName option={r.option} /> ({r.by.map((l) => t(`limit.${l}`)).join(", ")})
                 </span>
               ))}
             </p>
@@ -269,7 +271,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
           <Block
             title={
               <>
-                {t("print.bestDetail")}: <CropName crop={optionCrop(best.option)} />
+                {t("print.bestDetail")}: <OptionName option={best.option} />
               </>
             }
           >

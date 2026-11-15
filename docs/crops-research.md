@@ -54,6 +54,35 @@ Rotations built from them, each over three harvests: the four the app already ha
 
 The income sum counts more durum grain after chickpea (16% the first harvest after, 10% the second) and after faba bean (12% the first harvest after). The sources are Lago-Olveira et al. 2023 (Puglia) and Garofalo et al. 2009 (Foggia, simulated), as cited in the team's research compilation; nobody on the team has checked them against the papers. No figure was found for lentil, pea or vetch, so they get none. See `docs/scoring.md`.
 
+## Intercropping
+
+Researched on 15 November 2026. Four Gemini Hydrogen researchers were sent out: one on yields and costs, two independently on payment rules, one on local trials. The local-trials researcher timed out and returned nothing. The other three worked **from search excerpts, not from documents they opened**, so everything below is a lead, not a checked fact. We tried to read the Genzano paper ourselves; both the publisher and the university repository refused automated readers, and we did not work around that.
+
+**In the app: strips, as a stand-in.** Half the field in durum and half in a grain legume each year, in strips wide enough for the drill and the combine, swapped the next year. Each strip is an ordinary sole crop, so every figure is the plain average of two rotations the app already works out (`strips` in `scripts/make-placeholder-bundle.mjs`, `sideBySide` in `src/money/money.ts`). **No new number is assumed and no gain from growing the crops side by side is counted.** Two are shipped: chickpea with durum, and faba bean with durum. They are ranked only when the farmer switches them on (`docs/scoring.md`, "Strip intercrops").
+
+Why strips and not a true mixture:
+
+| Form | What the researchers found (excerpts) | In the app |
+|---|---|---|
+| **Strips**, each declared as its own parcel | Both payment researchers: keeps coupled durum support on the durum strips, coupled legume support and Eco-scheme 4 on the legume strips, and both grains are sold clean. Rarely practised in Italy; trials on sloping farms in Marche and Abruzzo gave a land equivalent ratio near 1.0, which is what the app assumes. Narrow strips may be flagged by satellite checks of the claim. | Yes, as a stand-in. Eco-scheme 4 is an optional payment, off until the CAA office confirms. |
+| **Durum and a legume in the same rows, harvested together** | Agronomy: the best local evidence (the Genzano trial, below). Payments: both researchers say it **loses coupled durum support**, which needs a pure crop from at least 180 kg/ha of certified seed, and no selective herbicide is registered for the mixture. Separating the grain costs about 15 to 50 €/t. | No. We have no cost figures and no vetch yield, and the payment loss is serious. |
+| **A forage legume sown into standing durum in late winter** (*bulatura*: sulla, clover) | Covers the ground after the July harvest, the months this app finds bare. No durum yield penalty in northern trials; about 50 kg N/ha for the next crop; 150 to 320 €/ha extra. Establishment is erratic in a dry spring on clay. Payment rules unclear. | No. The trials are not from dryland southern Italy. The strongest candidate to add next, because it answers the app's own main finding. |
+| **A legume grown under durum and not harvested** | Durum yield down 14 to 16% in a central Italian trial; no second product to sell. | No. |
+
+**The Genzano trial (Denora et al. 2025), on the demo field itself.** Durum sown and harvested together with common vetch, against fertilised and unfertilised durum alone, over a wet season (2022–23, 674 mm) and a dry one (2023–24, 315 mm).
+
+| | 2022–23 | 2023–24 | How we know |
+|---|---|---|---|
+| Durum alone, fertilised (t/ha) | 3.03 | 2.79 | Read in the paper by an earlier researcher (Claude Opus) |
+| Durum alone, unfertilised (t/ha) | 2.57 | 1.96 | Same |
+| Durum grown with vetch (t/ha) | 3.31 | 2.67 | Search excerpt only |
+| Land equivalent ratio | 1.62 | 1.35 | Search excerpt only |
+| Durum grain protein, with vetch against alone (%) | 13.9 against 12.3 | 12.4 against 12.3 | Search excerpt only |
+
+Also from excerpts: vetch residues held up to 125 kg N/ha, and the paper's margin was 281 €/ha with vetch against 48 €/ha for fertilised durum. The rain totals in the excerpts match the ones the data team typed in from the paper, which is some reassurance that the excerpts are the paper's. **Before any of this goes on screen, someone must open the paper** (https://doi.org/10.1016/j.ijagro.2025.100045) and copy the vetch yield, the cost lines and the prices used.
+
+**Cautions the farmer sees in the app for strips:** the strip width must suit the drill and the combine header; the CAA office must confirm each strip can be declared as its own parcel; spray on the durum strips must not drift onto the legume; and few farms in Italy do this yet.
+
 ## Researched but left out of the app
 
 - **Sulla hay:** both researchers preferred it to berseem clover for dry calcareous clay, but it is normally kept for two years, and no yield or cost for the second year was found. Opus gave 6 t/ha from a search excerpt; Hydrogen gave 3.8.
