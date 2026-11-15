@@ -776,4 +776,7 @@ export const it: Dict = {
   "soil.reset": "Usa di nuovo la mappa dei suoli",
   "soil.yours": "L'hai scelto tu; la mappa dei suoli dice {map}.",
   "soil.phYours": "pH {ph}, dalla tua analisi",
+  // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
+  "q.none": "Niente, a maggese",
+  "q.nonePlain": "Niente (maggese)",
 };

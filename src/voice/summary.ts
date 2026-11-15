@@ -109,7 +109,7 @@ export function questionsSummary(state: AppState): string {
   const lang = state.lang;
   const t = (key: string) => translate(lang, key);
   const last =
-    state.lastCrop === "other" ? state.lastCropName || t("q.otherPlain") : cropWord(state.lastCrop, lang);
+    state.lastCrop === "other" ? state.lastCropName || t("q.otherPlain") : state.lastCrop === "none" ? t("q.nonePlain") : cropWord(state.lastCrop, lang);
   const lines = [sentence(`${t("q.lastCrop")}: ${last}`)];
   if (state.priorities.length) {
     lines.push(sentence(`${t("options.priorities")}: ${state.priorities.map((p, i) => `${i + 1} ${t(`priority.${p}`)}`).join(", ")}`));

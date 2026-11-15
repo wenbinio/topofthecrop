@@ -179,7 +179,7 @@ export default function Print({ bundle }: { bundle: FieldBundle }) {
             <li>
               {t("q.lastCrop")}:{" "}
               <b data-testid="print-last-crop">
-                {state.lastCrop === "other" ? state.lastCropName || t("q.otherPlain") : <CropName crop={state.lastCrop} />}
+                {state.lastCrop === "other" ? state.lastCropName || t("q.otherPlain") : state.lastCrop === "none" ? t("q.nonePlain") : <CropName crop={state.lastCrop} />}
               </b>
             </li>
             <li>

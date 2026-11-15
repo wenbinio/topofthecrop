@@ -111,6 +111,10 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
             </span>
           </Choice>
         ))}
+        {/* A field can also have grown nothing last year (left fallow). */}
+        <Choice role="radio" light on={state.lastCrop === "none"} onClick={() => setState({ lastCrop: "none", lastCropName: "" })}>
+          <span data-testid="last-crop-none">{t("q.none")}</span>
+        </Choice>
         <Choice role="radio" on={state.lastCrop === "other"} onClick={() => setState({ lastCrop: "other", lastCropName: name })}>
           {t("q.other")}
         </Choice>
