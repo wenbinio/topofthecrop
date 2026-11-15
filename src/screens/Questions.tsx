@@ -21,7 +21,10 @@ function Choice({
   title,
   label,
   place,
+  light = false,
 }: {
+  /** Chosen stays light (a thick green edge, not a dark fill), so a crop's painting stays easy to see. */
+  light?: boolean;
   on: boolean;
   disabled?: boolean;
   onClick: () => void;
@@ -44,7 +47,11 @@ function Choice({
       disabled={disabled}
       onClick={onClick}
       className={`tc-tap w-full flex items-center gap-2 px-3 py-2 rounded-box border-2 text-left font-bold text-body ${
-        on ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"
+        on
+          ? light
+            ? "bg-surface text-ink border-primary ring-2 ring-primary"
+            : "bg-primary text-on-primary border-primary"
+          : "bg-surface text-ink border-line-strong"
       } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       {children}
@@ -95,7 +102,7 @@ export default function Questions({ bundle }: { bundle: FieldBundle }) {
       </SectionTitle>
       <div role="radiogroup" aria-label={t("q.lastCrop")} className="grid grid-cols-2 gap-2 px-4" data-testid="last-crop">
         {crops.map((crop) => (
-          <Choice key={crop} role="radio" on={state.lastCrop === crop} onClick={() => setState({ lastCrop: crop, lastCropName: "" })}>
+          <Choice key={crop} role="radio" light on={state.lastCrop === crop} onClick={() => setState({ lastCrop: crop, lastCropName: "" })}>
             <span className="flex flex-col items-center gap-1 text-center" data-crop={crop}>
               <CropPlate crop={crop} className="w-20 h-20" />
               {t(`crop.${crop}`)}

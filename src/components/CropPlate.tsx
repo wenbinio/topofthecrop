@@ -17,7 +17,7 @@ export function CropPlate({
   className = "w-11 h-11",
 }: {
   crop: CropId;
-  /** The 480 px file, for a plate shown larger than about 80 px. */
+  /** The 320 px file, for a plate shown larger than about 60 px. */
   big?: boolean;
   /** The crop's name, when the plate stands alone; leave it out when the name is written beside it. */
   title?: string;
@@ -29,13 +29,13 @@ export function CropPlate({
       alt={title ?? ""}
       title={title}
       aria-hidden={title ? undefined : true}
-      width={big ? 480 : 160}
-      height={big ? 480 : 160}
+      width={big ? 320 : 128}
+      height={big ? 320 : 128}
       decoding="async"
       draggable={false}
       data-testid="crop-plate"
       data-crop={crop}
-      className={`tc-plate flex-none rounded-md object-cover ${className}`}
+      className={`tc-plate flex-none object-contain ${className}`}
     />
   );
 }
