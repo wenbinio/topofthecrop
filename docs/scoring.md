@@ -7,21 +7,41 @@ it does not make a placeholder figure a measured fact.
 
 A field drawn on Bradano basin farmland uses these same rules (`src/data/field-rules.js`), applied to the 1 km squares under its outline instead of the demo field's own data.
 
-## Read the signals — placeholder interpretation
+## Read the signals — measured; the thresholds are our judgement
 
-Compare greenness, surface temperature and water use with the same weeks in
-earlier years. Before reading the table, make two checks when preparing findings:
+Three signals are measured for every field from the data team's season series
+(`measuredSignals` and `SIGNAL_RULES` in `src/data/field-rules.js`), the same
+way for the demo field and for a drawn field:
+
+- **Greenness:** peak greenness each season (NASA MODIS, 250 m).
+- **Temperature:** hot days at flowering each season (30 °C or more, 15 April to
+  15 June; ERA5-Land air temperature). There is no surface temperature data in
+  the app (ECOSTRESS was not used), so the step says "hot days at flowering".
+- **Water use:** water the crops used, November to June, each season (NASA MODIS
+  evapotranspiration, 500 m).
+
+Each compares the median of the field's last five seasons (after 2020; usually
+2022 to 2026) with the normal seasons 2001 to 2020. Below their 25th percentile
+is "falling", above their 75th percentile is "rising", anything between is
+"normal". With fewer than 15 normal seasons or 3 recent ones the signal is "no
+data", and the step says there is no record to compare. The five seasons and the
+25th and 75th percentiles are our judgement, not tested agronomy.
+
+For the demo field (data of 14 November 2026): greenness is falling (median 0.68
+against a 25th percentile of 0.69), hot days at flowering are rising (9 against a
+75th percentile of 6.25) and water use is normal (322 mm, between 305 and 334 mm).
+The table gives "decline with heat", with fair confidence.
+
+Before reading the table, two checks are made when preparing findings:
 
 1. Is the field bare on purpose? Low greenness after harvest is expected.
    Report a bare-soil period rather than treating it as crop decline.
-2. Is the whole area affected? Area rainfall and temperature can reveal drought
-   or a heat wave. Mark that finding as weather-driven.
+2. Is the whole area affected? Heat and autumn rain come from area grids, so
+   those findings are marked weather-driven.
 
-The supplied findings carry the result of these checks. The signal table alone
-cannot infer harvest timing or area-wide weather from three directions.
 If any signal is missing, report “not enough data”, with low confidence.
 Only falling greenness, rising temperature and falling water use count as
-signals here. All other available directions count as normal in this draft.
+signals here. All other directions count as normal.
 
 | Greenness | Temperature | Water use | Interpretation | Confidence |
 |---|---|---|---|---|
@@ -30,7 +50,7 @@ signals here. All other available directions count as normal in this draft.
 | Falling | Normal | Falling | Less canopy and water use; poor establishment or nutrient shortage | Fair |
 | Falling | Normal | Normal | Unexplained canopy loss; check nutrients, weeds, disease or harvest | Low |
 | Normal | Rising | Falling | Early water stress before canopy decline | Fair |
-| Normal | Rising | Normal | Warm but healthy crop; early stress or an unrelated cause | Low |
+| Normal | Rising | Normal | Hotter seasons but the crop stays green; early stress or an unrelated cause | Low |
 | Normal | Normal | Falling | One weak signal; timing or the sensor may explain it | Low |
 | Normal | Normal | Normal | No decline detected | Good |
 
@@ -76,6 +96,32 @@ Scores only set the order and are never shown. The farmer sees the signals,
 diagnosis, weather-driven note, limits and chosen priorities instead.
 Income is average annual gross margin across the three harvests, not revenue;
 the supporting facts should give the prices used and their date.
+
+## The slider: normal, drier, much drier
+
+Each stop is defined from the data, the same way for hot days and for rain
+(`hotDayStops` and `rainStops` in `src/data/field-rules.js`). Under the slider
+the Year screen says what the stop means and shows its October to May rain.
+
+| Stop | Today | By 2041–2060 |
+|---|---|---|
+| Normal | A typical season, 2001–2020: the median, with the 10th to 90th percentile | Today's typical value plus the middle path's change (SSP2-4.5), median of 29 models |
+| Drier | A 1-in-10 dry and hot season: the 10th percentile of October–May rain and the 90th percentile of hot days at flowering | That season plus the high path's change (SSP5-8.5) |
+| Much drier | The driest and the hottest seasons since 2001 (not always the same season) | Those seasons plus the high path's change |
+
+At the demo field: normal 542 mm and 4 hot days; drier 418 mm and 8 hot days;
+much drier 390 mm (the 2017 season) and 13 hot days. By 2050 on the high path:
+393 mm and 10 hot days; 367 mm and 15 hot days.
+
+Two parts of the slider are still our judgement and are left fixed on purpose:
+
+- **The extra risk icons** (`risksByScenario`): drier adds a dry-autumn icon in
+  October and November and a heat icon in April to June; much drier also adds a
+  dry icon in September and December.
+- **The dry-year penalty** (`DRY` in `scripts/make-placeholder-bundle.mjs`): in a
+  drier year each option's income score is multiplied by the mean, over its three
+  crops, of 0.95, 0.85 or 0.7 for crops that need little, some or a lot of water;
+  in a much drier year 0.85, 0.65 or 0.45. The other scores stay the same.
 
 ## How the income figure is worked out
 

@@ -208,6 +208,40 @@ describe("Year", () => {
   });
 });
 
+describe("what each slider stop means", () => {
+  it("a line under the slider says what the stop is, and changes with it", async () => {
+    renderAt("/year?f=genzano-demo&p=income,water");
+    expect(await screen.findByTestId("scenario-def")).toHaveTextContent("A usual season (2001–2020).");
+    act(() => {
+      fireEvent.change(screen.getByRole("slider"), { target: { value: "1" } });
+    });
+    await waitFor(() => expect(screen.getByTestId("scenario-def")).toHaveTextContent("As dry and as hot as 1 season in 10."));
+    // The frozen fixture has no rain per stop, so no rain line shows.
+    expect(screen.queryByTestId("rain-stop")).toBeNull();
+  });
+
+  it("with rain per stop in the bundle, it shows the stop's Oct-May rain now and by 2050", async () => {
+    const withRain = structuredClone(fixture);
+    const fact = (value: number) => ({
+      value, unit: "mm", scale: "area", confidence: "fair", placeholder: false,
+      source: { dataset: "CHIRPS + NASA GPM + ERA5-Land", resolution: "6 to 11 km", url: "" },
+    });
+    Object.assign(withRain.year, {
+      rainSeason: {
+        normal: { now: fact(542), by2050: fact(520) },
+        drier: { now: fact(418), by2050: fact(393) },
+        "much-drier": { now: fact(390), by2050: fact(367) },
+      },
+    });
+    vi.stubGlobal("fetch", vi.fn(async () => okJson(withRain)));
+    renderAt("/year?f=genzano-demo&p=income,water&s=much-drier");
+    const line = await screen.findByTestId("rain-stop");
+    expect(screen.getByTestId("scenario-def")).toHaveTextContent("The driest and the hottest seasons since 2001.");
+    expect(line).toHaveTextContent("390");
+    expect(line).toHaveTextContent("367");
+  });
+});
+
 describe("what counts as a hot day", () => {
   it("tapping the Year headline opens the 30 °C definition, also given on hover", async () => {
     renderAt("/year?f=genzano-demo&p=income,water");

@@ -101,6 +101,11 @@ export type FieldBundle = {
     hotDays: Record<Scenario, { now: Fact; by2050: Fact }>;
     /** The usual daytime high (°C) from 15 April to 15 June, now and by 2050. Shown beside what counts as a hot day. */
     flowerHigh?: { now: Fact; by2050: Fact };
+    /**
+     * Oct-May rain (mm) at each slider stop, now and by 2050, built like `hotDays` (src/data/field-rules.js `rainStops`):
+     * normal a typical season, drier a 1-in-10 dry season, much-drier the driest season since 2001.
+     */
+    rainSeason?: Record<Scenario, { now: Fact; by2050: Fact }>;
   };
   options: Option[]; // 3 to 12, exactly one with isCurrent
   economics?: Economics; // prices, yields, costs and support behind the income figures

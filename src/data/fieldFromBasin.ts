@@ -8,7 +8,7 @@ import type { Polygon } from "geojson";
 import type { Fact, FieldBundle, Finding } from "./types";
 import { DRAWN_FIELD_ID } from "./types";
 import { AREA_UNKNOWN } from "./caveats";
-import { fieldData, finding, flowerHigh, hotDayStops, makeSources, real, risksByScenario, yearMonths } from "./field-rules.js";
+import { fieldData, finding, flowerHigh, hotDayStops, makeSources, measuredSignals, rainStops, real, risksByScenario, yearMonths } from "./field-rules.js";
 import type { Triple } from "./field-rules.js";
 import { projected } from "./fieldshift-data.js";
 import type { BasinData, OutlineValues, SquareProps, Triple as MaybeTriple } from "./fieldshift-data.js";
@@ -136,10 +136,14 @@ export function fieldFromBasin(
   const need = full(values.water?.durum_need, 0);
   const clay = full(values.soil?.clay, 0);
 
+  // The rest of the figures, and from their season series the signals behind the diagnosis on the Why screen.
+  const extra = drawnFieldData(d, values, sources);
+  const signals = measuredSignals(extra.seasons);
+
   const findings: Finding[] = [];
-  if (bare) findings.push(finding("bare", real(bare, "months", "area", sources.modis, "fair", "finding.bare.fact", BASELINE), "finding.bare.detailArea"));
-  findings.push(finding("heat", real(hot, "days", "area", sources.era5, "fair", "finding.heat.fact", BASELINE), "finding.heat.detailArea"));
-  if (autumn) findings.push(finding("dry", real(autumn, "mm", "area", sources.rain, "fair", "finding.dry.fact", BASELINE), "finding.dry.detailArea"));
+  if (bare) findings.push(finding("bare", real(bare, "months", "area", sources.modis, "fair", "finding.bare.fact", BASELINE), signals, "finding.bare.detailArea"));
+  findings.push(finding("heat", real(hot, "days", "area", sources.era5, "fair", "finding.heat.fact", BASELINE), signals, "finding.heat.detailArea"));
+  if (autumn) findings.push(finding("dry", real(autumn, "mm", "area", sources.rain, "fair", "finding.dry.fact", BASELINE), signals, "finding.dry.detailArea"));
 
   const evidence: Fact[] = [];
   if (bare) evidence.push(real(bare, "months", "area", sources.modis, "fair", "evidence.bareMonths", BASELINE));
@@ -153,9 +157,19 @@ export function fieldFromBasin(
     thresholds: d.cells_greenness.meta.thresholds,
     rainMonth, frostMonth, hot30Month,
   });
-  const bySeason = (w.hot_days_flower_by_season ?? []).filter((n): n is number => typeof n === "number" && Number.isFinite(n));
+  const known = (list: (number | null)[] | undefined) => (list ?? []).filter((n): n is number => typeof n === "number" && Number.isFinite(n));
+  const bySeason = known(w.hot_days_flower_by_season);
   // The hottest season: the most hot days in any of the 26 seasons (averaged over the squares under the outline).
   const hottest = bySeason.length ? Math.round(Math.max(...bySeason) * 10) / 10 : hot[2];
+  // Oct-May rain at each slider stop: typical, 1-in-10 dry (the 10th percentile), the driest season since 2001.
+  const rainBySeason = known(w.rain_season_by_season);
+  const rain245 = full(later.rain_season, 0), rainChange585 = full(change.ssp585?.rainse);
+  const rainSeason = season && rain245 && rainChange585
+    ? rainStops({
+        rain: season, driest: rainBySeason.length ? Math.min(...rainBySeason) : season[0], projected245: rain245,
+        change585: rainChange585, scale: "area", sources, baseline: BASELINE, future: FUTURE,
+      })
+    : undefined;
 
   return {
     field: {
@@ -175,6 +189,7 @@ export function fieldFromBasin(
       risksByScenario: risksByScenario(yearList),
       hotDays: hotDayStops({ hot, hottest, projected245: hot245, change585, scale: "area", sources, baseline: BASELINE, future: FUTURE }),
       flowerHigh: flowerHigh({ now: tmax, by2050: tmax245, scale: "area", sources, baseline: BASELINE, future: FUTURE }),
+      ...(rainSeason ? { rainSeason } : {}),
     },
     options: demo.options.map((option) => ({
       ...option,
@@ -185,7 +200,7 @@ export function fieldFromBasin(
       },
     })),
     ...(demo.economics ? { economics: demo.economics } : {}),
-    fieldData: drawnFieldData(d, values, sources),
+    fieldData: extra,
   };
 }
 

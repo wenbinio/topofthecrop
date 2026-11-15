@@ -46,3 +46,9 @@ it('uses allNormal when no direction counts', () => {
     'path.signal.allNormal', 'diagnosis.no-decline', 'path.priority.none',
   ]);
 });
+it('says which signal has no record to compare, and then that there is not enough data', () => {
+  const signals: Signals = { greenness: 'normal', temperature: 'rising', waterUse: 'no-data' };
+  expect(buildPath({ ...fixture.findings[1], signals } as Finding, [], ['income'])).toEqual([
+    'path.signal.temperature.rising', 'path.signal.waterUse.noData', 'diagnosis.not-enough-data', 'path.weatherDriven', 'path.priority.income',
+  ]);
+});

@@ -114,11 +114,11 @@ Resolutions above are from general knowledge and must be checked against each pr
 
 Diagnose, match, filter, rank. Every stage is a written rule an adviser can read; there is no trained model.
 
-**1. A decision tree diagnoses the field from agreement between signals.** Three satellite signals are read for the field, each compared with the same weeks in earlier years:
+**1. A decision tree diagnoses the field from agreement between signals.** Three signals are measured for the field from the data team's season series, each comparing the field's last five seasons with its normal seasons, 2001–2020 (`measuredSignals` in `src/data/field-rules.js`; the thresholds are our judgement, written in `docs/scoring.md`):
 
-- **Greenness** (NDVI, from Landsat/HLS or the ECOSTRESS-grid NDVI product)
-- **Surface temperature** (ECOSTRESS)
-- **Water use** (evapotranspiration, from ECOSTRESS and Landsat)
+- **Greenness:** peak greenness each season (NASA MODIS, 250 m)
+- **Temperature:** hot days at flowering each season (ERA5-Land air temperature; the app has no surface temperature data)
+- **Water use:** water the crops used each season (NASA MODIS evapotranspiration, 500 m)
 
 The goal is agreement. If temperature rises or water use drops while greenness falls, that is stronger evidence of decline than any one signal alone. If they disagree, such as a warm patch with healthy greenness, it may be early stress, or something unrelated like bare soil or the weather that day. Each permutation leads to one finding and one confidence word:
 
@@ -129,14 +129,14 @@ The goal is agreement. If temperature rises or water use drops while greenness f
 | Falling | Normal | Dropping | Less canopy and less water use without heat; poor establishment or nutrient shortage | Fair |
 | Falling | Normal | Normal | Canopy loss not explained by heat or water; nutrients, weeds, disease, or simply harvest | Low: check locally |
 | Normal | Rising | Dropping | Early water stress, before the canopy shows it | Fair |
-| Normal | Rising | Normal | Warm patch with a healthy crop; early stress or unrelated | Low |
+| Normal | Rising | Normal | Hotter seasons but the crop stays green; early stress or unrelated | Low |
 | Normal | Normal | Dropping | One weak signal; probably timing or sensor | Low |
 | Normal | Normal | Normal | No decline detected | Good |
 
 Two checks run before the table is read, so the tree does not blame the field for something else:
 
 - **Is the field bare on purpose?** After harvest, low greenness is expected and is reported as a bare-soil period, not as decline.
-- **Is the whole area affected?** If rainfall and temperature for the area (NASA POWER, GPM) show a drought or heat wave, the finding is marked as weather-driven, not specific to this field.
+- **Is the whole area affected?** Heat and autumn rain come from area grids (ERA5-Land; CHIRPS, NASA GPM IMERG and ERA5-Land), so those findings are marked as weather-driven, not specific to this field.
 
 This table is a first draft for the team to correct. The findings it produces are the "What we see on your field" strip in step 3, and the signals behind each one are the "Evidence" in step 4.
 
@@ -155,7 +155,7 @@ A dealbreaker stays a dealbreaker: no score can outvote it. The current rotation
 
 **4. The options that remain are ordered by the farmer's priorities, in the farmer's order.** Each option has a score from 0 to 1 for income, water, soil and forage. The farmer ranks at least two of the four; the first counts 4, the second 3, the third 2, the fourth 1, and the scores are averaged with those weights. A priority left out has no weight and only breaks ties. The weights are our own judgement (`docs/scoring.md`). This is the only place an index is used, and only to put a short list in order.
 
-**5. The slider re-runs the ordering** with the water and heat inputs for a drier, hotter year.
+**5. The slider re-runs the ordering** for a drier, hotter year. Each stop is defined from the data: normal is a typical season (2001–2020), drier a 1-in-10 dry and hot season, much drier the driest and hottest seasons since 2001, each also shown by 2050. The Year screen says so under the slider and shows the stop's October–May rain beside its hot days (`docs/scoring.md`, "The slider").
 
 **6. The farmer sees the path, never the score.** The "Why?" screen shows the route taken as plain steps, for example "greenness falling and water use dropping → water stress → no irrigation → you chose income and soil". Score numbers are not shown anywhere in the app.
 

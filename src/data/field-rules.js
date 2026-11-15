@@ -45,30 +45,30 @@ export const FINDINGS = {
   bare: {
     title: "finding.bare.title", detail: "finding.bare.detail", factLabel: "finding.bare.fact",
     // Bare soil after harvest looks like decline to a satellite; expectedBare says it is not.
-    signals: { greenness: "falling", temperature: "rising", waterUse: "falling" },
     weatherDriven: false,
     expectedBare: true,
     addressedBy: ["vetch-oat-durum-durum", "faba-durum-faba"],
   },
   heat: {
     title: "finding.heat.title", detail: "finding.heat.detail", factLabel: "finding.heat.fact",
-    signals: { greenness: "normal", temperature: "rising", waterUse: "falling" },
     weatherDriven: true,
     addressedBy: ["chickpea-durum-durum", "vetch-oat-durum-durum"],
   },
   dry: {
     title: "finding.dry.title", detail: "finding.dry.detail", factLabel: "finding.dry.fact",
-    signals: { greenness: "normal", temperature: "normal", waterUse: "falling" },
     weatherDriven: true,
     addressedBy: ["chickpea-durum-durum", "faba-durum-faba"],
   },
 };
 
-/** A finding with its figure. `detail` replaces the dictionary key of the detail line when given. */
-export function finding(kind, fact, detail) {
+/**
+ * A finding with its figure and the field's measured signals (`measuredSignals`, the same for every finding of a
+ * field). `detail` replaces the dictionary key of the detail line when given.
+ */
+export function finding(kind, fact, signals, detail) {
   const k = FINDINGS[kind];
   return {
-    title: k.title, detail: detail ?? k.detail, fact, signals: { ...k.signals }, weatherDriven: k.weatherDriven,
+    title: k.title, detail: detail ?? k.detail, fact, signals: { ...signals }, weatherDriven: k.weatherDriven,
     ...(k.expectedBare ? { expectedBare: true } : {}), addressedBy: [...k.addressedBy],
   };
 }
@@ -339,4 +339,77 @@ export function trialSoilFrom(text, sources) {
     if (match && isNum(Number(match[1]))) out[key] = one(Number(match[1]), unit, undefined, "field", sources.trial, "good", `data.${key}`, "2022-24");
   }
   return out;
+}
+
+// --- the signals behind the diagnosis on the Why screen, measured for each field ----------------
+
+/**
+ * Our judgement (docs/scoring.md, "Read the signals"): a signal compares the median of a field's last `recent`
+ * seasons after the normal years with the normal seasons themselves (2001-2020). Below their 25th percentile it is
+ * "falling", above their 75th "rising", otherwise "normal". With fewer than `minNormal` normal seasons or
+ * `minRecent` recent ones it is "no-data".
+ */
+export const SIGNAL_RULES = { recent: 5, normal: [2001, 2020], minNormal: 15, minRecent: 3, low: 0.25, high: 0.75 };
+
+/** The value a share `q` of the way through sorted numbers, between neighbours where it falls between two. */
+function quantile(sorted, q) {
+  const pos = q * (sorted.length - 1), lo = Math.floor(pos);
+  return sorted[lo] + (pos - lo) * (sorted[Math.min(lo + 1, sorted.length - 1)] - sorted[lo]);
+}
+
+/** One signal from one value per season (`years` and `values` line up; null = no data that season). */
+export function seasonSignal(years, values) {
+  if (!Array.isArray(years) || !Array.isArray(values) || values.length !== years.length) return "no-data";
+  const [from, to] = SIGNAL_RULES.normal;
+  const normal = values.filter((v, i) => isNum(v) && years[i] >= from && years[i] <= to).sort((a, b) => a - b);
+  const recent = values.filter((v, i) => isNum(v) && years[i] > to).slice(-SIGNAL_RULES.recent).sort((a, b) => a - b);
+  if (normal.length < SIGNAL_RULES.minNormal || recent.length < SIGNAL_RULES.minRecent) return "no-data";
+  const now = quantile(recent, 0.5);
+  if (now < quantile(normal, SIGNAL_RULES.low)) return "falling";
+  if (now > quantile(normal, SIGNAL_RULES.high)) return "rising";
+  return "normal";
+}
+
+/**
+ * The three signals the diagnosis reads, from a bundle's season series (`fieldData.seasons`), so anyone can redo them:
+ *   greenness    peak greenness each season (NASA MODIS)
+ *   temperature  hot days at flowering each season (ERA5-Land air temperature; there is no surface temperature data)
+ *   waterUse     water the crops used each season (NASA MODIS evapotranspiration)
+ */
+export function measuredSignals(seasons) {
+  const years = seasons?.years ?? [], series = seasons?.series ?? {};
+  return {
+    greenness: seasonSignal(years, series.peakGreenness?.values),
+    temperature: seasonSignal(years, series.hotDays?.values),
+    waterUse: seasonSignal(years, series.cropWaterUse?.values),
+  };
+}
+
+// --- Oct-May rain for each slider stop ------------------------------------------------------------
+
+/**
+ * Oct-May rain at each of the slider's stops, built the way `hotDayStops` builds hot days, so the slider has one
+ * definition: normal is a typical season (2001-2020), by 2050 on the middle path (SSP2-4.5); drier is a 1-in-10 dry
+ * season (the 10th percentile), by 2050 with the high path's (SSP5-8.5) change; much-drier is the driest season
+ * since 2001, by 2050 with the same change. Rain changes are percentages across the 29 models.
+ * `rain` today's [low, typical, high]; `driest` the least in any season; `projected245` today + SSP2-4.5 change;
+ * `change585` the SSP5-8.5 change in percent.
+ */
+export function rainStops({ rain, driest, projected245, change585, scale, sources, baseline, future }) {
+  const later = (now) => change585.map((c) => Math.round(now * (1 + c / 100)));
+  const dry = later(rain[0]), driestLater = later(driest);
+  return {
+    normal: {
+      now: real(rain.map(Math.round), "mm", scale, sources.rain, "fair", "year.rainNow", baseline),
+      by2050: real(projected245.map(Math.round), "mm", scale, sources.cmip6, "low", "year.rain2050", future),
+    },
+    drier: {
+      now: one(Math.round(rain[0]), "mm", undefined, scale, sources.rain, "fair", "year.rainNow", baseline),
+      by2050: one(dry[1], "mm", [dry[0], dry[2]], scale, sources.cmip6, "low", "year.rain2050", future),
+    },
+    "much-drier": {
+      now: one(Math.round(driest), "mm", undefined, scale, sources.rain, "fair", "year.rainNow", "2001-2026"),
+      by2050: one(driestLater[1], "mm", [driestLater[0], driestLater[2]], scale, sources.cmip6, "low", "year.rain2050", future),
+    },
+  };
 }

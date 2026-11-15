@@ -22,6 +22,7 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
   const to = useTo();
   const [state, setState] = useAppState();
   const hot = bundle.year.hotDays[state.scenario];
+  const rain = bundle.year.rainSeason?.[state.scenario];
   const { ranked } = rankOptions({
     options: bundle.options,
     limits: state.limits,
@@ -83,6 +84,23 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
             </span>
           ))}
         </div>
+        {/* What the stop means, and its Oct-May rain now and by 2050 (src/data/field-rules.js rainStops). */}
+        <p className="text-small text-ink-soft mt-1" data-testid="scenario-def">{t(`year.def.${state.scenario}`)}</p>
+        {rain ? (
+          <div className="mt-2" data-testid="rain-stop">
+            <p className="text-small font-bold">{t("year.rainHead")}</p>
+            <div className="flex items-start gap-6">
+              <div>
+                <FactButton fact={rain.now} label={t("year.rainNow")} />
+                <p className="text-small font-bold text-ink-soft">{t("year.now")}</p>
+              </div>
+              <div>
+                <FactButton fact={rain.by2050} label={t("year.rain2050")} />
+                <p className="text-small font-bold text-ink-soft">{t("year.by2050")}</p>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {best ? (

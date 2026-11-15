@@ -1088,7 +1088,7 @@
       "signals": {
         "greenness": "falling",
         "temperature": "rising",
-        "waterUse": "falling"
+        "waterUse": "normal"
       },
       "weatherDriven": false,
       "expectedBare": true,
@@ -1119,9 +1119,9 @@
         "placeholder": false
       },
       "signals": {
-        "greenness": "normal",
+        "greenness": "falling",
         "temperature": "rising",
-        "waterUse": "falling"
+        "waterUse": "normal"
       },
       "weatherDriven": true,
       "addressedBy": [
@@ -1151,9 +1151,9 @@
         "placeholder": false
       },
       "signals": {
-        "greenness": "normal",
-        "temperature": "normal",
-        "waterUse": "falling"
+        "greenness": "falling",
+        "temperature": "rising",
+        "waterUse": "normal"
       },
       "weatherDriven": true,
       "addressedBy": [
@@ -1440,6 +1440,114 @@
         "confidence": "low",
         "asOf": "2041-2060",
         "placeholder": false
+      }
+    },
+    "rainSeason": {
+      "normal": {
+        "now": {
+          "value": 542,
+          "unit": "mm",
+          "range": [
+            418,
+            631
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+            "resolution": "6 to 11 km",
+            "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+          },
+          "confidence": "fair",
+          "label": "year.rainNow",
+          "asOf": "2001-2020",
+          "placeholder": false
+        },
+        "by2050": {
+          "value": 520,
+          "unit": "mm",
+          "range": [
+            477,
+            558
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "year.rain2050",
+          "asOf": "2041-2060",
+          "placeholder": false
+        }
+      },
+      "drier": {
+        "now": {
+          "value": 418,
+          "unit": "mm",
+          "scale": "area",
+          "source": {
+            "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+            "resolution": "6 to 11 km",
+            "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+          },
+          "confidence": "fair",
+          "label": "year.rainNow",
+          "asOf": "2001-2020",
+          "placeholder": false
+        },
+        "by2050": {
+          "value": 393,
+          "unit": "mm",
+          "range": [
+            351,
+            443
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "year.rain2050",
+          "asOf": "2041-2060",
+          "placeholder": false
+        }
+      },
+      "much-drier": {
+        "now": {
+          "value": 390,
+          "unit": "mm",
+          "scale": "area",
+          "source": {
+            "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+            "resolution": "6 to 11 km",
+            "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+          },
+          "confidence": "fair",
+          "label": "year.rainNow",
+          "asOf": "2001-2026",
+          "placeholder": false
+        },
+        "by2050": {
+          "value": 367,
+          "unit": "mm",
+          "range": [
+            328,
+            413
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "year.rain2050",
+          "asOf": "2041-2060",
+          "placeholder": false
+        }
       }
     }
   },
