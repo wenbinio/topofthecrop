@@ -630,8 +630,8 @@
           "it": "Accoppiato leguminose granella"
         },
         "condition": {
-          "en": "Chickpea, faba, lentil or pea to full ripeness.",
-          "it": "Cece, favino, lenticchia o pisello a maturazione piena."
+          "en": "Chickpea, faba bean, lentil or pea grown to full ripeness.",
+          "it": "Cece, favino, lenticchia o pisello coltivati fino a maturazione piena."
         },
         "amount": {
           "value": 44,
@@ -667,8 +667,8 @@
           "it": "Accoppiato oleaginose"
         },
         "condition": {
-          "en": "Oilseed crops. 2023 rate.",
-          "it": "Colture oleaginose. Importo 2023."
+          "en": "For oilseed crops. Uses the 2023 payment rate.",
+          "it": "Per colture oleaginose. Importo del 2023."
         },
         "amount": {
           "value": 98,
@@ -772,8 +772,8 @@
           "it": "Eco-schema 4: coltura da rinnovo"
         },
         "condition": {
-          "en": "If rapeseed, coriander count as renewal crops. Ask your adviser.",
-          "it": "Se colza, coriandolo valgono come rinnovo. Chiedi al tecnico."
+          "en": "Only if rapeseed or coriander count as renewal crops. Ask your CAA office.",
+          "it": "Solo se colza o coriandolo valgono come colture da rinnovo. Chiedi al tuo CAA."
         },
         "amount": {
           "value": 40,

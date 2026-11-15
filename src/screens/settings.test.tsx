@@ -461,7 +461,7 @@ describe("Settings", () => {
       renderAt(`${SETTINGS}&${THREE}`);
       expect(await screen.findAllByTestId("extra-item")).toHaveLength(3);
       expect(screen.getByRole("button", { name: "Add a payment" })).toBeDisabled();
-      expect(screen.getByTestId("extra-max")).toHaveTextContent("Max 3 added payments.");
+      expect(screen.getByTestId("extra-max")).toHaveTextContent("You can add up to 3 payments.");
       const reset = screen.getByRole("button", { name: "Reset figures" });
       expect(reset).toBeEnabled();
       act(() => {

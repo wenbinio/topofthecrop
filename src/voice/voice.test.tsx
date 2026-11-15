@@ -156,7 +156,7 @@ describe("microphone", () => {
     tapMic().say("water, next");
     await waitFor(() => expect(lastPath).toContain("p=water"));
     expect(lastPath.split("?")[0]).toBe("/questions");
-    expect(screen.getByTestId("voice-line")).toHaveTextContent("Water on, Rank 2 priorities first");
+    expect(screen.getByTestId("voice-line")).toHaveTextContent("Water on, Pick 2 priorities in order first");
   });
 
   it("says what to try when it did not understand", async () => {
@@ -171,7 +171,7 @@ describe("microphone", () => {
     renderAt("/questions?f=genzano-demo");
     await screen.findByTestId("last-crop");
     tapMic().fail("not-allowed");
-    expect(screen.getByTestId("voice-line")).toHaveTextContent("Microphone blocked. Allow it in browser settings.");
+    expect(screen.getByTestId("voice-line")).toHaveTextContent("The microphone is blocked. Allow it in your browser settings.");
   });
 
   it("an unsupported browser shows no microphone and no speaker", async () => {

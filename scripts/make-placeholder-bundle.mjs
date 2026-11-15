@@ -92,13 +92,13 @@ const support = [
   {
     id: 'coupled-legumes', level: 'italy', defaultOn: true,
     name: { en: "Coupled grain legumes", it: "Accoppiato leguminose granella" },
-    condition: { en: "Chickpea, faba, lentil or pea to full ripeness.", it: "Cece, favino, lenticchia o pisello a maturazione piena." },
+    condition: { en: "Chickpea, faba bean, lentil or pea grown to full ripeness.", it: "Cece, favino, lenticchia o pisello coltivati fino a maturazione piena." },
     amount: researched(44, '€/ha', [29, 44], money.agea, 'good', '2025'), crops: ['chickpea', 'faba', 'lentil', 'pea'], options: [],
   },
   {
     id: 'coupled-oilseeds', level: 'italy', defaultOn: true,
     name: { en: "Coupled oilseeds", it: "Accoppiato oleaginose" },
-    condition: { en: "Oilseed crops. 2023 rate.", it: "Colture oleaginose. Importo 2023." },
+    condition: { en: "For oilseed crops. Uses the 2023 payment rate.", it: "Per colture oleaginose. Importo del 2023." },
     amount: researched(98, '€/ha', [80, 98], money.agea, 'fair', '2023'), crops: ['rapeseed'], options: [],
   },
   {
@@ -119,8 +119,8 @@ const support = [
   {
     id: 'eco-rotation-renewal', level: 'eu', defaultOn: false,
     name: { en: "Eco-scheme 4: renewal crop", it: "Eco-schema 4: coltura da rinnovo" },
-    condition: { en: "If rapeseed, coriander count as renewal crops. Ask your adviser.",
-      it: "Se colza, coriandolo valgono come rinnovo. Chiedi al tecnico." },
+    condition: { en: "Only if rapeseed or coriander count as renewal crops. Ask your CAA office.",
+      it: "Solo se colza o coriandolo valgono come colture da rinnovo. Chiedi al tuo CAA." },
     amount: researched(40, '€/ha', [0, 72], money.agea, 'low', '2025'), crops: [],
     options: ['rapeseed-durum-durum', 'coriander-durum-durum'],
   },

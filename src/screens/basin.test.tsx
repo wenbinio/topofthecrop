@@ -119,12 +119,12 @@ describe("a drawn field", () => {
     const first = renderAt(`/options?${o}`);
     const headline = (await screen.findByTestId("rec-headline", {}, { timeout: 10000 })).textContent;
     const findings = screen.getByTestId("findings").textContent;
-    expect(screen.getByTestId("farmland-note")).toHaveTextContent("Part of outline is not farmland.");
+    expect(screen.getByTestId("farmland-note")).toHaveTextContent("Part of the outline is not farmland.");
     first.unmount();
     // A fresh load of the same link.
     resetBasin();
     renderAt(`/options?${o}&g=it`);
-    expect(await screen.findByTestId("area-note", {}, { timeout: 10000 })).toHaveTextContent("Per l'area di 1 km intorno al tuo campo");
+    expect(await screen.findByTestId("area-note", {}, { timeout: 10000 })).toHaveTextContent("Per la zona di 1 km intorno al tuo campo");
     cleanup();
     renderAt(`/options?${o}`);
     expect((await screen.findByTestId("rec-headline", {}, { timeout: 10000 })).textContent).toBe(headline);
@@ -142,9 +142,9 @@ describe("a drawn field", () => {
     renderAt(`/why/chickpea-durum-durum?${o}`);
     const unknowns = await screen.findByRole("heading", { name: "Not known" }, { timeout: 10000 });
     const list = unknowns.parentElement!;
-    expect(list).toHaveTextContent("1 km estimates");
-    expect(list).toHaveTextContent("hot days likely undercounted");
-    expect(list).toHaveTextContent("check with soil test");
+    expect(list).toHaveTextContent("1 km area estimates");
+    expect(list).toHaveTextContent("hot days are likely undercounted");
+    expect(list).toHaveTextContent("check with a soil test");
   }, 30000);
 
   it("a shared link outside the basin opens live weather", async () => {
@@ -156,7 +156,7 @@ describe("a drawn field", () => {
   it("when the basin data fails to load, says so and Retry tries again", async () => {
     stubFetch({ basin: false });
     renderAt(`/options?o=${ring(NEAR_DEMO)}&p=income,water`);
-    expect(await screen.findByText("Area data not loaded.", {}, { timeout: 10000 })).toBeInTheDocument();
+    expect(await screen.findByText("Could not load the area data.", {}, { timeout: 10000 })).toBeInTheDocument();
     stubFetch();
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
     expect(screen.getByRole("status")).toHaveTextContent("Loading area data…");
@@ -167,16 +167,16 @@ describe("a drawn field", () => {
     stubFetch();
     renderAt("/why/chickpea-durum-durum?f=genzano-demo&p=income,water");
     const list = (await screen.findByRole("heading", { name: "Not known" })).parentElement!;
-    expect(list).toHaveTextContent("hot days likely undercounted");
-    expect(list).toHaveTextContent("check with soil test");
-    expect(list).not.toHaveTextContent("1 km estimates");
+    expect(list).toHaveTextContent("hot days are likely undercounted");
+    expect(list).toHaveTextContent("check with a soil test");
+    expect(list).not.toHaveTextContent("1 km area estimates");
   });
 
   it("Find field draws the basin outline on the map", async () => {
     stubFetch();
     renderAt("/");
     await waitFor(() => expect(map.basinOutline?.type).toBe("FeatureCollection"));
-    expect(screen.getByText("Full results inside white line")).toBeInTheDocument();
+    expect(screen.getByText("Full results are inside the white line")).toBeInTheDocument();
   });
 });
 

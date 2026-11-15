@@ -44,7 +44,7 @@ describe("SeasonNow", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
     render(<SeasonNow centre={[16.0928, 40.8234]} />);
-    expect((await screen.findByTestId("season-error")).textContent).toContain("This season's rain unavailable.");
+    expect((await screen.findByTestId("season-error")).textContent).toContain("This season's rain data is not available.");
     fireEvent.click(screen.getByRole("button", { name: "Try again" }));
     await screen.findByTestId("season-error");
     expect(fetchMock).toHaveBeenCalledTimes(2);
