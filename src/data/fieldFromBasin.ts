@@ -8,7 +8,7 @@ import type { Polygon } from "geojson";
 import type { Fact, FieldBundle, Finding } from "./types";
 import { DRAWN_FIELD_ID } from "./types";
 import { AREA_UNKNOWN } from "./caveats";
-import { fieldData, finding, flowerHigh, hotDayStops, makeSources, measuredSignals, rainStops, real, risksByScenario, yearMonths } from "./field-rules.js";
+import { fieldData, finding, flowerHigh, hotDayStops, makeSources, measuredSignals, moreEvidence, rainStops, real, risksByScenario, yearMonths } from "./field-rules.js";
 import type { Triple } from "./field-rules.js";
 import { projected } from "./fieldshift-data.js";
 import type { BasinData, OutlineValues, SquareProps, Triple as MaybeTriple } from "./fieldshift-data.js";
@@ -151,6 +151,7 @@ export function fieldFromBasin(
   if (season) evidence.push(real(season, "mm", "area", sources.rain, "fair", "evidence.rainSeason", BASELINE));
   if (need) evidence.push(real(need, "mm", "area", sources.water, "fair", "evidence.durumNeed", BASELINE));
   if (clay) evidence.push(real(clay, "%", "area", sources.soil, "fair", "evidence.clay", "SoilGrids 2.0"));
+  evidence.push(...moreEvidence(extra)); // NASA SMAP soil water in spring, NASA MODIS crop water use
 
   const yearList = yearMonths({
     ndviMonth: months(g?.ndvi_month),

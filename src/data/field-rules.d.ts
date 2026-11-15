@@ -94,3 +94,7 @@ export function rainStops(input: {
   baseline: string;
   future: string;
 }): Record<Scenario, { now: Fact; by2050: Fact }>;
+
+export function moreEvidence(data: FieldData | undefined): Fact[];
+export const STRESS_RULES: { z: number };
+export function stressSeasons(seasons: FieldData["seasons"] | undefined): { season: number; z: number }[];

@@ -1,7 +1,7 @@
 // The rules behind the Why screen's signals and the slider's rain (src/data/field-rules.js), on made-up series.
 // Written with AI assistance (Claude, Anthropic).
 import { describe, expect, it } from "vitest";
-import { makeSources, measuredSignals, rainStops, seasonSignal, SIGNAL_RULES } from "./field-rules.js";
+import { makeSources, measuredSignals, moreEvidence, rainStops, seasonSignal, SIGNAL_RULES, STRESS_RULES, stressSeasons } from "./field-rules.js";
 import type { FieldData } from "./types";
 
 const YEARS = Array.from({ length: 26 }, (_, i) => 2001 + i); // seasons 2001-2026
@@ -65,5 +65,39 @@ describe("rainStops: Oct-May rain at each slider stop", () => {
       expect(stop.by2050.source.dataset).toBe("NASA NEX-GDDP-CMIP6");
       expect(stop.by2050.confidence).toBe("low");
     }
+  });
+});
+
+describe("moreEvidence: NASA SMAP soil water and NASA MODIS crop water use under Why", () => {
+  const fact = (value: number, dataset: string) => ({
+    value, unit: "x", scale: "area" as const, confidence: "fair" as const, placeholder: false, label: "data.x",
+    source: { dataset, resolution: "1 km", url: "" },
+  });
+  it("adds both figures with the evidence labels, in that order", () => {
+    const lines = moreEvidence({ water: { soilWaterSpring: fact(30.1, "SMAP"), cropWaterUse: fact(319, "MODIS") } } as unknown as FieldData);
+    expect(lines.map((f) => [f.label, f.value, f.source.dataset])).toEqual([
+      ["evidence.soilWaterSpring", 30.1, "SMAP"],
+      ["evidence.cropWaterUse", 319, "MODIS"],
+    ]);
+  });
+  it("leaves out a figure the field has no data for, and adds nothing without field data", () => {
+    const lines = moreEvidence({ water: { cropWaterUse: fact(319, "MODIS") } } as unknown as FieldData);
+    expect(lines.map((f) => f.label)).toEqual(["evidence.cropWaterUse"]);
+    expect(moreEvidence(undefined)).toEqual([]);
+  });
+});
+
+describe("stressSeasons: seasons much less green than nearby fields", () => {
+  const z = (values: (number | null)[]): FieldData["seasons"] => ({
+    years: [2017, 2018, 2019, 2020],
+    series: { peakVsNearby: { values, unit: "z", scale: "field", confidence: "fair", label: "data.x", placeholder: false, source: { dataset: "MODIS", resolution: "250 m", url: "" } } },
+  });
+  it("flags a season at or below the judgement threshold, and skips seasons with no data", () => {
+    expect(STRESS_RULES.z).toBe(-1.5);
+    expect(stressSeasons(z([-1.49, -1.5, null, -2.6]))).toEqual([{ season: 2018, z: -1.5 }, { season: 2020, z: -2.6 }]);
+  });
+  it("flags nothing for a field without the comparison (every drawn field)", () => {
+    expect(stressSeasons({ years: [2018], series: {} })).toEqual([]);
+    expect(stressSeasons(undefined)).toEqual([]);
   });
 });

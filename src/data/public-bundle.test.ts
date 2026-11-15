@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import shipped from "../../public/data/genzano-demo.json";
 import { incomeConfidence, optionMoney, withMoney } from "../money/money";
+import { stressSeasons } from "./field-rules.js";
 import type { Fact } from "./types";
 import { CLIMATE_SCENARIOS, CROPS } from "./types";
 import { OPTION_COUNT, validateBundle } from "./validate";
@@ -168,5 +169,19 @@ describe("the demo field's signals and slider stops come from its own data", () 
     expect(rain["much-drier"].by2050.value).toBe(Math.round(Math.min(...seasons) * (1 + change / 100)));
     // The hot days at the same stops: 1-in-10 hot and the hottest season, so each stop is drier and hotter.
     expect(bundle.year.hotDays.drier.now.value).toBe(source.weather.typical.hot_days_flower[2]);
+  });
+
+  it("every option's evidence ends with SMAP soil water in spring and MODIS crop water use, as field.json has them", () => {
+    for (const option of bundle.options) {
+      const [soil, water] = option.why.evidence.slice(-2);
+      expect([soil.label, soil.value, soil.source.dataset]).toEqual(["evidence.soilWaterSpring", source.water.typical.sm_spring[1], "NASA SMAP L4 soil moisture"]);
+      expect([water.label, water.value]).toEqual(["evidence.cropWaterUse", source.water.typical.water_use_modis[1]]);
+    }
+  });
+
+  it("the seasons much less green than nearby fields are field.json's own low z-scores: 2018 and 2023", () => {
+    const low = source.greenness.seasons.filter((r: { peak_vs_nearby_z: number | null }) => r.peak_vs_nearby_z !== null && r.peak_vs_nearby_z <= -1.5);
+    expect(stressSeasons(bundle.fieldData!.seasons).map((f) => f.season)).toEqual(low.map((r: { season: number }) => r.season));
+    expect(low.map((r: { season: number }) => r.season)).toEqual([2018, 2023]); // data of 14 November 2026
   });
 });

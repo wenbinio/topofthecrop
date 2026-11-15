@@ -77,11 +77,11 @@ What the app uses, from the data team's files (`data/`, made by the notebooks in
 
 | Dataset | What we take from it | On screen | Resolution |
 |---|---|---|---|
-| MODIS Terra vegetation indices (MOD13Q1, v6.1) | Greenness: the green, patchy and bare months on the year strip, the bare months after harvest, and peak greenness each season (the Why screen's "less green than usual" step). Also green-up and dry-off dates | Yes. Demo field "your field"; a drawn field "your area" (1 km mean) | 250 m |
-| MODIS Terra evapotranspiration (MOD16A2GF, v6.1; MOD16A2 for the latest months) | Water the crops used each season (the Why screen's "crops used less water" step) | Behind the Why screen's steps; the figures are in the data for the evidence screens | 500 m |
+| MODIS Terra vegetation indices (MOD13Q1, v6.1) | Greenness: the green, patchy and bare months on the year strip, the bare months after harvest, and peak greenness each season (the Why screen's "less green than usual" step, the Year screen's 2024 and 2026 card, and the demo field's seasons much less green than nearby fields). Also green-up and dry-off dates | Yes. Demo field "your field"; a drawn field "your area" (1 km mean) | 250 m |
+| MODIS Terra evapotranspiration (MOD16A2GF, v6.1; MOD16A2 for the latest months) | Water the crops used each season (the Why screen's "crops used less water" step) | Yes: a Why evidence line, and the Year screen's 2024 and 2026 card | 500 m |
 | GPM IMERG Final, monthly (V07) | One of the three rain sources (with CHIRPS and ERA5-Land; the app shows their median): autumn rain, October–May rain, the slider's rain | Yes | about 11 km |
 | NEX-GDDP-CMIP6 | Change by 2041–2060 from 29 climate models, on the middle (SSP2-4.5) and high (SSP5-8.5) paths: hot days at flowering, the usual high at flowering, the slider's rain; frost and rain for the evidence screens | Yes | about 28 km |
-| SMAP L4 soil moisture (SPL4SMGP, v8) | Root-zone soil water at sowing (November) and in spring (March–April), 2016–2025 | Not yet: in the data (`fieldData`) | 9 km |
+| SMAP L4 soil moisture (SPL4SMGP, v8) | Root-zone soil water at sowing (November) and in spring (March–April), 2016–2025 | Spring soil water: a Why evidence line, and the Year screen's 2024 and 2026 card. Sowing: in the data only | 9 km |
 | NASADEM | Height and slope | Not yet: in the data | 30 m |
 | Harmonized Landsat Sentinel-2 (HLSL30 and HLSS30, v2.0) | 30 m greenness at the demo field, used to check MODIS | No | 30 m |
 | NASA POWER | Live: weather history for a field outside the basin, and this season's rain so far. In the data: a check on rain and temperature at the demo field | Yes, live | about 50 km |

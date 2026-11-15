@@ -123,6 +123,43 @@ Two parts of the slider are still our judgement and are left fixed on purpose:
   crops, of 0.95, 0.85 or 0.7 for crops that need little, some or a lot of water;
   in a much drier year 0.85, 0.65 or 0.45. The other scores stay the same.
 
+## 2024 and 2026 against a usual season
+
+A card on the Year screen (`src/components/SeasonCompare.tsx`) puts two recent
+seasons beside the usual one, from the data team's season series: 2024, the
+drought season, and 2026, a wet one. Each season is named by its harvest year.
+
+| Row | Usual | Each season |
+|---|---|---|
+| October–May rain | The slider's normal stop: median of 2001–2020 | `rain_season` |
+| Soil water in spring (NASA SMAP, top metre, March–April) | Median of 2016–2025, the seasons with SMAP data | `sm_spring` |
+| Peak greenness (NASA MODIS) | Median of 2001–2020 | `peak_ndvi` |
+| Water crops used, November–June (NASA MODIS) | Median of 2001–2020 | `aet_season` |
+
+An arrow marks a season outside the usual range, the 10th to 90th percentile,
+so lower or higher than 9 usual seasons in 10. A value inside the range gets no
+arrow, however far from the median. A season with no value shows "no data".
+
+At the demo field 2024 had 413 mm of rain (usual 542), 27.3% soil water (usual
+30.1), 0.60 peak greenness (usual 0.71, inside the range) and 258 mm of water
+used (usual 319). 2026 had 651 mm, 32.8%, 0.72 and 326 mm. 2026 rain is the
+median of CHIRPS and ERA5-Land only, because NASA GPM IMERG in Earth Engine ends
+in September 2025 (`HANDOVER.md`, caveat 4); the card says so.
+
+The same card names the seasons the **demo field** was much less green than
+nearby rain-fed fields (`stressSeasons` in `src/data/field-rules.js`). The data
+team's `peak_vs_nearby_z` measures how far the field's peak greenness, minus
+nearby fields', departs from its usual gap. **Our judgement:** a season at
+or below −1.5 is flagged (`STRESS_RULES`). That flags 2018 (−2.59) and 2023
+(−1.69), the two seasons the data team picked out; the next lowest are 2012
+(−1.38) and 2002 (−1.31), so the line between them is a close call. A
+satellite sees the stress, not its cause, so the line ends in "check locally":
+disease, a thin stand, late sowing or a different crop that year. A drawn field
+has no such comparison and gets no flag.
+
+The Why screen's evidence also gained two lines for every option: soil water in
+spring (SMAP) and the water crops used (MODIS), each with its usual range.
+
 ## How the income figure is worked out
 
 For each harvest, income per hectare is yield × crop price − direct costs +
