@@ -99,6 +99,16 @@ diagnosis, weather-driven note, limits and chosen priorities instead.
 Income is average annual gross margin across the three harvests, not revenue;
 the supporting facts should give the prices used and their date.
 
+## Each rotation's risk — placeholder rule
+
+Each option shows a risk rating. It is our own rule with no source yet, so the app marks it as a placeholder and
+its source says "Our own rule, no source yet" (`risk` in `scripts/make-placeholder-bundle.mjs`):
+
+- **High** for the current rotation, durum after durum after durum.
+- **Medium** when a first crop is a broomrape host (faba bean, lentil, pea) or is sold on contract only (rapeseed,
+  coriander). For strip intercrops, both first crops count.
+- **Low** for any other rotation.
+
 ## Usual, dry and driest years
 
 The Year screen shows three kinds of year at once, each with its October to May

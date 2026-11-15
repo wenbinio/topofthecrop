@@ -2,8 +2,9 @@
 // Real: the field, what the satellites see, its year and the evidence (from field.json via real-field.mjs),
 //       the researched support (docs/support-and-prices.md) and every crop's yield, price, direct costs,
 //       nitrogen left, water need, machinery, buyer and broomrape status (docs/crops-research.md, "In the app").
+//       Each figure cites where it comes from (see `money` below; the full list is in DATA_SOURCES.md).
 // Derived here, by the rules written beside them: each rotation's facts, limits and priority scores.
-// Still our judgement, so still marked placeholder: each rotation's risk.
+// Still our judgement, so still marked placeholder: each rotation's risk (docs/scoring.md).
 // Run: node scripts/make-placeholder-bundle.mjs
 import { mkdirSync, writeFileSync } from "node:fs";
 import { realField } from "./real-field.mjs";
@@ -15,22 +16,34 @@ const fact = (value, unit, range, scale, source, confidence, label, extra = {}) 
 const researched = (value, unit, range, source, confidence, asOf, placeholder = false) =>
   fact(value, unit, range, 'area', source, confidence, undefined, { asOf, placeholder });
 
+// Where each figure comes from. A figure cites the trial, price list, paper or payment rules it was taken from.
+// Figures with no source anyone opened (most yields, every cost, nitrogen left, water need) cite our crop
+// research notes, which say for each figure how it was found and how sure it is (docs/crops-research.md).
+// Figures the app works out cite the rule they follow. The whole list: DATA_SOURCES.md, "Crop, price and support figures".
+const DOCS = 'https://github.com/wenbinio/topofthecrop/blob/main/docs/';
 const money = {
   foggia: { dataset: 'National durum price list and Foggia exchange', resolution: 'regional market', url: 'https://www.fg.camcom.it/' },
+  foggiaBari: { dataset: 'Foggia and Bari exchange price lists, 2025-26', resolution: 'regional market', url: 'https://www.fg.camcom.it/' },
+  bari: { dataset: 'Bari exchange price list, Italian green lentils', resolution: 'regional market', url: 'https://www.ba.camcom.it/' },
+  bologna: { dataset: 'Bologna exchange price list, field pea', resolution: 'northern market', url: 'https://www.bo.camcom.gov.it/' },
   hay: { dataset: 'Hay quotes from northern exchanges (no southern quote found)', resolution: 'other regions', url: 'https://www.bo.camcom.gov.it/' },
   agea: { dataset: 'AGEA payment circulars, CAP 2023-2027', resolution: 'national', url: 'https://www.agea.gov.it/' },
   masaf: { dataset: 'MASAF decrees and AGEA instructions', resolution: 'national', url: 'https://www.masaf.gov.it/' },
-  csr: { dataset: 'CSR Basilicata 2023-2027', resolution: 'regional', url: 'https://basilicatacsr.it/' },
-  research: { dataset: 'Crop research, Nov 2026', resolution: 'southern Italy', url: '' },
-  lago: { dataset: 'Lago-Olveira et al. 2023, wheat after chickpea, Puglia', resolution: 'one study', url: 'https://www.sciencedirect.com/science/article/pii/S0048969723037476' },
-  garofalo: { dataset: 'Garofalo et al. 2009, wheat after faba bean, Foggia (53-year simulation)', resolution: 'one study', url: 'https://publish.csiro.au/cp/cp08208' },
+  csr: { dataset: 'CSR Basilicata 2023-2027 (regional rural development plan)', resolution: 'regional', url: 'https://europa.regione.basilicata.it/feasr/' },
+  denora: { dataset: 'Denora et al. 2025, durum trial at Genzano di Lucania', resolution: 'one trial, two seasons', url: 'https://doi.org/10.1016/j.ijagro.2025.100045' },
+  notes: { dataset: 'Our crop research notes, 14 Nov 2026', resolution: 'southern Italy', url: `${DOCS}crops-research.md#in-the-app` },
+  lago: { dataset: 'Lago-Olveira et al. 2023, Sci. Total Environ. 896, 165124: wheat after chickpea, Puglia', resolution: 'one study', url: 'https://doi.org/10.1016/j.scitotenv.2023.165124' },
+  garofalo: { dataset: 'Garofalo et al. 2009, Crop Pasture Sci. 60, 240-250: wheat after faba bean, 53-year simulation', resolution: 'one study', url: 'https://doi.org/10.1071/CP08208' },
+  income: { dataset: 'Worked out from the crop figures and payments', resolution: 'this rotation', url: `${DOCS}scoring.md#how-the-income-figure-is-worked-out` },
+  riskRule: { dataset: 'Our own rule, no source yet', resolution: 'this rotation', url: `${DOCS}scoring.md#each-rotations-risk--placeholder-rule` },
 };
 
 // YIELD LIFT: how much more grain durum gives after a legume, in percent, for the first durum harvest after it
-// and (where the study gives one) a second durum in a row. Taken from the team's research compilation, which
-// cites these papers; we have not opened the papers ourselves, so confidence is low. The chickpea study worked
-// with wheat at 5 t/ha, well above this area's 3 t/ha, so the percentage may not carry over. No figure was found
-// for lentil, pea or vetch, so they get none: that is a gap in the evidence, not a finding that they give nothing.
+// and (where the study gives one) a second durum in a row. Chickpea: Lago-Olveira et al. 2023, Table S3, as copied
+// into the team's research compilation and not checked against the paper. Faba bean: Garofalo et al. 2009, whose
+// abstract gives the 12%. Both are single studies, so confidence stays low. The chickpea study worked with wheat
+// at 5 t/ha, well above this area's 3 t/ha, so the percentage may not carry over. No figure was found for lentil,
+// pea or vetch, so they get none: that is a gap in the evidence, not a finding that they give nothing.
 const DURUM_AFTER = {
   chickpea: { percents: [16, 10], source: money.lago },
   faba: { percents: [12], source: money.garofalo },
@@ -61,10 +74,16 @@ const CROP_TABLE = {
   rapeseed:    { y: [2.0, 1.0, 3.0], p: [500, 400, 565],  c: [590, 500, 750], n: null,         water: 'medium', machinery: 'side-knives', buyer: 'contract', broomrape: 'no',     confidence: 'low' },
   coriander:   { y: [1.3, 0.6, 2.0], p: [575, 450, 800],  c: [460, 400, 650], n: null,         water: 'low',    machinery: 'yes',         buyer: 'contract', broomrape: 'partly', confidence: 'low' },
 };
-// The four crops the app had before keep the price sources researched for them (docs/support-and-prices.md).
-const PRICE_SOURCE = { durum: money.foggia, chickpea: money.foggia, faba: money.foggia, 'vetch-oat': money.hay };
+// Prices taken from an exchange list someone opened (docs/crops-research.md, "What is solid and what is not";
+// docs/support-and-prices.md, "Prices"). Rapeseed and coriander have none, so they cite the notes.
+const PRICE_SOURCE = {
+  durum: money.foggia, chickpea: money.foggiaBari, faba: money.foggiaBari, barley: money.foggiaBari,
+  lentil: money.bari, pea: money.bologna, 'vetch-oat': money.hay,
+};
+// Only durum's yield was checked against a source: the trial at the demo field (3.03 and 2.79 t/ha fertilised).
+const YIELD_SOURCE = { durum: money.denora };
 
-const cropFact = (crop, [value, low, high], unit, source = money.research) =>
+const cropFact = (crop, [value, low, high], unit, source = money.notes) =>
   researched(value, unit, [low, high], source, CROP_TABLE[crop].confidence, '2026-11');
 
 // SUPPORT: switched on by default only where the payment needs no extra commitment or contract.
@@ -181,7 +200,7 @@ const support = [
 
 const economics = {
   crops: Object.fromEntries(Object.entries(CROP_TABLE).map(([crop, row]) => [crop, {
-    yield: cropFact(crop, row.y, 't/ha'),
+    yield: cropFact(crop, row.y, 't/ha', YIELD_SOURCE[crop]),
     price: cropFact(crop, row.p, '€/t', PRICE_SOURCE[crop]),
     costs: cropFact(crop, row.c, '€/ha'),
     ...(DURUM_AFTER[crop] ? { durumAfter: durumAfter(crop) } : {}),
@@ -298,19 +317,21 @@ const option = (id, sequence, checkLocally, strips) => {
   const supportTag = !isCurrent && allCrops.some((crop) => paymentsFor(id, crop).some((item) =>
     item.id !== 'basic-income' && item.id !== 'redistributive' && !currentGets.has(item.id)));
 
-  const research = (value, unit, range, confidence, label, placeholder = false) =>
-    fact(value, unit, range, 'area', money.research, confidence, label, { asOf: '2026-11', placeholder });
-  const incomeFact = (label) => research(income, '€/ha', incomeRange, incomeConfidence, label);
+  // Each rotation fact cites where it comes from: income the rule that works it out, nitrogen and water the
+  // crop research notes they are taken from, risk the rule we wrote ourselves.
+  const rotationFact = (source, value, unit, range, confidence, label, placeholder = false) =>
+    fact(value, unit, range, 'area', source, confidence, label, { asOf: '2026-11', placeholder });
+  const incomeFact = (label) => rotationFact(money.income, income, '€/ha', incomeRange, incomeConfidence, label);
   const firstConfidence = weakest(firsts.map((crop) => crop.confidence));
-  const nitrogenFact = (label) => research(n ? n[0] : 0, 'kg N/ha', n ? [n[1], n[2]] : undefined, isCurrent ? 'fair' : firstConfidence, label);
+  const nitrogenFact = (label) => rotationFact(money.notes, n ? n[0] : 0, 'kg N/ha', n ? [n[1], n[2]] : undefined, isCurrent ? 'fair' : firstConfidence, label);
 
   return {
     id, isCurrent, sequence, ...(strips ? { strips } : {}), firstHarvestYear: 2027,
     facts: {
       income: incomeFact('fact.income'),
-      water: research(water, undefined, undefined, firstConfidence, 'fact.water'),
+      water: rotationFact(money.notes, water, undefined, undefined, firstConfidence, 'fact.water'),
       nitrogen: nitrogenFact('fact.nitrogen'),
-      risk: research(risk, undefined, undefined, 'low', 'fact.risk', true),
+      risk: rotationFact(money.riskRule, risk, undefined, undefined, 'low', 'fact.risk', true),
     },
     scores, removedBy, flaggedBy, supportTag,
     why: {

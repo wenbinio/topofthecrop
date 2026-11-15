@@ -29,6 +29,26 @@ Every dataset is free and openly licensed. Rain and temperature published for th
 
 The 1 km grid follows the EEA reference grid (ETRS89-LAEA, EPSG:3035).
 
+## Crop, price and support figures
+
+The money and crop figures come from these sources. Each figure in the app cites the one it was taken from (`scripts/make-placeholder-bundle.mjs`). Where no source was opened, the figure cites our crop research notes. Which figures are verified, and how sure each is, is in `docs/crops-research.md` and `docs/support-and-prices.md`.
+
+| Source | Used for | Link |
+|---|---|---|
+| Denora, M. et al. (2025). Durum wheat-vetch intercropping in Mediterranean agroecological systems: effects on yield, nitrogen balance, and farm profitability. Italian Journal of Agronomy 20, 100045 | Durum yield (the trial at the demo field); the demo field's station rain and temperature and the trial's soil, for checks | https://doi.org/10.1016/j.ijagro.2025.100045 |
+| National durum price list and the Foggia commodity exchange (Camera di Commercio di Foggia), 2025–26 | Durum price | https://www.fg.camcom.it/ |
+| Foggia and Bari commodity exchange price lists, cereals and legumes, October 2025 to August 2026 | Chickpea, faba bean and barley prices | https://www.fg.camcom.it/ and https://www.ba.camcom.it/ |
+| Bari commodity exchange price list | Italian green lentil price | https://www.ba.camcom.it/ |
+| Bologna commodity exchange price list | Field pea price, and the hay quotes behind the vetch–oat hay price (no southern quote exists) | https://www.bo.camcom.gov.it/ |
+| AGEA payment circulars, CAP 2023–2027 (2023, 2024 and 2025 unit amounts; operating instructions 30/2025 and 47/2026) | Basic income support, the redistributive payment, coupled payments and eco-schemes | https://www.agea.gov.it/ |
+| MASAF decrees and AGEA instructions | Payment rules (the crop-rotation rule, the durum fund) | https://www.masaf.gov.it/ |
+| CSR Basilicata 2023–2027, the region's rural development plan | The three regional payments. These rest on search results and trade press, because the official pages would not load | https://europa.regione.basilicata.it/feasr/ |
+| Lago-Olveira, S. et al. (2023). Environmental and economic benefits of wheat and chickpea crop rotation in the Mediterranean region of Apulia (Italy). Science of the Total Environment 896, 165124 | More durum after chickpea: 16%, then 10% | https://doi.org/10.1016/j.scitotenv.2023.165124 |
+| Garofalo, P., Di Paolo, E. and Rinaldi, M. (2009). Durum wheat in rotation with faba bean: long-term simulation case study. Crop and Pasture Science 60(3), 240–250 | More durum after faba bean: 12% | https://doi.org/10.1071/CP08208 |
+| Our crop research notes, 14 November 2026 (`docs/crops-research.md`): two AI research agents (Claude Opus and Gemini) working from one brief, with the team choosing the figures | Every other crop figure: yields other than durum, all direct costs, nitrogen left, water need, machinery, buyer, broomrape status, and the rapeseed and coriander prices | https://github.com/wenbinio/topofthecrop/blob/main/docs/crops-research.md |
+
+Each rotation's income is worked out from these figures (`docs/scoring.md`, "How the income figure is worked out"). Its risk rating is our own rule (`docs/scoring.md`, "Each rotation's risk").
+
 ## Ground check
 
 Rain and temperature at the demo field were checked against the weather station of the vetch trial at that field. The paper gives season totals without saying which months they cover, so three windows are shown. The station values are copied by hand from the paper and labelled as such in `field.json`. They are used only for this check: no data was changed to match them.
