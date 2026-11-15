@@ -6,7 +6,8 @@ import type { Polygon } from "geojson";
 import type { Lang } from "../data/types";
 
 export const PC_STAC_SEARCH = "https://planetarycomputer.microsoft.com/api/stac/v1/search";
-export const PC_TILES = "https://planetarycomputer.microsoft.com/api/data/v1/item/tiles/WebMercatorQuad";
+export const PC_DATA = "https://planetarycomputer.microsoft.com/api/data/v1";
+export const PC_TILES = `${PC_DATA}/item/tiles/WebMercatorQuad`;
 export const TIMELAPSE_TIMEOUT_MS = 8000;
 
 /** Our judgement (docs/scoring.md, "Field timelapse"). */
@@ -15,35 +16,112 @@ export const TIMELAPSE_RULES = {
   years: 3,
   /** A scene with more cloud than this, in %, over its whole 100 km tile, is not used. */
   maxCloud: 25,
-  /** Zoom levels tried, closest first; the closest at which the field fits is used. */
-  maxZoom: 16,
+  /** Zoom levels tried, closest first: the closest at which the field and its margin fit in one tile's width. */
+  maxZoom: 18,
   minZoom: 12,
-  /** The field may span at most this share of the picture's width and height. */
-  fieldShare: 0.5,
+  /** Margin around the field, as a share of its longer side, on each side of the picture. */
+  margin: 0.08,
+  /** Pictures tried for each month, least cloudy first, until one is clear at the field. */
+  perMonth: 3,
 };
 
+/**
+ * Sentinel-2 scene classes (SCL) that count as a clear view of the ground: dark features, vegetation, bare soil,
+ * water, unclassified, snow. No data (0), defective (1), cloud shadow (3), cloud (8, 9) and cirrus (10) do not.
+ */
+export const CLEAR_SCL = new Set([2, 4, 5, 6, 7, 11]);
+
 const TILE = 256;
-/** The picture is a 2 × 2 block of map tiles, 512 px a side. */
-const BLOCK = 2;
 
 export type Scene = { id: string; datetime: string; cloud: number };
 export type Frame = Scene & { month: string };
 
+const offMiddle = (iso: string) => Math.abs(Number(iso.slice(8, 10)) - 15);
+const better = (a: Scene, b: Scene) => a.cloud - b.cloud || offMiddle(a.datetime) - offMiddle(b.datetime);
+
 /**
- * One frame a month: the scene with the least cloud, then the one nearest the middle of the month. A Sentinel-2
+ * Each month's scenes, least cloudy first, then nearest the middle of the month; months in date order. A Sentinel-2
  * pass over Basilicata is mid-morning, so the month in UTC is the local month.
  */
-export function monthlyFrames(scenes: Scene[]): Frame[] {
-  const best = new Map<string, Frame>();
-  const offMiddle = (iso: string) => Math.abs(Number(iso.slice(8, 10)) - 15);
+export function monthCandidates(scenes: Scene[], perMonth = TIMELAPSE_RULES.perMonth): { month: string; scenes: Scene[] }[] {
+  const byMonth = new Map<string, Scene[]>();
   for (const scene of scenes) {
     const month = scene.datetime.slice(0, 7);
-    const held = best.get(month);
-    if (!held || scene.cloud < held.cloud || (scene.cloud === held.cloud && offMiddle(scene.datetime) < offMiddle(held.datetime))) {
-      best.set(month, { ...scene, month });
+    byMonth.set(month, [...(byMonth.get(month) ?? []), scene]);
+  }
+  return [...byMonth.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, list]) => ({ month, scenes: [...list].sort(better).slice(0, perMonth) }));
+}
+
+/** One frame a month, before any check at the field: each month's first candidate. */
+export function monthlyFrames(scenes: Scene[]): Frame[] {
+  return monthCandidates(scenes, 1).map(({ month, scenes: [scene] }) => ({ ...scene, month }));
+}
+
+/** The first number anywhere in the data API's answer to a point query, whatever its shape. */
+function firstNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const n = firstNumber(item);
+      if (n !== null) return n;
     }
   }
-  return [...best.values()].sort((a, b) => a.datetime.localeCompare(b.datetime));
+  return null;
+}
+
+/** The data API's point query: the scene class at one place. */
+export function sclUrl(item: string, [lon, lat]: [number, number]): string {
+  const query = new URLSearchParams({ collection: "sentinel-2-l2a", item, assets: "SCL" });
+  return `${PC_DATA}/item/point/${lon.toFixed(5)},${lat.toFixed(5)}?${query}`;
+}
+
+/** Whether the scene sees the ground at the field's middle: true, false, or null when the check could not be made. */
+export async function clearAtField(item: string, centre: [number, number], fetchImpl: typeof fetch = fetch): Promise<boolean | null> {
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), TIMELAPSE_TIMEOUT_MS);
+  try {
+    const response = await fetchImpl(sclUrl(item, centre), { signal: abort.signal });
+    if (!response.ok) return null;
+    const scl = firstNumber(((await response.json()) as { values?: unknown }).values);
+    return scl === null ? null : CLEAR_SCL.has(scl);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * One frame a month: the first candidate that is clear at the field. A month with no clear candidate is left out.
+ * If the check cannot be made at all (the service refuses it), every month keeps its least cloudy scene, as before.
+ */
+export async function chooseFrames(scenes: Scene[], centre: [number, number], fetchImpl: typeof fetch = fetch): Promise<Frame[]> {
+  let checking = true;
+  const pick = async ({ month, scenes: list }: { month: string; scenes: Scene[] }): Promise<Frame | null> => {
+    for (const scene of list) {
+      if (!checking) return { ...scene, month };
+      const clear = await clearAtField(scene.id, centre, fetchImpl);
+      if (clear === null) {
+        checking = false;
+        return { ...scene, month };
+      }
+      if (clear) return { ...scene, month };
+    }
+    return null;
+  };
+  const months = monthCandidates(scenes);
+  const chosen: (Frame | null)[] = new Array(months.length).fill(null);
+  let next = 0;
+  const worker = async () => {
+    while (next < months.length) {
+      const i = next++;
+      chosen[i] = await pick(months[i]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(6, months.length) }, worker));
+  return chosen.filter((frame): frame is Frame => frame !== null);
 }
 
 const lonToX = (lon: number, z: number) => ((lon + 180) / 360) * TILE * 2 ** z;
@@ -54,46 +132,53 @@ const latToY = (lat: number, z: number) => {
 
 export type TileWindow = {
   z: number;
-  /** The top-left tile of the 2 × 2 block. */
+  /** The top-left tile, and how many tiles across and down (one or two each). */
   tx: number;
   ty: number;
-  /** Width and height of the picture in tile pixels. */
-  size: number;
-  /** The field's outline in the picture's pixels. */
+  cols: number;
+  rows: number;
+  /** The square shown, in pixels from the top-left tile's corner: the field and its margin. */
+  region: { x: number; y: number; size: number };
+  /** The field's outline, in the same pixels. */
   points: [number, number][];
   /** Middle of the field, [lon, lat]: the point the scenes must cover. */
   centre: [number, number];
 };
 
-/** The closest zoom at which the field fits, and the 2 × 2 block of tiles around it. */
+/**
+ * The square around the field and its margin, at the closest zoom where that square is at most one tile wide, so
+ * it never needs more than 2 × 2 tiles. The screen stretches the square to fill the picture.
+ */
 export function tileWindow(outline: Polygon): TileWindow {
   const ring = outline.coordinates[0];
   const lons = ring.map((p) => p[0]);
   const lats = ring.map((p) => p[1]);
   const [w, e, s, n] = [Math.min(...lons), Math.max(...lons), Math.min(...lats), Math.max(...lats)];
-  const fits = (z: number) =>
-    Math.max(lonToX(e, z) - lonToX(w, z), latToY(s, z) - latToY(n, z)) <= TIMELAPSE_RULES.fieldShare * BLOCK * TILE;
+  const square = (z: number) => Math.max(lonToX(e, z) - lonToX(w, z), latToY(s, z) - latToY(n, z)) * (1 + 2 * TIMELAPSE_RULES.margin);
   let z = TIMELAPSE_RULES.maxZoom;
-  while (z > TIMELAPSE_RULES.minZoom && !fits(z)) z--;
+  while (z > TIMELAPSE_RULES.minZoom && square(z) > TILE) z--;
+  const size = Math.max(square(z), 1);
   const cx = (lonToX(w, z) + lonToX(e, z)) / 2;
   const cy = (latToY(n, z) + latToY(s, z)) / 2;
-  // The block whose middle lies nearest the field's middle: the field is never more than a quarter off-centre.
-  const tx = Math.round(cx / TILE) - 1;
-  const ty = Math.round(cy / TILE) - 1;
+  const [left, top] = [cx - size / 2, cy - size / 2];
+  const tx = Math.floor(left / TILE);
+  const ty = Math.floor(top / TILE);
   return {
     z,
     tx,
     ty,
-    size: BLOCK * TILE,
+    cols: Math.floor((left + size - 1e-9) / TILE) - tx + 1,
+    rows: Math.floor((top + size - 1e-9) / TILE) - ty + 1,
+    region: { x: left - tx * TILE, y: top - ty * TILE, size },
     points: ring.map(([lon, lat]) => [lonToX(lon, z) - tx * TILE, latToY(lat, z) - ty * TILE] as [number, number]),
     centre: [(w + e) / 2, (s + n) / 2],
   };
 }
 
-/** The four tiles of a frame, row by row: [x, y]. */
+/** The tiles of a frame, row by row: [x, y]. */
 export function blockTiles(win: TileWindow): [number, number][] {
   const out: [number, number][] = [];
-  for (let row = 0; row < BLOCK; row++) for (let col = 0; col < BLOCK; col++) out.push([win.tx + col, win.ty + row]);
+  for (let row = 0; row < win.rows; row++) for (let col = 0; col < win.cols; col++) out.push([win.tx + col, win.ty + row]);
   return out;
 }
 

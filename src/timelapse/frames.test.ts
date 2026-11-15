@@ -3,7 +3,8 @@
 import type { Polygon } from "geojson";
 import { describe, expect, it, vi } from "vitest";
 import {
-  PC_STAC_SEARCH, TIMELAPSE_RULES, blockTiles, creditYears, fetchScenes, frameLabel, monthlyFrames, searchBody, tileUrl, tileWindow,
+  PC_STAC_SEARCH, TIMELAPSE_RULES, blockTiles, chooseFrames, clearAtField, creditYears, fetchScenes, frameLabel, monthCandidates, monthlyFrames,
+  sclUrl, searchBody, tileUrl, tileWindow,
 } from "./frames";
 
 // The demo field's outline (data/field.json).
@@ -26,24 +27,69 @@ describe("monthlyFrames", () => {
 });
 
 describe("tileWindow", () => {
-  it("zooms in as far as the field fits in half the picture, and puts its outline inside the picture", () => {
+  it("crops to the field and its margin: the field's longer side fills the picture but for the margins", () => {
     const win = tileWindow(demo);
-    expect(win.z).toBe(TIMELAPSE_RULES.maxZoom);
-    expect(win.size).toBe(512);
-    for (const [x, y] of win.points) {
-      expect(x).toBeGreaterThan(0);
-      expect(x).toBeLessThan(512);
-      expect(y).toBeGreaterThan(0);
-      expect(y).toBeLessThan(512);
-    }
-    expect(blockTiles(win)).toEqual([[win.tx, win.ty], [win.tx + 1, win.ty], [win.tx, win.ty + 1], [win.tx + 1, win.ty + 1]]);
+    const xs = win.points.map(([x]) => x);
+    const ys = win.points.map(([, y]) => y);
+    const { x, y, size } = win.region;
+    for (const px of xs) expect(px).toBeGreaterThanOrEqual(x);
+    for (const px of xs) expect(px).toBeLessThanOrEqual(x + size);
+    for (const py of ys) expect(py).toBeGreaterThanOrEqual(y);
+    for (const py of ys) expect(py).toBeLessThanOrEqual(y + size);
+    const longer = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+    expect(longer / size).toBeCloseTo(1 / (1 + 2 * TIMELAPSE_RULES.margin), 5);
+    // The square is at most one tile wide, so it needs at most 2 x 2 tiles, and they cover it.
+    expect(size).toBeLessThanOrEqual(256);
+    expect(win.cols * 256).toBeGreaterThanOrEqual(x + size);
+    expect(win.rows * 256).toBeGreaterThanOrEqual(y + size);
+    expect(blockTiles(win)).toHaveLength(win.cols * win.rows);
     expect(win.centre[0]).toBeCloseTo(16.0925, 3);
     expect(win.centre[1]).toBeCloseTo(40.8232, 3);
   });
 
-  it("zooms out for a big field", () => {
+  it("zooms out for a big field, never past the closest zoom for a small one", () => {
     const big: Polygon = { type: "Polygon", coordinates: [[[16.0, 40.8], [16.03, 40.8], [16.03, 40.82], [16.0, 40.82], [16.0, 40.8]]] };
-    expect(tileWindow(big).z).toBeLessThan(TIMELAPSE_RULES.maxZoom);
+    expect(tileWindow(big).z).toBeLessThan(tileWindow(demo).z);
+    const tiny: Polygon = { type: "Polygon", coordinates: [[[16.0, 40.8], [16.0002, 40.8], [16.0002, 40.8002], [16.0, 40.8], [16.0, 40.8]]] };
+    expect(tileWindow(tiny).z).toBe(TIMELAPSE_RULES.maxZoom);
+  });
+});
+
+describe("checking each picture at the field", () => {
+  const scenes = [
+    { id: "jun-cloudy", datetime: "2024-06-15T09:50:00Z", cloud: 0.2 },
+    { id: "jun-clear", datetime: "2024-06-25T09:50:00Z", cloud: 3 },
+    { id: "jul-cloudy", datetime: "2024-07-10T09:50:00Z", cloud: 1 },
+  ];
+  const answer = (values: unknown) => new Response(JSON.stringify({ coordinates: [16, 40], values }), { status: 200 });
+
+  it("keeps up to three candidates a month, least cloudy first", () => {
+    expect(monthCandidates(scenes).map((m) => [m.month, m.scenes.map((s) => s.id)])).toEqual([
+      ["2024-06", ["jun-cloudy", "jun-clear"]],
+      ["2024-07", ["jul-cloudy"]],
+    ]);
+  });
+
+  it("reads the scene class at the field's middle: ground is clear, cloud and no data are not", async () => {
+    expect(new URL(sclUrl("S2A_X", [16.09251, 40.82322])).pathname).toBe("/api/data/v1/item/point/16.09251,40.82322");
+    const ask = (values: unknown) => clearAtField("S2A_X", [16, 40], (async () => answer(values)) as unknown as typeof fetch);
+    expect(await ask([5])).toBe(true); // bare soil
+    expect(await ask([["SCL", [4], ["SCL_b1"]]])).toBe(true); // vegetation, in the multi-asset shape
+    expect(await ask([9])).toBe(false); // cloud
+    expect(await ask([0])).toBe(false); // no data
+    expect(await clearAtField("S2A_X", [16, 40], (async () => new Response("no", { status: 404 })) as unknown as typeof fetch)).toBeNull();
+  });
+
+  it("takes each month's first picture that is clear at the field, and leaves out a month with none", async () => {
+    const fetchImpl = vi.fn(async (url: string) => answer([String(url).includes("cloudy") ? 9 : 5]));
+    const frames = await chooseFrames(scenes, [16, 40], fetchImpl as unknown as typeof fetch);
+    expect(frames.map((f) => [f.month, f.id])).toEqual([["2024-06", "jun-clear"]]);
+  });
+
+  it("falls back to the least cloudy scene of each month when the check cannot be made", async () => {
+    const fetchImpl = vi.fn(async () => { throw new TypeError("blocked"); });
+    const frames = await chooseFrames(scenes, [16, 40], fetchImpl as unknown as typeof fetch);
+    expect(frames.map((f) => f.id)).toEqual(["jun-cloudy", "jul-cloudy"]);
   });
 });
 
