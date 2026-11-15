@@ -17,7 +17,7 @@ A farmer goes through six steps. Each step is one screen and one route.
 | 3 | `/options` | `src/screens/Options.tsx` | What the satellites see, the recommendation, ranked rotations |
 | 4 | `/why/:optionId` | `src/screens/Why.tsx` | One rotation: income sum, evidence, what we don't know, what to check locally |
 | 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days now and by 2050, the drier-year slider |
-| 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `Print.tsx` | A link and a one-page printout for the adviser |
+| 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Check and share": what to check alone for the best fit, who can look at the plan without an adviser, then the link and a one-page printout. The route keeps its old name so shared links still open |
 
 Two more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin) and `/settings` (`Settings.tsx`, the farmer's own prices and support payments).
 

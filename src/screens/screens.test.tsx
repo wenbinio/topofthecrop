@@ -3,6 +3,7 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import App, { AppRoutes } from "../App";
+import { WHO, ownChecks } from "./check-share";
 
 vi.mock("../components/Map", () => ({
   default: () => <div data-testid="map" />,
@@ -239,6 +240,46 @@ describe("what counts as a hot day", () => {
     renderAt("/options?f=genzano-demo&p=income,water");
     fireEvent.click(await screen.findByRole("button", { name: "Hot flowering" }));
     expect(screen.getByTestId("hot-def")).toHaveTextContent("30 °C or more");
+  });
+});
+
+describe("Check and share (step 6)", () => {
+  it("lists what to check alone for the best fit, without the line that only says to ask someone", async () => {
+    renderAt("/adviser?f=genzano-demo&p=income,water");
+    const own = await screen.findByTestId("own-checks");
+    expect(own).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    const items = within(own).getAllByTestId("own-check").map((li) => li.textContent);
+    expect(items).toEqual(["Any local pulse or forage buyer?", "Where to buy seed; best valley variety"]);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Check before you sow");
+  });
+
+  it("names who can look at the plan for a farmer with no adviser, easiest to reach first", async () => {
+    renderAt("/adviser?f=genzano-demo&p=income,water");
+    const who = within(await screen.findByTestId("who-can-check")).getAllByTestId("who");
+    expect(who).toHaveLength(5);
+    expect(who[0]).toHaveTextContent("Cooperative or seed dealer: seed, varieties, buyers");
+    expect(who[1]).toHaveTextContent("CAA office");
+    expect(who[4]).toHaveTextContent("An agronomist, if you have one");
+    expect(screen.getByRole("heading", { name: "No adviser? Ask one of these" })).toBeInTheDocument();
+  });
+
+  it("still offers the printout, WhatsApp and the link", async () => {
+    renderAt("/adviser?f=genzano-demo&p=income,water");
+    const share = await screen.findByTestId("share");
+    expect(within(share).getByRole("link", { name: "Print page" })).toBeInTheDocument();
+    expect(within(share).getByRole("link", { name: "WhatsApp" }).getAttribute("href")).toContain("https://wa.me/?text=");
+    expect(within(share).getByRole("button", { name: "Copy link" })).toBeInTheDocument();
+  });
+
+  it("a check that only says to ask someone is not something to check alone", () => {
+    expect(ownChecks(["check.buyer", "check.adviser"])).toEqual(["check.buyer"]);
+    expect(ownChecks(["check.adviser"])).toEqual([]);
+    expect(WHO).toEqual(["dealer", "caa", "service", "neighbour", "agronomist"]);
+  });
+
+  it("the Year screen's button now says Check and share", async () => {
+    renderAt("/year?f=genzano-demo&p=income,water");
+    expect(await screen.findByRole("link", { name: "Check and share" })).toBeInTheDocument();
   });
 });
 
