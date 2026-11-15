@@ -107,7 +107,7 @@ Everything behind the income figure, on the Settings screen, which is split into
 | More durum after a legume, first and second harvest | `l1.<crop>`, `l2.<crop>` | 0–100% |
 | Support payment amount, and on or off | `s.<id>`, `on.<id>` | 0–2,000 €/ha |
 
-Every change applies at once and travels in the link. "Save changes" at the foot of Settings takes the farmer back to the screen they came from with the new figures, and puts them in the plan kept on the phone (`keepFigures` in `src/state/plan.ts`) when that plan is the same field and answers.
+Every change applies at once and travels in the link. "Save changes" at the foot of Settings takes the farmer back to the screen they came from with the new figures, and puts them in the plan kept on the phone (`keepFigures` in `src/state/plan.ts`) when that plan is the same field and answers. Back does the same, whether Settings' own, the top bar's or the phone's: it returns to the screen before with the new figures, and a further Back moves on (`src/components/KeepFiguresOnBack.tsx`).
 
 Payments the farmer adds travel in `x`. A typed figure counts as "fair" confidence and tags the income "Yours". To make a new figure editable: add it to `resolveMoney`, `setMoney` and `MONEY_LIMITS` in `src/money/money.ts`, allow its key prefix in `src/state/url.ts`, add a row to a section in `src/screens/settings/Editor.tsx`, and list it on the printout when changed (`src/screens/Print.tsx`).
 

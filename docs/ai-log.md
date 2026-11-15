@@ -78,6 +78,9 @@ How AI tools were used during the competition (14–15 November 2026): what we a
     - where to intercrop on the farmer's own field: the field split between the two crops from three satellite signals over several springs (Sentinel-2 greenness and leaf moisture, and high and low ground from the Copernicus DEM), showing where they agree
     - changing the soil type, and the pH from a soil analysis
     - "Nothing, left fallow" as a last crop
+- **Back after changing prices**
+  - **We:** found on a phone that Back after changing a price threw the change away and stayed on the same screen; a teammate added a "Save changes" button
+  - **AI:** made every way back out of Settings (its own Back, the top bar's and the phone's) keep the new figures and return to the screen before, so a further Back moves on
 - **AI badge on the crop pictures**
   - **We:** asked for a visible AI mark on every AI-made picture, as the competition's rules require
   - **AI:** added a see-through "AI" badge to each crop picture, and named ChatGPT in the AI statement and the app's AI note

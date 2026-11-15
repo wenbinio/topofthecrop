@@ -64,7 +64,7 @@ Open https://wenbinio.github.io/topofthecrop/ and press **Ctrl+F5** first (on a 
 
 - [ ] **Prices and support**: crop prices (9 crops), costs, yields, more durum after a legume (3 figures), support payments (5 on), your own payments.
 - [ ] Change the durum price and tap **Save changes**: you are back on the plan, the figures change and show **Yours**. Copy the link and open it in a new tab: the change is still there.
-- [ ] *Back* also returns to the plan, but does not keep a change that was not saved.
+- [ ] Change a price again and tap *Back* instead (the top bar's or the phone's): you are back on the plan with the change kept. Tap Back once more: you go on to the questions, not to the plan with the old price.
 - [ ] **Bigger text** makes everything larger; tap again to undo.
 - [ ] **Data and credits**: the credit lines (NASA, Copernicus, CHIRPS, FAO, soil, crop map, land cover, basin, forecast, Sentinel-2, the Copernicus DEM heights, the trial) and the AI note, which also says the crop pictures were made with AI.
 
