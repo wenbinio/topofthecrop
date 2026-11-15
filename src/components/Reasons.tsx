@@ -22,11 +22,11 @@ function reasonScale(reason: Reason, option: Option) {
 }
 
 /** One short line per reason, each led by its priority's icon. */
-export function ReasonList({ reasons, option, testId }: { reasons: Reason[]; option: Option; testId?: string }) {
+export function ReasonList({ reasons, option, testId, badges = false }: { reasons: Reason[]; option: Option; testId?: string; badges?: boolean }) {
   const t = useT();
   const lang = useLang();
   return (
-    <ul className="flex flex-col gap-1" data-testid={testId}>
+    <ul className={`flex flex-col ${badges ? "gap-3" : "gap-1"}`} data-testid={testId}>
       {reasons.map((reason) => {
         const Icon = PRIORITY_ICON[reason.priority];
         const vars = Object.fromEntries(
@@ -34,9 +34,15 @@ export function ReasonList({ reasons, option, testId }: { reasons: Reason[]; opt
         );
         const scale = reasonScale(reason, option);
         return (
-          <li key={reason.priority} data-testid="reason" data-priority={reason.priority} className="flex items-start gap-2 text-body">
-            <Icon className="w-5 h-5 flex-none mt-0.5" title={t(`priority.${reason.priority}`)} />
-            <span>
+          <li key={reason.priority} data-testid="reason" data-priority={reason.priority} className={`flex items-start text-body ${badges ? "gap-3" : "gap-2"}`}>
+            {badges ? (
+              <span className="w-9 h-9 flex-none rounded-full bg-sunk text-primary flex items-center justify-center">
+                <Icon className="w-5 h-5" title={t(`priority.${reason.priority}`)} />
+              </span>
+            ) : (
+              <Icon className="w-5 h-5 flex-none mt-0.5" title={t(`priority.${reason.priority}`)} />
+            )}
+            <span className={badges ? "pt-1.5" : ""}>
               <RichText text={t(reason.key, vars)} />
               {scale ? (
                 <>

@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useId, useState } from "react";
+import { useAppState } from "../state/useAppState";
+import { validPh } from "../state/url";
 import type { FieldBundle, View } from "../data/types";
 import { soilSummary } from "../data/soil";
 import { useLang, useT } from "../i18n";
-import { ScaleBadge, SourceButton, formatNumber, rangeText, unitText, valueText } from "./FactParts";
+import { ScaleBadge, SourceButton, YoursTag, formatNumber, rangeText, unitText, valueText } from "./FactParts";
 import { BareSoilIcon, ChevronIcon } from "./Icons";
 import { SectionTitle } from "./ui";
 
@@ -15,8 +17,13 @@ export function SoilCard({ bundle, view, bare = false }: { bundle: FieldBundle; 
   const t = useT();
   const lang = useLang();
   const [open, setOpen] = useState(false);
-  const soil = soilSummary(bundle);
+  const [state, setState] = useAppState();
+  const [editing, setEditing] = useState(false);
+  const [phText, setPhText] = useState(state.soilPh !== null ? String(state.soilPh) : "");
+  const phId = useId();
+  const soil = soilSummary(bundle, { weight: state.soilWeight, ph: state.soilPh });
   if (!soil) return null;
+  const mine = soil.own.weight || soil.own.ph;
   const simple = view === "simple";
   return (
     <section data-testid="soil-card" data-texture={soil.texture}>
@@ -33,23 +40,95 @@ export function SoilCard({ bundle, view, bare = false }: { bundle: FieldBundle; 
           <BareSoilIcon className="w-6 h-6 flex-none mt-0.5" />
           <div className="min-w-0">
             <p className="text-big font-bold" data-testid="soil-kind">
-              {t(`soil.weight.${soil.weight}`)} <span className="text-body font-normal text-ink-soft">({t(`soil.texture.${soil.texture}`)})</span>
+              {t(`soil.weight.${soil.weight}`)}{" "}
+              {soil.own.weight ? <YoursTag /> : <span className="text-body font-normal text-ink-soft">({t(`soil.texture.${soil.texture}`)})</span>}
             </p>
             <p className="text-body">{t(`soil.weight.${soil.weight}.means`)}</p>
           </div>
         </div>
-        {soil.band && soil.ph ? (
+        {soil.band && (soil.ph || soil.own.ph) ? (
           <div className="mt-2 pl-8" data-testid="soil-ph">
             <p className="text-body">
-              <span className="font-bold">{t(`soil.ph.${soil.band}`)}</span> · pH {valueText(soil.ph, t, lang)}
-              {soil.measuredPh ? ` · ${t("soil.measured")} ${valueText(soil.measuredPh, t, lang)}` : ""}
+              <span className="font-bold">{t(`soil.ph.${soil.band}`)}</span>
+              {soil.own.ph && soil.ownPh !== undefined ? (
+                <>
+                  {" "}· {t("soil.phYours", { ph: formatNumber(soil.ownPh, lang) })} <YoursTag />
+                </>
+              ) : soil.ph ? (
+                <>
+                  {" "}· pH {valueText(soil.ph, t, lang)}
+                  {soil.measuredPh ? ` · ${t("soil.measured")} ${valueText(soil.measuredPh, t, lang)}` : ""}
+                </>
+              ) : null}
             </p>
             {simple ? null : <p className="text-body">{t(`soil.ph.${soil.band}.means`)}</p>}
           </div>
         ) : null}
         <p className="mt-2 pl-8 text-small text-ink-soft" data-testid="soil-honest">
-          {t("soil.estimate")} {t("soil.notRanked")}
+          {soil.own.weight ? t("soil.yours", { map: t(`soil.weight.${soil.mapWeight}`).toLocaleLowerCase(lang) }) : t("soil.estimate")} {t("soil.notRanked")}
         </p>
+        {/* The farmer knows their ground better than a map: they can say so, and undo it. */}
+        {editing ? (
+          <div className="mt-2 ml-8 p-3 rounded-box bg-sunk flex flex-col gap-2" data-testid="soil-editor">
+            <p className="font-bold text-body">{t("soil.editHead")}</p>
+            <div role="radiogroup" aria-label={t("soil.editHead")} className="grid grid-cols-3 gap-2">
+              {(["heavy", "medium", "light"] as const).map((w) => (
+                <button
+                  key={w}
+                  type="button"
+                  role="radio"
+                  aria-checked={soil.weight === w}
+                  data-testid={`soil-pick-${w}`}
+                  onClick={() => setState({ soilWeight: w === soil.mapWeight ? null : w })}
+                  className={`tc-tap min-h-11 px-1 rounded-box border-2 font-bold text-small ${soil.weight === w ? "bg-primary text-on-primary border-primary" : "bg-surface text-ink border-line-strong"}`}
+                >
+                  {t(`soil.weight.${w}`)}
+                </button>
+              ))}
+            </div>
+            <label htmlFor={phId} className="text-body">
+              {t("soil.phLabel")}
+            </label>
+            <input
+              id={phId}
+              type="number"
+              inputMode="decimal"
+              step="0.1"
+              min={3}
+              max={10}
+              value={phText}
+              data-testid="soil-ph-input"
+              onChange={(e) => {
+                setPhText(e.target.value);
+                const ph = Number(e.target.value.replace(",", "."));
+                setState({ soilPh: e.target.value.trim() !== "" && validPh(ph) ? Math.round(ph * 10) / 10 : null });
+              }}
+              className="tc-tap w-28 px-3 rounded-box border-2 border-line-strong bg-surface text-big"
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" data-testid="soil-done" onClick={() => setEditing(false)} className="tc-tap min-h-11 px-4 rounded-box bg-primary text-on-primary font-bold text-body">
+                {t("soil.done")}
+              </button>
+              {mine ? (
+                <button
+                  type="button"
+                  data-testid="soil-reset"
+                  onClick={() => {
+                    setPhText("");
+                    setState({ soilWeight: null, soilPh: null });
+                  }}
+                  className="min-h-11 underline underline-offset-4 text-body"
+                >
+                  {t("soil.reset")}
+                </button>
+              ) : null}
+            </div>
+          </div>
+        ) : (
+          <button type="button" data-testid="soil-edit" onClick={() => setEditing(true)} className="tc-tap mt-1 ml-8 min-h-11 font-bold text-body underline underline-offset-4">
+            {t("soil.edit")}
+          </button>
+        )}
         <button
           type="button"
           aria-expanded={open}

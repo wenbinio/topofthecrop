@@ -2,7 +2,7 @@
 // The panel grows and shrinks smoothly (a CSS grid row from 0fr to 1fr, in index.css) and, while closed, is
 // inert: out of the tab order and unread by screen readers, though still in the page.
 // Written with AI assistance (Claude, Anthropic).
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { ChevronIcon } from "./Icons";
 
@@ -15,8 +15,11 @@ export function Fold({
   icon,
   defaultOpen = false,
   testId,
+  openSignal = 0,
   children,
 }: {
+  /** Each time this number goes up, the row opens and scrolls into view (a button elsewhere asking for it). */
+  openSignal?: number;
   title: ReactNode;
   /** A few words on the right of the title that say what is inside, shown open or closed. */
   summary?: ReactNode;
@@ -26,6 +29,12 @@ export function Fold({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const self = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!openSignal) return;
+    setOpen(true);
+    self.current?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+  }, [openSignal]);
   // Once fully open, the panel stops clipping, so a source bubble on its last row can hang below it.
   const [settled, setSettled] = useState(defaultOpen);
   const headId = useId();
@@ -40,7 +49,7 @@ export function Fold({
   }, [open]);
 
   return (
-    <section className="border-b border-line bg-surface" data-testid={testId} data-open={open}>
+    <section ref={self} className="border-b border-line bg-surface" data-testid={testId} data-open={open}>
       <h2>
         <button
           type="button"

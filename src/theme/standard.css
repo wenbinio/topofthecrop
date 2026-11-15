@@ -23,6 +23,8 @@
   /* wheat-gold text on paper (4.6:1) and the soft band behind the "how sure" note */
   --tc-wheat-ink: #7d5b14;
   --tc-note: #f3e8cf;
+  /* the soft green behind a "your plan still holds" card */
+  --tc-ok: #e1ebdd;
   --tc-on-best: #16201a;
   --tc-warn: #9c3b12;
   --tc-on-warn: #ffffff;

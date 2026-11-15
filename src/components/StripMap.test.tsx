@@ -1,10 +1,15 @@
 // How an intercrop sits on the field: the split into strips or halves, and the map that draws it.
 // Written with AI assistance (Claude, Anthropic).
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render as rtlRender, screen, within } from "@testing-library/react";
+import type { ReactElement } from "react";
+import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import shipped from "../../public/data/genzano-demo.json";
 import type { FieldBundle, Option } from "../data/types";
 import { STRIP_METRES, StripMap, backdropScene, layoutPieces, moistFirst, pairFit, piecesIn } from "./StripMap";
+
+/** The soil card and the map read the plan from the link, so they render inside a router. */
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
 
 type Pt = [number, number];
 

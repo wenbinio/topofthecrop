@@ -780,6 +780,15 @@ export const en = {
   "options.weak.costs": "the {crop} costs",
   "options.weak.lift": "the extra durum after {crop}",
   "options.sureWhy.lowParts": "Not yet checked against a local source: {parts}. Talk it over with an adviser before you sow.",
+  "options.harvestYear": "Harvest {year}",
+  "today.titleMonth": "Your field in {month}",
+  "soil.edit": "Change",
+  "soil.editHead": "What is your ground like?",
+  "soil.phLabel": "pH from a soil test, if you have one",
+  "soil.done": "Done",
+  "soil.reset": "Use the soil map again",
+  "soil.yours": "You set this; the soil map says {map}.",
+  "soil.phYours": "pH {ph}, from your soil test",
 } as const;
 
 export type DictKey = keyof typeof en;

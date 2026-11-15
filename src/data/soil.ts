@@ -45,9 +45,18 @@ export function phBand(ph: number): PhBand {
   return ph < PH_BANDS.acidBelow ? "acid" : ph > PH_BANDS.alkalineAbove ? "alkaline" : "neutral";
 }
 
+/** What the farmer said about their soil, where it differs from the soil map. */
+export type OwnSoil = { weight: Weight | null; ph: number | null };
+
 export type SoilSummary = {
   texture: Texture;
   weight: Weight;
+  /** The soil map's own kind of ground, kept for "the soil map says…" when the farmer chose another. */
+  mapWeight: Weight;
+  /** Which parts the farmer set themselves. */
+  own: { weight: boolean; ph: boolean };
+  /** The farmer's soil-test pH, where they typed one. */
+  ownPh?: number;
   /** The soil map's pH, and the band it falls in. The band follows the measured pH where the field has one. */
   ph?: Fact;
   band?: PhBand;
@@ -62,7 +71,7 @@ export type SoilSummary = {
 const num = (fact: Fact | undefined): number | null => (fact && typeof fact.value === "number" ? fact.value : null);
 
 /** The field's soil, or null when the bundle has no sand and silt figures to name it from. */
-export function soilSummary(bundle: FieldBundle): SoilSummary | null {
+export function soilSummary(bundle: FieldBundle, own: OwnSoil = { weight: null, ph: null }): SoilSummary | null {
   const soil = bundle.fieldData?.soil;
   if (!soil) return null;
   const sand = num(soil.sand), silt = num(soil.silt);
@@ -73,11 +82,13 @@ export function soilSummary(bundle: FieldBundle): SoilSummary | null {
   const texture = textureClass(sand, silt, clay);
   const measuredPh = bundle.fieldData?.trialSoil?.ph;
   const ph = soil.ph;
-  const phValue = num(measuredPh) ?? num(ph);
+  const phValue = own.ph ?? num(measuredPh) ?? num(ph);
   const rest = Object.entries(soil).filter(([key]) => key !== "sand" && key !== "silt").map(([, fact]) => fact);
   const figures = [clayFact, soil.sand, soil.silt, ...rest].filter((fact): fact is Fact => Boolean(fact));
   return {
-    texture, weight: WEIGHT_OF[texture],
+    texture, weight: own.weight ?? WEIGHT_OF[texture], mapWeight: WEIGHT_OF[texture],
+    own: { weight: own.weight !== null && own.weight !== WEIGHT_OF[texture], ph: own.ph !== null },
+    ...(own.ph !== null ? { ownPh: own.ph } : {}),
     ...(ph ? { ph } : {}), ...(phValue !== null ? { band: phBand(phValue) } : {}), ...(measuredPh ? { measuredPh } : {}),
     figures, scale: soil.sand!.scale,
   };

@@ -1,12 +1,18 @@
 // "Your soil": naming the ground from the soil figures the bundle carries. Written with AI assistance (Claude, Anthropic).
 import { readFileSync } from "node:fs";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render as rtlRender, screen } from "@testing-library/react";
+import type { ReactElement } from "react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import { SoilCard } from "../components/SoilCard";
 import { LangContext } from "../i18n";
 import { WEIGHT_OF, phBand, soilSummary, textureClass } from "./soil";
+import { decodeState, encodeState } from "../state/url";
 import { validateBundle } from "./validate";
+
+/** The soil card and the map read the plan from the link, so they render inside a router. */
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
 
 const demo = validateBundle(JSON.parse(readFileSync("public/data/genzano-demo.json", "utf8")));
 
@@ -110,5 +116,42 @@ describe("the soil card", () => {
     unmount();
     const { container } = render(<SoilCard bundle={validateBundle(structuredClone(fixture))} view="standard" />);
     expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe("the farmer's own soil", () => {
+  it("replaces the soil map's ground and pH, says so, and keeps the map's answer for comparison", () => {
+    const own = soilSummary(demo, { weight: "light", ph: 6.2 })!;
+    expect(own.weight).toBe("light");
+    expect(own.mapWeight).toBe("heavy");
+    expect(own.own).toEqual({ weight: true, ph: true });
+    expect(own.band).toBe("acid");
+    // Choosing what the map already says is not a correction.
+    expect(soilSummary(demo, { weight: "heavy", ph: null })!.own.weight).toBe(false);
+  });
+
+  it("goes in the link and comes back out of it", () => {
+    const state = decodeState("f=genzano-demo&sw=light&sph=6.2");
+    expect(state.soilWeight).toBe("light");
+    expect(state.soilPh).toBe(6.2);
+    expect(encodeState(state)).toContain("sw=light");
+    expect(encodeState(state)).toContain("sph=6.2");
+    expect(decodeState("sw=rocky&sph=14").soilWeight).toBeNull();
+    expect(decodeState("sw=rocky&sph=14").soilPh).toBeNull();
+  });
+
+  it("the card shows the farmer's soil, marked as theirs, and Change lets them pick another or go back to the map", () => {
+    rtlRender(<SoilCard bundle={demo} view="standard" />, {
+      wrapper: ({ children }) => <MemoryRouter initialEntries={["/options?f=genzano-demo&sw=light&sph=6.2"]}>{children}</MemoryRouter>,
+    });
+    expect(screen.getByTestId("soil-kind")).toHaveTextContent("Light ground");
+    expect(screen.getByTestId("soil-kind")).toHaveTextContent("Yours");
+    expect(screen.getByTestId("soil-ph")).toHaveTextContent("6.2");
+    expect(screen.getByTestId("soil-honest")).toHaveTextContent("heavy ground");
+    fireEvent.click(screen.getByTestId("soil-edit"));
+    expect(screen.getByTestId("soil-pick-light")).toHaveAttribute("aria-checked", "true");
+    fireEvent.click(screen.getByTestId("soil-reset"));
+    expect(screen.getByTestId("soil-kind")).toHaveTextContent("Heavy ground");
+    expect(screen.getByTestId("soil-kind")).not.toHaveTextContent("Yours");
   });
 });
