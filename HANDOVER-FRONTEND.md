@@ -16,7 +16,7 @@ A farmer goes through six steps. Each step is one screen and one route.
 | 2 | `/questions` | `src/screens/Questions.tsx` | Last crop, limits, priorities tapped in order (at least two) |
 | 3 | `/options` | `src/screens/Options.tsx` | What the satellites see, the recommendation, ranked rotations |
 | 4 | `/why/:optionId` | `src/screens/Why.tsx` | One rotation: income sum, evidence, what we don't know, what to check locally |
-| 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days now and by 2050, the drier-year slider |
+| 5 | `/year` | `src/screens/Year.tsx` | The field's year month by month, hot days and October–May rain now and by 2050, the drier-year slider, this season's rain and the forecast (live), 2024 and 2026 against a usual season |
 | 6 | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Check and share": what to check alone for the best fit, who can look at the plan without an adviser, then the link and a one-page printout. The route keeps its old name so shared links still open |
 
 Two more screens sit outside the steps: `/area` (`AreaWeather.tsx`, live weather for a field outside the basin) and `/settings` (`Settings.tsx`, the farmer's own prices and support payments).
@@ -174,6 +174,7 @@ All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a t
 
 - `npm test` runs about 480 tests. Screens are tested with a frozen bundle, `src/test-fixtures/money-bundle.json`, so changing the shipped figures does not break them. One test, `src/data/public-bundle.test.ts`, checks the shipped file.
 - The map is mocked in tests. Check map changes by hand in a browser.
+- `docs/checking-the-app.md` walks through every screen of the live app with the demo field's expected figures.
 - Every push to `main` runs `.github/workflows/pages.yml`: typecheck, test, build, publish.
 - After switching branches, restart `npm run dev`; it can serve stale files.
 - GitHub Pages keeps every file in its cache for ten minutes. The app's code files have a new name in each build, but the data files do not, so for ten minutes after publishing new code could read old data. To prevent that, the build fingerprints all shipped data (`dataStamp()` in `vite.config.ts`) and the app adds the fingerprint to each data file's address (`stamped()` in `src/data/fresh.ts`). When checking a publish, look at the data request in the browser's network list: it ends `?v=` and ten characters.

@@ -1,10 +1,10 @@
 # Field Shift: data handover for the app
 
-Sat 14 Nov 2026, 18:30 UK. From Edison (data lane) to the frontend. Written with AI assistance (Claude, Anthropic) and checked against the final data files. Updated Sun 15 Nov, 10:15 UK: paths and app details brought in line with the repo.
+Sat 14 Nov 2026, 18:30 UK. From Edison (data lane) to the frontend. Written with AI assistance (Claude, Anthropic) and checked against the final data files. Updated Sun 15 Nov, 10:15 UK: paths and app details brought in line with the repo; 11:45 UK: what now reaches the screens.
 
 This file sits at the top of the repo, and `AGENTS.md` tells any person or AI agent to read it before working on the data. `HANDOVER-FRONTEND.md` covers the app's side: how each key reaches a screen.
 
-## 0. Briefing for an AI assistant
+## 0. Briefing for a person or an AI assistant
 
 - **Project.** Field Shift (NASA Space Apps Challenge 2026) helps family durum-wheat farmers in the Bradano basin (Basilicata, southern Italy) compare crop rotations under a changing climate. The app, Top of the Crop, is a static web app on GitHub Pages for phones: no backend, no login, in English and Italian, in six steps (`AGENTS.md`).
 - **The data is finished.** Everything the app needs is in `data/`, made by the Colab notebooks in `ColabNotebooks/` and checked. **Never edit files in `data/` by hand.** If a value looks wrong, ask Edison to rerun the notebook that made it.
@@ -241,8 +241,8 @@ Written before the app was built, as guidance. For how the app actually uses eac
   - The ground check (`field.weather.ground_check`).
   - MODIS against HLS (`field.greenness`).
   - The trial's soil (`field.soil.trial_reported`).
-- **Disease and stress flags (demo field):** a season is unusual when `peak_vs_nearby_z` is far below 0. It was −2.59 in 2018 and −1.69 in 2023. Every flag ends in "check locally".
-- Link to `DATA_SOURCES.md`, and show the AI note from `index.json`.
+- **Disease and stress flags (demo field):** a season is unusual when `peak_vs_nearby_z` is far below 0. It was −2.59 in 2018 and −1.69 in 2023. Every flag ends in "check locally". Done: the Year screen names them, flagging at −1.5 or below (`docs/scoring.md`).
+- Link to `DATA_SOURCES.md`, and show the AI note from `index.json`. Done: "Data and credits" on Check and share and on the printout.
 
 **Printout and share link.** Print with print CSS. For the link, store the outline (coordinates rounded to 5 decimals) and the settings in the URL hash, then recompute on load. There's no server.
 
@@ -307,7 +307,7 @@ Keys stay the same, so the app needs no changes. If keys ever change, this file 
 
 ## 10. Credits, licences and AI
 
-- **Data credits.** All datasets are free and openly licensed; each licence and citation is in `DATA_SOURCES.md` and in each file's `meta.sources`. Several licences ask for a credit line: Copernicus (ERA5-Land, Sentinel-2, CORINE), ESA WorldCover, SoilGrids and the EU crop map. Use the exact citations from `DATA_SOURCES.md`, for example on an "About the data" page that links to it.
-- **AI.** The notebooks were written with AI assistance (Claude, Anthropic) and run by the team; data values come from the cited datasets. A few published trial values were copied by hand from Denora et al. (2025) and are labelled as such. Show `index.json`'s `ai_assistance` text in the app, and add the same kind of note for AI-written app code and text, in the code and on the page.
+- **Data credits.** All datasets are free and openly licensed; each licence and citation is in `DATA_SOURCES.md` and in each file's `meta.sources`. Several licences ask for a credit line: Copernicus (ERA5-Land, Sentinel-2, CORINE), ESA WorldCover, SoilGrids and the EU crop map. The app shows them under "Data and credits" (`src/components/DataCredits.tsx`), with a link to `DATA_SOURCES.md`.
+- **AI.** The notebooks were written with AI assistance (Claude, Anthropic) and run by the team; data values come from the cited datasets. A few published trial values were copied by hand from Denora et al. (2025) and are labelled as such. The app shows a short note on this and on AI-written app code under "Data and credits"; each AI-written code file says so in its header.
 - **NASA branding.** No NASA logos or insignia in AI-made content. Naming NASA datasets, as the citations do, is fine.
 - **Station data.** The Basilicata station records are not in the repo and must not be added.
