@@ -124,7 +124,7 @@ describe("last crop", () => {
     await screen.findAllByTestId("option-row");
     expect(rowIds()).not.toContain("chickpea-durum-durum");
     const line = screen.getByTestId("left-out");
-    expect(line).toHaveTextContent("Chickpea left out: just grown");
+    expect(line).toHaveTextContent("Chickpea was left out: you just grew it");
     expect(cropIconsIn(line)).toEqual(["chickpea"]);
     expect(screen.getByTestId("recommendation")).not.toHaveAttribute("data-option-id", "chickpea-durum-durum");
   });
@@ -133,22 +133,22 @@ describe("last crop", () => {
 describe("explanations", () => {
   it("the ? beside Your priorities opens one line per priority", async () => {
     renderAt("/options?f=genzano-demo&p=income,water");
-    const help = await screen.findByRole("button", { name: "What priorities mean" });
+    const help = await screen.findByRole("button", { name: "What the priorities mean" });
     expect(help).toHaveAttribute("title", expect.stringContaining("hay cut"));
     expect(screen.queryByTestId("priority-lines")).toBeNull();
     fireEvent.click(help);
     const lines = within(screen.getByTestId("priority-lines")).getAllByRole("listitem");
     expect(lines).toHaveLength(4);
-    expect(lines[0]).toHaveTextContent("Earns more per ha a year");
-    expect(lines[1]).toHaveTextContent("holds up in dry year");
-    expect(lines[2]).toHaveTextContent("Leaves nitrogen for next crop");
+    expect(lines[0]).toHaveTextContent("Earns more per hectare a year");
+    expect(lines[1]).toHaveTextContent("holds up in a dry year");
+    expect(lines[2]).toHaveTextContent("Leaves nitrogen for the next crop");
     expect(lines[3]).toHaveTextContent("hay cut");
     expect(screen.getByRole("checkbox", { name: "Forage" })).toHaveAttribute("title", expect.stringContaining("hay cut"));
   });
 
   it("the ? on Questions opens the same four lines", async () => {
     renderAt("/questions?f=genzano-demo&g=it");
-    fireEvent.click(await screen.findByRole("button", { name: "Cosa vogliono dire" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Cosa vogliono dire le priorità" }));
     expect(within(screen.getByTestId("priority-lines")).getAllByRole("listitem")).toHaveLength(4);
   });
 
@@ -158,7 +158,7 @@ describe("explanations", () => {
     const green = within(covers).getByRole("button", { name: "Green" });
     expect(green).toHaveAttribute("title", expect.stringContaining("0.5"));
     fireEvent.click(green);
-    expect(within(covers).getByTestId("legend-line")).toHaveTextContent("Crop covers ground (greenness 0.5+). NASA MODIS, typical year 2001–2020.");
+    expect(within(covers).getByTestId("legend-line")).toHaveTextContent("The crop covers the ground (greenness 0.5 or more). NASA MODIS satellite, typical year 2001–2020.");
     fireEvent.click(within(covers).getByRole("button", { name: "Bare" }));
     expect(within(covers).getByTestId("legend-line")).toHaveTextContent("under 0.3");
     fireEvent.click(within(covers).getByRole("button", { name: "Bare" }));
@@ -208,7 +208,7 @@ describe("income confidence", () => {
     await screen.findAllByTestId("option-row");
     const marks = screen.getAllByTestId("income-confidence");
     expect(marks).toHaveLength(4);
-    expect(marks[0]).toHaveTextContent("Income figure: low");
+    expect(marks[0]).toHaveTextContent("Confidence in income: low");
     const button = within(marks[0]).getByRole("button");
     expect(button).toHaveAttribute("title", expect.stringContaining("weakest figure"));
     fireEvent.click(button);
@@ -226,7 +226,7 @@ describe("income confidence", () => {
     await screen.findAllByTestId("option-row");
     for (const mark of screen.getAllByTestId("income-confidence")) {
       expect(mark).toHaveAttribute("data-confidence", "good");
-      expect(mark).toHaveTextContent("Income figure: good");
+      expect(mark).toHaveTextContent("Confidence in income: good");
     }
   });
 });

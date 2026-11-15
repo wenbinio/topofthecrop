@@ -18,19 +18,19 @@ const state = (lang: Lang, priorities: Priority[] = ["income", "water"], extra: 
 describe("screenSummary", () => {
   it("Options: headline, reasons, adviser line", () => {
     expect(screenSummary("/options", bundle, state("en"))).toBe(
-      "Plant chickpea next. About 158 euro per hectare a year more than durum on durum. Needs little water. A suggestion: check it locally first.",
+      "Plant chickpea next. About 158 euro per hectare a year more than durum on durum. Needs little water. This is a suggestion: check locally first.",
     );
     expect(screenSummary("/options", bundle, state("it"))).toBe(
-      "Semina cece dopo. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. Un consiglio: prima verifica sul posto.",
+      "Semina cece dopo. Circa più 158 euro per ettaro all'anno sul ringrano. Vuole poca acqua. È un consiglio: prima verifica sul posto.",
     );
   });
 
   it("Options with soil first speaks the nitrogen in words", () => {
     expect(screenSummary("/options", bundle, state("en", ["soil", "income"]))).toBe(
-      "Plant faba bean next. About 60 kilos of nitrogen per hectare for next crop. About 57 euro per hectare a year more than durum on durum. A suggestion: check it locally first.",
+      "Plant faba bean next. About 60 kilos of nitrogen per hectare for next crop. About 57 euro per hectare a year more than durum on durum. This is a suggestion: check locally first.",
     );
     expect(screenSummary("/options", bundle, state("it", ["soil", "income"]))).toBe(
-      "Semina favino dopo. Circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno sul ringrano. Un consiglio: prima verifica sul posto.",
+      "Semina favino dopo. Circa 60 chili di azoto per ettaro alla coltura dopo. Circa più 57 euro per ettaro all'anno sul ringrano. È un consiglio: prima verifica sul posto.",
     );
   });
 
@@ -55,14 +55,14 @@ describe("screenSummary", () => {
   it("Questions: what is chosen and what is still to pick", () => {
     expect(screenSummary("/questions", bundle, state("en", []))).toBe("Last crop: Durum. Tap what matters most first: Income, Water, Soil and nitrogen, Forage.");
     expect(screenSummary("/questions", bundle, state("it", ["water"]))).toBe(
-      "Ultima coltura: Grano duro. Le tue priorità: 1 Acqua. Tocca prima ciò che conta di più: Reddito, Suolo e azoto, Foraggio.",
+      "Ultima coltura: Grano duro. Le tue priorità: 1 Acqua. Tocca prima quello che conta di più: Reddito, Suolo e azoto, Foraggio.",
     );
     expect(screenSummary("/questions", bundle, state("en"))).toBe("Last crop: Durum. Your priorities: 1 Income, 2 Water.");
   });
 
   it("Check and share: what to check alone for the best fit, then who can look at it", () => {
     expect(screenSummary("/adviser", bundle, state("en"))).toBe(
-      "Check before you sow. Check yourself: Any local pulse or forage buyer. Where to buy seed; best valley variety. " +
+      "Check before you sow. Check these yourself: Any local pulse or forage buyer. Where to buy seed; best valley variety. " +
         "No adviser? Ask one of these: Cooperative or seed dealer; CAA office, where you file your payment claim; " +
         "Your region's farm advisory service; A neighbour who grows it; An agronomist, if you have one.",
     );

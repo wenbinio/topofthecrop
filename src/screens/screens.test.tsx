@@ -144,7 +144,7 @@ describe("Options", () => {
     for (const o of only.options) if (!o.isCurrent) o.removedBy = ["no-irrigation"];
     vi.stubGlobal("fetch", vi.fn(async () => okJson(only)));
     renderAt("/options?f=genzano-demo&p=soil,income&l=no-irrigation");
-    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Keep durum: fits best");
+    expect(await screen.findByTestId("rec-headline")).toHaveTextContent("Keep durum: it fits best");
     expect(screen.getAllByTestId("option-row")).toHaveLength(1);
     expect(screen.getByTestId("rec-reasons")).toHaveTextContent("No nitrogen added");
   });
@@ -216,7 +216,7 @@ describe("what counts as a hot day", () => {
     expect(screen.queryByTestId("hot-def")).toBeNull();
     fireEvent.click(head);
     const line = screen.getByTestId("hot-def");
-    expect(line).toHaveTextContent("30 °C or more, 15 April–15 June");
+    expect(line).toHaveTextContent("30 °C or more between 15 April and 15 June");
     // The frozen fixture has no flowerHigh, so only the definition shows.
     expect(line).not.toHaveTextContent("Usual high");
   });
@@ -319,7 +319,7 @@ describe("Questions", () => {
     renderAt("/questions?f=genzano-demo");
     const next = await screen.findByRole("button", { name: "Next" });
     expect(next).toBeDisabled();
-    expect(screen.getByTestId("rank-hint")).toHaveTextContent("Rank at least 2");
+    expect(screen.getByTestId("rank-hint")).toHaveTextContent("Pick at least 2");
     fireEvent.click(screen.getByRole("checkbox", { name: "Income" }));
     await waitFor(() => expect(screen.getByRole("checkbox", { name: "Income" })).toHaveAttribute("data-rank", "1"));
     expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
