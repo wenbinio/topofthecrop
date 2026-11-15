@@ -3,7 +3,7 @@ import type { AppState, FieldBundle } from "../data/types";
 import { DEMO_FIELD_ID } from "../data/types";
 import { togglePriority } from "../components/Reasons";
 import { rankOptions } from "../ranking/rank";
-import { SETTINGS_PATH } from "../screens/Settings";
+import { SETTINGS_PATH } from "../screens/settings/path";
 import { setLimit } from "../state/toggles";
 import type { Step, VoiceCommand } from "./commands";
 

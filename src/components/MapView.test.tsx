@@ -26,7 +26,7 @@ vi.mock("maplibre-gl", () => {
   return { Map: FakeMap, Marker: class {}, NavigationControl: class {}, setWorkerUrl: () => {} };
 });
 
-import Map from "./Map";
+import Map from "./MapView";
 
 type Observed = { cb: ResizeObserverCallback; el: Element | null; disconnected: boolean };
 const observers: Observed[] = [];

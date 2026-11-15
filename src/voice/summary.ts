@@ -7,7 +7,7 @@ import { optionCrop } from "../components/Crops";
 import { rankOptions } from "../ranking/rank";
 import type { Reason } from "../ranking/reasons";
 import { reasonsFor } from "../ranking/reasons";
-import { SETTINGS_PATH } from "../screens/Settings";
+import { SETTINGS_PATH } from "../screens/settings/path";
 
 /** Unit marks and signs written out, so the phone says "euro per hectare a year" rather than reading symbols. */
 export function spoken(text: string, lang: Lang): string {

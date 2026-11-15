@@ -1,23 +1,36 @@
-import { useLayoutEffect } from "react";
+import { Suspense, lazy, useLayoutEffect } from "react";
 import type { ReactNode } from "react";
 import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { DEMO_FIELD_ID } from "./data/types";
 import { isUsableRing } from "./geo/geometry";
-import { LangContext } from "./i18n";
+import { LangContext, useT } from "./i18n";
 import { useAppState, useTo } from "./state/useAppState";
 import { BundleGate, BundleProvider, useBundle } from "./components/BundleProvider";
 import { StepBar } from "./components/StepBar";
 import { TopBar } from "./components/TopBar";
 import Adviser from "./screens/Adviser";
-import AreaWeather from "./screens/AreaWeather";
 import FindField from "./screens/FindField";
 import Options from "./screens/Options";
-import Print from "./screens/Print";
 import Questions from "./screens/Questions";
-import Settings, { SETTINGS_PATH } from "./screens/Settings";
+import { SETTINGS_PATH } from "./screens/settings/path";
 import Why from "./screens/Why";
 import Year from "./screens/Year";
 import { VoiceProvider } from "./voice/Voice";
+
+// Screens few farmers open, loaded only when first needed, so step 1 starts with less to download.
+const AreaWeather = lazy(() => import("./screens/AreaWeather"));
+const Print = lazy(() => import("./screens/Print"));
+const Settings = lazy(() => import("./screens/Settings"));
+
+/** While a screen loaded on demand arrives: the same one loading line as the bundle gate. */
+function ScreenLoading() {
+  const t = useT();
+  return (
+    <p className="p-4 text-body text-ink-soft" role="status">
+      {t("common.loading")}
+    </p>
+  );
+}
 
 /**
  * Sends the farmer back to step 1 when the link lacks the field a screen needs.
@@ -73,6 +86,7 @@ function Shell() {
       >
         <TopBar steps={isPrint || isSettings ? null : <StepBar pathname={pathname} />} />
         <main className={`flex-1 min-h-0 flex flex-col ${isPrint ? "" : "overflow-y-auto"}`}>
+          <Suspense fallback={<ScreenLoading />}>
           <Routes>
             <Route path="/" element={<FindField />} />
             <Route
@@ -92,6 +106,7 @@ function Shell() {
             <Route path={SETTINGS_PATH} element={<Settings />} />
             <Route path="*" element={<RedirectHome />} />
           </Routes>
+          </Suspense>
         </main>
       </div>
       </VoiceProvider>

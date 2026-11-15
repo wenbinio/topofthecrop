@@ -123,7 +123,7 @@ No bundle can be built, so `BundleGate` redirects to `/area`. `src/weather/weath
 
 ## 6. The map
 
-All map code is in `src/components/Map.tsx`. The picture is four open layers stacked, none needing an account or key:
+All map code is in `src/components/MapView.tsx`. `src/components/Map.tsx` is a thin wrapper that fetches it the first time a map is drawn, because the map library is about two thirds of the app's code; screens and tests keep importing `Map.tsx`. The picture is four open layers stacked, none needing an account or key:
 
 | Layer | Source | Detail | Licence |
 |---|---|---|---|
@@ -145,7 +145,7 @@ All map code is in `src/components/Map.tsx`. The picture is four open layers sta
 - **Two views:** Standard shows sources and ranges; Simple shows bigger text and fewer figures. Same screens, different theme file and a few `simple` branches.
 - **Crop symbols:** `src/components/Crops.tsx`. Use `CropName` wherever a crop is named.
 - **Voice:** `src/voice/`. A push-to-talk microphone and a read-aloud button, using the phone browser's own speech service. `commands.ts` is a pure parser for English and Italian; `apply.ts` turns a command into a state change. Hidden where the browser has no speech support.
-- **Settings in fold-out sections:** `Settings.tsx` groups the figures into four sections (crop prices, crop costs, support payments, the farmer's own payments), each behind a header button with a one-line summary. All start closed except a section holding something the farmer changed; which are open is plain component state, not part of the link. Reset, the adviser line and the voice note stay outside the sections.
+- **Settings in fold-out sections:** `Settings.tsx` is the screen's entry; its parts are in `src/screens/settings/` (`Editor.tsx` puts the sections together, `path.ts` holds `SETTINGS_PATH` for links into it). Settings, Print and Area weather load on demand (`React.lazy` in `App.tsx`). The editor groups the figures into six sections (crop prices, crop costs, crop yields, more durum after a legume, support payments, the farmer's own payments), each behind a header button with a one-line summary. All start closed except a section holding something the farmer changed; which are open is plain component state, not part of the link. Reset, the adviser line and the voice note stay outside the sections.
 - **Sideways phones:** the custom Tailwind variant `phone-land` (landscape, at most 500 px tall and 1000 px wide) rearranges screens into two columns.
 
 ## 8. Tests and publishing

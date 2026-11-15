@@ -6,7 +6,7 @@ import type { AppState, Lang } from "../data/types";
 import { CROPS } from "../data/types";
 import { useT } from "../i18n";
 import { economicsCrops } from "../money/money";
-import { SETTINGS_PATH, settingsFrom } from "../screens/Settings";
+import { SETTINGS_PATH, settingsFrom } from "../screens/settings/path";
 import { encodeState } from "../state/url";
 import { useAppState } from "../state/useAppState";
 import { useBundle } from "../components/BundleProvider";

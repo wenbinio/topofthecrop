@@ -18,7 +18,7 @@ import { BackButton, BottomBar, LinkButton, SectionTitle } from "../components/u
 import { PriorityChips, ReasonList } from "../components/Reasons";
 import { reasonsFor } from "../ranking/reasons";
 import type { RankedOption } from "../ranking/rank";
-import { SETTINGS_PATH, settingsFrom } from "./Settings";
+import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { AreaNote } from "../components/BundleProvider";
 import { FARMLAND_NOTE_BELOW } from "../data/caveats";
 import { ReadButton } from "../voice/Voice";

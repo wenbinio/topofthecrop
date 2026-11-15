@@ -13,7 +13,7 @@ import { ConfidenceWord, PlaceholderNote, ScaleBadge, YoursTag, formatNumber, ra
 import { BackIcon, ChevronIcon, FindingIcon } from "../components/Icons";
 import { HOT_DAY_LABELS, HotDaysTerm, RichText, Term } from "../components/Term";
 import { BottomBar, LinkButton } from "../components/ui";
-import { SETTINGS_PATH, settingsFrom } from "./Settings";
+import { SETTINGS_PATH, settingsFrom } from "./settings/path";
 import { unknownsFor } from "../data/caveats";
 import { AreaNote } from "../components/BundleProvider";
 
