@@ -4,8 +4,9 @@ import { useT } from "../i18n";
 import { rankOptions } from "../ranking/rank";
 import { useAppState, useTo } from "../state/useAppState";
 import { CropSequence, OptionName } from "../components/Crops";
+import { Link } from "react-router-dom";
 import { FactButton, PlaceholderNote } from "../components/FactParts";
-import { HeatIcon } from "../components/Icons";
+import { ChevronIcon, HeatIcon } from "../components/Icons";
 import { CoverLegend, RiskLegend, YearStrip } from "../components/YearStrip";
 import { HotDaysTerm } from "../components/Term";
 import { BackButton, BottomBar, LinkButton } from "../components/ui";
@@ -103,6 +104,15 @@ export default function Year({ bundle }: { bundle: FieldBundle }) {
             </div>
           </div>
         ) : null}
+        {/* The farmer's own field from space, one clear picture a month (src/screens/Timelapse.tsx). */}
+        <Link
+          to={to("/timelapse")}
+          data-testid="timelapse-link"
+          className="mt-3 inline-flex items-center gap-1 min-h-11 font-bold text-body underline underline-offset-4"
+        >
+          {t("timelapse.title")}
+          <ChevronIcon className="w-4 h-4" />
+        </Link>
       </div>
 
       {best ? (

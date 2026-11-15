@@ -283,7 +283,7 @@ Background and sources: `docs/crops-research.md`, "Intercropping".
 
 ## Field timelapse
 
-Not linked from the steps yet: `#/timelapse` with a field's link. `src/timelapse/frames.ts` holds the rules; each is
+"Your field from space", linked from the Year screen (`#/timelapse`). `src/timelapse/frames.ts` holds the rules; each is
 **our judgement** (`TIMELAPSE_RULES`).
 
 - **Pictures:** Sentinel-2 L2A at 10 m, from Microsoft Planetary Computer, loaded live for the farmer's own outline,

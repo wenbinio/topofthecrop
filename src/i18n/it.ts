@@ -259,6 +259,7 @@ export const it: Dict = {
   "credits.land": "Seminativi: CORINE Land Cover 2018 (© Unione europea, Copernicus Land Monitoring Service, AEA) ed ESA WorldCover 2021, CC BY 4.0.",
   "credits.basin": "Confine del bacino: HydroSHEDS (Lehner e Grill 2013).",
   "credits.forecast": "Previsioni: MET Norway, CC BY 4.0. I livelli della mappa sono citati sulla mappa.",
+  "credits.timelapse": "Il tuo campo dallo spazio: foto Sentinel-2, contiene dati Copernicus Sentinel modificati, tramite Microsoft Planetary Computer.",
   "credits.trial": "Campo demo: il sito della prova su grano duro e veccia di Denora et al. (2025).",
   "credits.ai": "Aiuto dell'IA: l'idea e i sei passi sono del gruppo. Il codice dell'app e i notebook dei dati sono stati scritti con strumenti di IA, soprattutto Claude (Anthropic), con revisioni di OpenAI Codex e Google Gemini. Il gruppo ha eseguito i notebook in Google Earth Engine e controllato i risultati. I dati del campo e del meteo vengono dai dataset qui sopra, non dall'IA; i dati provvisori non sono verificati.",
   "credits.all": "Ogni dataset, licenza e citazione: github.com/wenbinio/topofthecrop, DATA_SOURCES.md",
