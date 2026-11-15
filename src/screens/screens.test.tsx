@@ -614,7 +614,7 @@ describe("Share your plan", () => {
     expect(who[1]).toHaveTextContent("CAA office");
     expect(who[4]).toHaveTextContent("An agronomist, if you have one");
     expect(screen.getByRole("heading", { name: "No adviser? Ask one of these" })).toBeInTheDocument();
-    expect(screen.getByTestId("tab-plan")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByTestId("tab-advice")).toHaveAttribute("aria-current", "page");
   });
 
   it("still offers the printout, WhatsApp and the link", async () => {
@@ -846,7 +846,7 @@ describe("Why", () => {
     expect(link).toHaveAttribute("href", "/year?f=genzano-demo&p=income%2Cwater");
     fireEvent.click(link);
     expect(await screen.findByTestId("year-kinds")).toBeInTheDocument();
-    expect(screen.getByTestId("tab-why")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByTestId("tab-advice")).toHaveAttribute("aria-current", "page");
   });
 
   it("says so in one line when the same rotation fits best in all three", async () => {
@@ -878,27 +878,28 @@ describe("Why", () => {
 
 describe("the tab bar", () => {
   it.each([
-    ["/options", "tab-plan"],
-    ["/why/faba-durum-faba", "tab-why"],
-    ["/year", "tab-why"],
-    ["/adviser", "tab-plan"],
+    ["/options", "tab-advice"],
+    ["/why/faba-durum-faba", "tab-advice"],
+    ["/year", "tab-advice"],
+    ["/adviser", "tab-advice"],
     ["/today", "tab-field"],
+    ["/plans", "tab-plans"],
   ])("on %s marks %s as the current tab, and only that one", async (route, current) => {
     vi.stubGlobal("localStorage", memoryStorage());
     renderAt(`${route}?f=genzano-demo&p=income,water`);
     const bar = await screen.findByTestId("tab-bar");
-    for (const id of ["tab-field", "tab-plan", "tab-why"]) {
+    for (const id of ["tab-field", "tab-advice", "tab-plans"]) {
       if (id === current) expect(within(bar).getByTestId(id)).toHaveAttribute("aria-current", "page");
       else expect(within(bar).getByTestId(id)).not.toHaveAttribute("aria-current");
     }
   });
 
-  it("links My field, Plan and Why (the best fit's) keeping the query string", async () => {
+  it("links My field, Advice and My plans keeping the query string", async () => {
     renderAt("/options?f=genzano-demo&p=soil,income&g=it");
     const bar = await screen.findByTestId("tab-bar");
     expect(within(bar).getByTestId("tab-field")).toHaveAttribute("href", "/today?f=genzano-demo&p=soil%2Cincome&g=it");
-    expect(within(bar).getByTestId("tab-plan")).toHaveAttribute("href", "/options?f=genzano-demo&p=soil%2Cincome&g=it");
-    expect(within(bar).getByTestId("tab-why")).toHaveAttribute("href", "/why/faba-durum-faba?f=genzano-demo&p=soil%2Cincome&g=it");
+    expect(within(bar).getByTestId("tab-advice")).toHaveAttribute("href", "/options?f=genzano-demo&p=soil%2Cincome&g=it");
+    expect(within(bar).getByTestId("tab-plans")).toHaveAttribute("href", "/plans?f=genzano-demo&p=soil%2Cincome&g=it");
   });
 
   it("names its tabs", async () => {
@@ -906,8 +907,8 @@ describe("the tab bar", () => {
     const bar = await screen.findByTestId("tab-bar");
     expect(bar).toHaveAccessibleName("Main");
     expect(within(bar).getByTestId("tab-field")).toHaveTextContent("My field");
-    expect(within(bar).getByTestId("tab-plan")).toHaveTextContent("Plan");
-    expect(within(bar).getByTestId("tab-why")).toHaveTextContent("Why");
+    expect(within(bar).getByTestId("tab-advice")).toHaveTextContent("Advice");
+    expect(within(bar).getByTestId("tab-plans")).toHaveTextContent("My plans");
   });
 
   it("is not there while setting up, nor on the printout", async () => {
@@ -978,8 +979,8 @@ describe("the More menu", () => {
     renderAt("/options?f=genzano-demo&p=income,water");
     fireEvent.click(await screen.findByTestId("more"));
     expect(screen.getByTestId("more")).toHaveAttribute("aria-expanded", "true");
-    fireEvent.click(screen.getByTestId("tab-why"));
-    await screen.findByTestId("why-years");
+    fireEvent.click(screen.getByTestId("tab-plans"));
+    await screen.findByTestId("plans-empty");
     expect(screen.getByTestId("more")).toHaveAttribute("aria-expanded", "false");
   });
 

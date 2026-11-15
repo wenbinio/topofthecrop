@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../test-fixtures/money-bundle.json";
 import { AppRoutes } from "../App";
 import type { SavedPlan } from "../state/plan";
-import { PLAN_STORAGE_KEY, dayStamp, monthIndex, planChange, planKey, readPlan, writePlan } from "../state/plan";
+import { PLAN_STORAGE_KEY, dayStamp, monthIndex, planChange, planKey, readPlan, readPlans, recordPlan, writePlan } from "../state/plan";
 import { decodeState } from "../state/url";
 
 vi.mock("../components/Map", () => ({
@@ -217,5 +217,35 @@ describe("coming back", () => {
     renderAt("/");
     await screen.findByTestId("find-field");
     expect(screen.queryByTestId("welcome-back")).toBeNull();
+  });
+});
+
+describe("My plans", () => {
+  it("keeping a plan puts it on the list, newest first, marked as the current answers; Open reopens it; Remove takes it off", async () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    renderAt("/today?f=genzano-demo&p=income,water");
+    await screen.findByTestId("today-todo");
+    cleanup();
+    renderAt("/plans?f=genzano-demo&p=income,water");
+    const list = await screen.findByTestId("plans-list");
+    const records = within(list).getAllByTestId("plan-record");
+    expect(records).toHaveLength(1);
+    expect(records[0]).toHaveAttribute("data-option-id", "chickpea-durum-durum");
+    expect(within(records[0]).getByTestId("plan-current")).toHaveTextContent("Your current answers");
+    expect(within(records[0]).getByTestId("plan-open")).toHaveAttribute("href", expect.stringContaining("/options?"));
+    fireEvent.click(within(records[0]).getByTestId("plan-remove"));
+    expect(await screen.findByTestId("plans-empty")).toHaveTextContent("No plans kept yet");
+    expect(readPlans()).toEqual([]);
+  });
+
+  it("the same answers kept twice stay one plan, with the newer date", () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    recordPlan({ query: "f=a", key: "k1", bestId: "x", field: "A", savedAt: "2026-11-01" });
+    recordPlan({ query: "f=b", key: "k2", bestId: "y", field: "B", savedAt: "2026-11-02" });
+    recordPlan({ query: "f=a", key: "k1", bestId: "z", field: "A", savedAt: "2026-11-03" });
+    expect(readPlans().map((p) => [p.key, p.savedAt, p.bestId])).toEqual([
+      ["k1", "2026-11-03", "z"],
+      ["k2", "2026-11-02", "y"],
+    ]);
   });
 });

@@ -8,17 +8,18 @@ Live site: https://wenbinio.github.io/topofthecrop/
 
 ## 1. The app in one minute
 
-Since 15 November 2026 the farmer sets up in three steps, then moves between three tabs. The setup steps show a step bar at the top (`src/components/StepBar.tsx`); the plan routes show a tab bar at the bottom (`src/components/TabBar.tsx`, `isPlanRoute`, `tabOf`).
+Since 15 November 2026 the farmer sets up in three steps, then moves between three tabs: My field, Advice and My plans. The setup steps show a step bar at the top (`src/components/StepBar.tsx`); the plan routes show a tab bar at the bottom (`src/components/TabBar.tsx`, `isPlanRoute`, `tabOf`).
 
 | Where | Route | Screen file | What it shows |
 |---|---|---|---|
 | Step 1 | `/` | `src/screens/FindField.tsx` | Map, town search, "My location", tap or draw a field, or find it by parcel number |
 | Step 2 | `/questions` | `src/screens/Questions.tsx` | Three questions one at a time: last crop (botanical plates), limits (each with a `HelpTip` "?"), priorities tapped in order |
-| Step 3, Plan tab | `/options` | `src/screens/Options.tsx` | The plan: recommendation, three harvests, reasons, "how sure"; Keep, Why, Share; priorities with "Change my answers"; folds for what we see, soil, where to intercrop (`StripMap`) and the other choices |
-| Why tab | `/why/:optionId` | `src/screens/Why.tsx` | Reasons, what the data found (`buildPath`, without the priorities), usual / dry / driest year card, folds for money, evidence, unknowns |
-| Why tab | `/year` | `src/screens/Year.tsx` | The weather in detail: the three kinds of year with hot days and rain now and by 2050, the month strip, 2024 and 2026 against a usual season |
+| Step 3, Advice tab | `/options` | `src/screens/Options.tsx` | The plan: recommendation, three harvests, reasons, "how sure"; Keep, Why, Share; priorities with "Change my answers"; folds for what we see, soil, where to intercrop (`StripMap`) and the other choices |
+| Advice tab | `/why/:optionId` | `src/screens/Why.tsx` | Reasons, what the data found (`buildPath`, without the priorities), usual / dry / driest year card, folds for money, evidence, unknowns |
+| Advice tab | `/year` | `src/screens/Year.tsx` | The weather in detail: the three kinds of year with hot days and rain now and by 2050, the month strip, 2024 and 2026 against a usual season |
 | My field tab | `/today`, `/timelapse` | `src/screens/Today.tsx`, `Timelapse.tsx` | Whether the advice changed, the to-do list (the only place the checks show), this month, season rain and forecast (live), links to the timelapse and the weather |
-| Plan tab | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Share your plan": the plan, who can look at it, printout, WhatsApp, copy link. The route keeps its old name so shared links still open |
+| My plans tab | `/plans` | `src/screens/Plans.tsx` | Every plan kept (`readPlans`, `recordPlan` in `src/state/plan.ts`, written whenever My field keeps a plan), newest first, to reopen or remove |
+| Advice tab | `/adviser`, `/print` | `src/screens/Adviser.tsx`, `check-share.ts`, `Print.tsx` | "Share your plan": the plan, who can look at it, printout, WhatsApp, copy link. The route keeps its old name so shared links still open |
 
 The top bar (`src/components/TopBar.tsx`) has a back arrow (previous screen, or `parentOf` the route on a link opened straight on a screen), the app's mark and name, IT/EN, and a "More" menu with voice, prices and support (`/settings`), bigger text (the simple view) and the data credits (`/credits`).
 

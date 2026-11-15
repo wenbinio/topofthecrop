@@ -749,4 +749,14 @@ export const it: Dict = {
   "limit.broomrape.def": "L'orobanche, la pianta parassita che attacca favino, pisello e lenticchia, è già comparsa in questo campo. Le colture che attacca hanno un avviso.",
   "q.limitHelp": "Cosa vuol dire «{limit}»",
   "common.backTop": "Indietro",
+  // Storyboard flow (tabs, plan hub, intercrop map), written by Gemini Hydrogen.
+  "tab.advice": "Consiglio",
+  "tab.plans": "I miei piani",
+  "plans.title": "I miei piani",
+  "plans.lead": "Tutti i piani che hai salvato, dal più recente. Restano su questo telefono.",
+  "plans.empty": "Nessun piano salvato finora. Tocca «Salva questo piano» nel consiglio e lo trovi qui.",
+  "plans.saved": "Salvato il {date}",
+  "plans.current": "Le tue risposte attuali",
+  "plans.open": "Apri",
+  "plans.remove": "Togli",
 };

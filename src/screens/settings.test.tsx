@@ -163,7 +163,7 @@ describe("Settings", () => {
     expect(perYearOnWhy()).toBe("643");
     expect(within(whyNumbers()).getAllByTestId("tag-yours").length).toBeGreaterThan(0);
 
-    fireEvent.click(screen.getByTestId("tab-plan"));
+    fireEvent.click(screen.getByTestId("tab-advice"));
     await screen.findAllByTestId("option-row");
     expect(screen.getByTestId("recommendation")).toHaveAttribute("data-option-id", "chickpea-durum-durum");
     expect(incomeOf("durum-durum-durum")).toBe("595");
