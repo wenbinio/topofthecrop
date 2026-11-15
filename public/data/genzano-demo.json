@@ -3591,5 +3591,1409 @@
         ]
       }
     }
-  ]
+  ],
+  "fieldData": {
+    "greenness": {
+      "greenUp": {
+        "value": 173,
+        "unit": "dayOfSeason",
+        "range": [
+          143,
+          195
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "NASA MODIS (MOD13Q1)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+        },
+        "confidence": "fair",
+        "label": "data.greenUp",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "peak": {
+        "value": 226,
+        "unit": "dayOfSeason",
+        "range": [
+          210,
+          258
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "NASA MODIS (MOD13Q1)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+        },
+        "confidence": "fair",
+        "label": "data.peak",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "dryOff": {
+        "value": 269,
+        "unit": "dayOfSeason",
+        "range": [
+          258,
+          277
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "NASA MODIS (MOD13Q1)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+        },
+        "confidence": "fair",
+        "label": "data.dryOff",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "seasonLength": {
+        "value": 93,
+        "unit": "days",
+        "range": [
+          72,
+          138
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "NASA MODIS (MOD13Q1)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+        },
+        "confidence": "fair",
+        "label": "data.seasonLength",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "peakGreenness": {
+        "value": 0.71,
+        "unit": "NDVI",
+        "range": [
+          0.59,
+          0.76
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "NASA MODIS (MOD13Q1)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+        },
+        "confidence": "fair",
+        "label": "data.peakGreenness",
+        "asOf": "2001-2020",
+        "placeholder": false
+      }
+    },
+    "weather": {
+      "rainOnset": {
+        "value": 20,
+        "unit": "dayOfSeason",
+        "range": [
+          6,
+          67
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "CHIRPS + ERA5-Land (daily rain)",
+          "resolution": "6 to 11 km",
+          "url": "https://doi.org/10.1038/sdata.2015.66"
+        },
+        "confidence": "fair",
+        "label": "data.rainOnset",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "drySpellSpring": {
+        "value": 14,
+        "unit": "days",
+        "range": [
+          11,
+          21
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "CHIRPS + ERA5-Land (daily rain)",
+          "resolution": "6 to 11 km",
+          "url": "https://doi.org/10.1038/sdata.2015.66"
+        },
+        "confidence": "fair",
+        "label": "data.drySpellSpring",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "frostWinter": {
+        "value": 26,
+        "unit": "nights",
+        "range": [
+          17,
+          41
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "ERA5-Land (NASA POWER check)",
+          "resolution": "about 11 km",
+          "url": "https://doi.org/10.24381/cds.e2161bac"
+        },
+        "confidence": "fair",
+        "label": "data.frostWinter",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "frostLate": {
+        "value": 2,
+        "unit": "nights",
+        "range": [
+          0,
+          7
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "ERA5-Land (NASA POWER check)",
+          "resolution": "about 11 km",
+          "url": "https://doi.org/10.24381/cds.e2161bac"
+        },
+        "confidence": "fair",
+        "label": "data.frostLate",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "rainSpring": {
+        "value": 188,
+        "unit": "mm",
+        "range": [
+          123,
+          234
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+          "resolution": "6 to 11 km",
+          "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+        },
+        "confidence": "fair",
+        "label": "data.rainSpring",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "rainYear": {
+        "value": 693,
+        "unit": "mm",
+        "range": [
+          566,
+          840
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+          "resolution": "6 to 11 km",
+          "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+        },
+        "confidence": "fair",
+        "label": "data.rainYear",
+        "asOf": "2001-2020",
+        "placeholder": false
+      }
+    },
+    "water": {
+      "soilWaterSowing": {
+        "value": 26.3,
+        "unit": "%",
+        "range": [
+          22.7,
+          28.3
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "NASA SMAP L4 soil moisture",
+          "resolution": "about 9 km",
+          "url": "https://doi.org/10.5067/T5RUATAQREF8"
+        },
+        "confidence": "fair",
+        "label": "data.soilWaterSowing",
+        "asOf": "2016-2025",
+        "placeholder": false
+      },
+      "soilWaterSpring": {
+        "value": 30.1,
+        "unit": "%",
+        "range": [
+          27.4,
+          32
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "NASA SMAP L4 soil moisture",
+          "resolution": "about 9 km",
+          "url": "https://doi.org/10.5067/T5RUATAQREF8"
+        },
+        "confidence": "fair",
+        "label": "data.soilWaterSpring",
+        "asOf": "2016-2025",
+        "placeholder": false
+      },
+      "cropWaterUse": {
+        "value": 319,
+        "unit": "mm",
+        "range": [
+          277,
+          346
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "NASA MODIS (MOD16A2GF)",
+          "resolution": "500 m",
+          "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+        },
+        "confidence": "fair",
+        "label": "data.cropWaterUse",
+        "asOf": "2001-2020",
+        "placeholder": false
+      },
+      "referenceEt": {
+        "value": 489,
+        "unit": "mm",
+        "range": [
+          466,
+          521
+        ],
+        "scale": "area",
+        "source": {
+          "dataset": "FAO-56 reference evapotranspiration from ERA5-Land",
+          "resolution": "about 11 km",
+          "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+        },
+        "confidence": "fair",
+        "label": "data.referenceEt",
+        "asOf": "2001-2020",
+        "placeholder": false
+      }
+    },
+    "soil": {
+      "sand": {
+        "value": 22,
+        "unit": "%",
+        "range": [
+          8,
+          44
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.sand",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "silt": {
+        "value": 40,
+        "unit": "%",
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.silt",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "organicCarbon": {
+        "value": 17.7,
+        "unit": "g/kg",
+        "range": [
+          4.4,
+          43.7
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.organicCarbon",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "ph": {
+        "value": 7.7,
+        "range": [
+          6.2,
+          8.4
+        ],
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.ph",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "nitrogen": {
+        "value": 1.54,
+        "unit": "g/kg",
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.nitrogen",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "cec": {
+        "value": 22,
+        "unit": "cmol(c)/kg",
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.cec",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "waterHolding": {
+        "value": 87,
+        "unit": "mm",
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 water retention (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.1016/j.iswcr.2022.08.001"
+        },
+        "confidence": "fair",
+        "label": "data.waterHolding",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "bulkDensity": {
+        "value": 1.4,
+        "unit": "g/cm³",
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.bulkDensity",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      },
+      "stones": {
+        "value": 12,
+        "unit": "%",
+        "scale": "field",
+        "source": {
+          "dataset": "SoilGrids 2.0 (ISRIC)",
+          "resolution": "250 m",
+          "url": "https://doi.org/10.5194/soil-7-217-2021"
+        },
+        "confidence": "fair",
+        "label": "data.stones",
+        "asOf": "SoilGrids 2.0",
+        "placeholder": false
+      }
+    },
+    "land": {
+      "slope": {
+        "value": 4.6,
+        "unit": "°",
+        "scale": "field",
+        "source": {
+          "dataset": "NASA NASADEM",
+          "resolution": "30 m",
+          "url": "https://doi.org/10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001"
+        },
+        "confidence": "good",
+        "label": "data.slope",
+        "placeholder": false
+      },
+      "height": {
+        "value": 349,
+        "unit": "m",
+        "scale": "field",
+        "source": {
+          "dataset": "NASA NASADEM",
+          "resolution": "30 m",
+          "url": "https://doi.org/10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001"
+        },
+        "confidence": "good",
+        "label": "data.height",
+        "placeholder": false
+      }
+    },
+    "by2050": {
+      "ssp245": {
+        "hotDays": {
+          "value": 5.4,
+          "unit": "days",
+          "range": [
+            4.2,
+            6.9
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.hotDays",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "flowerHigh": {
+          "value": 24.5,
+          "unit": "°C",
+          "range": [
+            23.7,
+            25.3
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.flowerHigh",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "frostWinter": {
+          "value": 22.5,
+          "unit": "nights",
+          "range": [
+            19.7,
+            25.8
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.frostWinter",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "frostLate": {
+          "value": 1.4,
+          "unit": "nights",
+          "range": [
+            1.1,
+            1.9
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.frostLate",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "rainSeason": {
+          "value": 520,
+          "unit": "mm",
+          "range": [
+            477,
+            558
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.rainSeason",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "rainAutumn": {
+          "value": 148,
+          "unit": "mm",
+          "range": [
+            129,
+            168
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.rainAutumn",
+          "asOf": "2041-2060",
+          "placeholder": false
+        }
+      },
+      "ssp585": {
+        "hotDays": {
+          "value": 6,
+          "unit": "days",
+          "range": [
+            4.8,
+            9.7
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.hotDays",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "flowerHigh": {
+          "value": 25.1,
+          "unit": "°C",
+          "range": [
+            24.1,
+            26.3
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.flowerHigh",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "frostWinter": {
+          "value": 21.4,
+          "unit": "nights",
+          "range": [
+            18.3,
+            24.2
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.frostWinter",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "frostLate": {
+          "value": 1.4,
+          "unit": "nights",
+          "range": [
+            0.9,
+            2
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.frostLate",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "rainSeason": {
+          "value": 509,
+          "unit": "mm",
+          "range": [
+            455,
+            575
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.rainSeason",
+          "asOf": "2041-2060",
+          "placeholder": false
+        },
+        "rainAutumn": {
+          "value": 148,
+          "unit": "mm",
+          "range": [
+            125,
+            168
+          ],
+          "scale": "area",
+          "source": {
+            "dataset": "NASA NEX-GDDP-CMIP6",
+            "resolution": "about 28 km",
+            "url": "https://doi.org/10.1038/s41597-022-01393-4"
+          },
+          "confidence": "low",
+          "label": "data.rainAutumn",
+          "asOf": "2041-2060",
+          "placeholder": false
+        }
+      }
+    },
+    "seasons": {
+      "years": [
+        2001,
+        2002,
+        2003,
+        2004,
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "series": {
+        "peakGreenness": {
+          "values": [
+            0.73,
+            0.72,
+            0.56,
+            0.69,
+            0.71,
+            0.69,
+            0.77,
+            0.71,
+            0.56,
+            0.7,
+            0.74,
+            0.65,
+            0.83,
+            0.76,
+            0.7,
+            0.74,
+            0.7,
+            0.59,
+            0.75,
+            0.74,
+            0.79,
+            0.66,
+            0.68,
+            0.6,
+            0.75,
+            0.72
+          ],
+          "unit": "NDVI",
+          "scale": "field",
+          "source": {
+            "dataset": "NASA MODIS (MOD13Q1)",
+            "resolution": "250 m",
+            "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+          },
+          "confidence": "fair",
+          "label": "data.peakGreenness",
+          "placeholder": false
+        },
+        "dryOff": {
+          "values": [
+            263,
+            272,
+            269,
+            270,
+            266,
+            275,
+            258,
+            268,
+            274,
+            276,
+            281,
+            262,
+            259,
+            263,
+            270,
+            259,
+            254,
+            282,
+            271,
+            253,
+            270,
+            274,
+            278,
+            275,
+            272,
+            269
+          ],
+          "unit": "dayOfSeason",
+          "scale": "field",
+          "source": {
+            "dataset": "NASA MODIS (MOD13Q1)",
+            "resolution": "250 m",
+            "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+          },
+          "confidence": "fair",
+          "label": "data.dryOff",
+          "placeholder": false
+        },
+        "peakVsNearby": {
+          "values": [
+            0.25,
+            -1.31,
+            -0.26,
+            -0.24,
+            0.59,
+            1.11,
+            0.93,
+            -0.5,
+            0.16,
+            -0.83,
+            0.6,
+            -1.38,
+            1.8,
+            0.36,
+            1.22,
+            -0.46,
+            0.32,
+            -2.59,
+            0.62,
+            -0.41,
+            1.01,
+            0.1,
+            -1.69,
+            -0.65,
+            -0.74,
+            0.06
+          ],
+          "unit": "z",
+          "scale": "field",
+          "source": {
+            "dataset": "NASA MODIS (MOD13Q1)",
+            "resolution": "250 m",
+            "url": "https://doi.org/10.5067/MODIS/MOD13Q1.061"
+          },
+          "confidence": "fair",
+          "label": "data.peakVsNearby",
+          "placeholder": false
+        },
+        "hotDays": {
+          "values": [
+            9,
+            0,
+            7,
+            2,
+            1,
+            4,
+            0,
+            6,
+            12,
+            5,
+            0,
+            6,
+            2,
+            4,
+            6,
+            2,
+            7,
+            3,
+            8,
+            5,
+            3,
+            13,
+            0,
+            7,
+            13,
+            9
+          ],
+          "unit": "days",
+          "scale": "area",
+          "source": {
+            "dataset": "ERA5-Land (NASA POWER check)",
+            "resolution": "about 11 km",
+            "url": "https://doi.org/10.24381/cds.e2161bac"
+          },
+          "confidence": "fair",
+          "label": "data.hotDays",
+          "placeholder": false
+        },
+        "rainSeason": {
+          "values": [
+            508,
+            419,
+            586,
+            626,
+            545,
+            621,
+            451,
+            468,
+            697,
+            609,
+            630,
+            442,
+            542,
+            635,
+            479,
+            562,
+            390,
+            489,
+            543,
+            410,
+            552,
+            509,
+            656,
+            413,
+            468,
+            651
+          ],
+          "unit": "mm",
+          "scale": "area",
+          "source": {
+            "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+            "resolution": "6 to 11 km",
+            "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+          },
+          "confidence": "fair",
+          "label": "data.rainSeason",
+          "placeholder": false
+        },
+        "rainAutumn": {
+          "values": [
+            175,
+            88,
+            98,
+            161,
+            200,
+            142,
+            58,
+            169,
+            150,
+            161,
+            267,
+            107,
+            152,
+            203,
+            121,
+            181,
+            111,
+            102,
+            179,
+            179,
+            170,
+            179,
+            192,
+            124,
+            80,
+            180
+          ],
+          "unit": "mm",
+          "scale": "area",
+          "source": {
+            "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+            "resolution": "6 to 11 km",
+            "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+          },
+          "confidence": "fair",
+          "label": "data.rainAutumn",
+          "placeholder": false
+        },
+        "soilWaterSowing": {
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            28.2,
+            28.6,
+            25.6,
+            27.7,
+            26.5,
+            25.7,
+            26,
+            27,
+            22.6,
+            22.7,
+            24.5
+          ],
+          "unit": "%",
+          "scale": "area",
+          "source": {
+            "dataset": "NASA SMAP L4 soil moisture",
+            "resolution": "about 9 km",
+            "url": "https://doi.org/10.5067/T5RUATAQREF8"
+          },
+          "confidence": "fair",
+          "label": "data.soilWaterSowing",
+          "placeholder": false
+        },
+        "soilWaterSpring": {
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            30.2,
+            28,
+            31.9,
+            31.1,
+            27.4,
+            33,
+            29.5,
+            31.2,
+            27.3,
+            30.1,
+            32.8
+          ],
+          "unit": "%",
+          "scale": "area",
+          "source": {
+            "dataset": "NASA SMAP L4 soil moisture",
+            "resolution": "about 9 km",
+            "url": "https://doi.org/10.5067/T5RUATAQREF8"
+          },
+          "confidence": "fair",
+          "label": "data.soilWaterSpring",
+          "placeholder": false
+        },
+        "cropWaterUse": {
+          "values": [
+            298,
+            333,
+            260,
+            322,
+            319,
+            323,
+            359,
+            332,
+            307,
+            307,
+            343,
+            277,
+            337,
+            319,
+            296,
+            373,
+            273,
+            316,
+            318,
+            344,
+            311,
+            300,
+            360,
+            258,
+            322,
+            326
+          ],
+          "unit": "mm",
+          "scale": "area",
+          "source": {
+            "dataset": "NASA MODIS (MOD16A2GF)",
+            "resolution": "500 m",
+            "url": "https://doi.org/10.5067/MODIS/MOD16A2GF.061"
+          },
+          "confidence": "fair",
+          "label": "data.cropWaterUse",
+          "placeholder": false
+        },
+        "durumNeed": {
+          "values": [
+            547,
+            525,
+            505,
+            464,
+            507,
+            491,
+            511,
+            531,
+            499,
+            487,
+            482,
+            544,
+            527,
+            488,
+            526,
+            516,
+            546,
+            506,
+            505,
+            538,
+            532,
+            552,
+            458,
+            554,
+            532,
+            530
+          ],
+          "unit": "mm",
+          "scale": "area",
+          "source": {
+            "dataset": "FAO-56 crop water need from ERA5-Land",
+            "resolution": "about 11 km",
+            "url": "https://www.fao.org/3/x0490e/x0490e00.htm"
+          },
+          "confidence": "fair",
+          "label": "data.durumNeed",
+          "placeholder": false
+        }
+      }
+    },
+    "groundCheck": {
+      "rain": [
+        {
+          "season": "2022-23",
+          "window": "oct-may",
+          "station": {
+            "value": 673.6,
+            "unit": "mm",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2022-23",
+            "placeholder": false
+          },
+          "satellites": {
+            "value": 656,
+            "unit": "mm",
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "data.satellites",
+            "asOf": "2022-23",
+            "placeholder": false
+          }
+        },
+        {
+          "season": "2022-23",
+          "window": "nov-jun",
+          "station": {
+            "value": 673.6,
+            "unit": "mm",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2022-23",
+            "placeholder": false
+          },
+          "satellites": {
+            "value": 678,
+            "unit": "mm",
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "data.satellites",
+            "asOf": "2022-23",
+            "placeholder": false
+          }
+        },
+        {
+          "season": "2022-23",
+          "window": "sowing-harvest",
+          "station": {
+            "value": 673.6,
+            "unit": "mm",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2022-23",
+            "placeholder": false
+          },
+          "satellites": {
+            "value": 498,
+            "unit": "mm",
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "data.satellites",
+            "asOf": "2022-23",
+            "placeholder": false
+          }
+        },
+        {
+          "season": "2023-24",
+          "window": "oct-may",
+          "station": {
+            "value": 314.6,
+            "unit": "mm",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2023-24",
+            "placeholder": false
+          },
+          "satellites": {
+            "value": 412,
+            "unit": "mm",
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "data.satellites",
+            "asOf": "2023-24",
+            "placeholder": false
+          }
+        },
+        {
+          "season": "2023-24",
+          "window": "nov-jun",
+          "station": {
+            "value": 314.6,
+            "unit": "mm",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2023-24",
+            "placeholder": false
+          },
+          "satellites": {
+            "value": 392,
+            "unit": "mm",
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "data.satellites",
+            "asOf": "2023-24",
+            "placeholder": false
+          }
+        },
+        {
+          "season": "2023-24",
+          "window": "sowing-harvest",
+          "station": {
+            "value": 314.6,
+            "unit": "mm",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2023-24",
+            "placeholder": false
+          },
+          "satellites": {
+            "value": 308,
+            "unit": "mm",
+            "scale": "area",
+            "source": {
+              "dataset": "CHIRPS + NASA GPM + ERA5-Land",
+              "resolution": "6 to 11 km",
+              "url": "https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07"
+            },
+            "confidence": "fair",
+            "label": "data.satellites",
+            "asOf": "2023-24",
+            "placeholder": false
+          }
+        }
+      ],
+      "temperature": [
+        {
+          "season": "2022-23",
+          "window": "sowing-harvest",
+          "station": {
+            "value": 13.58,
+            "unit": "°C",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2022-23",
+            "placeholder": false
+          },
+          "era5Land": {
+            "value": 12.4,
+            "unit": "°C",
+            "scale": "area",
+            "source": {
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
+            },
+            "confidence": "fair",
+            "label": "data.era5Land",
+            "asOf": "2022-23",
+            "placeholder": false
+          }
+        },
+        {
+          "season": "2023-24",
+          "window": "sowing-harvest",
+          "station": {
+            "value": 15.47,
+            "unit": "°C",
+            "scale": "field",
+            "source": {
+              "dataset": "Trial weather station (Denora et al. 2025)",
+              "resolution": "at the field",
+              "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+            },
+            "confidence": "fair",
+            "label": "data.station",
+            "asOf": "2023-24",
+            "placeholder": false
+          },
+          "era5Land": {
+            "value": 13,
+            "unit": "°C",
+            "scale": "area",
+            "source": {
+              "dataset": "ERA5-Land (NASA POWER check)",
+              "resolution": "about 11 km",
+              "url": "https://doi.org/10.24381/cds.e2161bac"
+            },
+            "confidence": "fair",
+            "label": "data.era5Land",
+            "asOf": "2023-24",
+            "placeholder": false
+          }
+        }
+      ]
+    },
+    "trialSoil": {
+      "ph": {
+        "value": 8.2,
+        "scale": "field",
+        "source": {
+          "dataset": "Trial soil analysis (Denora et al. 2025)",
+          "resolution": "at the field",
+          "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+        },
+        "confidence": "good",
+        "label": "data.ph",
+        "asOf": "2022-24",
+        "placeholder": false
+      },
+      "nitrogen": {
+        "value": 0.9,
+        "unit": "g/kg",
+        "scale": "field",
+        "source": {
+          "dataset": "Trial soil analysis (Denora et al. 2025)",
+          "resolution": "at the field",
+          "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+        },
+        "confidence": "good",
+        "label": "data.nitrogen",
+        "asOf": "2022-24",
+        "placeholder": false
+      },
+      "cec": {
+        "value": 21.3,
+        "unit": "cmol(c)/kg",
+        "scale": "field",
+        "source": {
+          "dataset": "Trial soil analysis (Denora et al. 2025)",
+          "resolution": "at the field",
+          "url": "https://doi.org/10.1016/j.ijagro.2025.100045"
+        },
+        "confidence": "good",
+        "label": "data.cec",
+        "asOf": "2022-24",
+        "placeholder": false
+      }
+    }
+  }
 }
