@@ -336,6 +336,8 @@ Aiming at the **Local Impact** award, with **Best Use of Data** second.
 - [ ] All links open in a private window with no login
 - [ ] "Submit for Judging" clicked before the deadline
 
+Text ready to paste for the NASA data list, the partner data and other references, and the AI statement: `docs/space-apps-submission.md`.
+
 The video opens on the Genzano field and the hot-days number, not on a logo.
 
 ## Use of AI

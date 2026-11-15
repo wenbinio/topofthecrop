@@ -29,9 +29,17 @@ const money = {
   hay: { dataset: 'Hay quotes from northern exchanges (no southern quote found)', resolution: 'other regions', url: 'https://www.bo.camcom.gov.it/' },
   agea: { dataset: 'AGEA payment circulars, CAP 2023-2027', resolution: 'national', url: 'https://www.agea.gov.it/' },
   masaf: { dataset: 'MASAF decrees and AGEA instructions', resolution: 'national', url: 'https://www.masaf.gov.it/' },
-  csr: { dataset: 'CSR Basilicata 2023-2027 (regional rural development plan)', resolution: 'regional', url: 'https://europa.regione.basilicata.it/feasr/' },
+  csr: { dataset: 'CSR Basilicata 2023-2027 (regional rural development plan)', resolution: 'regional', url: 'https://www.basilicatacsr.it/' },
   denora: { dataset: 'Denora et al. 2025, durum trial at Genzano di Lucania', resolution: 'one trial, two seasons', url: 'https://doi.org/10.1016/j.ijagro.2025.100045' },
   notes: { dataset: 'Our crop research notes, 14 Nov 2026', resolution: 'southern Italy', url: `${DOCS}crops-research.md#in-the-app` },
+  // Costs and nitrogen: docs/crops-research.md, "Costs and nitrogen: the sources".
+  ismea: { dataset: 'ISMEA cost survey 2025: durum in Puglia, Sicily and Basilicata', resolution: 'southern Italy', url: 'https://agronotizie.imagelinenetwork.com/agricoltura-economia-politica/2025/12/31/frumento-duro-produzione-piu-competitiva-al-centro-che-al-sud/88636' },
+  chickpeaCost: { dataset: 'Worked out from Lago-Olveira et al. 2023 (Puglia) and ISMEA 2025', resolution: 'southern Italy', url: `${DOCS}crops-research.md#costs-and-nitrogen-the-sources` },
+  tedone: { dataset: 'Tedone et al. 2023: faba bean before durum, southern Italy', resolution: 'one long-term trial', url: 'https://doi.org/10.3390/agronomy13010105' },
+  giambalvo: { dataset: 'Giambalvo et al. 2004 (Sicily) and Preissel et al. 2015 (Europe)', resolution: 'one trial, one review', url: 'https://om.ciheam.org/article.php?IDPDF=4600059' },
+  preissel: { dataset: 'Preissel et al. 2015: legumes before cereals in Europe', resolution: 'review of 29 trials', url: 'https://doi.org/10.1016/j.fcr.2015.01.012' },
+  grdc: { dataset: 'GRDC 2018: soil nitrogen after legumes in 16 dryland trials', resolution: 'eastern Australia', url: 'https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability' },
+  grdcNone: { dataset: 'GRDC 2018: no extra nitrogen after wheat, barley or canola', resolution: 'eastern Australia', url: 'https://grdc.com.au/resources-and-publications/grdc-update-papers/tab-content/grdc-update-papers/2018/02/rules-of-thumb-for-calculating-additional-soil-n-availability' },
   lago: { dataset: 'Lago-Olveira et al. 2023, Sci. Total Environ. 896, 165124: wheat after chickpea, Puglia', resolution: 'one study', url: 'https://doi.org/10.1016/j.scitotenv.2023.165124' },
   garofalo: { dataset: 'Garofalo et al. 2009, Crop Pasture Sci. 60, 240-250: wheat after faba bean, 53-year simulation', resolution: 'one study', url: 'https://doi.org/10.1071/CP08208' },
   income: { dataset: 'Worked out from the crop figures and payments', resolution: 'this rotation', url: `${DOCS}scoring.md#how-the-income-figure-is-worked-out` },
@@ -64,8 +72,8 @@ const liftAt = (sequence, i) => {
 // water: low | medium | high. machinery: "yes" | "low-cut" | "side-knives" | "hay" (mower, rake, baler).
 // buyer: "yes" | "limited" | "contract" (contract only). broomrape host: "yes" | "partly" | "no".
 const CROP_TABLE = {
-  durum:       { y: [3.0, 2.0, 4.0], p: [290, 255, 337],  c: [685, 600, 900], n: null,         water: 'medium', machinery: 'yes',         buyer: 'yes',      broomrape: 'no',     confidence: 'fair' },
-  chickpea:    { y: [1.4, 0.8, 2.2], p: [700, 500, 950],  c: [540, 480, 750], n: [20, 15, 40], water: 'low',    machinery: 'yes',         buyer: 'limited',  broomrape: 'partly', confidence: 'low' },
+  durum:       { y: [3.0, 2.0, 4.0], p: [290, 255, 337],  c: [675, 600, 900], n: null,         water: 'medium', machinery: 'yes',         buyer: 'yes',      broomrape: 'no',     confidence: 'fair' },
+  chickpea:    { y: [1.4, 0.8, 2.2], p: [700, 500, 950],  c: [600, 480, 800], n: [20, 15, 40], water: 'low',    machinery: 'yes',         buyer: 'limited',  broomrape: 'partly', confidence: 'low' },
   faba:        { y: [2.0, 1.2, 3.0], p: [255, 240, 275],  c: [500, 450, 650], n: [35, 30, 60], water: 'medium', machinery: 'yes',         buyer: 'yes',      broomrape: 'yes',    confidence: 'low' },
   'vetch-oat': { y: [4.5, 2.5, 7.0], p: [120, 80, 150],   c: [485, 350, 600], n: [20, 10, 40], water: 'low',    machinery: 'hay',         buyer: 'limited',  broomrape: 'partly', confidence: 'low' },
   lentil:      { y: [1.0, 0.5, 1.8], p: [780, 700, 1000], c: [510, 450, 700], n: [20, 15, 35], water: 'low',    machinery: 'low-cut',     buyer: 'yes',      broomrape: 'yes',    confidence: 'low' },
@@ -82,6 +90,14 @@ const PRICE_SOURCE = {
 };
 // Only durum's yield was checked against a source: the trial at the demo field (3.03 and 2.79 t/ha fertilised).
 const YIELD_SOURCE = { durum: money.denora };
+// Direct costs with a published source (docs/crops-research.md, "Costs and nitrogen: the sources"):
+// durum is ISMEA's 2025 southern survey (fertiliser, crop protection, seed, energy and contractors: 674.5 €/ha);
+// chickpea is about 89% of wheat's costs in Lago-Olveira et al. 2023, applied to ISMEA's durum. The other crops'
+// costs have no published southern budget yet, so they still cite our notes.
+const COST_SOURCE = { durum: money.ismea, chickpea: money.chickpeaCost };
+// Nitrogen left for the next crop: every legume's figure sits inside the range of the studies it cites.
+// A crop that is not a legume leaves no extra nitrogen.
+const N_SOURCE = { chickpea: money.giambalvo, faba: money.tedone, pea: money.preissel, lentil: money.grdc, 'vetch-oat': money.grdc };
 
 const cropFact = (crop, [value, low, high], unit, source = money.notes) =>
   researched(value, unit, [low, high], source, CROP_TABLE[crop].confidence, '2026-11');
@@ -202,7 +218,7 @@ const economics = {
   crops: Object.fromEntries(Object.entries(CROP_TABLE).map(([crop, row]) => [crop, {
     yield: cropFact(crop, row.y, 't/ha', YIELD_SOURCE[crop]),
     price: cropFact(crop, row.p, '€/t', PRICE_SOURCE[crop]),
-    costs: cropFact(crop, row.c, '€/ha'),
+    costs: cropFact(crop, row.c, '€/ha', COST_SOURCE[crop]),
     ...(DURUM_AFTER[crop] ? { durumAfter: durumAfter(crop) } : {}),
   }])),
   support,
@@ -317,13 +333,15 @@ const option = (id, sequence, checkLocally, strips) => {
   const supportTag = !isCurrent && allCrops.some((crop) => paymentsFor(id, crop).some((item) =>
     item.id !== 'basic-income' && item.id !== 'redistributive' && !currentGets.has(item.id)));
 
-  // Each rotation fact cites where it comes from: income the rule that works it out, nitrogen and water the
-  // crop research notes they are taken from, risk the rule we wrote ourselves.
+  // Each rotation fact cites where it comes from: income the rule that works it out, nitrogen the studies behind its
+  // first legume's figure, water the crop research notes, risk the rule we wrote ourselves.
   const rotationFact = (source, value, unit, range, confidence, label, placeholder = false) =>
     fact(value, unit, range, 'area', source, confidence, label, { asOf: '2026-11', placeholder });
   const incomeFact = (label) => rotationFact(money.income, income, '€/ha', incomeRange, incomeConfidence, label);
   const firstConfidence = weakest(firsts.map((crop) => crop.confidence));
-  const nitrogenFact = (label) => rotationFact(money.notes, n ? n[0] : 0, 'kg N/ha', n ? [n[1], n[2]] : undefined, isCurrent ? 'fair' : firstConfidence, label);
+  const firstLegume = isCurrent ? undefined : grown.map((seq) => seq[0]).find((crop) => CROP_TABLE[crop].n);
+  const nitrogenSource = firstLegume ? N_SOURCE[firstLegume] : money.grdcNone;
+  const nitrogenFact = (label) => rotationFact(nitrogenSource, n ? n[0] : 0, 'kg N/ha', n ? [n[1], n[2]] : undefined, isCurrent ? 'fair' : firstConfidence, label);
 
   return {
     id, isCurrent, sequence, ...(strips ? { strips } : {}), firstHarvestYear: 2027,
